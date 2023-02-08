@@ -13,4 +13,4 @@ npm --workspaces version "$VERSION"
 npm install  # update lockfile
 git add package{,-lock}.json ./**/*.json
 git commit --message "$VERSION"
-git tag "$VERSION"
+git tag -a "$VERSION"
