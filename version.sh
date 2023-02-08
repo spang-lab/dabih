@@ -8,13 +8,9 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-pushd "$HERE/.."
-    VERSION="$(npm version --no-git-tag-version "$1")"
-    npm --workspaces version "$VERSION"
-    npm install  # update lockfile
-    git add package{,-lock}.json packages/**/*.json
-    git commit --message "$VERSION"
-    git tag "$VERSION"
-popd
+VERSION="$(npm version --no-git-tag-version "$1")"
+npm --workspaces version "$VERSION"
+npm install  # update lockfile
+git add package{,-lock}.json packages/**/*.json
+git commit --message "$VERSION"
+git tag "$VERSION"
