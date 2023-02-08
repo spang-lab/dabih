@@ -2,8 +2,6 @@ name: Publish API Image
 
 on:
   push:
-    branches:
-      - main
     tags:
       - "v*"
 
