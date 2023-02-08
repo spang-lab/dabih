@@ -1,0 +1,42 @@
+.loader {
+  width: 16px;
+  height: 16px;
+  border-radius: 30%;
+  display: block;
+  margin: 15px auto;
+  position: relative;
+  color: #555;
+  left: -100px;
+  box-sizing: border-box;
+  animation: shadowRolling 2s linear infinite;
+}
+
+@keyframes shadowRolling {
+  0% {
+    box-shadow: 0 0px rgba(255, 255, 255, 0), 0 0px rgba(255, 255, 255, 0), 0 0px rgba(255, 255, 255, 0), 0 0px rgba(255, 255, 255, 0);
+  }
+  12% {
+    box-shadow: 0 -200px theme(colors.sky.700), 0 0px rgba(255, 255, 255, 0), 0 0px rgba(255, 255, 255, 0), 0 0px rgba(255, 255, 255, 0);
+  }
+  25% {
+    box-shadow: 0 -220px theme(colors.sky.700), 0 -200px theme(colors.sky.700), 0 0px rgba(255, 255, 255, 0), 0 0px rgba(255, 255, 255, 0);
+  }
+  36% {
+    box-shadow: 0 -240px theme(colors.sky.700), 0 -220px theme(colors.sky.700), 0 -200px theme(colors.sky.700), 0 0px rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 0 -260px theme(colors.sky.700), 0 -240px theme(colors.sky.700), 0 -220px theme(colors.sky.700), 0 -200px theme(colors.sky.700);
+  }
+  62% {
+    box-shadow: 0 -400px rgba(255, 255, 255, 0), 0 -260px theme(colors.sky.700), 0 -240px theme(colors.sky.700), 0 -220px theme(colors.sky.700);
+  }
+  75% {
+    box-shadow: 0 -400px rgba(255, 255, 255, 0), 0 -400px rgba(255, 255, 255, 0), 0 -260px theme(colors.sky.700), 0 -240px theme(colors.sky.700);
+  }
+  87% {
+    box-shadow: 0 -400px rgba(255, 255, 255, 0), 0 -400px rgba(255, 255, 255, 0), 0 -400px rgba(255, 255, 255, 0), 0 -260px theme(colors.sky.700);
+  }
+  100% {
+    box-shadow: 0 -400px rgba(255, 255, 255, 0), 0 -400px rgba(255, 255, 255, 0), 0 -400px rgba(255, 255, 255, 0), 0 -400px rgba(255, 255, 255, 0);
+  }
+}
