@@ -10,9 +10,6 @@
     "rootKey": "node ./src/scripts/rootKey.js",
     "prod": "NODE_ENV=production node app.js"
   },
-  "workspaces": [
-    "client"
-  ],
   "type": "module",
   "author": "mhuttner",
   "license": "MIT",
