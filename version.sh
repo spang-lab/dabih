@@ -9,7 +9,9 @@ if [ $# -ne 1 ]; then
 fi
 
 VERSION="$(npm version --no-git-tag-version "$1")"
-npm --workspaces version "$VERSION"
+pushd client
+  npm version --no-commit-hooks "$VERSION"
+popd
 npm install  # update lockfile
 git add package{,-lock}.json ./**/*.json
 git commit --message "$VERSION"
