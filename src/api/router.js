@@ -124,7 +124,6 @@ const getApiRouter = () => {
     tokenRouter.routes(),
     tokenRouter.allowedMethods(),
   );
-  router.get('/healthy', healthy);
 
   return router;
 };
@@ -143,6 +142,7 @@ const getRouter = () => {
     apiRouter.routes(),
     apiRouter.allowedMethods(),
   );
+  router.get('/api/v1/healthy', healthy);
   return router;
 };
 

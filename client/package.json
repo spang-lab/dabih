@@ -21,7 +21,8 @@
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
     "react-feather": "^2.0.10",
-    "react-to-print": "^2.14.11"
+    "react-to-print": "^2.14.11",
+    "sharp": "^0.31.3"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",
