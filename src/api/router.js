@@ -134,7 +134,7 @@ const getRouter = () => {
   router.use(catchError);
 
   router.get('/healthy', healthy);
-
+  router.get('/api/v1/healthy', healthy);
   const apiRouter = getApiRouter();
 
   router.use(
@@ -142,7 +142,6 @@ const getRouter = () => {
     apiRouter.routes(),
     apiRouter.allowedMethods(),
   );
-  router.get('/api/v1/healthy', healthy);
   return router;
 };
 
