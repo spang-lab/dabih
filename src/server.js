@@ -22,12 +22,11 @@ export default async () => {
 
   const app = new Koa();
   const { server } = getConfig();
-  const { port, url } = server;
+  const { port } = server;
 
   const apiRoutes = apiRouter().routes();
   app.use(apiRoutes);
 
   app.listen(port);
   log(`HTTP Server listening on port ${port}`);
-  log(`Full url: ${url}`);
 };

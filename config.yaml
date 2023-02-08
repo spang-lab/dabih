@@ -1,7 +1,5 @@
 
 server:
-  protocol: http
-  host: localhost
   port: 8088
 
 admins:
