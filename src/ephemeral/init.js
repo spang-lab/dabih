@@ -1,5 +1,6 @@
 import { getConfig, log } from '../util/index.js';
 
+import initRedis from './redis.js';
 import initMemcached from './memcached.js';
 import initMemory from './memory.js';
 
@@ -8,6 +9,10 @@ let client = null;
 export const initEphemeral = async () => {
   const { ephemeral } = getConfig();
   const { adapter } = ephemeral;
+  if (adapter === 'redis') {
+    client = await initRedis();
+    return;
+  }
   if (adapter === 'memcached') {
     client = await initMemcached();
     return;

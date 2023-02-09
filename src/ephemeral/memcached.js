@@ -9,20 +9,20 @@ import {
   uint8ToBase64,
 } from '../crypto/index.js';
 
-const connect = async (memcachedUrl) => {
+const connect = async (url) => {
   const opts = {
     timeout: 500,
     retries: 1,
     failures: 1,
   };
-  const memcached = new Memcached(memcachedUrl, opts);
+  const memcached = new Memcached(url, opts);
   const connectFn = promisify(memcached.connect).bind(memcached);
   try {
-    await connectFn(memcachedUrl);
+    await connectFn(url);
     memcached.end();
   } catch (err) {
     log.error(err);
-    throw new Error(`Failed to connect to memcached server ${memcachedUrl}`);
+    throw new Error(`Failed to connect to memcached server ${url}`);
   }
 };
 
@@ -34,10 +34,10 @@ const init = async () => {
   };
 
   const { ephemeral } = getConfig();
-  const { memcachedUrl } = ephemeral;
-  log(`Memcached connect to ${memcachedUrl}`);
-  await connect(memcachedUrl);
-  const memcached = new Memcached(memcachedUrl, opts);
+  const { url } = ephemeral;
+  log(`Memcached connect to ${url}`);
+  await connect(url);
+  const memcached = new Memcached(url, opts);
 
   const ephemeralSecret = getEnv('EPHEMERAL_SECRET', null);
   if (!ephemeralSecret) {

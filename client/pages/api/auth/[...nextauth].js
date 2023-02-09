@@ -1,11 +1,10 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 import NextAuth from 'next-auth';
-import { join } from 'path';
 import { getProviders } from '../../../lib';
 
 const apiUser = async (provider, accessToken) => {
-  const url = join(process.env.NEXTAUTH_URL, 'api/v1/token');
+  const url = `${process.env.NEXTAUTH_URL}/api/v1/token`;
   const result = await axios.post(url, {}, {
     headers: {
       Authorization: `Bearer ${provider}_${accessToken}`,

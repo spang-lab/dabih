@@ -7,11 +7,15 @@ let config = null;
 export const getEnv = (key, defaultValue = '') => {
   const { env } = process;
   const value = env[key];
-  if (!value) {
-    log.warn(`Enviroment Variable ${key} not configured, using default '${defaultValue}'`);
-    return defaultValue;
+  if (value) {
+    return value;
   }
-  return value;
+  if (config && config.env && config.env[key]) {
+    log.warn(`Reading env var ${key} from config.yaml`);
+    return config.env[key];
+  }
+  log.warn(`Enviroment Variable ${key} not configured, using default '${defaultValue}'`);
+  return defaultValue;
 };
 
 export const initConfig = async () => {

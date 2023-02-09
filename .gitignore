@@ -1,5 +1,5 @@
 data/
-deploy/
+dev/
 node_modules/
 
 .DS_Store
