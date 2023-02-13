@@ -38,7 +38,6 @@ services:
     stdin_open: false
 
   dabih-caddy:
-    container-name: dabih-caddy
     image: caddy:latest
     restart: unless-stopped
     ports:
