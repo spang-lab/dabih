@@ -1,0 +1,26 @@
+
+server:
+  port: 8081
+
+admins:
+  subs: []
+  groups:
+    - dabih
+
+
+crypto:
+  rootKeys: []
+
+# Configure where to store temporary data
+ephemeral:
+  adapter: 'memory'
+
+database:
+  dialect: sqlite
+  logging: false 
+  storage: /data/dabih.sqlite
+
+
+storage:
+  backend: local
+  path: /data
