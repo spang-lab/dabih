@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dabih-client
+  name: dabih-client-deployment
+  namespace: dabih 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dabih-client
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: dabih-client
+    spec:
+      containers:
+      - image: thespanglab/dabih-client:v1.0.18
+        name: dabih-client
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /api/healthy
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /api/healthy
+            port: http
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        env:
+        - name: NEXTAUTH_URL
+          value: https://dabih.spang-lab.de
+        - name: NEXTAUTH_SECRET
+          value: YOUR_SECRET_HERE
+        # Add Authentication secrets here
+      restartPolicy: Always
+
+

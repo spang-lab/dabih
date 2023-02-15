@@ -10,15 +10,20 @@
 The simplest way to install dabih is to use the prebuilt containers on Docker
 Hub
 
-- [mhuttner/dabih-client](https://hub.docker.com/repository/docker/mhuttner/dabih-client/general)
-- [mhuttner/dabih-api](https://hub.docker.com/repository/docker/mhuttner/dabih-api/general)
+- [thespanglab/dabih-client](https://hub.docker.com/repository/docker/thespanglab/dabih-client/general)
+- [thespanglab/dabih-api](https://hub.docker.com/repository/docker/thespanglab/dabih-api/general)
 
 ### Docker Compose
 
-The `example` folder contains a full example for docker-compose with caddy as a reverse proxy
+The `example` folder contains a full example for docker-compose with caddy as a
+reverse proxy
 
 
 ### Kubernetes
+  
+The `example/kubernetes` folder contains a full example for kubernetes with a
+redis store and postgres database.
+
 
 
 ## How dabih works
