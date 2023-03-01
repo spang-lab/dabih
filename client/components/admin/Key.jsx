@@ -5,7 +5,7 @@ import {
   Highlight, Gray, DeleteModal,
 } from '../util';
 
-const formatDate = (dbDate) => new Date(dbDate).toLocaleString('de-DE');
+const formatDate = (dbDate) => new Date(dbDate.replace(/ \+/, '+')).toLocaleString('de-DE');
 
 export default function KeyElem({ data, onConfirm, onDelete }) {
   const {
