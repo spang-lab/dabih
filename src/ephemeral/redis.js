@@ -20,7 +20,7 @@ const init = async () => {
   try {
     await client.connect();
   } catch (err) {
-    log.err(err);
+    log.error(err);
     throw new Error(`Failed to connect to redis server ${url}`);
   }
   const aesKey = await aes.deriveKey(ephemeralSecret);

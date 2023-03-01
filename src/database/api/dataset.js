@@ -222,7 +222,8 @@ async function addKeys(ctx, mnemonic, aesKey) {
   const missing = publicKeys.filter((pk) => !existing.find((k) => k.id === pk.publicKeyId));
 
   const promises = missing.map(async (publicKey) => {
-    const encrypted = rsa.encrypt(publicKey.data, aesKey);
+    const key = JSON.parse(publicKey.data);
+    const encrypted = rsa.encrypt(key, aesKey);
     await Key.createTx(tx, {
       key: encrypted,
       datasetId: dataset.id,
