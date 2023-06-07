@@ -43,6 +43,14 @@ export function SpangLabProvider(options) {
   return provider;
 }
 
+const isConfigured = (provider) => {
+  if (!provider || !provider.options) {
+    return false;
+  }
+  const { options } = provider;
+  return Object.keys(options).every((key) => options[key]);
+};
+
 export function getProviders() {
   const providers = [
     SpangLabProvider({
@@ -63,5 +71,5 @@ export function getProviders() {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ];
-  return providers.filter((p) => p);
+  return providers.filter((p) => isConfigured(p));
 }

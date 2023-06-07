@@ -1,10 +1,11 @@
 import {
-  log, sendError, setUser, getUserinfo,
+  log, sendError, setUser,
 } from '../util/index.js';
+import { resolveUser } from '../auth/index.js';
 
 const getMiddleware = () => async (ctx, next) => {
   try {
-    const user = await getUserinfo(ctx);
+    const user = await resolveUser(ctx);
     setUser(ctx, user);
   } catch (err) {
     log.error(err);

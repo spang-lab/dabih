@@ -22,7 +22,6 @@ export function ApiWrapper({ children }) {
 
   // User
   const listKeyUsers = useCallback(() => api.get('/key/list/user'), [api]);
-  const getUser = useCallback(async () => api.post('/token'), [api]);
   const generateToken = useCallback(
     async (type) => api.post(`/token/generate/${type}`),
     [api],
@@ -114,7 +113,6 @@ export function ApiWrapper({ children }) {
     () => ({
       isReady,
       listKeyUsers,
-      getUser,
       generateToken,
       removeToken,
       listTokens,
@@ -135,7 +133,6 @@ export function ApiWrapper({ children }) {
     }),
     [
       isReady,
-      getUser,
       listKeyUsers,
       generateToken,
       removeToken,
