@@ -2,7 +2,7 @@ import React from 'react';
 import { Key } from 'react-feather';
 import { Switch } from '@headlessui/react';
 import {
-  Highlight, Gray, DeleteModal,
+  Highlight, DeleteModal,
 } from '../util';
 
 const formatDate = (dbDate) => new Date(dbDate.replace(/ \+/, '+')).toLocaleString('de-DE');
@@ -73,9 +73,9 @@ export default function KeyElem({ data, onConfirm, onDelete }) {
           <Highlight>{sub}</Highlight>
         </p>
         <p>
-          <Gray>
+          <span className="text-gray-500">
             {date}
-          </Gray>
+          </span>
         </p>
         <p className="text-gray-500">
           {hash}

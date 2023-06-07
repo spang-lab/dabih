@@ -20,7 +20,7 @@ function RouteLink({ path }) {
 export default function Documentation() {
   return (
     <Docs>
-      <Title1 className="mb-10">
+      <Title1>
         <Color>API</Color>
         Reference
       </Title1>

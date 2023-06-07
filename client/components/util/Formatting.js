@@ -1,34 +1,5 @@
 import React from 'react';
 
-export function LocalDate({ value }) {
-  if (!value) {
-    return null;
-  }
-  const dateString = value.replace(/\s\+/, '+');
-  const date = new Date(dateString).toLocaleString('de-DE');
-  return (
-    <span>
-      {' '}
-      {date}
-      {' '}
-    </span>
-  );
-}
-export function LocalDay({ value }) {
-  if (!value) {
-    return null;
-  }
-  const dateString = value.replace(/\s\+/, '+');
-  const date = new Date(dateString).toLocaleDateString('de-DE');
-  return (
-    <span>
-      {' '}
-      {date}
-      {' '}
-    </span>
-  );
-}
-
 export function TimeSince({ value }) {
   const now = new Date();
   const date = new Date(value);
