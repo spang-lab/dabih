@@ -85,13 +85,8 @@ export default function Member({ data, dataset }) {
       <div className="px-2 shrink-0 text-sky-700 justify-self-start">
         <User size={20} />
       </div>
-      <div className="container mx-auto">
-        <p>
-          <Link href={`mailto:${email}`}>
-            {sub}
-          </Link>
-        </p>
-        <div className="font-medium text-gray-800">{name}</div>
+      <div className="container font-semibold text-sky-600 mx-auto">
+        {name}
       </div>
       {getDelete()}
       {getSwitch()}

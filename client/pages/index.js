@@ -8,7 +8,7 @@ import {
   Title1,
   Title2,
   Subtitle1,
-  SpangLabBrand,
+  Institute,
   BrowserSupport,
   Navigation,
   Color,
@@ -40,7 +40,7 @@ export default function Home() {
 
             </Title1>
             <div className="flex pt-2">
-              <SpangLabBrand />
+              <Institute />
             </div>
             <Subtitle1>
               <ul className="px-4 list-disc">

@@ -10,6 +10,7 @@ export { default as Navigation } from './navigation/Navigation';
 export { default as Download } from './download/Download';
 export { default as Tokens } from './tokens/Tokens';
 export { default as Docs } from './docs/Docs';
+export * from './branding';
 export * from './base';
 export * from './util';
 export * from './messages';

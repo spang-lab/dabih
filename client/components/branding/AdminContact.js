@@ -1,6 +1,5 @@
 import React from 'react';
-import { Highlight } from './Formatting';
-import Link from './Link';
+import { Link } from '../util';
 
 export default function AdminContact() {
   const enc = (text) => encodeURIComponent(text);
@@ -11,7 +10,7 @@ export default function AdminContact() {
 
   return (
     <div className="p-2">
-      <Highlight>Michael Huttner</Highlight>
+      <span>Michael Huttner</span>
       <Link
         className="px-3 py-1 border rounded-lg border-sky-700 hover:border-sky-500"
         href={`mailto:${mail}?subject=${subject}&body=${text}`}

@@ -3,7 +3,7 @@ import { Combobox, Transition } from '@headlessui/react';
 import {
   ChevronsDown, UserPlus, User,
 } from 'react-feather';
-import { SmallButton, Highlight } from '../util';
+import { SmallButton } from '../util';
 import { useDatasets } from './Context';
 
 function MemberOption({ option }) {
@@ -17,7 +17,6 @@ function MemberOption({ option }) {
       <span className="text-gray-700">
         <User className="inline-block" size={14} />
         <span className="px-1">User</span>
-        <Highlight>{option.sub}</Highlight>
         {option.name}
       </span>
     </Combobox.Option>

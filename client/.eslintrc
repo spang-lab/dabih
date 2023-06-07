@@ -2,7 +2,7 @@
   "extends": ["next/core-web-vitals", "airbnb"],
   "rules": {
         "react/prop-types": "off",
-        "react/jsx-filename-extension": "off",
-        "react/jsx-props-no-spreading": "off"
+        "react/jsx-props-no-spreading": "off",
+        "react/jsx-filename-extension": [1, { "extensions": [".js"] }]
   }
 }

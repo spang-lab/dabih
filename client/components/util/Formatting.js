@@ -1,24 +1,11 @@
 import React from 'react';
 
-export function Bytes({ value }) {
-  const formatBytes = (bytes, decimals = 2) => {
-    if (!bytes || bytes === 0) return '0 B';
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
-  };
-  return (
-    <span>
-      {' '}
-      {formatBytes(value)}
-      {' '}
-    </span>
-  );
-}
 export function LocalDate({ value }) {
-  const date = new Date(value).toLocaleString('de-DE');
+  if (!value) {
+    return null;
+  }
+  const dateString = value.replace(/\s\+/, '+');
+  const date = new Date(dateString).toLocaleString('de-DE');
   return (
     <span>
       {' '}
@@ -28,7 +15,11 @@ export function LocalDate({ value }) {
   );
 }
 export function LocalDay({ value }) {
-  const date = new Date(value).toLocaleDateString('de-DE');
+  if (!value) {
+    return null;
+  }
+  const dateString = value.replace(/\s\+/, '+');
+  const date = new Date(dateString).toLocaleDateString('de-DE');
   return (
     <span>
       {' '}
@@ -171,16 +162,5 @@ export function CodeBlock({ children }) {
         {children}
       </pre>
     </div>
-  );
-}
-export function Gray({ children }) {
-  return (
-    <>
-      {' '}
-      <span className="text-gray-500">
-        {children}
-      </span>
-      {' '}
-    </>
   );
 }

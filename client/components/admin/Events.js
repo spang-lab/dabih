@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { RefreshCcw } from 'react-feather';
 import {
-  Color, Gray, Title3, LocalDate, Highlight, MutedButton,
+  Color, Title3, LocalDate, Highlight, MutedButton,
 } from '../util';
 import { useAdminApi } from '../api';
 
@@ -21,7 +21,7 @@ function Event({ data }) {
         {mnemonic}
       </Color>
       <Highlight>{sub}</Highlight>
-      <Gray>{message}</Gray>
+      <span className="text-gray-500">{message}</span>
     </div>
   );
 }
