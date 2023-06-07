@@ -2,7 +2,6 @@ import React from 'react';
 
 import {
   Container,
-  Title1,
   Navigation,
   Upload as Uploader,
 } from '../components';
@@ -14,11 +13,11 @@ export default function Upload() {
         <Navigation />
       </Container>
       <Container>
-        <Title1>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Upload
           {' '}
           <span className="text-sky-700">your data</span>
-        </Title1>
+        </h1>
         <Uploader />
 
       </Container>

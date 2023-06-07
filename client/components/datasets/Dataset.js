@@ -1,21 +1,13 @@
 import React from 'react';
 import { FileText, Lock } from 'react-feather';
-import {
-  Bytes, Color, LocalDate,
-} from '../util';
+import { Bytes, LocalDate } from '../util';
 import Download from './Download';
 import Members from './Members';
 import DatasetActions from './DatasetActions';
 
 export default function Dataset({ data }) {
   const {
-    mnemonic,
-    name,
-    hash,
-    size,
-    fileName,
-    createdBy,
-    createdAt,
+    mnemonic, name, hash, size, fileName, createdBy, createdAt,
   } = data;
 
   const getName = () => {
@@ -35,11 +27,13 @@ export default function Dataset({ data }) {
         <div className="flex flex-row flex-wrap">
           <div className="text-xl font-extrabold">
             Encrypted Dataset
-            <Color>{mnemonic}</Color>
+            <span className="text-sky-700">
+              {' '}
+              {mnemonic}
+              {' '}
+            </span>
           </div>
-          <div className="m-1">
-            {getName()}
-          </div>
+          <div className="m-1">{getName()}</div>
         </div>
         <div className="flex flex-row items-center">
           <Download size={size} mnemonic={mnemonic} />
@@ -50,12 +44,20 @@ export default function Dataset({ data }) {
         <div className="shrink-0 text-sky-700 justify-self-start">
           <div className="relative mx-auto w-14 h-14">
             <FileText className="" size={56} />
-            <Lock className="absolute text-rose-700 -bottom-1 -right-1" strokeWidth={3} size={30} />
+            <Lock
+              className="absolute text-rose-700 -bottom-1 -right-1"
+              strokeWidth={3}
+              size={30}
+            />
           </div>
         </div>
         <div className="px-3 py-2 text-center border-r-2">
           <p className="font-semibold">Filename</p>
-          <Color>{fileName}</Color>
+          <span className="text-sky-700">
+            {' '}
+            {fileName}
+            {' '}
+          </span>
         </div>
         <div className="px-3 py-2 text-center border-r-2">
           <p className="font-semibold">Upload Date</p>
@@ -75,13 +77,11 @@ export default function Dataset({ data }) {
         </div>
       </div>
       <div>
-
         <div className="flex flex-row flex-wrap justify-between">
           <div className="w-full xs:w-1/2">
             <Members data={data} />
           </div>
         </div>
-
       </div>
     </div>
   );

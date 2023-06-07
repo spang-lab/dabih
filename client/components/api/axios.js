@@ -33,10 +33,7 @@ export default function create({ router, onError, session }) {
       url: newUrl,
     };
   };
-  api.interceptors.request.use(
-    onRequest,
-    onError,
-  );
+  api.interceptors.request.use(onRequest, onError);
   api.interceptors.response.use(
     (r) => r.data,
     (error) => {

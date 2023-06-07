@@ -1,13 +1,11 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, {
-  Fragment, useState,
-} from 'react';
+import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Cpu } from 'react-feather';
 import Generate from './Generate';
 import styles from './Generate.module.css';
 
-import { BigButton, Highlight } from '../util';
+import { BigButton } from '../util';
 
 export default function GenerateKey() {
   const [isOpen, setOpen] = useState(false);
@@ -20,7 +18,9 @@ export default function GenerateKey() {
 
   return (
     <div className="items-start w-full">
-      <div className="px-3 pt-2 pb-10 italic font-semibold text-left text-sky-800 text-md">Recommended</div>
+      <div className="px-3 pt-2 pb-10 italic font-semibold text-left text-sky-800 text-md">
+        Recommended
+      </div>
       <div className="text-center">
         <BigButton onClick={() => setOpen(true)}>
           <span className="whitespace-nowrap">
@@ -58,7 +58,9 @@ export default function GenerateKey() {
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-95"
                 >
-                  <Dialog.Panel className={`${shake} w-full max-w-5xl p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all`}>
+                  <Dialog.Panel
+                    className={`${shake} w-full max-w-5xl p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all`}
+                  >
                     <Dialog.Title
                       as="h2"
                       className="text-2xl font-extrabold text-gray-900 leading-6"
@@ -68,9 +70,12 @@ export default function GenerateKey() {
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
                         You
-                        <Highlight>need</Highlight>
-                        to save your private key
-                        after generating it.
+                        <span className="font-semibold text-sky-700">
+                          {' '}
+                          need
+                          {' '}
+                        </span>
+                        to save your private key after generating it.
                       </p>
                     </div>
                     <Generate onComplete={() => setOpen(false)} />

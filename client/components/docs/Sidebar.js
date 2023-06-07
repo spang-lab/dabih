@@ -5,9 +5,7 @@ import { Link } from '../util';
 
 function Header({ children }) {
   return (
-    <div className="p-2 text-lg font-extrabold text-gray-600">
-      {children}
-    </div>
+    <div className="p-2 text-lg font-extrabold text-gray-600">{children}</div>
   );
 }
 function Item({ children, href }) {
@@ -42,7 +40,6 @@ function Sidebar() {
         <Header>Getting Started</Header>
         <Item href="/docs/installation">Installation</Item>
         <Item href="/docs/configuration">Configuration Options</Item>
-
       </div>
     </div>
   );

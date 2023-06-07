@@ -24,8 +24,7 @@ export default function UploadProgress(props) {
   return (
     <div className="w-1/2 pt-5 mx-auto">
       <p className="p-3 text-xl text-center text-gray-500">
-        Uploading file
-        &quot;
+        Uploading file &quot;
         {fileName}
         &quot;
       </p>

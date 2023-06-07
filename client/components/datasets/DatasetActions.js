@@ -1,24 +1,25 @@
-import React, {
-  Fragment, useState,
-} from 'react';
+import React, { Fragment, useState } from 'react';
 import { Menu, Transition, Dialog } from '@headlessui/react';
 import {
-  ChevronDown, Trash2, Key, RefreshCcw, Download, Edit3, Settings,
+  ChevronDown,
+  Trash2,
+  Key,
+  RefreshCcw,
+  Download,
+  Edit3,
+  Settings,
 } from 'react-feather';
 import { useRouter } from 'next/router';
 import { useDatasets } from './Context';
-import { MutedButton, Highlight } from '../util';
+import { MutedButton } from '../util';
 
 function ConfirmDialog(props) {
   const {
-    onConfirm,
-    onClose,
-    isOpen,
-    children,
-    title,
-    danger,
+    onConfirm, onClose, isOpen, children, title, danger,
   } = props;
-  const className = (danger) ? 'bg-rose-700 hover:bg-rose-600' : 'bg-sky-700 hover:bg-sky-600';
+  const className = danger
+    ? 'bg-rose-700 hover:bg-rose-600'
+    : 'bg-sky-700 hover:bg-sky-600';
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -53,21 +54,20 @@ function ConfirmDialog(props) {
                 >
                   {title}
                 </Dialog.Title>
-                <div className="mt-2">
-                  {children}
-                </div>
+                <div className="mt-2">{children}</div>
 
                 <div className="mt-4 text-right">
                   <button
                     type="button"
-                    onClick={() => { onConfirm(); onClose(); }}
+                    onClick={() => {
+                      onConfirm();
+                      onClose();
+                    }}
                     className={`mx-3 px-3 py-2 rounded text-gray-100 ${className} hover:text-white`}
                   >
                     {title}
                   </button>
-                  <MutedButton onClick={onClose}>
-                    Cancel
-                  </MutedButton>
+                  <MutedButton onClick={onClose}>Cancel</MutedButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -133,10 +133,12 @@ export default function Actions({ data }) {
         onClose={() => setDialog(null)}
         onConfirm={() => submitName()}
       >
-        <p className="text-gray-500">
-          Set a new name for the dataset
-        </p>
-        <Highlight>{mnemonic}</Highlight>
+        <p className="text-gray-500">Set a new name for the dataset</p>
+        <span className="font-semibold text-sky-700">
+          {' '}
+          {mnemonic}
+          {' '}
+        </span>
         <form onSubmit={submitName}>
           <input
             type="text"
@@ -155,7 +157,11 @@ export default function Actions({ data }) {
         <p className="text-gray-500">
           Are you sure you want to reencrypt the Dataset
         </p>
-        <Highlight>{mnemonic}</Highlight>
+        <span className="font-semibold text-sky-700">
+          {' '}
+          {mnemonic}
+          {' '}
+        </span>
         <p className="text-gray-500">
           This is only useful if a dabih was lost or stolen.
         </p>
@@ -169,16 +175,17 @@ export default function Actions({ data }) {
         <p className="text-gray-500">
           Are you sure you want to delete the Dataset
         </p>
-        <Highlight>{mnemonic}</Highlight>
+        <span className="font-semibold text-sky-700">
+          {' '}
+          {mnemonic}
+          {' '}
+        </span>
       </ConfirmDialog>
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button className="z-0 inline-flex justify-center w-full px-2 py-1 text-sm font-extrabold border rounded text-sky-700 hover:text-sky-600">
             <Settings size={20} />
-            <ChevronDown
-              size={20}
-              aria-hidden="true"
-            />
+            <ChevronDown size={20} aria-hidden="true" />
           </Menu.Button>
         </div>
         <Transition
@@ -193,7 +200,9 @@ export default function Actions({ data }) {
           <Menu.Items className="absolute right-0 z-10 w-40 mt-2 bg-white shadow-lg origin-top-right divide-y divide-gray-100 rounded-md ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-1 py-1 ">
               <Action
-                onClick={() => { router.push(`/download/${mnemonic}`); }}
+                onClick={() => {
+                  router.push(`/download/${mnemonic}`);
+                }}
                 className="text-sky-700"
                 enabled
               >
@@ -209,7 +218,9 @@ export default function Actions({ data }) {
                 Rename
               </Action>
               <div className="pt-2 mt-2 border-t">
-                <span className="text-xs font-extrabold text-center">Danger</span>
+                <span className="text-xs font-extrabold text-center">
+                  Danger
+                </span>
                 <Action
                   onClick={() => setDialog('reencrypt')}
                   className="text-rose-700"

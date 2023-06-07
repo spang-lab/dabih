@@ -2,33 +2,40 @@ import React from 'react';
 
 import {
   Docs,
-  Title1,
-  Title2,
   CodeBlock,
-  Code,
 } from '../../components';
 
 function Documentation() {
   return (
     <Docs>
       <div className="text-lg">
-        <Title1>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Configuration
-        </Title1>
-        <Title2 className="pt-5">
+        </h1>
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
           Environment Variables
-        </Title2>
+        </h2>
         The dabih API server reads the following Environment Variables:
         <p className="py-1">
-          <Code>CONFIG</Code>
+          <span className="font-semibold text-gray-500">
+            {' '}
+            CONFIG
+            {' '}
+          </span>
           Specifies the location of the yaml config file, details are described below.
           Default will be
-          <Code>
+          <span className="font-semibold text-gray-500">
+            {' '}
             ./config.yaml
-          </Code>
+            {' '}
+          </span>
         </p>
         <p className="py-1">
-          <Code>EPHEMERAL_SECRET</Code>
+          <span className="font-semibold text-gray-500">
+            {' '}
+            EPHEMERAL_SECRET
+            {' '}
+          </span>
           <span className="italic">
             (Optional)
           </span>
@@ -37,7 +44,11 @@ function Documentation() {
           encrypt the storage and protect sensitve keys.
         </p>
         <p className="py-1">
-          <Code>DATABASE_SECRET</Code>
+          <span className="font-semibold text-gray-500">
+            {' '}
+            DATABASE_SECRET
+            {' '}
+          </span>
           <span className="italic">
             (Optional)
           </span>
@@ -45,9 +56,9 @@ function Documentation() {
           The password for an external SQL based database. Not required if
           you are using sqlite.
         </p>
-        <Title2 className="pt-5">
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
           config.yaml
-        </Title2>
+        </h2>
         <p>
           All other configuration is read from the config.yaml file.
         </p>

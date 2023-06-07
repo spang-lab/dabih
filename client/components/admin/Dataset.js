@@ -1,23 +1,22 @@
 import React from 'react';
 import {
-  Bytes, Color, LocalDate,
-  Highlight, TimeSince,
+  Bytes, LocalDate, TimeSince,
 } from '../util';
 import Actions from './DatasetActions';
 
 function File({ data }) {
   const {
-    size,
-    fileName,
-    createdBy,
-    createdAt,
-    hash,
+    size, fileName, createdBy, createdAt, hash,
   } = data;
   return (
     <div className="flex flex-row flex-wrap items-center py-1 pl-5 text-sm border-gray-300 rounded-xl space-x-2">
       <div className="px-3 py-2 text-center border-r-2">
         <p className="font-semibold">Filename</p>
-        <Color>{fileName}</Color>
+        <span className="text-sky-700">
+          {' '}
+          {fileName}
+          {' '}
+        </span>
       </div>
       <div className="px-3 py-2 text-center border-r-2">
         <p className="font-semibold">Upload Date</p>
@@ -40,11 +39,7 @@ function File({ data }) {
 }
 
 export default function Dataset({ data, onAction }) {
-  const {
-    mnemonic,
-    name,
-    deleted,
-  } = data;
+  const { mnemonic, name, deleted } = data;
 
   const getDeleted = () => {
     if (!deleted) {
@@ -66,7 +61,11 @@ export default function Dataset({ data, onAction }) {
         </span>
         <p>
           Dataset
-          <Highlight>{mnemonic}</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            {mnemonic}
+            {' '}
+          </span>
         </p>
         {getDeleted()}
         <div className="font-medium text-black">{name}</div>

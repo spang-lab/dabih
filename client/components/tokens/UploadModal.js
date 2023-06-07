@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Copy } from 'react-feather';
-import { Highlight, MutedButton } from '../util';
+import { MutedButton } from '../util';
 
 export default function TokenModal({ token, onClose, isOpen }) {
   const [baseUrl, setBaseUrl] = useState('');
@@ -55,15 +55,16 @@ export default function TokenModal({ token, onClose, isOpen }) {
                   New Upload Token
                 </Dialog.Title>
                 <p className="pb-3">
-                  This url can be used to upload data to your account.
-                  By default it will expire 72 hours after your last login.
+                  This url can be used to upload data to your account. By
+                  default it will expire 72 hours after your last login.
                 </p>
                 <p>
                   Make sure to copy this url
                   {' '}
                   <strong>before</strong>
                   {' '}
-                  closing this window.
+                  closing
+                  this window.
                 </p>
                 <div className="flex flex-row mt-2">
                   <div className="text-center">
@@ -83,13 +84,15 @@ export default function TokenModal({ token, onClose, isOpen }) {
                 </div>
                 <p>
                   This url can
-                  <Highlight>no longer be accessed</Highlight>
+                  <span className="font-semibold text-sky-700">
+                    {' '}
+                    no longer be accessed
+                    {' '}
+                  </span>
                   later, copy it now.
                 </p>
                 <div className="mt-4 text-right">
-                  <MutedButton onClick={onClose}>
-                    Done
-                  </MutedButton>
+                  <MutedButton onClick={onClose}>Done</MutedButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

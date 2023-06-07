@@ -2,11 +2,7 @@ import React from 'react';
 
 export default function DownloadButton(props) {
   const {
-    children,
-    className,
-    file,
-    fileName,
-    onDownload,
+    children, className, file, fileName, onDownload,
   } = props;
   if (!file) {
     return null;
@@ -22,12 +18,7 @@ export default function DownloadButton(props) {
     focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     ${className}`;
   return (
-    <a
-      href={href}
-      download={fileName}
-      className={classes}
-      onClick={onDownload}
-    >
+    <a href={href} download={fileName} className={classes} onClick={onDownload}>
       {children}
     </a>
   );

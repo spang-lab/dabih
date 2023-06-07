@@ -8,7 +8,7 @@
 .loader:after {
   width: 16px;
   height: 16px;
-  content: "";
+  content: '';
   position: absolute;
   border-radius: 50%;
   inset: 0;
@@ -23,6 +23,7 @@
 }
 
 @keyframes rotate {
-  100% {transform: rotate(360deg) translate(40px)}
+  100% {
+    transform: rotate(360deg) translate(40px);
+  }
 }
-

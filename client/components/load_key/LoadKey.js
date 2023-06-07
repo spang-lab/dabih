@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Title2 } from '../util';
 import WebcamScan from './WebcamScan';
 import LoadPrivateKey from './LoadPrivateKey';
 
@@ -18,9 +17,9 @@ export default function LoadKey({ isVisible }) {
   }
   return (
     <div className="py-12">
-      <Title2>
+      <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
         Load your existing key
-      </Title2>
+      </h2>
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto lg:max-w-none">
           <div className="mt-6 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-x-6">
@@ -30,7 +29,6 @@ export default function LoadKey({ isVisible }) {
             <Card>
               <LoadPrivateKey />
             </Card>
-
           </div>
         </div>
       </div>

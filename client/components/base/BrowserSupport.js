@@ -16,11 +16,15 @@ export default function BrowserSupport() {
       return null;
     }
     return (
-      <div className="relative p-3 m-3 text-xl font-semibold text-center text-red-800 bg-red-100 rounded-lg" role="alert">
+      <div
+        className="relative p-3 m-3 text-xl font-semibold text-center text-red-800 bg-red-100 rounded-lg"
+        role="alert"
+      >
         <p className="p-2 text-2xl font-bold">
           Dabih will not work with this browser
         </p>
-        Web Storage API is not supported. Dabih needs this API to store private keys.
+        Web Storage API is not supported. Dabih needs this API to store private
+        keys.
         <p>
           <Link href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API">
             More Info
@@ -34,7 +38,10 @@ export default function BrowserSupport() {
       return null;
     }
     return (
-      <div className="relative p-3 m-3 text-xl font-semibold text-center text-red-800 bg-red-100 rounded-lg" role="alert">
+      <div
+        className="relative p-3 m-3 text-xl font-semibold text-center text-red-800 bg-red-100 rounded-lg"
+        role="alert"
+      >
         <p className="p-2 text-2xl font-bold">
           Dabih will not work with this browser
         </p>

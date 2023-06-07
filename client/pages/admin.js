@@ -1,9 +1,7 @@
 import React from 'react';
 import {
   Container,
-  Title1,
   Navigation,
-  Color,
   AdminApiWrapper,
   AdminInterface,
 } from '../components';
@@ -15,12 +13,14 @@ export default function Admin() {
         <Navigation />
       </Container>
       <Container>
-        <Title1>
-          <Color>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+          <span className="text-sky-700">
+            {' '}
             Admin
-          </Color>
+            {' '}
+          </span>
           Console
-        </Title1>
+        </h1>
         <AdminInterface />
       </Container>
     </AdminApiWrapper>

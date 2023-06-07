@@ -5,21 +5,21 @@ import { useReactToPrint } from 'react-to-print';
 import { Download, Printer } from 'react-feather';
 
 import Key from './Key';
-import {
-  useMessages,
-} from '../messages';
+import { useMessages } from '../messages';
 
 import {
-  BigButton, ColoredButton, Danger, MutedButton, Spinner,
+  BigButton,
+  ColoredButton,
+  MutedButton,
+  Spinner,
 } from '../util';
 import DownloadButton from './DownloadButton';
-import {
-  generateKey,
-  exportPrivateKey,
-} from '../../lib';
+import { generateKey, exportPrivateKey } from '../../lib';
 import { useApi } from '../api';
 
-const delay = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
+const delay = (ms) => new Promise((resolve) => {
+  setTimeout(resolve, ms);
+});
 
 export default function GenerateKey({ onComplete }) {
   const [privateKey, setPrivateKey] = useState(null);
@@ -31,7 +31,8 @@ export default function GenerateKey({ onComplete }) {
   const { addPublicKey } = useApi();
 
   const print = useReactToPrint({
-    pageStyle: '@page { size: auto; margin: 10mm } @media print { body { -webkit-print-color-adjust: exact; } }',
+    pageStyle:
+      '@page { size: auto; margin: 10mm } @media print { body { -webkit-print-color-adjust: exact; } }',
     content: () => keyRef.current,
   });
 
@@ -71,9 +72,17 @@ export default function GenerateKey({ onComplete }) {
       <div className="text-center">
         <Key data={privateKey} ref={keyRef} />
         <p className="text-2xl">
-          <Danger>Warning:</Danger>
+          <span className="font-extrabold underline text-rose-800">
+            {' '}
+            Warning:
+            {' '}
+          </span>
           If you do not save this key you will
-          <Danger>not be able to access your data</Danger>
+          <span className="font-extrabold underline text-rose-800">
+            {' '}
+            not be able to access your data
+            {' '}
+          </span>
         </p>
         <span className="text-2xl">Please</span>
         <ColoredButton className="m-2" onClick={print}>
@@ -92,17 +101,18 @@ export default function GenerateKey({ onComplete }) {
           {' '}
           Download the Keyfile
         </DownloadButton>
-
       </div>
       <div className="text-end">
-        <BigButton className="mx-2 mt-2" disabled={!wasSaved} onClick={uploadKey}>
+        <BigButton
+          className="mx-2 mt-2"
+          disabled={!wasSaved}
+          onClick={uploadKey}
+        >
           Upload this key to
           {' '}
           <span className="font-bold">dabih</span>
         </BigButton>
-        <MutedButton onClick={() => onComplete()}>
-          Cancel
-        </MutedButton>
+        <MutedButton onClick={() => onComplete()}>Cancel</MutedButton>
       </div>
     </div>
   );

@@ -1,5 +1,10 @@
 import React, {
-  useEffect, useState, useCallback, useMemo, createContext, useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  createContext,
+  useContext,
 } from 'react';
 import pLimit from 'p-limit';
 import { useRouter } from 'next/router';
@@ -103,17 +108,15 @@ export function DownloadWrapper({ children }) {
     downloadDataset();
   }, [downloadDataset]);
 
-  const contextValue = useMemo(() => ({
-    dataset,
-    file,
-    chunks: chunkCount,
-    downloadDataset,
-  }), [
-    dataset,
-    file,
-    chunkCount,
-    downloadDataset,
-  ]);
+  const contextValue = useMemo(
+    () => ({
+      dataset,
+      file,
+      chunks: chunkCount,
+      downloadDataset,
+    }),
+    [dataset, file, chunkCount, downloadDataset],
+  );
 
   return (
     <DownloadContext.Provider value={contextValue}>

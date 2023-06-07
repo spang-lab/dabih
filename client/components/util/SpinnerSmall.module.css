@@ -1,4 +1,3 @@
-
 .loader {
   width: 24px;
   height: 24px;
@@ -6,12 +5,12 @@
   display: inline-block;
   position: relative;
   border: 2px solid;
-  border-color: #FFF #FFF transparent transparent;
+  border-color: #fff #fff transparent transparent;
   box-sizing: border-box;
   animation: rotation 1.5s linear infinite;
 }
 .loader::after {
-  content: '';  
+  content: '';
   box-sizing: border-box;
   position: absolute;
   left: 0;
@@ -20,15 +19,15 @@
   bottom: 0;
   margin: auto;
   border: 2px solid;
-  border-color: transparent transparent #FFF #FFF;
+  border-color: transparent transparent #fff #fff;
   width: 16px;
   height: 16px;
   border-radius: 50%;
   box-sizing: border-box;
-  animation: rotationBack 1.0s linear infinite;
+  animation: rotationBack 1s linear infinite;
   transform-origin: center center;
 }
-    
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
@@ -36,7 +35,7 @@
   100% {
     transform: rotate(360deg);
   }
-} 
+}
 @keyframes rotationBack {
   0% {
     transform: rotate(0deg);
@@ -45,4 +44,3 @@
     transform: rotate(-360deg);
   }
 }
-

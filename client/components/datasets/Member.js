@@ -1,19 +1,13 @@
 import React from 'react';
 import { Trash2, User } from 'react-feather';
 import { Switch } from '@headlessui/react';
-import {
-  DeleteButton,
-  Link,
-} from '../util';
+import { DeleteButton } from '../util';
 import { useDatasets } from './Context';
 
 export default function Member({ data, dataset }) {
   const { mnemonic } = dataset;
   const {
-    sub,
-    name,
-    email,
-    permission,
+    sub, name, permission,
   } = data;
   const { setAccess } = useDatasets();
   const enabled = permission === 'write';
@@ -35,19 +29,17 @@ export default function Member({ data, dataset }) {
   const getSwitch = () => {
     if (removed) {
       return (
-        <span className="px-3 font-semibold text-gray-400 whitespace-nowrap">Access removed</span>
+        <span className="px-3 font-semibold text-gray-400 whitespace-nowrap">
+          Access removed
+        </span>
       );
     }
     if (!canEdit) {
-      return (
-        <span className="px-3 text-gray-400">{permission}</span>
-      );
+      return <span className="px-3 text-gray-400">{permission}</span>;
     }
     return (
       <>
-        <div className="text-xs text-center">
-          Can edit
-        </div>
+        <div className="text-xs text-center">Can edit</div>
         <div className="px-2 text-center justify-self-end">
           <Switch
             checked={enabled}
@@ -85,9 +77,7 @@ export default function Member({ data, dataset }) {
       <div className="px-2 shrink-0 text-sky-700 justify-self-start">
         <User size={20} />
       </div>
-      <div className="container font-semibold text-sky-600 mx-auto">
-        {name}
-      </div>
+      <div className="container font-semibold text-sky-600 mx-auto">{name}</div>
       {getDelete()}
       {getSwitch()}
     </div>

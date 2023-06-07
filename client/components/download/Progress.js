@@ -27,8 +27,7 @@ export default function DownloadProgress(props) {
   return (
     <div className="w-1/2 pt-5 mx-auto">
       <p className="p-3 text-xl text-center text-gray-500">
-        Downloading file
-        &quot;
+        Downloading file &quot;
         {fileName}
         &quot;
       </p>

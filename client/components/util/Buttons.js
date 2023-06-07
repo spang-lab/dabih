@@ -30,11 +30,7 @@ export function Button({ onClick, children, className }) {
     focus:outline-none 
     ${className}`;
   return (
-    <button
-      type="button"
-      className={classes}
-      onClick={onClick}
-    >
+    <button type="button" className={classes} onClick={onClick}>
       {children}
     </button>
   );
@@ -48,11 +44,7 @@ export function MutedButton({ onClick, children, className }) {
     hover:text-white focus:outline-none 
     ${className}`;
   return (
-    <button
-      type="button"
-      className={classes}
-      onClick={onClick}
-    >
+    <button type="button" className={classes} onClick={onClick}>
       {children}
     </button>
   );
@@ -65,11 +57,7 @@ export function ColoredButton({ onClick, children, className }) {
     focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     ${className}`;
   return (
-    <button
-      type="button"
-      className={classes}
-      onClick={onClick}
-    >
+    <button type="button" className={classes} onClick={onClick}>
       {children}
     </button>
   );
@@ -82,11 +70,7 @@ export function SmallButton({ onClick, children, className }) {
     focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     ${className}`;
   return (
-    <button
-      type="button"
-      className={classes}
-      onClick={onClick}
-    >
+    <button type="button" className={classes} onClick={onClick}>
       {children}
     </button>
   );
@@ -100,11 +84,7 @@ export function DeleteButton({ onClick, children, className }) {
     focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     ${className}`;
   return (
-    <button
-      type="button"
-      className={classes}
-      onClick={onClick}
-    >
+    <button type="button" className={classes} onClick={onClick}>
       {children}
     </button>
   );
@@ -131,13 +111,8 @@ export function LogoutButton(props) {
   const { name } = user;
   return (
     <div className="inset-y-0 right-0 flex items-center pr-2 sm:inset-auto sm:ml-6 sm:pr-0">
-      <span className="hidden text-gray-500 md:block">
-        Logged in as
-        {' '}
-      </span>
-      <span className="px-1 text-gray-500">
-        {name}
-      </span>
+      <span className="hidden text-gray-500 md:block">Logged in as </span>
+      <span className="px-1 text-gray-500">{name}</span>
       <button
         type="button"
         onClick={onClick}

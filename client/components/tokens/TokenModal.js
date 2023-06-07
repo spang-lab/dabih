@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Copy } from 'react-feather';
-import { Highlight, MutedButton } from '../util';
+import { MutedButton } from '../util';
 import styles from './TokenModal.module.css';
 
 export default function TokenModal({ token, onClose, isOpen }) {
@@ -51,7 +51,9 @@ export default function TokenModal({ token, onClose, isOpen }) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className={`${shake} w-full max-w-lg p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all`}>
+              <Dialog.Panel
+                className={`${shake} w-full max-w-lg p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all`}
+              >
                 <Dialog.Title
                   as="h2"
                   className="pb-3 text-2xl font-extrabold text-gray-900 leading-6"
@@ -59,15 +61,17 @@ export default function TokenModal({ token, onClose, isOpen }) {
                   New Access Token
                 </Dialog.Title>
                 <p className="pb-3">
-                  This token can be used by command line tools to validate your identity,
-                  By default it will expire 72 hours after your last login.
+                  This token can be used by command line tools to validate your
+                  identity, By default it will expire 72 hours after your last
+                  login.
                 </p>
                 <p>
                   Make sure to copy this token
                   {' '}
                   <strong>before</strong>
                   {' '}
-                  closing this window.
+                  closing
+                  this window.
                 </p>
                 <div className="flex flex-row mt-2">
                   <div className="text-center">
@@ -87,13 +91,15 @@ export default function TokenModal({ token, onClose, isOpen }) {
                 </div>
                 <p>
                   This token can
-                  <Highlight>no longer be accessed</Highlight>
+                  <span className="font-semibold text-sky-700">
+                    {' '}
+                    no longer be accessed
+                    {' '}
+                  </span>
                   later, copy it now.
                 </p>
                 <div className="mt-4 text-right">
-                  <MutedButton onClick={onClose}>
-                    Done
-                  </MutedButton>
+                  <MutedButton onClick={onClose}>Done</MutedButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

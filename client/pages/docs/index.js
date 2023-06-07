@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { Docs, Title1 } from '../../components';
+import { Docs } from '../../components';
 
 function Documentation() {
   return (
     <Docs>
-      <Title1>
+      <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
         Hello
-      </Title1>
+      </h1>
     </Docs>
   );
 }

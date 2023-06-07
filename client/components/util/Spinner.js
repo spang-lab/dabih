@@ -6,7 +6,5 @@ export default function Spinner() {
     ${styles.loader}
     bg-sky-700
   `;
-  return (
-    <div className={classes} />
-  );
+  return <div className={classes} />;
 }

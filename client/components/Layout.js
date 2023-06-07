@@ -16,16 +16,11 @@ function Layout(props) {
   ];
 
   const { data: session } = useSession();
-  const user = (session) ? session.user : null;
+  const user = session ? session.user : null;
 
   return (
     <div className="layout">
-      <Header
-        links={links}
-        user={user}
-        signIn={signIn}
-        signOut={signOut}
-      />
+      <Header links={links} user={user} signIn={signIn} signOut={signOut} />
       {children}
       <Footer version={info.version} />
     </div>

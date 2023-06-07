@@ -3,9 +3,6 @@ import { Switch } from '@headlessui/react';
 
 import {
   Container,
-  Highlight,
-  Subtitle1,
-  Title1,
   Upload as Uploader,
   useApi,
   Link,
@@ -31,19 +28,19 @@ export default function Upload() {
   return (
     <div>
       <Container>
-        <Title1>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Data
           {' '}
           <span className="text-sky-700">ingress</span>
-        </Title1>
-        <Subtitle1>
+        </h1>
+        <div className="text-base text-gray-500 sm:text-lg md:text-xl">
           This page is used to send data to someone else, you
           {' '}
           <span className="font-bold">do not need</span>
           {' '}
           and account
           or a crypo key yourself.
-        </Subtitle1>
+        </div>
 
         <div className="flex flex-row items-center py-3">
           <Switch
@@ -61,9 +58,11 @@ export default function Upload() {
           </Switch>
           <div className="pl-3">
             I agreed to share my data with
-            <Highlight>
+            <span className="font-semibold text-sky-700">
+              {' '}
               {user.name}
-            </Highlight>
+              {' '}
+            </span>
             and i have read and agree to the
             {' '}
             <Link target="_blank" href="/data_policy">
@@ -75,7 +74,11 @@ export default function Upload() {
         <p className="pt-5 text-3xl text-center">
           <span className="font-bold">Note: </span>
           Uploaded data will be sent to
-          <Highlight>{user.name}</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            {user.name}
+            {' '}
+          </span>
         </p>
         <Uploader disabled={!agreed} />
 

@@ -27,15 +27,21 @@ export default function Header(props) {
               </div>
               <div className="flex items-center justify-start flex-1 pl-12 sm:items-stretch sm:pl-0">
                 <div className="flex items-center flex-shrink-0">
-                  <Image className="block w-auto h-10 rounded-full" src="/images/dabih-logo.png" width={40} height={40} alt="Dabih" />
-                  <span className="px-3 text-xl text-white">
-                    Dabih
-                  </span>
+                  <Image
+                    className="block w-auto h-10 rounded-full"
+                    src="/images/dabih-logo.png"
+                    width={40}
+                    height={40}
+                    alt="Dabih"
+                  />
+                  <span className="px-3 text-xl text-white">Dabih</span>
                 </div>
                 <div className="hidden sm:block sm:ml-6">
                   <div className="flex space-x-4">
                     {links.map((item) => (
-                      <NavLink key={item.label} href={item.href}>{item.label}</NavLink>
+                      <NavLink key={item.label} href={item.href}>
+                        {item.label}
+                      </NavLink>
                     ))}
                   </div>
                 </div>
@@ -50,7 +56,9 @@ export default function Header(props) {
           <Disclosure.Panel className="sm:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {links.map((item) => (
-                <NavLink block key={item.label} href={item.href}>{item.label}</NavLink>
+                <NavLink block key={item.label} href={item.href}>
+                  {item.label}
+                </NavLink>
               ))}
             </div>
           </Disclosure.Panel>

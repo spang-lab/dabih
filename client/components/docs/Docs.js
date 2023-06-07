@@ -9,9 +9,7 @@ function Container({ children }) {
         <Sidebar />
       </div>
       <div className="p-4 text-gray-800 grow shrink md:px-12">
-        <div
-          className="block px-4 py-10 bg-white rounded-lg shadow-lg md:py-12 md:px-8"
-        >
+        <div className="block px-4 py-10 bg-white rounded-lg shadow-lg md:py-12 md:px-8">
           {children}
         </div>
       </div>

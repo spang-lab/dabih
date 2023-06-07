@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { RefreshCcw } from 'react-feather';
 import {
-  Color, Title3, LocalDate, Highlight, MutedButton,
+  LocalDate, MutedButton,
 } from '../util';
 import { useAdminApi } from '../api';
 
@@ -14,13 +14,17 @@ function Event({ data }) {
   return (
     <div className="flex flex-row p-1 border-b space-x-4">
       <LocalDate value={createdAt} />
-      <span>
-        {'>>'}
-      </span>
-      <Color>
+      <span>{'>>'}</span>
+      <span className="text-sky-700">
+        {' '}
         {mnemonic}
-      </Color>
-      <Highlight>{sub}</Highlight>
+        {' '}
+      </span>
+      <span className="font-semibold text-sky-700">
+        {' '}
+        {sub}
+        {' '}
+      </span>
       <span className="text-gray-500">{message}</span>
     </div>
   );
@@ -65,12 +69,18 @@ export default function Events() {
 
   return (
     <div>
-      <Title3>Events</Title3>
+      <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+        Events
+      </h3>
       <div className="flex flex-row">
         <div className="my-2">
           <span className="px-2 my-2">Date:</span>
         </div>
-        <DateSelect dates={eventDates} selectedDate={selectedDate} setDate={setDate} />
+        <DateSelect
+          dates={eventDates}
+          selectedDate={selectedDate}
+          setDate={setDate}
+        />
         <MutedButton className="mx-2" onClick={() => getEvents()}>
           <RefreshCcw size={18} />
         </MutedButton>

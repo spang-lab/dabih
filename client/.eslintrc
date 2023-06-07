@@ -1,8 +1,15 @@
 {
   "extends": ["next/core-web-vitals", "airbnb"],
+  "plugins": ["unused-imports"],
   "rules": {
-        "react/prop-types": "off",
-        "react/jsx-props-no-spreading": "off",
-        "react/jsx-filename-extension": [1, { "extensions": [".js"] }]
+    "react/prop-types": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js"] }],
+    "no-unused-vars": "off", // or "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+    ]
   }
 }

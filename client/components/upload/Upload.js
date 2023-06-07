@@ -69,14 +69,16 @@ export default function Upload({ disabled }) {
     const dataHash = await uploadChunks(file, mnemonic);
     const result = await api.uploadFinish(mnemonic);
     if (result.hash !== dataHash) {
-      log.error(`Upload hash mismatch server:${result.hash} client:${dataHash}`);
+      log.error(
+        `Upload hash mismatch server:${result.hash} client:${dataHash}`,
+      );
     }
     setSuccess(file.name);
     setUploadFile(null);
   };
 
-  const fileName = (uploadFile) ? uploadFile.name : '';
-  const total = (uploadFile) ? uploadFile.size : '';
+  const fileName = uploadFile ? uploadFile.name : '';
+  const total = uploadFile ? uploadFile.size : '';
   const current = uploadBytes || 0;
 
   const getSuccessMessage = () => {
@@ -86,16 +88,11 @@ export default function Upload({ disabled }) {
     return (
       <div className="p-3 m-3 text-base text-center text-green-800 bg-green-100 rounded-lg">
         <p className="font-extrabold">
-          File
-          &quot;
+          File &quot;
           {uploadSuccess}
-          &quot;
-          uploaded
-          successfully.
+          &quot; uploaded successfully.
         </p>
-        <Link href="/manage">
-          Manage your data here
-        </Link>
+        <Link href="/manage">Manage your data here</Link>
       </div>
     );
   };

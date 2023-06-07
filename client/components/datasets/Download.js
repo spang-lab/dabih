@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Download } from 'react-feather';
-import {
-  Link,
-  SpinnerSmall,
-} from '../util';
+import { Link, SpinnerSmall } from '../util';
 import DownloadButton from './DownloadButton';
 import { useDatasets } from './Context';
 
@@ -25,9 +22,7 @@ export default function DownloadDataset({ mnemonic, size }) {
   if (size > sizeThreshold) {
     return (
       <div className="px-2 font-semibold">
-        <Link
-          href={`/download/${mnemonic}`}
-        >
+        <Link href={`/download/${mnemonic}`}>
           <Download className="inline-block mr-2" size={20} />
           Download
         </Link>
@@ -39,18 +34,13 @@ export default function DownloadDataset({ mnemonic, size }) {
     return (
       <div className="flex flex-row px-2 py-1 font-extrabold text-white rounded bg-sky-700">
         <SpinnerSmall />
-        <span className="pl-2">
-          Downloading...
-        </span>
+        <span className="pl-2">Downloading...</span>
       </div>
     );
   }
   if (download) {
     return (
-      <DownloadButton
-        file={download.file}
-        fileName={download.name}
-      >
+      <DownloadButton file={download.file} fileName={download.name}>
         Save
         {' '}
         {download.name}

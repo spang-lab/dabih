@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title2, Link } from '../util';
+import { Link } from '../util';
 
 import { DownloadWrapper, useDownload } from './Context';
 import Progress from './Progress';
@@ -16,10 +16,10 @@ export function DownloadMnemonic() {
     const href = URL.createObjectURL(file.data);
     return (
       <div className="w-1/2 py-20 mx-auto text-center">
-
-        <Title2>Download Complete</Title2>
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
+          Download Complete
+        </h2>
         <p className="py-5">
-
           <a
             className="px-3 py-2 text-3xl text-white whitespace-nowrap button rounded-xl bg-sky-700 hover:bg-sky-600"
             href={href}
@@ -28,13 +28,10 @@ export function DownloadMnemonic() {
             {' '}
             {file.name}
           </a>
-
         </p>
 
         <p>
-          <Link href="/manage">
-            Go Back
-          </Link>
+          <Link href="/manage">Go Back</Link>
         </p>
       </div>
     );

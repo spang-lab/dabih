@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useSession } from 'next-auth/react';
-import { Link, LocalDate, Title3 } from '../util';
+import { Link, LocalDate } from '../util';
 
 function DebugSession() {
   const { data: session } = useSession();
@@ -10,7 +10,9 @@ function DebugSession() {
   }
   return (
     <div>
-      <Title3>Session</Title3>
+      <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+        Session
+      </h3>
       Expires
       <LocalDate value={session.expires} />
       <Link href="/logout">Drop NextAuth Session</Link>

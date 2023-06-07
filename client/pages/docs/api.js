@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Title1, Link, Code, Title2, Docs, Color, ApiRoute, CodeBlock,
+  Link, Docs, ApiRoute, CodeBlock,
 } from '../../components';
 
 function RouteLink({ path }) {
@@ -20,10 +20,14 @@ function RouteLink({ path }) {
 export default function Documentation() {
   return (
     <Docs>
-      <Title1>
-        <Color>API</Color>
+      <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+        <span className="text-sky-700">
+          {' '}
+          API
+          {' '}
+        </span>
         Reference
-      </Title1>
+      </h1>
       <ApiRoute method="GET" path="/key/list/user">
         List all dabih users, more specifically users who
         have uploaded a public key to dabih.
@@ -44,7 +48,11 @@ export default function Documentation() {
       <ApiRoute method="POST" path="/key/add" action="KEY_ADD">
         Upload a new public key to dabih.
         The key will start of a with a state of
-        <Code>unconfirmed</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          unconfirmed
+          {' '}
+        </span>
         and needs to be unlocked by an admin.
         Keys are transfered using the
         {' '}
@@ -60,7 +68,11 @@ export default function Documentation() {
         <CodeBlock>
           {JSON.stringify({ keyHash: 'jg94g....' }, null, 2)}
         </CodeBlock>
-        <Code>keyHash</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          keyHash
+          {' '}
+        </span>
         {' '}
         is the sha-256 hash of the users public key
 
@@ -73,7 +85,11 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="GET" path="/dataset/list">
         List all datasets where you have a least
-        <Code>read</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          read
+          {' '}
+        </span>
         permission, including all their members.
         <p className="font-extrabold">Response:</p>
         <CodeBlock>
@@ -96,7 +112,11 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="GET" path="/dataset/:mnemonic">
         Get the information for the dataset
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
         <p className="font-extrabold">Response:</p>
         <CodeBlock>
           {`{
@@ -122,17 +142,29 @@ export default function Documentation() {
       <ApiRoute method="POST" path="/dataset/:mnemonic/remove" action="DATASET_REMOVE">
         Remove the dataset
         {' '}
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
         The dataset can still be recovered by an admin.
       </ApiRoute>
 
       <ApiRoute method="POST" action="DATASET_MEMBER_ADD" path="/dataset/:mnemonic/member/add">
         Add a new members to the dataset
         {' '}
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
         <p>
           You need to have
-          <Code>write</Code>
+          <span className="font-semibold text-gray-500">
+            {' '}
+            write
+            {' '}
+          </span>
           permission for the dataset for this call to succeed
         </p>
         <p className="font-extrabold">Request Body:</p>
@@ -147,10 +179,18 @@ export default function Documentation() {
       <ApiRoute method="POST" action="DATASET_MEMBER_SET" path="/dataset/:mnemonic/member/set">
         Change the permission of a member of the dataset
         {' '}
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
         <p>
           You need to have
-          <Code>write</Code>
+          <span className="font-semibold text-gray-500">
+            {' '}
+            write
+            {' '}
+          </span>
           permission for the dataset for this call to succeed
         </p>
         <p className="font-extrabold">Request Body:</p>
@@ -182,7 +222,11 @@ export default function Documentation() {
         <CodeBlock>
           {JSON.stringify({ keyHash: 'jg94g....' }, null, 2)}
         </CodeBlock>
-        <Code>keyHash</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          keyHash
+          {' '}
+        </span>
         {' '}
         is the sha-256 hash of the users public key
 
@@ -215,37 +259,77 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="PUT" path="/upload/:mnemonic">
         Add a new chunk to the dataset
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
         <p className="font-extrabold">Request:</p>
         The request is special and needs to be of type
-        <Code>multipart/form-data</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          multipart/form-data
+          {' '}
+        </span>
         Only a single file is supported and should be part of the form data.
         We also require the HTTP headers
-        <Code>Content-Range</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          Content-Range
+          {' '}
+        </span>
         and
-        <Code>Digest</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          Digest
+          {' '}
+        </span>
         .
-        <Code>Content-Range</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          Content-Range
+          {' '}
+        </span>
         should indicate with bytes of the complete file the chunk contains.
         All chunks (except the last one should be 2MiB in size.
-        <Code>Digest</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          Digest
+          {' '}
+        </span>
         should be the sha256 hash of the chunk data.
       </ApiRoute>
       <ApiRoute method="POST" action="UPLOAD_FINISH" path="/upload/finish/:mnemonic">
         Finish the upload for the dataset
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
         No request data is needed, but after this call the upload will be considered
         finished and the size and hash of the dataset
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
         will be calculated.
       </ApiRoute>
 
       <ApiRoute method="GET" path="/dataset/:mnemonic/chunk/:chunkHash">
         Download the encrypted data chunk with hash
-        <Code>chunkHash</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          chunkHash
+          {' '}
+        </span>
         {' '}
         for the dataset
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
         <br />
         The list of chunks and their hashes can be obtained by calling
 
@@ -254,14 +338,22 @@ export default function Documentation() {
         <p className="font-extrabold">Response:</p>
         <p>
           The chunk of the encrypted data as an
-          <Code>application/octet-stream</Code>
+          <span className="font-semibold text-gray-500">
+            {' '}
+            application/octet-stream
+            {' '}
+          </span>
           the client is resposible for decrypting the data
         </p>
       </ApiRoute>
-      <Title2 className="mt-10">
-        <Color>Admin API</Color>
+      <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
+        <span className="text-sky-700">
+          {' '}
+          Admin API
+          {' '}
+        </span>
         Reference
-      </Title2>
+      </h2>
       <ApiRoute method="GET" path="/admin/key/list">
         List all public keys for all users.
         <p className="font-extrabold">Response:</p>
@@ -288,7 +380,11 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="POST" path="/admin/key/confirm" action="KEY_CONFIRM">
         Set the
-        <Code>confirmed</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          confirmed
+          {' '}
+        </span>
         flag for a public Key
         <p className="font-extrabold">Request Body:</p>
         <CodeBlock>
@@ -326,16 +422,28 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="POST" path="/admin/dataset/:mnemonic/remove" action="DATASET_REMOVE">
         Remove the dataset
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
       </ApiRoute>
       <ApiRoute method="POST" path="/admin/dataset/:mnemonic/recover" action="DATASET_RECOVER">
         Recover the dataset
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
         after it has been deleted.
       </ApiRoute>
       <ApiRoute method="POST" path="/admin/dataset/:mnemonic/destroy" action="DATASET_DESTROY">
         Irreversibly delete the dataset
-        <Code>mnemonic</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          mnemonic
+          {' '}
+        </span>
       </ApiRoute>
       <ApiRoute method="GET" path="/admin/events">
         List all dates that have events.
@@ -348,7 +456,11 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="GET" path="/admin/events/:date">
         List all events on the day
-        <Code>date</Code>
+        <span className="font-semibold text-gray-500">
+          {' '}
+          date
+          {' '}
+        </span>
 
         <CodeBlock>
           {`[{

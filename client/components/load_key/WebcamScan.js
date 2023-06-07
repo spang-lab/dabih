@@ -1,7 +1,5 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-import React, {
-  Fragment, useState,
-} from 'react';
+import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Camera } from 'react-feather';
 
@@ -45,7 +43,13 @@ export default function WebcamScan() {
   return (
     <div className="text-center">
       <div className="m-3">
-        <Image className="mx-auto" src="/images/dabih-qr.svg" alt="QR Code" width={50} height={50} />
+        <Image
+          className="mx-auto"
+          src="/images/dabih-qr.svg"
+          alt="QR Code"
+          width={50}
+          height={50}
+        />
       </div>
       <BigButton onClick={() => setOpen(true)}>
         <span className="whitespace-nowrap">
@@ -60,7 +64,11 @@ export default function WebcamScan() {
       </p>
 
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={() => setOpen(false)}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={() => setOpen(false)}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -94,7 +102,6 @@ export default function WebcamScan() {
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
                       Make sure to position your QR code in the marked region.
-
                     </p>
                   </div>
                   <Webcam onCode={onCode} onError={onError} />

@@ -2,7 +2,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import Image from 'next/image';
 import QRCode from 'qrcode';
-import { Highlight } from '../util';
 
 const createDataUrl = async (privateKey) => {
   const options = {
@@ -14,7 +13,11 @@ const createDataUrl = async (privateKey) => {
 function Key({ data }, ref) {
   const [dataUrl, setDataUrl] = useState(null);
   useEffect(() => {
-    createDataUrl(data).then(setDataUrl);
+    const setUrl = async () => {
+      const url = await createDataUrl(data);
+      setDataUrl(url);
+    };
+    setUrl();
   }, [data]);
   if (!data || !dataUrl) {
     return null;
@@ -38,7 +41,8 @@ function Key({ data }, ref) {
         .map((v, i) => ({ v, j: i + idx }));
       idx += longRow;
     } else {
-      rdata = hexData.slice(idx, idx + shortRow)
+      rdata = hexData
+        .slice(idx, idx + shortRow)
         .map((v, i) => ({ v, j: i + idx }));
       idx += shortRow;
     }
@@ -63,7 +67,10 @@ function Key({ data }, ref) {
   };
 
   return (
-    <div ref={ref} className="p-4 mx-0 my-3 text-center border-2 rounded border-sky-800">
+    <div
+      ref={ref}
+      className="p-4 mx-0 my-3 text-center border-2 rounded border-sky-800"
+    >
       <table className="mx-auto text-lg font-semibold leading-none table-fixed">
         <tbody>
           {rows.map((row) => (
@@ -81,11 +88,13 @@ function Key({ data }, ref) {
                           alt="Private Key QR Code"
                         />
                         <br />
-                        <Highlight>Dabih private key v1</Highlight>
+                        <span className="font-semibold text-sky-700">
+                          {' '}
+                          Dabih private key v1
+                          {' '}
+                        </span>
                       </td>
-                      <td className={getColor(v)}>
-                        {v}
-                      </td>
+                      <td className={getColor(v)}>{v}</td>
                     </Fragment>
                   );
                 }

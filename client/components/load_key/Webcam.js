@@ -1,7 +1,5 @@
-/* eslint-disable jsx-a11y/media-has-caption, react-hooks/exhaustive-deps */
-import React, {
-  useEffect, useRef, useState,
-} from 'react';
+/* eslint-disable jsx-a11y/media-has-caption, react-hooks/exhaustive-deps, github/no-then */
+import React, { useEffect, useRef, useState } from 'react';
 import QrScanner from 'qr-scanner';
 import { Spinner } from '../util';
 
@@ -38,7 +36,10 @@ export default function Webcam({ onCode, onError }) {
       highlightScanRegion: true,
     });
 
-    scanner.start().then(() => setLoading(false)).catch(onError);
+    scanner
+      .start()
+      .then(() => setLoading(false))
+      .catch(onError);
 
     return () => {
       if (scanner) {
@@ -61,7 +62,10 @@ export default function Webcam({ onCode, onError }) {
   return (
     <div className="stroke-sky-700">
       <video ref={videoRef} playsInline muted />
-      <div className="border bg-sky-100 bg-opacity-10 border-sky-800" ref={overlayRef} />
+      <div
+        className="border bg-sky-100 bg-opacity-10 border-sky-800"
+        ref={overlayRef}
+      />
       {getSpinner()}
     </div>
   );

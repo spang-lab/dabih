@@ -1,8 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Combobox, Transition } from '@headlessui/react';
-import {
-  ChevronsDown, UserPlus, User,
-} from 'react-feather';
+import { ChevronsDown, UserPlus, User } from 'react-feather';
 import { SmallButton } from '../util';
 import { useDatasets } from './Context';
 
@@ -61,9 +59,7 @@ export default function AddMember({ dataset, options }) {
 
   return (
     <div className="flex flex-row items-center justify-center">
-      <div className="px-3 text-gray-500 whitespace-nowrap">
-        Add members:
-      </div>
+      <div className="px-3 text-gray-500 whitespace-nowrap">Add members:</div>
       <Combobox value={selected} onChange={setSelected}>
         <div className="relative p-1 grow">
           <div className="relative w-full overflow-hidden text-left bg-white border border-gray-400 rounded-lg cursor-default sm:text-sm">
@@ -93,7 +89,9 @@ export default function AddMember({ dataset, options }) {
                   No users found.
                 </div>
               ) : (
-                filtered.map((u) => <MemberOption key={u.sub || u.name} option={u} />)
+                filtered.map((u) => (
+                  <MemberOption key={u.sub || u.name} option={u} />
+                ))
               )}
             </Combobox.Options>
           </Transition>

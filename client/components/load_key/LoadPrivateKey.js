@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 
 import { Key, File, FilePlus } from 'react-feather';
 import { useRouter } from 'next/router';
-import { BigButton, Highlight } from '../util';
+import { BigButton } from '../util';
 import { useMessages } from '../messages';
 import { importPrivateKey, storage } from '../../lib';
 import { useApi } from '../api';
@@ -42,10 +42,7 @@ export default function LoadFile() {
   };
 
   const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragReject,
+    getRootProps, getInputProps, isDragActive, isDragReject,
   } = useDropzone({
     onDrop,
     accept: {
@@ -55,11 +52,7 @@ export default function LoadFile() {
 
   const getCenter = () => {
     if (isDragReject) {
-      return (
-        <p>
-          NO
-        </p>
-      );
+      return <p>NO</p>;
     }
     if (isDragActive) {
       return (
@@ -88,7 +81,7 @@ export default function LoadFile() {
           or click to select the key file.
           <br />
           This file will
-          <Highlight>not</Highlight>
+          <span className="font-semibold text-sky-700"> not </span>
           be uploaded.
         </p>
       </div>
@@ -96,10 +89,7 @@ export default function LoadFile() {
   };
 
   return (
-    <div
-      {...getRootProps()}
-      className="w-full p-5 grid place-content-center"
-    >
+    <div {...getRootProps()} className="w-full p-5 grid place-content-center">
       <input {...getInputProps()} />
       {getCenter()}
     </div>

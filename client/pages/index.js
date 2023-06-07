@@ -5,15 +5,9 @@ import { useRouter } from 'next/router';
 import {
   Container,
   BigButton,
-  Title1,
-  Title2,
-  Subtitle1,
   Institute,
   BrowserSupport,
   Navigation,
-  Color,
-  Title3,
-  Highlight,
 } from '../components';
 
 export default function Home() {
@@ -31,25 +25,28 @@ export default function Home() {
               Alpha version, not for production use
             </span>
 
-            <Title1>
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
               Welcome to the
               <br />
-              <Color>
+              <span className="text-sky-700">
+                {' '}
                 Dabih data storage platform
-              </Color>
+                {' '}
 
-            </Title1>
+              </span>
+
+            </h1>
             <div className="flex pt-2">
               <Institute />
             </div>
-            <Subtitle1>
+            <div className="text-base text-gray-500 sm:text-lg md:text-xl">
               <ul className="px-4 list-disc">
                 <li> A secure way to upload and share data</li>
                 <li> You decide who gets access to your data</li>
                 <li> End to end encrypted, rendundant data storage </li>
                 <li> Simple to use </li>
               </ul>
-            </Subtitle1>
+            </div>
             <div className="mt-5">
               <BigButton
                 onClick={() => router.push('/account')}
@@ -71,31 +68,61 @@ export default function Home() {
           </div>
         </div>
         <div className="mt-3 text-lg">
-          <Title2 className="pt-10 pb-3">How Dabih works</Title2>
+          <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
+            How dabih works
+          </h2>
           First and foremost dabih provides an API for
-          <Color>uploading</Color>
+          <span className="text-sky-700">
+            {' '}
+            uploading
+            {' '}
+          </span>
           ,
-          <Color>storing</Color>
+          <span className="text-sky-700">
+            {' '}
+            storing
+            {' '}
+          </span>
           ,
-          <Color>sharing</Color>
+          <span className="text-sky-700">
+            {' '}
+            sharing
+            {' '}
+          </span>
           and
-          <Color>downloading</Color>
+          <span className="text-sky-700">
+            {' '}
+            downloading
+            {' '}
+          </span>
           arbirary data.
           <br />
           The
-          <Color>key</Color>
+          <span className="text-sky-700">
+            {' '}
+            key
+            {' '}
+          </span>
           difference for dabih is that we
-          <Highlight>guarantee</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            guarantee
+            {' '}
+          </span>
           that no one except the people
           defined by dabih have access to the data,
           not even system administrators or people with
           pysical access to the hard-disks the data is stored on.
-          <Title3 className="pt-10 pb-3">
-            <Color>Symmetric</Color>
+          <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+            <span className="text-sky-700">
+              {' '}
+              Symmetric
+              {' '}
+            </span>
             {' '}
             Cryptograpy
 
-          </Title3>
+          </h3>
 
           This is possible because we never store the data we receive directly.
 
@@ -115,12 +142,16 @@ export default function Home() {
           storing the AES key of the data. This is still useful since the key
           will only have 32 bytes.
 
-          <Title3 className="pt-10 pb-3">
-            <Color>Asymmetric</Color>
+          <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+            <span className="text-sky-700">
+              {' '}
+              Asymmetric
+              {' '}
+            </span>
             {' '}
             Cryptograpy
 
-          </Title3>
+          </h3>
           For the key storage we will encrypt the AES key again,
           but now using asymmetric encryption.
           <p>
@@ -133,24 +164,44 @@ export default function Home() {
           <ul className="px-4 leading-relaxed list-disc">
             <li>
               A public key, used to
-              <Highlight>encrypt</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                encrypt
+                {' '}
+              </span>
               the data.
               <br />
               The public key will be sent to
-              <Highlight>Dabih</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                Dabih
+                {' '}
+              </span>
               and will be stored there.
               <br />
               It is public information.
             </li>
             <li>
               A private key, used to
-              <Highlight>decrypt</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                decrypt
+                {' '}
+              </span>
               the data.
               <br />
               The private key should
-              <Highlight>never</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                never
+                {' '}
+              </span>
               be shared and
-              <Highlight>only you</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                only you
+                {' '}
+              </span>
               should have it.
             </li>
           </ul>
@@ -164,7 +215,11 @@ export default function Home() {
             />
           </div>
           <p>
-            <Highlight>dabih</Highlight>
+            <span className="font-semibold text-sky-700">
+              {' '}
+              dabih
+              {' '}
+            </span>
             allows you to easily generate such a keypair on your computer
             and then send the public key to the server.
           </p>
@@ -182,18 +237,33 @@ export default function Home() {
           </div>
           With this public key we can complete the upload and encrypt the AES key.
           The encrypted key is stored and can only be decrypted using the private key that
-          <Highlight>dabih</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            dabih
+            {' '}
+          </span>
           does not have.
-          <Title3 className="pt-10 pb-3">
-            <Color>
+          <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+            <span className="text-sky-700">
+              {' '}
               Download
-            </Color>
-          </Title3>
+              {' '}
+
+            </span>
+          </h3>
           If this dataset is downloaded a two-step decryption process is required.
-          <Highlight>First</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            First
+            {' '}
+          </span>
           the encrypted AES key is downloaded and is decrypted using the private key.
           This results in the unencrypted AES key.
-          <Highlight>Then</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            Then
+            {' '}
+          </span>
           the encrypted dataset is downloaded and decrypted using
           the newly aquired AES key.
           <div className="relative w-full mx-auto lg:w-3/4 xl:w-2/3">
@@ -204,22 +274,37 @@ export default function Home() {
               height={579}
             />
           </div>
-          <Highlight>Note:</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            Note:
+            {' '}
+          </span>
           This guarantees that only the client with the private key can access the dataset.
-          <Title3 className="pt-10 pb-3">
+          <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
             Data
-            <Color>
+            <span className="text-sky-700">
+              {' '}
               Sharing
-            </Color>
-          </Title3>
+              {' '}
+
+            </span>
+          </h3>
           Of course we also need a way to safely share datasets with other users.
           Because
-          <Highlight>dabih</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            dabih
+            {' '}
+          </span>
           itself cannot access the data only a user
           who already has access can share the dataset with others.
           Data sharing is similar to downloading, but only the AES key is downloaded.
           This key is then sent back to
-          <Highlight>dabih</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            dabih
+            {' '}
+          </span>
           and encrypted with the public key of the new user.
           <div className="relative w-full mx-auto lg:w-3/4 xl:w-2/3">
             <Image
@@ -229,48 +314,82 @@ export default function Home() {
               height={579}
             />
           </div>
-          <Highlight>dabih</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            dabih
+            {' '}
+          </span>
           keeps a record of users who have access (or used to have access) to dataset
           and has 2 different kinds of permissions.
           <ul className="px-4 list-disc">
             <li>
-              <Highlight>read</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                read
+                {' '}
+              </span>
               permission allows the user to download the dataset.
             </li>
             <li>
-              <Highlight>write</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                write
+                {' '}
+              </span>
               permission additionally allows the user to edit and share the dataset with others.
             </li>
           </ul>
           We also keep a fingerprint of the AES key and check it, to prevent malicious clients
           from secretly exchanging the AES key.
           <br />
-          <Highlight>Note:</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            Note:
+            {' '}
+          </span>
           If users have access to the dataset once there are external risks.
           There is now way to prevent others from having/keeping a copy of the dataset
           on a laptop or other storage medium.
-          <Title3 className="pt-10 pb-3">
+          <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
             Data
-            <Color>
+            <span className="text-sky-700">
+              {' '}
               Deletion
-            </Color>
-          </Title3>
+              {' '}
+
+            </span>
+          </h3>
           Generally users can also delete datasets from
-          <Highlight>dabih</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            dabih
+            {' '}
+          </span>
           .
           But by default deletion does not remove the underlying files and keys, and the dataset
           can be recovered by an admin.
-          <Highlight>dabih</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            dabih
+            {' '}
+          </span>
           {' '}
           admins can decide to
-          <Highlight>destroy</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            destroy
+            {' '}
+          </span>
           {' '}
           and dataset. Destroying a dataset deletes all its data and is irrevokable.
-          <Title3 className="pt-10 pb-3">
-            <Color>
+          <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+            <span className="text-sky-700">
+              {' '}
               Reencryption
-            </Color>
-          </Title3>
+              {' '}
+
+            </span>
+          </h3>
           <div className="relative w-full mx-auto lg:w-3/4 xl:w-2/3">
             <Image
               src="/images/docs/reencrypt.svg"

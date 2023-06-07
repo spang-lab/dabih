@@ -15,7 +15,11 @@ export default function DeleteModal({ children, onDelete }) {
         </div>
       </DeleteButton>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={() => setOpen(false)}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={() => setOpen(false)}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -46,13 +50,14 @@ export default function DeleteModal({ children, onDelete }) {
                   >
                     Confirm Reencryption
                   </Dialog.Title>
-                  <div className="mt-2">
-                    {children}
-                  </div>
+                  <div className="mt-2">{children}</div>
 
                   <div className="mt-4 text-right">
                     <MutedButton
-                      onClick={() => { onDelete(); setOpen(false); }}
+                      onClick={() => {
+                        onDelete();
+                        setOpen(false);
+                      }}
                       className="mx-3 text-gray-100 bg-rose-700 hover:bg-rose-600 hover:text-white"
                     >
                       Reencrypt

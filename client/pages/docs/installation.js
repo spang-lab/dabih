@@ -1,12 +1,8 @@
 import React from 'react';
 
 import {
-  Color,
   Docs,
-  Highlight,
   Link,
-  Title1,
-  Title2,
   CodeBlock,
 } from '../../components';
 
@@ -14,17 +10,25 @@ function Documentation() {
   return (
     <Docs>
       <div className="text-lg">
-        <Title1>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Installing
-          <Color>Dabih</Color>
-        </Title1>
-        <Title2 className="mt-5">
+          <span className="text-sky-700">
+            {' '}
+            Dabih
+            {' '}
+          </span>
+        </h1>
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
           Requirements
-        </Title2>
+        </h2>
         <ul className="p-4 list-disc">
           <li className="py-1">
             Your own (sub)
-            <Highlight>domain.</Highlight>
+            <span className="font-semibold text-sky-700">
+              {' '}
+              domain.
+              {' '}
+            </span>
             Dabih needs https to function properly,
             in this guide we assume you own a domain and can get a certificate via
             {' '}
@@ -39,13 +43,13 @@ function Documentation() {
             If you do not have one dabih will use an sqlite file at the storage path.
           </li>
         </ul>
-        <Title2 className="mt-5">
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
           Deploying dabih on a kubernetes cluster.
-        </Title2>
+        </h2>
         TODO
-        <Title2 className="mt-5">
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
           Installing dabih on bare metal.
-        </Title2>
+        </h2>
         This guide assumes you have a linux server.
         We currently do not provide support for Windows based systems,
         but installation should be similar when using Windows Subsytem for Linux(WSL).
@@ -59,7 +63,11 @@ function Documentation() {
           to install nodejs and the npm package manager. We recommend Node.js version 18.12.x LTS.
         </p>
         <p>
-          <Highlight>Do not</Highlight>
+          <span className="font-semibold text-sky-700">
+            {' '}
+            Do not
+            {' '}
+          </span>
           install the default apt package for nodejs, it is outdated.
         </p>
         Use

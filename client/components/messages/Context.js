@@ -21,7 +21,9 @@ export function MessageWrapper({ children }) {
       date: now,
       ...newMessage,
     });
-    const newMessages = messages.filter((message) => (now - message.date) < maxAgeMs);
+    const newMessages = messages.filter(
+      (message) => now - message.date < maxAgeMs,
+    );
     setMessages(newMessages);
   }, []);
 
@@ -30,28 +32,29 @@ export function MessageWrapper({ children }) {
     setMessages(newMessages);
   };
 
-  const log = useCallback((text, type = 'message') => {
-    const genMessageId = () => {
-      const num = Math.floor(Math.random() * 10000);
-      return `message-${num}`;
-    };
-    const id = genMessageId();
-    const message = {
-      id,
-      text: text.toString(),
-      type,
-    };
-    addMessage(message);
-  }, [addMessage]);
+  const log = useCallback(
+    (text, type = 'message') => {
+      const genMessageId = () => {
+        const num = Math.floor(Math.random() * 10000);
+        return `message-${num}`;
+      };
+      const id = genMessageId();
+      const message = {
+        id,
+        text: text.toString(),
+        type,
+      };
+      addMessage(message);
+    },
+    [addMessage],
+  );
 
   const contextValue = useMemo(() => {
     log.error = (text) => log(text, 'error');
     log.warn = (text) => log(text, 'warning');
     log.success = (text) => log(text, 'success');
     return log;
-  }, [
-    log,
-  ]);
+  }, [log]);
 
   return (
     <MessageContext.Provider value={contextValue}>

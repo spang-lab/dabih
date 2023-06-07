@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Title3 } from '../util';
 import { useAdminApi } from '../api';
 
 import Dataset from './Dataset';
@@ -45,8 +44,12 @@ export default function PublicKeys() {
 
   return (
     <div>
-      <Title3>Datasets</Title3>
-      {datasets.map((dset) => <Dataset key={dset.mnemonic} data={dset} onAction={onAction} />)}
+      <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+        Datasets
+      </h3>
+      {datasets.map((dset) => (
+        <Dataset key={dset.mnemonic} data={dset} onAction={onAction} />
+      ))}
     </div>
   );
 }

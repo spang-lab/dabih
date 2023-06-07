@@ -36,19 +36,12 @@ export default function LoadFile() {
   };
 
   const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragReject,
+    getRootProps, getInputProps, isDragActive, isDragReject,
   } = useDropzone({ onDrop });
 
   const getCenter = () => {
     if (isDragReject) {
-      return (
-        <p>
-          NO
-        </p>
-      );
+      return <p>NO</p>;
     }
     if (isDragActive) {
       return (
@@ -81,11 +74,10 @@ export default function LoadFile() {
 
   return (
     <div className="w-full">
-      <div className="px-3 pt-2 italic font-semibold text-left text-gray-500 text-md">Advanced users</div>
-      <div
-        {...getRootProps()}
-        className="w-full grid place-content-center"
-      >
+      <div className="px-3 pt-2 italic font-semibold text-left text-gray-500 text-md">
+        Advanced users
+      </div>
+      <div {...getRootProps()} className="w-full grid place-content-center">
         <input {...getInputProps()} />
         {getCenter()}
       </div>

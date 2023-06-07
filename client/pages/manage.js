@@ -2,11 +2,8 @@ import React from 'react';
 
 import {
   Container,
-  Title1,
-  Title2,
   Navigation,
   Datasets,
-  Color,
   Tokens,
 } from '../components';
 
@@ -17,15 +14,23 @@ export default function Home() {
         <Navigation />
       </Container>
       <Container>
-        <Title1>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Manage
-          <Color>your data</Color>
-        </Title1>
+          <span className="text-sky-700">
+            {' '}
+            your data
+            {' '}
+          </span>
+        </h1>
         <Datasets />
-        <Title2>
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
           Access
-          <Color>tokens</Color>
-        </Title2>
+          <span className="text-sky-700">
+            {' '}
+            tokens
+            {' '}
+          </span>
+        </h2>
         <Tokens />
       </Container>
     </div>

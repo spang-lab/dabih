@@ -19,7 +19,7 @@ export default function Navigation() {
     if (session === undefined || key === undefined) {
       return;
     }
-    const user = (session) ? session.user : null;
+    const user = session ? session.user : null;
 
     const getKeyState = () => {
       if (key) return 'complete';
@@ -29,11 +29,14 @@ export default function Navigation() {
 
     const state = {
       start: 'complete',
-      account: (user) ? 'complete' : 'enabled',
+      account: user ? 'complete' : 'enabled',
       key: getKeyState(),
-      upload: (user && key) ? 'enabled' : 'disabled',
-      manage: (user && key) ? 'enabled' : 'disabled',
-      admin: (user && user.scopes && user.scopes.includes('admin')) ? 'enabled' : 'disabled',
+      upload: user && key ? 'enabled' : 'disabled',
+      manage: user && key ? 'enabled' : 'disabled',
+      admin:
+        user && user.scopes && user.scopes.includes('admin')
+          ? 'enabled'
+          : 'disabled',
     };
     const path = router.asPath.split('/')[1] || 'start';
 
@@ -53,7 +56,9 @@ export default function Navigation() {
     state[path] = 'active';
     setItems(state);
   }, [router, key, session]);
-  useEffect(() => { checkState(); }, [checkState]);
+  useEffect(() => {
+    checkState();
+  }, [checkState]);
 
   const getAdmin = () => {
     if (!items.admin || items.admin === 'disabled') {
@@ -62,11 +67,7 @@ export default function Navigation() {
     return (
       <>
         <NavLine state={items.manage} />
-        <NavItem
-          href="/admin"
-          state={items.admin}
-          label="Admin"
-        >
+        <NavItem href="/admin" state={items.admin} label="Admin">
           <Share2 size={24} />
         </NavItem>
       </>
@@ -75,47 +76,23 @@ export default function Navigation() {
 
   return (
     <div className="flex items-center">
-      <NavItem
-        href="/"
-        state={items.start}
-        label="Start"
-      >
+      <NavItem href="/" state={items.start} label="Start">
         <UserPlus size={24} />
       </NavItem>
-      <NavLine
-        state={items.account}
-      />
-      <NavItem
-        href="/account"
-        state={items.account}
-        label="Account"
-      >
+      <NavLine state={items.account} />
+      <NavItem href="/account" state={items.account} label="Account">
         <UserPlus size={24} />
       </NavItem>
-      <NavLine
-        state={items.key}
-      />
-      <NavItem
-        href="/key"
-        state={items.key}
-        label="Key"
-      >
+      <NavLine state={items.key} />
+      <NavItem href="/key" state={items.key} label="Key">
         <Key size={24} />
       </NavItem>
       <NavLine state={items.upload} />
-      <NavItem
-        href="/upload"
-        state={items.upload}
-        label="Upload"
-      >
+      <NavItem href="/upload" state={items.upload} label="Upload">
         <UploadCloud size={24} />
       </NavItem>
       <NavLine state={items.manage} />
-      <NavItem
-        href="/manage"
-        state={items.manage}
-        label="Manage"
-      >
+      <NavItem href="/manage" state={items.manage} label="Manage">
         <Share2 size={24} />
       </NavItem>
       {getAdmin()}

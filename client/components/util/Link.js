@@ -14,7 +14,6 @@ function BasicLink(props) {
     <Link target={target} className={aClassName} href={href}>
       {children}
     </Link>
-
   );
 }
 export default BasicLink;

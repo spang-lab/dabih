@@ -1,6 +1,4 @@
-import React, {
-  Fragment,
-} from 'react';
+import React, { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import {
   ChevronDown, Trash2, AlertOctagon, RotateCcw,
@@ -44,10 +42,7 @@ export default function Actions({ data, onAction }) {
         <div>
           <Menu.Button className="z-0 inline-flex justify-center w-full p-2 text-sm font-extrabold text-white border rounded bg-sky-700 focus-visible:ring-white focus-visible:ring-opacity-75">
             Actions
-            <ChevronDown
-              className="w-5 h-5 ml-2 -mr-1"
-              aria-hidden="true"
-            />
+            <ChevronDown className="w-5 h-5 ml-2 -mr-1" aria-hidden="true" />
           </Menu.Button>
         </div>
         <Transition
@@ -78,7 +73,9 @@ export default function Actions({ data, onAction }) {
                 Recover
               </Action>
               <div className="pt-2 mt-2 border-t">
-                <span className="text-xs font-extrabold text-center">Irreversible</span>
+                <span className="text-xs font-extrabold text-center">
+                  Irreversible
+                </span>
                 <Action
                   onClick={() => onAction('destroy', mnemonic)}
                   className="text-rose-700"

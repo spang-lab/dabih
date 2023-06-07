@@ -5,39 +5,26 @@ function Footer({ version }) {
   return (
     <div className="p-5 text-center text-gray-500 border-t">
       <p>
-        <Link href="www.spang-lab.de">
-          Institute of functional genomics
-        </Link>
-
-        <span className="px-2">
-          -
-        </span>
+        <Link href="www.spang-lab.de">Institute of functional genomics</Link>
+        <span className="px-2">-</span>
         Statistical Bioinformatics
       </p>
       <p>
-        <Link href="www.uni-regensburg.de">
-          University of Regensburg
-        </Link>
+        <Link href="www.uni-regensburg.de">University of Regensburg</Link>
       </p>
       <p>
         ©
-        {(new Date()).getFullYear()}
+        {new Date().getFullYear()}
         <span className="px-2"> · </span>
         Version
         {' '}
         {version}
       </p>
-      <Link href="/contact">
-        Contact/Impressum
-      </Link>
+      <Link href="/contact">Contact/Impressum</Link>
       <span className="px-2"> · </span>
-      <Link href="/privacy">
-        Privacy Policy
-      </Link>
+      <Link href="/privacy">Privacy Policy</Link>
       <span className="px-2"> · </span>
-      <Link href="/data_policy">
-        Data Policy
-      </Link>
+      <Link href="/data_policy">Data Policy</Link>
     </div>
   );
 }

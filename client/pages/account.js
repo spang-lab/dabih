@@ -5,10 +5,7 @@ import { signIn } from 'next-auth/react';
 import {
   Container,
   BigButton,
-  Title1,
-  Subtitle1,
   Navigation,
-  Highlight,
   Link,
 } from '../components';
 
@@ -19,18 +16,20 @@ export default function Account() {
         <Navigation />
       </Container>
       <Container>
-        <Title1>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Sign in to
           {' '}
           <span className="text-sky-700">
             your account
           </span>
 
-        </Title1>
-        <Subtitle1>
-          <Highlight>
+        </h1>
+        <div className="text-base text-gray-500 sm:text-lg md:text-xl">
+          <span className="font-semibold text-sky-700">
+            {' '}
             Dabih
-          </Highlight>
+            {' '}
+          </span>
           {' '}
           needs two factors from you to work:
           <ul className="px-4 leading-relaxed list-disc">
@@ -40,23 +39,31 @@ export default function Account() {
             <li>
               You need to have your
               {' '}
-              <Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
                 Private Key
-              </Highlight>
+                {' '}
+              </span>
             </li>
             <li>
               We do
               {' '}
-              <Highlight>not</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                not
+                {' '}
+              </span>
               {' '}
               store your personal data.
             </li>
             <li>
               The identiy provider gives
               {' '}
-              <Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
                 Dabih
-              </Highlight>
+                {' '}
+              </span>
               {' '}
               a personalized access token.
             </li>
@@ -66,7 +73,7 @@ export default function Account() {
             </li>
 
           </ul>
-        </Subtitle1>
+        </div>
         <div className="mt-5">
           <BigButton
             onClick={() => signIn()}

@@ -4,10 +4,6 @@ import {
   Navigation,
   Container,
   Key,
-  Highlight,
-  Color,
-  Title1,
-  Subtitle1,
 } from '../components';
 
 export default function ManageKey() {
@@ -17,15 +13,21 @@ export default function ManageKey() {
         <Navigation />
       </Container>
       <Container>
-        <Title1>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Load your
-          <Color>encryption key</Color>
-        </Title1>
-        <Subtitle1>
+          <span className="text-sky-700">
+            {' '}
+            encryption key
+            {' '}
+          </span>
+        </h1>
+        <div className="text-base text-gray-500 sm:text-lg md:text-xl">
           <p>
-            <Highlight>
+            <span className="font-semibold text-sky-700">
+              {' '}
               Dabih
-            </Highlight>
+              {' '}
+            </span>
             {' '}
             uses asymmetric key pairs for data encryption.
           </p>
@@ -35,30 +37,50 @@ export default function ManageKey() {
           <ul className="px-4 leading-relaxed list-disc">
             <li>
               A public key, used to
-              <Highlight>encrypt</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                encrypt
+                {' '}
+              </span>
               the data.
               <br />
               The public key will be sent to
-              <Highlight>Dabih</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                Dabih
+                {' '}
+              </span>
               and will be stored there.
               <br />
               It is public information.
             </li>
             <li>
               A private key, used to
-              <Highlight>decrypt</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                decrypt
+                {' '}
+              </span>
               the data.
               <br />
               The private key should
-              <Highlight>never</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                never
+                {' '}
+              </span>
               be shared and
-              <Highlight>only you</Highlight>
+              <span className="font-semibold text-sky-700">
+                {' '}
+                only you
+                {' '}
+              </span>
               should have it.
             </li>
 
           </ul>
 
-        </Subtitle1>
+        </div>
         <Key />
       </Container>
     </div>

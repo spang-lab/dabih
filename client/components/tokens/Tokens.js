@@ -71,22 +71,30 @@ function Tokens() {
     fetchTokens();
   }, [fetchTokens, token]);
 
-  const generateToken = useCallback(async (type) => {
-    const result = await api.generateToken(type);
-    if (result.error) {
-      return;
-    }
-    setToken(result);
-  }, [api, setToken]);
+  const generateToken = useCallback(
+    async (type) => {
+      const result = await api.generateToken(type);
+      if (result.error) {
+        return;
+      }
+      setToken(result);
+    },
+    [api, setToken],
+  );
 
-  const removeToken = useCallback(async (t) => {
-    await api.removeToken(t);
-    await fetchTokens();
-  }, [api, fetchTokens]);
+  const removeToken = useCallback(
+    async (t) => {
+      await api.removeToken(t);
+      await fetchTokens();
+    },
+    [api, fetchTokens],
+  );
 
   return (
     <div>
-      {tokens.map((t) => <Token data={t} key={t.token} onDelete={removeToken} />)}
+      {tokens.map((t) => (
+        <Token data={t} key={t.token} onDelete={removeToken} />
+      ))}
       <SmallButton onClick={() => generateToken('api')}>
         <Plus size={24} className="inline-block" />
         {' '}
@@ -97,8 +105,16 @@ function Tokens() {
         {' '}
         Generate an Upload Token
       </SmallButton>
-      <TokenModal token={token} isOpen={token && token.type === 'api'} onClose={() => setToken(null)} />
-      <UploadModal token={token} isOpen={token && token.type === 'upload'} onClose={() => setToken(null)} />
+      <TokenModal
+        token={token}
+        isOpen={token && token.type === 'api'}
+        onClose={() => setToken(null)}
+      />
+      <UploadModal
+        token={token}
+        isOpen={token && token.type === 'upload'}
+        onClose={() => setToken(null)}
+      />
     </div>
   );
 }

@@ -2,8 +2,6 @@ import React from 'react';
 import { Disclosure } from '@headlessui/react';
 import { ChevronRight } from 'react-feather';
 
-import { Title2, Color, Danger } from '../util';
-
 import GenerateKey from './GenerateKey';
 import AddPublicKey from './AddPublicKey';
 
@@ -22,9 +20,13 @@ export default function CreateKey({ isOpen }) {
     }
     return (
       <span className="text-lg">
-        <Danger>Warning:</Danger>
-        You already have a key registered,
-        any new key you registered will not automatically gain access to existing data.
+        <span className="font-extrabold underline text-rose-800">
+          {' '}
+          Warning:
+          {' '}
+        </span>
+        You already have a key registered, any new key you registered will not
+        automatically gain access to existing data.
       </span>
     );
   };
@@ -37,14 +39,13 @@ export default function CreateKey({ isOpen }) {
             <Disclosure.Button className="flex w-full py-2 text-lg font-bold text-black">
               <ChevronRight
                 size={40}
-                className={`${
-                  open ? 'rotate-90 transform' : ''}`}
+                className={`${open ? 'rotate-90 transform' : ''}`}
               />
-              <Title2>
+              <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
                 Add a
-                <Color>new</Color>
+                <span className="text-sky-700"> new </span>
                 keypair
-              </Title2>
+              </h2>
             </Disclosure.Button>
             <Disclosure.Panel>
               <div className="px-4 sm:px-6 lg:px-8">

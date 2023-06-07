@@ -31,13 +31,12 @@ function CloseButton({ onClick }) {
 
 function ErrorMessage({ text, time, onClick }) {
   return (
-    <div className="relative p-3 m-3 text-base text-red-800 bg-red-100 rounded-lg" role="alert">
-      <span className="px-3 text-gray-500">
-        {time}
-      </span>
-      <strong className="px-2">
-        Error:
-      </strong>
+    <div
+      className="relative p-3 m-3 text-base text-red-800 bg-red-100 rounded-lg"
+      role="alert"
+    >
+      <span className="px-3 text-gray-500">{time}</span>
+      <strong className="px-2">Error:</strong>
       {text}
       <CloseButton onClick={onClick} />
     </div>
@@ -46,13 +45,12 @@ function ErrorMessage({ text, time, onClick }) {
 
 function WarningMessage({ text, time, onClick }) {
   return (
-    <div className="relative p-3 m-3 text-base text-yellow-800 bg-yellow-100 rounded-lg" role="alert">
-      <span className="px-3 text-gray-500">
-        {time}
-      </span>
-      <strong className="px-2">
-        Warning:
-      </strong>
+    <div
+      className="relative p-3 m-3 text-base text-yellow-800 bg-yellow-100 rounded-lg"
+      role="alert"
+    >
+      <span className="px-3 text-gray-500">{time}</span>
+      <strong className="px-2">Warning:</strong>
       {text}
       <CloseButton onClick={onClick} />
     </div>
@@ -61,10 +59,11 @@ function WarningMessage({ text, time, onClick }) {
 
 function SuccessMessage({ text, time, onClick }) {
   return (
-    <div className="relative p-3 m-3 text-base text-green-800 bg-green-100 rounded-lg" role="alert">
-      <span className="px-3 text-gray-500">
-        {time}
-      </span>
+    <div
+      className="relative p-3 m-3 text-base text-green-800 bg-green-100 rounded-lg"
+      role="alert"
+    >
+      <span className="px-3 text-gray-500">{time}</span>
       {text}
       <CloseButton onClick={onClick} />
     </div>
@@ -73,10 +72,11 @@ function SuccessMessage({ text, time, onClick }) {
 
 function BaseMessage({ text, time, onClick }) {
   return (
-    <div className="relative p-3 m-3 text-base text-gray-800 bg-gray-100 rounded-lg" role="alert">
-      <span className="px-3 text-gray-500">
-        {time}
-      </span>
+    <div
+      className="relative p-3 m-3 text-base text-gray-800 bg-gray-100 rounded-lg"
+      role="alert"
+    >
+      <span className="px-3 text-gray-500">{time}</span>
       {text}
       <CloseButton onClick={onClick} />
     </div>
@@ -111,6 +111,5 @@ export default function Message(props) {
     >
       {getMessage()}
     </Transition>
-
   );
 }

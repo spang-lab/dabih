@@ -1,22 +1,13 @@
 import React from 'react';
 import { Key } from 'react-feather';
 import { Switch } from '@headlessui/react';
-import {
-  Highlight, DeleteModal,
-} from '../util';
+import { DeleteModal } from '../util';
 
 const formatDate = (dbDate) => new Date(dbDate.replace(/ \+/, '+')).toLocaleString('de-DE');
 
 export default function KeyElem({ data, onConfirm, onDelete }) {
   const {
-    id,
-    name,
-    sub,
-    hash,
-    confirmed,
-    confirmedBy,
-    createdAt,
-    isRootKey,
+    id, name, sub, hash, confirmed, confirmedBy, createdAt, isRootKey,
   } = data;
   const enabled = !!confirmed || isRootKey;
   const date = formatDate(createdAt);
@@ -54,10 +45,12 @@ export default function KeyElem({ data, onConfirm, onDelete }) {
     }
     return (
       <DeleteModal onDelete={() => onDelete(id)}>
-        <p className="text-gray-500">
-          Are you sure you want to delete the key
-        </p>
-        <Highlight>{name}</Highlight>
+        <p className="text-gray-500">Are you sure you want to delete the key</p>
+        <span className="font-semibold text-sky-700">
+          {' '}
+          {name}
+          {' '}
+        </span>
       </DeleteModal>
     );
   };
@@ -70,20 +63,18 @@ export default function KeyElem({ data, onConfirm, onDelete }) {
       <div className="">
         <div className="font-medium text-black">{name}</div>
         <p>
-          <Highlight>{sub}</Highlight>
-        </p>
-        <p>
-          <span className="text-gray-500">
-            {date}
+          <span className="font-semibold text-sky-700">
+            {' '}
+            {sub}
+            {' '}
           </span>
         </p>
-        <p className="text-gray-500">
-          {hash}
+        <p>
+          <span className="text-gray-500">{date}</span>
         </p>
+        <p className="text-gray-500">{hash}</p>
       </div>
-      <div className="justify-self-end">
-        {getModal()}
-      </div>
+      <div className="justify-self-end">{getModal()}</div>
       <div className="text-center justify-self-end">
         <p className="text-xs font-semibold text-gray-500">Active</p>
         {getSwitch()}
