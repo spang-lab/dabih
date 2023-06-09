@@ -86,7 +86,7 @@ export default function Upload({ disabled }) {
       return null;
     }
     return (
-      <div className="p-3 m-3 text-base text-center text-green-800 bg-green-100 rounded-lg">
+      <div className="p-3 m-3 text-base text-center text-success bg-green-100 rounded-lg">
         <p className="font-extrabold">
           File &quot;
           {uploadSuccess}

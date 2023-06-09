@@ -17,21 +17,21 @@ function Documentation() {
         </h2>
         The dabih API server reads the following Environment Variables:
         <p className="py-1">
-          <span className="font-semibold text-gray-500">
+          <span className="font-semibold text-gray-mid">
             {' '}
             CONFIG
             {' '}
           </span>
           Specifies the location of the yaml config file, details are described below.
           Default will be
-          <span className="font-semibold text-gray-500">
+          <span className="font-semibold text-gray-mid">
             {' '}
             ./config.yaml
             {' '}
           </span>
         </p>
         <p className="py-1">
-          <span className="font-semibold text-gray-500">
+          <span className="font-semibold text-gray-mid">
             {' '}
             EPHEMERAL_SECRET
             {' '}
@@ -44,7 +44,7 @@ function Documentation() {
           encrypt the storage and protect sensitve keys.
         </p>
         <p className="py-1">
-          <span className="font-semibold text-gray-500">
+          <span className="font-semibold text-gray-mid">
             {' '}
             DATABASE_SECRET
             {' '}

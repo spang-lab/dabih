@@ -65,10 +65,10 @@ export default function Webcam({ onCode, onError }) {
   };
 
   return (
-    <div className="stroke-sky-700">
+    <div className="stroke-main-mid">
       <video ref={videoRef} playsInline muted />
       <div
-        className="border bg-sky-100 bg-opacity-10 border-sky-800"
+        className="border bg-gray-light bg-opacity-10 border-main-mid"
         ref={overlayRef}
       />
       {getSpinner()}

@@ -5,7 +5,7 @@ import { Link } from '../util';
 
 function Header({ children }) {
   return (
-    <div className="p-2 text-lg font-extrabold text-gray-600">{children}</div>
+    <div className="p-2 text-lg font-extrabold text-gray-mid">{children}</div>
   );
 }
 function Item({ children, href }) {
@@ -13,7 +13,7 @@ function Item({ children, href }) {
 
   if (router.asPath === href) {
     return (
-      <div className="py-2 font-semibold text-white bg-sky-600">
+      <div className="py-2 font-semibold text-white bg-main-mid">
         <span className="mx-4 border-l border-white" />
         {children}
       </div>
@@ -23,7 +23,7 @@ function Item({ children, href }) {
   return (
     <Link href={href}>
       <div className="py-2">
-        <span className="mx-4 border-l border-sky-700" />
+        <span className="mx-4 border-l border-main-mid" />
         {children}
       </div>
     </Link>

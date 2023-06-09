@@ -72,13 +72,13 @@ export default function GenerateKey({ onComplete }) {
       <div className="text-center">
         <Key data={privateKey} ref={keyRef} />
         <p className="text-2xl">
-          <span className="font-extrabold underline text-rose-800">
+          <span className="font-extrabold underline text-danger">
             {' '}
             Warning:
             {' '}
           </span>
           If you do not save this key you will
-          <span className="font-extrabold underline text-rose-800">
+          <span className="font-extrabold underline text-danger">
             {' '}
             not be able to access your data
             {' '}

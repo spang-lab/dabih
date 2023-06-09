@@ -52,24 +52,24 @@ function Key({ data }, ref) {
   const getColor = (v) => {
     const num = parseInt(v, 16);
     if (num < 50) {
-      return 'text-sky-400';
+      return 'text-main-mid';
     }
     if (num < 100) {
-      return 'text-sky-500';
+      return 'text-gray-light0';
     }
     if (num < 150) {
-      return 'text-sky-600';
+      return 'text-main-mid';
     }
     if (num < 200) {
-      return 'text-sky-700';
+      return 'text-main-mid';
     }
-    return 'text-sky-800';
+    return 'text-main-mid';
   };
 
   return (
     <div
       ref={ref}
-      className="p-4 mx-0 my-3 text-center border-2 rounded border-sky-800"
+      className="p-4 mx-0 my-3 text-center border-2 rounded border-main-mid"
     >
       <table className="mx-auto text-lg font-semibold leading-none table-fixed">
         <tbody>
@@ -88,7 +88,7 @@ function Key({ data }, ref) {
                           alt="Private Key QR Code"
                         />
                         <br />
-                        <span className="font-semibold text-sky-700">
+                        <span className="font-semibold text-main-mid">
                           {' '}
                           Dabih private key v1
                           {' '}

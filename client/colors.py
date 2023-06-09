@@ -7,7 +7,7 @@ def find_colors(file_path):
     with open(file_path, 'r') as file:
         lines = file.readlines()
 
-    color_regex = r"(bg|text|border|ring)-(\w+)-(\d+)"
+    color_regex = r"(bg|text|border|ring)-(\w+)(-light|-mid|-dark)?"
     colors = []
     for line in lines:
         result = re.search(color_regex, line)
@@ -43,45 +43,18 @@ paths = ['components', 'pages']
 files = getJSFiles(paths)
 
 replacements = {
-    'sky-100':'gray-light',
-    'sky-400':'main-mid',
-    'gray-800':'gray-dark',
-    'rose-700':'danger',
-    'indigo-500':'main-mid',
-    'gray-700':'gray-mid',
-    'gray-500':'gray-mid',
-    'sky-700':'main-mid',
-    'gray-200':'gray-light',
-    'gray-100':'gray-light',
-    'emerald-700':'main-mid',
-    'sky-900':'main-dark',
-    'emerald-500':'main-mid',
-    'yellow-800':'main-mid',
-    'emerald-600':'main-mid',
-    'sky-50':'gray-light',
-    'orange-600':'main-mid',
-    'rose-800':'danger',
-    'gray-900':'gray-dark',
-    'gray-600':'gray-mid',
-    'slate-600':'gray-mid',
-    'sky-600':'main-mid',
-    'gray-300':'gray-mid',
-    'red-800':'danger',
-    'sky-500':'main-mid',
-    'gray-400':'gray-mid',
-    'sky-800':'main-mid',
-    'green-800':'success',
+    'gray-light':'gray-100',
+    'gray-mid':'gray-400',
+    'gray-dark':'gray-800',
+    'main-light':'main-100',
+    'main-mid':'main-200',
+    'main-dark':'main-300',
 }
 
-existing = set()
 for file in files:
-    existing.update(find_colors(file))
-for color in existing:
-    print(f"'{color}':'',")
+    replace_colors(files, replacements)
 
 
-for file in files:
-    replace_colors(file, replacements)
 
 
 

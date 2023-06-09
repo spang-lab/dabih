@@ -15,17 +15,17 @@ function Event({ data }) {
     <div className="flex flex-row p-1 border-b space-x-4">
       <LocalDate value={createdAt} />
       <span>{'>>'}</span>
-      <span className="text-sky-700">
+      <span className="text-main-mid">
         {' '}
         {mnemonic}
         {' '}
       </span>
-      <span className="font-semibold text-sky-700">
+      <span className="font-semibold text-main-mid">
         {' '}
         {sub}
         {' '}
       </span>
-      <span className="text-gray-500">{message}</span>
+      <span className="text-gray-mid">{message}</span>
     </div>
   );
 }
@@ -85,7 +85,7 @@ export default function Events() {
           <RefreshCcw size={18} />
         </MutedButton>
       </div>
-      <div className="mx-4 my-2 border border-gray-300 rounded-lg">
+      <div className="mx-4 my-2 border border-gray-mid rounded-lg">
         {events.map((e) => (
           <Event key={e.id} data={e} />
         ))}

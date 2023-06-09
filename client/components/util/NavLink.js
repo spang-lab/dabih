@@ -8,31 +8,29 @@ function NavLink(props) {
   const { href, children, block } = props;
   const isActive = router.asPath === href;
 
-  const classes = ['px-3', 'py-2', 'font-medium', 'rounded-md'];
   if (block) {
-    classes.push('block', 'text-base');
-  } else {
-    classes.push('text-sm');
-  }
-
-  const activeClasses = [...classes, 'text-white', 'bg-gray-900'].join(' ');
-  const inactiveClasses = [
-    ...classes,
-    'text-gray-300',
-    'bg-gray-700',
-    'hover:text-white',
-  ].join(' ');
-
-  if (isActive) {
+    if (isActive) {
+      return (
+        <div className="block px-3 py-2 font-semibold rounded-md text-white bg-main-dark" aria-current="page">
+          {children}
+        </div>
+      );
+    }
     return (
-      <Link href={href} className={activeClasses} aria-current="page">
+      <Link href={href} className="block px-3 py-2 font-semibold rounded-md bg-gray-mid text-white">
         {children}
       </Link>
     );
   }
-
+  if (isActive) {
+    return (
+      <div className="px-3 py-2 font-semibold rounded-md text-active bg-main-dark" aria-current="page">
+        {children}
+      </div>
+    );
+  }
   return (
-    <Link href={href} className={inactiveClasses}>
+    <Link href={href} className="px-3 py-2 font-semibold rounded-md bg-main-mid text-gray-light">
       {children}
     </Link>
   );

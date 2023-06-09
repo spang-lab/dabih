@@ -18,8 +18,8 @@ function ConfirmDialog(props) {
     onConfirm, onClose, isOpen, children, title, danger,
   } = props;
   const className = danger
-    ? 'bg-rose-700 hover:bg-rose-600'
-    : 'bg-sky-700 hover:bg-sky-600';
+    ? 'bg-danger hover:bg-rose-600'
+    : 'bg-main-mid hover:bg-main-mid';
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -50,7 +50,7 @@ function ConfirmDialog(props) {
               <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all">
                 <Dialog.Title
                   as="h2"
-                  className="text-2xl font-extrabold text-gray-900 leading-6"
+                  className="text-2xl font-extrabold text-gray-dark leading-6"
                 >
                   {title}
                 </Dialog.Title>
@@ -63,7 +63,7 @@ function ConfirmDialog(props) {
                       onConfirm();
                       onClose();
                     }}
-                    className={`mx-3 px-3 py-2 rounded text-gray-100 ${className} hover:text-white`}
+                    className={`mx-3 px-3 py-2 rounded text-gray-light ${className} hover:text-white`}
                   >
                     {title}
                   </button>
@@ -83,10 +83,10 @@ function Action({
 }) {
   const getClass = (active) => {
     if (!enabled) {
-      return 'text-gray-300';
+      return 'text-gray-mid';
     }
     if (active) {
-      return 'bg-sky-700 text-white';
+      return 'bg-main-mid text-white';
     }
     return className;
   };
@@ -133,8 +133,8 @@ export default function Actions({ data }) {
         onClose={() => setDialog(null)}
         onConfirm={() => submitName()}
       >
-        <p className="text-gray-500">Set a new name for the dataset</p>
-        <span className="font-semibold text-sky-700">
+        <p className="text-gray-mid">Set a new name for the dataset</p>
+        <span className="font-semibold text-main-mid">
           {' '}
           {mnemonic}
           {' '}
@@ -144,7 +144,7 @@ export default function Actions({ data }) {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-2 py-1 my-1 border border-gray-300 rounded"
+            className="w-full px-2 py-1 my-1 border border-gray-mid rounded"
           />
         </form>
       </ConfirmDialog>
@@ -154,15 +154,15 @@ export default function Actions({ data }) {
         onClose={() => setDialog(null)}
         onConfirm={() => reencryptDataset(mnemonic)}
       >
-        <p className="text-gray-500">
+        <p className="text-gray-mid">
           Are you sure you want to reencrypt the Dataset
         </p>
-        <span className="font-semibold text-sky-700">
+        <span className="font-semibold text-main-mid">
           {' '}
           {mnemonic}
           {' '}
         </span>
-        <p className="text-gray-500">
+        <p className="text-gray-mid">
           This is only useful if a dabih was lost or stolen.
         </p>
       </ConfirmDialog>
@@ -172,10 +172,10 @@ export default function Actions({ data }) {
         isOpen={dialog === 'delete'}
         onConfirm={() => removeDataset(mnemonic)}
       >
-        <p className="text-gray-500">
+        <p className="text-gray-mid">
           Are you sure you want to delete the Dataset
         </p>
-        <span className="font-semibold text-sky-700">
+        <span className="font-semibold text-main-mid">
           {' '}
           {mnemonic}
           {' '}
@@ -183,7 +183,7 @@ export default function Actions({ data }) {
       </ConfirmDialog>
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="z-0 inline-flex justify-center w-full px-2 py-1 text-sm font-extrabold border rounded text-sky-700 hover:text-sky-600">
+          <Menu.Button className="z-0 inline-flex justify-center w-full px-2 py-1 text-sm font-extrabold border rounded text-main-mid hover:text-main-mid">
             <Settings size={20} />
             <ChevronDown size={20} aria-hidden="true" />
           </Menu.Button>
@@ -197,13 +197,13 @@ export default function Actions({ data }) {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 z-10 w-40 mt-2 bg-white shadow-lg origin-top-right divide-y divide-gray-100 rounded-md ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 z-10 w-40 mt-2 bg-white shadow-lg origin-top-right divide-y divide-gray-light rounded-md ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-1 py-1 ">
               <Action
                 onClick={() => {
                   router.push(`/download/${mnemonic}`);
                 }}
-                className="text-sky-700"
+                className="text-main-mid"
                 enabled
               >
                 <Download className="mx-2" size={24} />
@@ -211,7 +211,7 @@ export default function Actions({ data }) {
               </Action>
               <Action
                 onClick={() => setDialog('rename')}
-                className="text-sky-700"
+                className="text-main-mid"
                 enabled={enabled}
               >
                 <Edit3 className="mx-2" size={24} />
@@ -223,7 +223,7 @@ export default function Actions({ data }) {
                 </span>
                 <Action
                   onClick={() => setDialog('reencrypt')}
-                  className="text-rose-700"
+                  className="text-danger"
                   enabled={enabled}
                 >
                   <div className="relative w-6 h-6 mx-2">
@@ -234,7 +234,7 @@ export default function Actions({ data }) {
                 </Action>
                 <Action
                   onClick={() => setDialog('delete')}
-                  className="text-rose-700"
+                  className="text-danger"
                   enabled={enabled}
                 >
                   <Trash2 className="mx-2" size={24} />

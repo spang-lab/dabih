@@ -10,7 +10,7 @@ export function DatasetList() {
   if (!datasets || !datasets.length) {
     return (
       <div className="py-10 text-center">
-        <span className="text-gray-500">
+        <span className="text-gray-mid">
           You have no datasets yet. Uploaded datasets will appear here
         </span>
         <p>

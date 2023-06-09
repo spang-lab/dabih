@@ -9,10 +9,10 @@ function File({ data }) {
     size, fileName, createdBy, createdAt, hash,
   } = data;
   return (
-    <div className="flex flex-row flex-wrap items-center py-1 pl-5 text-sm border-gray-300 rounded-xl space-x-2">
+    <div className="flex flex-row flex-wrap items-center py-1 pl-5 text-sm border-gray-mid rounded-xl space-x-2">
       <div className="px-3 py-2 text-center border-r-2">
         <p className="font-semibold">Filename</p>
-        <span className="text-sky-700">
+        <span className="text-main-mid">
           {' '}
           {fileName}
           {' '}
@@ -46,7 +46,7 @@ export default function Dataset({ data, onAction }) {
       return null;
     }
     return (
-      <span className="text-rose-700">
+      <span className="text-danger">
         Deleted
         <TimeSince value={deleted} />
       </span>
@@ -54,14 +54,14 @@ export default function Dataset({ data, onAction }) {
   };
 
   return (
-    <div className="p-2 m-3 mx-auto text-sm bg-white border border-gray-300 rounded-xl space-x-4">
+    <div className="p-2 m-3 mx-auto text-sm bg-white border border-gray-mid rounded-xl space-x-4">
       <div className="container mx-auto">
         <span className="float-right">
           <Actions data={data} onAction={onAction} />
         </span>
         <p>
           Dataset
-          <span className="font-semibold text-sky-700">
+          <span className="font-semibold text-main-mid">
             {' '}
             {mnemonic}
             {' '}

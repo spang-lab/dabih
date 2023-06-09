@@ -56,7 +56,7 @@ export default function TokenModal({ token, onClose, isOpen }) {
               >
                 <Dialog.Title
                   as="h2"
-                  className="pb-3 text-2xl font-extrabold text-gray-900 leading-6"
+                  className="pb-3 text-2xl font-extrabold text-gray-dark leading-6"
                 >
                   New Access Token
                 </Dialog.Title>
@@ -77,7 +77,7 @@ export default function TokenModal({ token, onClose, isOpen }) {
                   <div className="text-center">
                     <input
                       size={32}
-                      className="p-2 border border-gray-400 rounded"
+                      className="p-2 border border-gray-mid rounded"
                       type="text"
                       readOnly
                       value={getValue()}
@@ -91,7 +91,7 @@ export default function TokenModal({ token, onClose, isOpen }) {
                 </div>
                 <p>
                   This token can
-                  <span className="font-semibold text-sky-700">
+                  <span className="font-semibold text-main-mid">
                     {' '}
                     no longer be accessed
                     {' '}

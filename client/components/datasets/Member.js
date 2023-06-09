@@ -29,13 +29,13 @@ export default function Member({ data, dataset }) {
   const getSwitch = () => {
     if (removed) {
       return (
-        <span className="px-3 font-semibold text-gray-400 whitespace-nowrap">
+        <span className="px-3 font-semibold text-gray-mid whitespace-nowrap">
           Access removed
         </span>
       );
     }
     if (!canEdit) {
-      return <span className="px-3 text-gray-400">{permission}</span>;
+      return <span className="px-3 text-gray-mid">{permission}</span>;
     }
     return (
       <>
@@ -44,7 +44,7 @@ export default function Member({ data, dataset }) {
           <Switch
             checked={enabled}
             onChange={toggle}
-            className={`${enabled ? 'bg-emerald-700' : 'bg-gray-300'}
+            className={`${enabled ? 'bg-main-mid' : 'bg-gray-mid'}
           relative inline-flex h-[28px] w-[52px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
           >
             <span className="sr-only">User write permission</span>
@@ -73,11 +73,11 @@ export default function Member({ data, dataset }) {
   };
 
   return (
-    <div className="flex items-center mx-auto text-sm bg-white border-b border-gray-300 space-x-4">
-      <div className="px-2 shrink-0 text-sky-700 justify-self-start">
+    <div className="flex items-center mx-auto text-sm bg-white border-b border-gray-mid space-x-4">
+      <div className="px-2 shrink-0 text-main-mid justify-self-start">
         <User size={20} />
       </div>
-      <div className="container font-semibold text-sky-600 mx-auto">{name}</div>
+      <div className="container font-semibold text-main-mid mx-auto">{name}</div>
       {getDelete()}
       {getSwitch()}
     </div>

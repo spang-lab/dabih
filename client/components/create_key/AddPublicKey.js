@@ -64,7 +64,7 @@ export default function LoadFile() {
             Open public key file...
           </span>
         </BigButton>
-        <p className="pt-3 text-gray-500">
+        <p className="pt-3 text-gray-mid">
           Add your own public key
           <br />
         </p>
@@ -74,7 +74,7 @@ export default function LoadFile() {
 
   return (
     <div className="w-full">
-      <div className="px-3 pt-2 italic font-semibold text-left text-gray-500 text-md">
+      <div className="px-3 pt-2 italic font-semibold text-left text-gray-mid text-md">
         Advanced users
       </div>
       <div {...getRootProps()} className="w-full grid place-content-center">

@@ -6,9 +6,9 @@ function User({ data }) {
   const { sub, name } = data;
 
   return (
-    <div className="max-w-sm p-1 m-1 border border-gray-300 rounded-lg">
-      <UserIcon className="inline-block m-2 text-sky-700" size={24} />
-      <span className="text-sky-700">
+    <div className="max-w-sm p-1 m-1 border border-gray-mid rounded-lg">
+      <UserIcon className="inline-block m-2 text-main-mid" size={24} />
+      <span className="text-main-mid">
         {' '}
         {sub}
         {' '}

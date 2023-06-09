@@ -22,8 +22,8 @@ export default function Token({ data, onDelete }) {
   };
 
   return (
-    <div className="flex items-center p-2 m-2 text-sm bg-white border border-gray-300 rounded-xl space-x-4">
-      <div className="p-1 border shrink-0 text-sky-700 justify-self-start border-sky-700 rounded-md">
+    <div className="flex items-center p-2 m-2 text-sm bg-white border border-gray-mid rounded-xl space-x-4">
+      <div className="p-1 border shrink-0 text-main-mid justify-self-start border-main-mid rounded-md">
         {getIcon()}
       </div>
       <div>

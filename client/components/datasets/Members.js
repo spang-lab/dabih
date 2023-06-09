@@ -52,7 +52,7 @@ export default function Members({ data }) {
       <Disclosure>
         {({ open }) => (
           <>
-            <Disclosure.Button className="flex w-full px-4 my-1 text-lg font-bold text-sky-900 focus:outline-none focus-visible:ring focus-visible:ring-sky-500 focus-visible:ring-opacity-75">
+            <Disclosure.Button className="flex w-full px-4 my-1 text-lg font-bold text-main-dark focus:outline-none focus-visible:ring focus-visible:ring-gray-light0 focus-visible:ring-opacity-75">
               <ChevronRight
                 size={24}
                 className={`${open ? 'rotate-90 transform' : ''}`}
@@ -61,11 +61,11 @@ export default function Members({ data }) {
               <span className="mx-1 underline-offset-2 hover:underline">
                 Members
               </span>
-              <span className="px-3 py-1 text-sm text-white rounded-full bg-sky-700">
+              <span className="px-3 py-1 text-sm text-white rounded-full bg-main-mid">
                 {getCount()}
               </span>
             </Disclosure.Button>
-            <Disclosure.Panel className="text-gray-500 border rounded-lg">
+            <Disclosure.Panel className="text-gray-mid border rounded-lg">
               {members.map((m) => (
                 <Member key={m.sub} data={m} dataset={data} />
               ))}

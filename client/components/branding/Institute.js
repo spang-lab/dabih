@@ -13,7 +13,7 @@ function SpangLabBrand() {
           fill
         />
       </div>
-      <div className="p-3 text-3xl font-bold text-slate-600">Spang Lab</div>
+      <div className="p-3 text-3xl font-bold text-gray-mid">Spang Lab</div>
     </div>
   );
 }

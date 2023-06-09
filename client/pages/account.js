@@ -19,13 +19,13 @@ export default function Account() {
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Sign in to
           {' '}
-          <span className="text-sky-700">
+          <span className="text-main-mid">
             your account
           </span>
 
         </h1>
-        <div className="text-base text-gray-500 sm:text-lg md:text-xl">
-          <span className="font-semibold text-sky-700">
+        <div className="text-base text-gray-mid sm:text-lg md:text-xl">
+          <span className="font-semibold text-main-mid">
             {' '}
             Dabih
             {' '}
@@ -39,7 +39,7 @@ export default function Account() {
             <li>
               You need to have your
               {' '}
-              <span className="font-semibold text-sky-700">
+              <span className="font-semibold text-main-mid">
                 {' '}
                 Private Key
                 {' '}
@@ -48,7 +48,7 @@ export default function Account() {
             <li>
               We do
               {' '}
-              <span className="font-semibold text-sky-700">
+              <span className="font-semibold text-main-mid">
                 {' '}
                 not
                 {' '}
@@ -59,7 +59,7 @@ export default function Account() {
             <li>
               The identiy provider gives
               {' '}
-              <span className="font-semibold text-sky-700">
+              <span className="font-semibold text-main-mid">
                 {' '}
                 Dabih
                 {' '}

@@ -18,7 +18,7 @@ export default function GenerateKey() {
 
   return (
     <div className="items-start w-full">
-      <div className="px-3 pt-2 pb-10 italic font-semibold text-left text-sky-800 text-md">
+      <div className="px-3 pt-2 pb-10 italic font-semibold text-left text-main-mid text-md">
         Recommended
       </div>
       <div className="text-center">
@@ -28,7 +28,7 @@ export default function GenerateKey() {
             Generate a keypair
           </span>
         </BigButton>
-        <p className="pt-3 text-gray-500">
+        <p className="pt-3 text-gray-mid">
           Use dabih to securely generate
           <br />
           your crypto keys in the browser
@@ -63,14 +63,14 @@ export default function GenerateKey() {
                   >
                     <Dialog.Title
                       as="h2"
-                      className="text-2xl font-extrabold text-gray-900 leading-6"
+                      className="text-2xl font-extrabold text-gray-dark leading-6"
                     >
                       Generate a new keypair
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-mid">
                         You
-                        <span className="font-semibold text-sky-700">
+                        <span className="font-semibold text-main-mid">
                           {' '}
                           need
                           {' '}

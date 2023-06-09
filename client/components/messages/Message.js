@@ -10,7 +10,7 @@ function CloseButton({ onClick }) {
     'my-1',
     'right-3',
     'rounded-md',
-    'text-gray-500',
+    'text-gray-mid',
     'hover:text-white',
     'focus:outline-none',
     'focus:ring-2',
@@ -32,10 +32,10 @@ function CloseButton({ onClick }) {
 function ErrorMessage({ text, time, onClick }) {
   return (
     <div
-      className="relative p-3 m-3 text-base text-red-800 bg-red-100 rounded-lg"
+      className="relative p-3 m-3 text-base text-danger bg-red-100 rounded-lg"
       role="alert"
     >
-      <span className="px-3 text-gray-500">{time}</span>
+      <span className="px-3 text-gray-mid">{time}</span>
       <strong className="px-2">Error:</strong>
       {text}
       <CloseButton onClick={onClick} />
@@ -46,10 +46,10 @@ function ErrorMessage({ text, time, onClick }) {
 function WarningMessage({ text, time, onClick }) {
   return (
     <div
-      className="relative p-3 m-3 text-base text-yellow-800 bg-yellow-100 rounded-lg"
+      className="relative p-3 m-3 text-base text-main-mid bg-yellow-100 rounded-lg"
       role="alert"
     >
-      <span className="px-3 text-gray-500">{time}</span>
+      <span className="px-3 text-gray-mid">{time}</span>
       <strong className="px-2">Warning:</strong>
       {text}
       <CloseButton onClick={onClick} />
@@ -60,10 +60,10 @@ function WarningMessage({ text, time, onClick }) {
 function SuccessMessage({ text, time, onClick }) {
   return (
     <div
-      className="relative p-3 m-3 text-base text-green-800 bg-green-100 rounded-lg"
+      className="relative p-3 m-3 text-base text-success bg-green-100 rounded-lg"
       role="alert"
     >
-      <span className="px-3 text-gray-500">{time}</span>
+      <span className="px-3 text-gray-mid">{time}</span>
       {text}
       <CloseButton onClick={onClick} />
     </div>
@@ -73,10 +73,10 @@ function SuccessMessage({ text, time, onClick }) {
 function BaseMessage({ text, time, onClick }) {
   return (
     <div
-      className="relative p-3 m-3 text-base text-gray-800 bg-gray-100 rounded-lg"
+      className="relative p-3 m-3 text-base text-gray-dark bg-gray-light rounded-lg"
       role="alert"
     >
-      <span className="px-3 text-gray-500">{time}</span>
+      <span className="px-3 text-gray-mid">{time}</span>
       {text}
       <CloseButton onClick={onClick} />
     </div>

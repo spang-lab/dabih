@@ -3,7 +3,7 @@ import { Link } from './util';
 
 function Contact() {
   return (
-    <div className="p-5 text-gray-900">
+    <div className="p-5 text-gray-dark">
       <h1 className="py-3 text-3xl font-bold">Contact</h1>
       <h3 className="py-2 text-xl">Institute of functional genomics</h3>
       Statistical Bioinformatics

@@ -9,10 +9,10 @@ function Action({
 }) {
   const getClass = (active) => {
     if (!enabled) {
-      return 'text-gray-300';
+      return 'text-gray-mid';
     }
     if (active) {
-      return 'bg-sky-700 text-white';
+      return 'bg-main-mid text-white';
     }
     return className;
   };
@@ -40,7 +40,7 @@ export default function Actions({ data, onAction }) {
     <div className="text-right ">
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="z-0 inline-flex justify-center w-full p-2 text-sm font-extrabold text-white border rounded bg-sky-700 focus-visible:ring-white focus-visible:ring-opacity-75">
+          <Menu.Button className="z-0 inline-flex justify-center w-full p-2 text-sm font-extrabold text-white border rounded bg-main-mid focus-visible:ring-white focus-visible:ring-opacity-75">
             Actions
             <ChevronDown className="w-5 h-5 ml-2 -mr-1" aria-hidden="true" />
           </Menu.Button>
@@ -54,11 +54,11 @@ export default function Actions({ data, onAction }) {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 z-10 w-32 mt-2 bg-white shadow-lg origin-top-right divide-y divide-gray-100 rounded-md ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 z-10 w-32 mt-2 bg-white shadow-lg origin-top-right divide-y divide-gray-light rounded-md ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-1 py-1 ">
               <Action
                 onClick={() => onAction('delete', mnemonic)}
-                className="text-rose-700"
+                className="text-danger"
                 enabled={!deleted}
               >
                 <Trash2 className="mx-2" size={24} />
@@ -66,7 +66,7 @@ export default function Actions({ data, onAction }) {
               </Action>
               <Action
                 onClick={() => onAction('recover', mnemonic)}
-                className="text-sky-700"
+                className="text-main-mid"
                 enabled={!!deleted}
               >
                 <RotateCcw className="mx-2" size={24} />
@@ -78,7 +78,7 @@ export default function Actions({ data, onAction }) {
                 </span>
                 <Action
                   onClick={() => onAction('destroy', mnemonic)}
-                  className="text-rose-700"
+                  className="text-danger"
                   enabled={!!deleted}
                 >
                   <AlertOctagon className="mx-2 font-extrabold" size={24} />

@@ -14,7 +14,7 @@ export default function Admin() {
       </Container>
       <Container>
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-          <span className="text-sky-700">
+          <span className="text-main-mid">
             {' '}
             Admin
             {' '}

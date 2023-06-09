@@ -46,7 +46,7 @@ export default function DeleteModal({ children, onDelete }) {
                 <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all">
                   <Dialog.Title
                     as="h2"
-                    className="text-2xl font-extrabold text-gray-900 leading-6"
+                    className="text-2xl font-extrabold text-gray-dark leading-6"
                   >
                     Confirm Reencryption
                   </Dialog.Title>
@@ -58,7 +58,7 @@ export default function DeleteModal({ children, onDelete }) {
                         onDelete();
                         setOpen(false);
                       }}
-                      className="mx-3 text-gray-100 bg-rose-700 hover:bg-rose-600 hover:text-white"
+                      className="mx-3 text-gray-light bg-danger hover:bg-rose-600 hover:text-white"
                     >
                       Reencrypt
                     </MutedButton>

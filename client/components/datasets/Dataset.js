@@ -15,19 +15,19 @@ export default function Dataset({ data }) {
       return null;
     }
     return (
-      <span className="px-3 py-1 font-medium border rounded text-sky-700 border-sky-700">
+      <span className="px-3 py-1 font-medium border rounded text-main-mid border-main-mid">
         {name}
       </span>
     );
   };
 
   return (
-    <div className="px-3 m-3 mx-auto bg-white border border-gray-300 rounded-xl space-x-4">
+    <div className="px-3 m-3 mx-auto bg-white border border-gray-mid rounded-xl space-x-4">
       <div className="flex flex-row justify-between py-2">
         <div className="flex flex-row flex-wrap">
           <div className="text-xl font-extrabold">
             Encrypted Dataset
-            <span className="text-sky-700">
+            <span className="text-main-mid">
               {' '}
               {mnemonic}
               {' '}
@@ -40,12 +40,12 @@ export default function Dataset({ data }) {
           <DatasetActions data={data} />
         </div>
       </div>
-      <div className="flex flex-row flex-wrap items-center py-1 pl-5 text-sm border-gray-300 md:text-base rounded-xl space-x-2">
-        <div className="shrink-0 text-sky-700 justify-self-start">
+      <div className="flex flex-row flex-wrap items-center py-1 pl-5 text-sm border-gray-mid md:text-base rounded-xl space-x-2">
+        <div className="shrink-0 text-main-mid justify-self-start">
           <div className="relative mx-auto w-14 h-14">
             <FileText className="" size={56} />
             <Lock
-              className="absolute text-rose-700 -bottom-1 -right-1"
+              className="absolute text-danger -bottom-1 -right-1"
               strokeWidth={3}
               size={30}
             />
@@ -53,7 +53,7 @@ export default function Dataset({ data }) {
         </div>
         <div className="px-3 py-2 text-center border-r-2">
           <p className="font-semibold">Filename</p>
-          <span className="text-sky-700">
+          <span className="text-main-mid">
             {' '}
             {fileName}
             {' '}

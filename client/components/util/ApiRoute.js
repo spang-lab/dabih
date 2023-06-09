@@ -9,9 +9,9 @@ export default function ApiRoute({
       return null;
     }
     return (
-      <span className="my-2 text-base font-semibold text-gray-400 w-42">
+      <span className="my-2 text-base font-semibold text-gray-mid w-42">
         Event:
-        <span className="px-1 py-1 mx-1 border-2 border-gray-400 rounded">
+        <span className="px-1 py-1 mx-1 border-2 border-gray-mid rounded">
           {action}
         </span>
       </span>
@@ -22,17 +22,17 @@ export default function ApiRoute({
     <div id={id} className="mt-20">
       <div className="flex flex-wrap items-center my-3 text-2xl">
         <div>
-          <span className="w-20 font-extrabold text-sky-700">{method}</span>
+          <span className="w-20 font-extrabold text-main-mid">{method}</span>
         </div>
         <div className="grow">
-          <span className="px-2 py-1 mx-5 text-orange-600 border border-orange-600 rounded-lg">
+          <span className="px-2 py-1 mx-5 text-main-mid border border-main-mid rounded-lg">
             /api/v1
             {path}
           </span>
         </div>
         {getAction()}
       </div>
-      <div className="pl-10 text-lg text-gray-700">{children}</div>
+      <div className="pl-10 text-lg text-gray-mid">{children}</div>
     </div>
   );
 }

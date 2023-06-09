@@ -17,7 +17,7 @@ export default function BrowserSupport() {
     }
     return (
       <div
-        className="relative p-3 m-3 text-xl font-semibold text-center text-red-800 bg-red-100 rounded-lg"
+        className="relative p-3 m-3 text-xl font-semibold text-center text-danger bg-red-100 rounded-lg"
         role="alert"
       >
         <p className="p-2 text-2xl font-bold">
@@ -39,7 +39,7 @@ export default function BrowserSupport() {
     }
     return (
       <div
-        className="relative p-3 m-3 text-xl font-semibold text-center text-red-800 bg-red-100 rounded-lg"
+        className="relative p-3 m-3 text-xl font-semibold text-center text-danger bg-red-100 rounded-lg"
         role="alert"
       >
         <p className="p-2 text-2xl font-bold">
