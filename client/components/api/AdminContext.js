@@ -21,7 +21,6 @@ export function AdminApiWrapper({ children }) {
   );
 
   // User
-  const isAdmin = useCallback(() => api.get('/admin'), [api]);
   const listKeys = useCallback(() => api.get('/admin/key/list'), [api]);
   const confirmKey = useCallback(
     (keyId, confirmed) => api.post('/admin/key/confirm', { keyId, confirmed }),
@@ -56,7 +55,6 @@ export function AdminApiWrapper({ children }) {
   const contextValue = useMemo(
     () => ({
       isReady,
-      isAdmin,
       listKeys,
       confirmKey,
       deleteKey,
@@ -69,7 +67,6 @@ export function AdminApiWrapper({ children }) {
     }),
     [
       isReady,
-      isAdmin,
       listKeys,
       confirmKey,
       deleteKey,

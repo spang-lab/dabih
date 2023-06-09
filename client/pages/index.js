@@ -21,10 +21,6 @@ export default function Home() {
         <BrowserSupport />
         <div className="flex flex-row">
           <div className="p-3 basis-3/4">
-            <span className="block p-3 m-3 text-3xl font-extrabold text-center border rounded-full text-rose-700 border-rose-700">
-              Alpha version, not for production use
-            </span>
-
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
               Welcome to the
               <br />

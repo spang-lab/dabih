@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.15",
     "axios": "^1.4.0",
+    "cls-hooked": "^4.2.2",
     "next": "13.4.4",
     "next-auth": "4.22.1",
     "p-limit": "^4.0.0",
