@@ -15,15 +15,15 @@ export default function ManageKey() {
       <Container>
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Load your
-          <span className="text-main-mid">
+          <span className="text-main-200">
             {' '}
             encryption key
             {' '}
           </span>
         </h1>
-        <div className="text-base text-gray-mid sm:text-lg md:text-xl">
+        <div className="text-base text-gray-400 sm:text-lg md:text-xl">
           <p>
-            <span className="font-semibold text-main-mid">
+            <span className="font-semibold text-main-200">
               {' '}
               Dabih
               {' '}
@@ -37,7 +37,7 @@ export default function ManageKey() {
           <ul className="px-4 leading-relaxed list-disc">
             <li>
               A public key, used to
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 encrypt
                 {' '}
@@ -45,7 +45,7 @@ export default function ManageKey() {
               the data.
               <br />
               The public key will be sent to
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 Dabih
                 {' '}
@@ -56,7 +56,7 @@ export default function ManageKey() {
             </li>
             <li>
               A private key, used to
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 decrypt
                 {' '}
@@ -64,13 +64,13 @@ export default function ManageKey() {
               the data.
               <br />
               The private key should
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 never
                 {' '}
               </span>
               be shared and
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 only you
                 {' '}

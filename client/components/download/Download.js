@@ -21,7 +21,7 @@ export function DownloadMnemonic() {
         </h2>
         <p className="py-5">
           <a
-            className="px-3 py-2 text-3xl text-white whitespace-nowrap button rounded-xl bg-main-mid hover:bg-main-mid"
+            className="px-3 py-2 text-3xl text-white whitespace-nowrap button rounded-xl bg-main-200 hover:bg-main-200"
             href={href}
           >
             Save File

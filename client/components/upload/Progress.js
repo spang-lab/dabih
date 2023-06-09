@@ -23,7 +23,7 @@ export default function UploadProgress(props) {
 
   return (
     <div className="w-1/2 pt-5 mx-auto">
-      <p className="p-3 text-xl text-center text-gray-mid">
+      <p className="p-3 text-xl text-center text-gray-400">
         Uploading file &quot;
         {fileName}
         &quot;
@@ -36,7 +36,7 @@ export default function UploadProgress(props) {
           stroke="currentColor"
           strokeWidth={width}
           fill="transparent"
-          className="text-gray-mid"
+          className="text-gray-400"
         />
 
         <circle
@@ -49,7 +49,7 @@ export default function UploadProgress(props) {
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          className="text-main-mid -rotate-90 origin-center"
+          className="text-main-200 -rotate-90 origin-center"
         />
         <text
           x={center}
@@ -70,7 +70,7 @@ export default function UploadProgress(props) {
           dx={-50}
           fill="currentColor"
           dominantBaseline="central"
-          className="text-2xl text-gray-mid"
+          className="text-2xl text-gray-400"
         >
           complete
         </text>
@@ -81,7 +81,7 @@ export default function UploadProgress(props) {
           dx={-50}
           fill="currentColor"
           dominantBaseline="central"
-          className="text-lg text-gray-mid"
+          className="text-lg text-gray-400"
         >
           (
           {formatBytes(current)}

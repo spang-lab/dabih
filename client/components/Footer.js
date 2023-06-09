@@ -3,7 +3,7 @@ import { Link } from './util';
 
 function Footer({ version }) {
   return (
-    <div className="p-5 text-center text-gray-mid border-t">
+    <div className="p-5 text-center text-gray-400 border-t">
       <p>
         <Link href="www.spang-lab.de">Institute of functional genomics</Link>
         <span className="px-2">-</span>

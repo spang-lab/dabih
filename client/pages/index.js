@@ -24,7 +24,7 @@ export default function Home() {
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
               Welcome to the
               <br />
-              <span className="text-main-mid">
+              <span className="text-main-200">
                 {' '}
                 Dabih data storage platform
                 {' '}
@@ -35,7 +35,7 @@ export default function Home() {
             <div className="flex pt-2">
               <Institute />
             </div>
-            <div className="text-base text-gray-mid sm:text-lg md:text-xl">
+            <div className="text-base text-gray-400 sm:text-lg md:text-xl">
               <ul className="px-4 list-disc">
                 <li> A secure way to upload and share data</li>
                 <li> You decide who gets access to your data</li>
@@ -68,25 +68,25 @@ export default function Home() {
             How dabih works
           </h2>
           First and foremost dabih provides an API for
-          <span className="text-main-mid">
+          <span className="text-main-200">
             {' '}
             uploading
             {' '}
           </span>
           ,
-          <span className="text-main-mid">
+          <span className="text-main-200">
             {' '}
             storing
             {' '}
           </span>
           ,
-          <span className="text-main-mid">
+          <span className="text-main-200">
             {' '}
             sharing
             {' '}
           </span>
           and
-          <span className="text-main-mid">
+          <span className="text-main-200">
             {' '}
             downloading
             {' '}
@@ -94,13 +94,13 @@ export default function Home() {
           arbirary data.
           <br />
           The
-          <span className="text-main-mid">
+          <span className="text-main-200">
             {' '}
             key
             {' '}
           </span>
           difference for dabih is that we
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             guarantee
             {' '}
@@ -110,7 +110,7 @@ export default function Home() {
           not even system administrators or people with
           pysical access to the hard-disks the data is stored on.
           <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
-            <span className="text-main-mid">
+            <span className="text-main-200">
               {' '}
               Symmetric
               {' '}
@@ -139,7 +139,7 @@ export default function Home() {
           will only have 32 bytes.
 
           <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
-            <span className="text-main-mid">
+            <span className="text-main-200">
               {' '}
               Asymmetric
               {' '}
@@ -160,7 +160,7 @@ export default function Home() {
           <ul className="px-4 leading-relaxed list-disc">
             <li>
               A public key, used to
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 encrypt
                 {' '}
@@ -168,7 +168,7 @@ export default function Home() {
               the data.
               <br />
               The public key will be sent to
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 Dabih
                 {' '}
@@ -179,7 +179,7 @@ export default function Home() {
             </li>
             <li>
               A private key, used to
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 decrypt
                 {' '}
@@ -187,13 +187,13 @@ export default function Home() {
               the data.
               <br />
               The private key should
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 never
                 {' '}
               </span>
               be shared and
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 only you
                 {' '}
@@ -211,7 +211,7 @@ export default function Home() {
             />
           </div>
           <p>
-            <span className="font-semibold text-main-mid">
+            <span className="font-semibold text-main-200">
               {' '}
               dabih
               {' '}
@@ -233,14 +233,14 @@ export default function Home() {
           </div>
           With this public key we can complete the upload and encrypt the AES key.
           The encrypted key is stored and can only be decrypted using the private key that
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             dabih
             {' '}
           </span>
           does not have.
           <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
-            <span className="text-main-mid">
+            <span className="text-main-200">
               {' '}
               Download
               {' '}
@@ -248,14 +248,14 @@ export default function Home() {
             </span>
           </h3>
           If this dataset is downloaded a two-step decryption process is required.
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             First
             {' '}
           </span>
           the encrypted AES key is downloaded and is decrypted using the private key.
           This results in the unencrypted AES key.
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             Then
             {' '}
@@ -270,7 +270,7 @@ export default function Home() {
               height={579}
             />
           </div>
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             Note:
             {' '}
@@ -278,7 +278,7 @@ export default function Home() {
           This guarantees that only the client with the private key can access the dataset.
           <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
             Data
-            <span className="text-main-mid">
+            <span className="text-main-200">
               {' '}
               Sharing
               {' '}
@@ -287,7 +287,7 @@ export default function Home() {
           </h3>
           Of course we also need a way to safely share datasets with other users.
           Because
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             dabih
             {' '}
@@ -296,7 +296,7 @@ export default function Home() {
           who already has access can share the dataset with others.
           Data sharing is similar to downloading, but only the AES key is downloaded.
           This key is then sent back to
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             dabih
             {' '}
@@ -310,7 +310,7 @@ export default function Home() {
               height={579}
             />
           </div>
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             dabih
             {' '}
@@ -319,7 +319,7 @@ export default function Home() {
           and has 2 different kinds of permissions.
           <ul className="px-4 list-disc">
             <li>
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 read
                 {' '}
@@ -327,7 +327,7 @@ export default function Home() {
               permission allows the user to download the dataset.
             </li>
             <li>
-              <span className="font-semibold text-main-mid">
+              <span className="font-semibold text-main-200">
                 {' '}
                 write
                 {' '}
@@ -338,7 +338,7 @@ export default function Home() {
           We also keep a fingerprint of the AES key and check it, to prevent malicious clients
           from secretly exchanging the AES key.
           <br />
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             Note:
             {' '}
@@ -348,7 +348,7 @@ export default function Home() {
           on a laptop or other storage medium.
           <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
             Data
-            <span className="text-main-mid">
+            <span className="text-main-200">
               {' '}
               Deletion
               {' '}
@@ -356,7 +356,7 @@ export default function Home() {
             </span>
           </h3>
           Generally users can also delete datasets from
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             dabih
             {' '}
@@ -364,14 +364,14 @@ export default function Home() {
           .
           But by default deletion does not remove the underlying files and keys, and the dataset
           can be recovered by an admin.
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             dabih
             {' '}
           </span>
           {' '}
           admins can decide to
-          <span className="font-semibold text-main-mid">
+          <span className="font-semibold text-main-200">
             {' '}
             destroy
             {' '}
@@ -379,7 +379,7 @@ export default function Home() {
           {' '}
           and dataset. Destroying a dataset deletes all its data and is irrevokable.
           <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
-            <span className="text-main-mid">
+            <span className="text-main-200">
               {' '}
               Reencryption
               {' '}

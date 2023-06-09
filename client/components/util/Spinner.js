@@ -4,7 +4,7 @@ import styles from './Spinner.module.css';
 export default function Spinner() {
   const classes = `
     ${styles.loader}
-    bg-main-mid
+    bg-main-200
   `;
   return <div className={classes} />;
 }

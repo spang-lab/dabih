@@ -15,7 +15,7 @@ export default function KeyStatus() {
         <button
           onClick={onClick}
           type="button"
-          className="px-3 py-1 text-center rounded-lg text-main-mid bg-emerald-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-dark focus:ring-white"
+          className="px-3 py-1 text-center rounded-lg text-main-200 bg-emerald-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
         >
           <p className="text-xs font-semibold">Key loaded</p>
           <Key className="mx-auto" size={14} />
@@ -28,7 +28,7 @@ export default function KeyStatus() {
     <div className="inset-y-0 right-0 flex items-center pr-2 sm:inset-auto sm:ml-6 sm:pr-0">
       <button
         type="button"
-        className="px-5 py-2 rounded-full text-gray-light0 bg-main-dark hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-dark focus:ring-white"
+        className="px-5 py-2 rounded-full text-gray-1000 bg-main-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
       >
         No key
       </button>

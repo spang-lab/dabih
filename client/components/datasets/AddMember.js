@@ -8,11 +8,11 @@ function MemberOption({ option }) {
   return (
     <Combobox.Option
       className={({ active }) => `relative cursor-default select-none py-2 px-4 ${
-        active ? 'bg-main-mid text-white' : 'text-gray-dark'
+        active ? 'bg-main-200 text-white' : 'text-gray-800'
       }`}
       value={option}
     >
-      <span className="text-gray-mid">
+      <span className="text-gray-400">
         <User className="inline-block" size={14} />
         <span className="px-1">User</span>
         {option.name}
@@ -37,7 +37,7 @@ export default function AddMember({ dataset, options }) {
 
   if (permission !== 'write') {
     return (
-      <div className="text-sm text-center text-gray-mid">
+      <div className="text-sm text-center text-gray-400">
         Users with write permission can add members
       </div>
     );
@@ -59,19 +59,19 @@ export default function AddMember({ dataset, options }) {
 
   return (
     <div className="flex flex-row items-center justify-center">
-      <div className="px-3 text-gray-mid whitespace-nowrap">Add members:</div>
+      <div className="px-3 text-gray-400 whitespace-nowrap">Add members:</div>
       <Combobox value={selected} onChange={setSelected}>
         <div className="relative p-1 grow">
-          <div className="relative w-full overflow-hidden text-left bg-white border border-gray-mid rounded-lg cursor-default sm:text-sm">
+          <div className="relative w-full overflow-hidden text-left bg-white border border-gray-400 rounded-lg cursor-default sm:text-sm">
             <Combobox.Input
-              className="w-full py-2 pl-3 pr-10 text-sm text-gray-dark border-none leading-5"
+              className="w-full py-2 pl-3 pr-10 text-sm text-gray-800 border-none leading-5"
               displayValue={getDisplayValue}
               onChange={(event) => setQuery(event.target.value)}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronsDown
                 size={24}
-                className="text-gray-mid"
+                className="text-gray-400"
                 aria-hidden="true"
               />
             </Combobox.Button>
@@ -85,7 +85,7 @@ export default function AddMember({ dataset, options }) {
           >
             <Combobox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white max-h-60 rounded-md ring-1 ring-black ring-opacity-5 sm:text-sm">
               {filtered.length === 0 && query !== '' ? (
-                <div className="relative px-4 py-2 text-gray-mid cursor-default select-none">
+                <div className="relative px-4 py-2 text-gray-400 cursor-default select-none">
                   No users found.
                 </div>
               ) : (

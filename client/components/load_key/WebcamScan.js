@@ -57,7 +57,7 @@ export default function WebcamScan() {
           Open camera
         </span>
       </BigButton>
-      <p className="pt-3 text-gray-mid">
+      <p className="pt-3 text-gray-400">
         Use your computers webcam to scan
         <br />
         your key from a QR Code
@@ -95,12 +95,12 @@ export default function WebcamScan() {
                 <Dialog.Panel className="w-full max-w-4xl p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all">
                   <Dialog.Title
                     as="h2"
-                    className="text-2xl font-extrabold text-gray-dark leading-6"
+                    className="text-2xl font-extrabold text-gray-800 leading-6"
                   >
                     Scan your code
                   </Dialog.Title>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-mid">
+                    <p className="text-sm text-gray-400">
                       Make sure to position your QR code in the marked region.
                     </p>
                   </div>

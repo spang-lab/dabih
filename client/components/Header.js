@@ -10,13 +10,13 @@ export default function Header(props) {
   } = props;
 
   return (
-    <Disclosure as="nav" className="bg-gray-dark">
+    <Disclosure as="nav" className="bg-gray-700">
       {({ open }) => (
         <>
           <div className="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="relative flex items-center justify-between h-16">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center p-2 text-gray-mid rounded-md hover:text-white hover:bg-gray-mid focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                <Disclosure.Button className="inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:text-white hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XIcon className="block w-6 h-6" aria-hidden="true" />

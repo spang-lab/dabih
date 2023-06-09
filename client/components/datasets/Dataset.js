@@ -15,19 +15,19 @@ export default function Dataset({ data }) {
       return null;
     }
     return (
-      <span className="px-3 py-1 font-medium border rounded text-main-mid border-main-mid">
+      <span className="px-3 py-1 font-medium border rounded text-main-200 border-main-200">
         {name}
       </span>
     );
   };
 
   return (
-    <div className="px-3 m-3 mx-auto bg-white border border-gray-mid rounded-xl space-x-4">
+    <div className="px-3 m-3 mx-auto bg-white border border-gray-400 rounded-xl space-x-4">
       <div className="flex flex-row justify-between py-2">
         <div className="flex flex-row flex-wrap">
           <div className="text-xl font-extrabold">
             Encrypted Dataset
-            <span className="text-main-mid">
+            <span className="text-main-200">
               {' '}
               {mnemonic}
               {' '}
@@ -40,8 +40,8 @@ export default function Dataset({ data }) {
           <DatasetActions data={data} />
         </div>
       </div>
-      <div className="flex flex-row flex-wrap items-center py-1 pl-5 text-sm border-gray-mid md:text-base rounded-xl space-x-2">
-        <div className="shrink-0 text-main-mid justify-self-start">
+      <div className="flex flex-row flex-wrap items-center py-1 pl-5 text-sm border-gray-400 md:text-base rounded-xl space-x-2">
+        <div className="shrink-0 text-main-200 justify-self-start">
           <div className="relative mx-auto w-14 h-14">
             <FileText className="" size={56} />
             <Lock
@@ -53,7 +53,7 @@ export default function Dataset({ data }) {
         </div>
         <div className="px-3 py-2 text-center border-r-2">
           <p className="font-semibold">Filename</p>
-          <span className="text-main-mid">
+          <span className="text-main-200">
             {' '}
             {fileName}
             {' '}

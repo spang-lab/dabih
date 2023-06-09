@@ -32,7 +32,7 @@ export default function DownloadDataset({ mnemonic, size }) {
 
   if (loading) {
     return (
-      <div className="flex flex-row px-2 py-1 font-extrabold text-white rounded bg-main-mid">
+      <div className="flex flex-row px-2 py-1 font-extrabold text-white rounded bg-main-200">
         <SpinnerSmall />
         <span className="pl-2">Downloading...</span>
       </div>
@@ -51,7 +51,7 @@ export default function DownloadDataset({ mnemonic, size }) {
     <div>
       <button
         type="button"
-        className="flex px-2 py-1 text-sm font-extrabold text-white rounded bg-main-mid hover:bg-main-mid flex-nowrap"
+        className="flex px-2 py-1 text-sm font-extrabold text-white rounded bg-main-200 hover:bg-main-200 flex-nowrap"
         onClick={onClick}
       >
         <Download className="inline-block mr-2" size={20} />

@@ -14,9 +14,9 @@ export default function DownloadButton(props) {
   const classes = `
     button
     px-3 py-3 text-lg rounded
-    text-gray-light bg-main-mid hover:bg-main-mid
+    text-gray-100 bg-main-200 hover:bg-main-200
     hover:text-white focus:outline-none focus:ring-2
-    focus:ring-offset-2 focus:ring-offset-gray-dark focus:ring-white
+    focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     ${className}`;
   return (
     <a href={href} download={fileName} className={classes} onClick={onDownload}>

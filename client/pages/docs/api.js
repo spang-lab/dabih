@@ -21,7 +21,7 @@ export default function Documentation() {
   return (
     <Docs>
       <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-        <span className="text-main-mid">
+        <span className="text-main-200">
           {' '}
           API
           {' '}
@@ -48,7 +48,7 @@ export default function Documentation() {
       <ApiRoute method="POST" path="/key/add" action="KEY_ADD">
         Upload a new public key to dabih.
         The key will start of a with a state of
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           unconfirmed
           {' '}
@@ -68,7 +68,7 @@ export default function Documentation() {
         <CodeBlock>
           {JSON.stringify({ keyHash: 'jg94g....' }, null, 2)}
         </CodeBlock>
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           keyHash
           {' '}
@@ -85,7 +85,7 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="GET" path="/dataset/list">
         List all datasets where you have a least
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           read
           {' '}
@@ -112,7 +112,7 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="GET" path="/dataset/:mnemonic">
         Get the information for the dataset
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
@@ -142,7 +142,7 @@ export default function Documentation() {
       <ApiRoute method="POST" path="/dataset/:mnemonic/remove" action="DATASET_REMOVE">
         Remove the dataset
         {' '}
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
@@ -153,14 +153,14 @@ export default function Documentation() {
       <ApiRoute method="POST" action="DATASET_MEMBER_ADD" path="/dataset/:mnemonic/member/add">
         Add a new members to the dataset
         {' '}
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
         </span>
         <p>
           You need to have
-          <span className="font-semibold text-gray-mid">
+          <span className="font-semibold text-gray-400">
             {' '}
             write
             {' '}
@@ -179,14 +179,14 @@ export default function Documentation() {
       <ApiRoute method="POST" action="DATASET_MEMBER_SET" path="/dataset/:mnemonic/member/set">
         Change the permission of a member of the dataset
         {' '}
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
         </span>
         <p>
           You need to have
-          <span className="font-semibold text-gray-mid">
+          <span className="font-semibold text-gray-400">
             {' '}
             write
             {' '}
@@ -222,7 +222,7 @@ export default function Documentation() {
         <CodeBlock>
           {JSON.stringify({ keyHash: 'jg94g....' }, null, 2)}
         </CodeBlock>
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           keyHash
           {' '}
@@ -259,40 +259,40 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="PUT" path="/upload/:mnemonic">
         Add a new chunk to the dataset
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
         </span>
         <p className="font-extrabold">Request:</p>
         The request is special and needs to be of type
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           multipart/form-data
           {' '}
         </span>
         Only a single file is supported and should be part of the form data.
         We also require the HTTP headers
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           Content-Range
           {' '}
         </span>
         and
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           Digest
           {' '}
         </span>
         .
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           Content-Range
           {' '}
         </span>
         should indicate with bytes of the complete file the chunk contains.
         All chunks (except the last one should be 2MiB in size.
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           Digest
           {' '}
@@ -301,14 +301,14 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="POST" action="UPLOAD_FINISH" path="/upload/finish/:mnemonic">
         Finish the upload for the dataset
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
         </span>
         No request data is needed, but after this call the upload will be considered
         finished and the size and hash of the dataset
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
@@ -318,14 +318,14 @@ export default function Documentation() {
 
       <ApiRoute method="GET" path="/dataset/:mnemonic/chunk/:chunkHash">
         Download the encrypted data chunk with hash
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           chunkHash
           {' '}
         </span>
         {' '}
         for the dataset
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
@@ -338,7 +338,7 @@ export default function Documentation() {
         <p className="font-extrabold">Response:</p>
         <p>
           The chunk of the encrypted data as an
-          <span className="font-semibold text-gray-mid">
+          <span className="font-semibold text-gray-400">
             {' '}
             application/octet-stream
             {' '}
@@ -347,7 +347,7 @@ export default function Documentation() {
         </p>
       </ApiRoute>
       <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
-        <span className="text-main-mid">
+        <span className="text-main-200">
           {' '}
           Admin API
           {' '}
@@ -380,7 +380,7 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="POST" path="/admin/key/confirm" action="KEY_CONFIRM">
         Set the
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           confirmed
           {' '}
@@ -422,7 +422,7 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="POST" path="/admin/dataset/:mnemonic/remove" action="DATASET_REMOVE">
         Remove the dataset
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
@@ -430,7 +430,7 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="POST" path="/admin/dataset/:mnemonic/recover" action="DATASET_RECOVER">
         Recover the dataset
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
@@ -439,7 +439,7 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="POST" path="/admin/dataset/:mnemonic/destroy" action="DATASET_DESTROY">
         Irreversibly delete the dataset
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           mnemonic
           {' '}
@@ -456,7 +456,7 @@ export default function Documentation() {
       </ApiRoute>
       <ApiRoute method="GET" path="/admin/events/:date">
         List all events on the day
-        <span className="font-semibold text-gray-mid">
+        <span className="font-semibold text-gray-400">
           {' '}
           date
           {' '}

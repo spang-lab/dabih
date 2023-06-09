@@ -17,7 +17,7 @@ function DebugSession() {
       <LocalDate value={session.expires} />
       <Link href="/logout">Drop NextAuth Session</Link>
       <p className="font-bold">Session:</p>
-      <pre className="max-w-md p-1 m-1 text-sm bg-gray-light border border-gray-mid rounded-lg">
+      <pre className="max-w-md p-1 m-1 text-sm bg-gray-100 border border-gray-400 rounded-lg">
         {JSON.stringify(session, null, 2)}
       </pre>
     </div>

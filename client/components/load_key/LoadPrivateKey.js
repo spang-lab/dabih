@@ -75,13 +75,13 @@ export default function LoadFile() {
             Open key file...
           </span>
         </BigButton>
-        <p className="pt-3 text-gray-mid">
+        <p className="pt-3 text-gray-400">
           Drop your dabih key file here
           <br />
           or click to select the key file.
           <br />
           This file will
-          <span className="font-semibold text-main-mid"> not </span>
+          <span className="font-semibold text-main-200"> not </span>
           be uploaded.
         </p>
       </div>

@@ -33,9 +33,9 @@ export default function Dropzone({ onChange, disabled }) {
       </div>
     );
   };
-  let className = 'border-main-mid bg-gray-light';
+  let className = 'border-main-200 bg-gray-100';
   if (disabled) {
-    className = 'bg-gray-light border-gray-mid';
+    className = 'bg-gray-100 border-gray-400';
   }
 
   return (

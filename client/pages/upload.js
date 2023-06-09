@@ -16,7 +16,7 @@ export default function Upload() {
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Upload
           {' '}
-          <span className="text-main-mid">your data</span>
+          <span className="text-main-200">your data</span>
         </h1>
         <Uploader />
 

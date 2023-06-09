@@ -52,7 +52,7 @@ replacements = {
 }
 
 for file in files:
-    replace_colors(files, replacements)
+    replace_colors(file, replacements)
 
 
 

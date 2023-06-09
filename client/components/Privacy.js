@@ -3,7 +3,7 @@ import { Link } from './util';
 
 function Privacy() {
   return (
-    <div className="p-5 text-gray-dark">
+    <div className="p-5 text-gray-800">
       <h1 className="py-3 text-3xl font-bold">Privacy</h1>
       <h3 className="py-3 text-xl">Cookies</h3>
       <p>

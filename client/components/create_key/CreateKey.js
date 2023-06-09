@@ -7,7 +7,7 @@ import AddPublicKey from './AddPublicKey';
 
 function Card({ children }) {
   return (
-    <div className="flex items-stretch justify-center w-full border-2 rounded-xl h-80 bg-gray-light border-main-mid sm:h-64">
+    <div className="flex items-stretch justify-center w-full border-2 rounded-xl h-80 bg-gray-100 border-main-200 sm:h-64">
       {children}
     </div>
   );
@@ -43,7 +43,7 @@ export default function CreateKey({ isOpen }) {
               />
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
                 Add a
-                <span className="text-main-mid"> new </span>
+                <span className="text-main-200"> new </span>
                 keypair
               </h2>
             </Disclosure.Button>
