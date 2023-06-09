@@ -51,8 +51,8 @@ replacements = {
     'gray-700':'muted',
     'gray-500':'muted',
     'sky-700':'main-700',
-    'gray-200':'main-200',
-    'gray-100':'main-100',
+    'gray-200':'main-100',
+    'gray-100':'main-50',
     'emerald-700':'main-700',
     'sky-900':'main-900',
     'emerald-500':'main-500',
@@ -76,9 +76,12 @@ replacements = {
 existing = set()
 for file in files:
     existing.update(find_colors(file))
-
 for color in existing:
     print(f"'{color}':'',")
+
+
+for file in files:
+    replace_colors(file, replacements)
 
 
 
