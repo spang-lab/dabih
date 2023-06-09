@@ -7,20 +7,17 @@ module.exports = {
   ],
   theme: {
     colors: {
-      muted: '#94a3b8',
+      gray: {
+        light: '#f1f5f9',
+        mid: '#64748b',
+        dark: '#1e293b',
+      },
       danger: '#be123c',
       success: '#047857',
       main: {
-        50: '#d6f2ff',
-        100: '#c1eafe',
-        200: '#abe1fe',
-        300: '#97d6fc',
-        400: '#84c9fb',
-        500: '#649ef6',
-        600: '#4d59ec',
-        700: '#4839d3',
-        800: '#312087',
-        900: '#130b33',
+        light: '#649ef6',
+        mid: '#4839d3',
+        dark: '#312087',
       },
     },
     extend: {},
