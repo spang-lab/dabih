@@ -1,34 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Clock } from 'react-feather';
 import LoadKey from '../load_key/LoadKey';
 import CreateKey from '../create_key/CreateKey';
-import { useUsers } from '../util';
+import { Spinner, useUsers } from '../util';
 import { AdminContact } from '../branding';
 
 export default function Key() {
   const { data: session } = useSession();
   const users = useUsers();
+  const [state, setState] = useState('loading');
 
-  if (!session || !session.user) {
-    return null;
-  }
-
-  const getUserState = () => {
-    const { sub } = session.user;
-    if (!users.length) {
-      return null;
+  useEffect(() => {
+    if (!session || !session.user || !users) {
+      return;
     }
+    const { sub } = session.user;
     const user = users.find((u) => u.sub === sub);
     if (!user) {
-      return 'no_key';
+      setState('no_key');
+      return;
     }
     if (user.confirmed) {
-      return 'has_key';
+      setState('has_key');
+      return;
     }
-    return 'unconfirmed_key';
-  };
-  const state = getUserState();
+    setState('unconfirmed_key');
+  }, [session, users]);
+
+  if (state === 'loading') {
+    return (
+      <div className="flex justify-center mt-10">
+        <Spinner />
+      </div>
+    );
+  }
 
   if (state === 'unconfirmed_key') {
     return (
@@ -53,6 +59,7 @@ export default function Key() {
 
   return (
     <div>
+      {state}
       <LoadKey isVisible={state === 'has_key'} />
       <CreateKey isOpen={state === 'no_key'} />
     </div>

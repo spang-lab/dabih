@@ -5,7 +5,7 @@ import {
   base64Tobase64Url,
   pemToPkcs8,
   pkcs8ToPem,
-  PEM,
+  CONST,
 } from './crypto-util';
 
 export const isCryptoApiAvailable = () => {
@@ -19,17 +19,11 @@ export const isCryptoApiAvailable = () => {
 };
 
 export const generateKey = async () => {
-  const params = {
-    name: 'RSA-OAEP',
-    modulusLength: 2048,
-    publicExponent: new Uint8Array([1, 0, 1]),
-    hash: 'SHA-256',
-  };
   const isExportable = true;
   const keyUses = ['encrypt', 'decrypt'];
 
   const { privateKey, publicKey } = await crypto.subtle.generateKey(
-    params,
+    CONST.rsa,
     isExportable,
     keyUses,
   );
@@ -41,39 +35,41 @@ export const generateKey = async () => {
 };
 
 export const hashBlob = async (blob) => {
-  const algorithm = 'SHA-256';
   const data = await blob.arrayBuffer();
-  const buffer = await crypto.subtle.digest(algorithm, data);
+  const buffer = await crypto.subtle.digest(CONST.hash.alg, data);
   return uint8ToBase64(buffer);
 };
 
 export const hashHashes = async (hashes) => {
-  const algorithm = 'SHA-256';
   const hashSize = 32;
   const hashData = new Uint8Array(hashSize * hashes.length);
   hashes.map(base64ToUint8).forEach((array, i) => {
     hashData.set(array, i * hashSize);
   });
-  const buffer = await crypto.subtle.digest(algorithm, hashData);
+  const buffer = await crypto.subtle.digest(CONST.hash.alg, hashData);
   return uint8ToBase64(buffer);
 };
 
 export const hashKey = async (publicKey) => {
   const spki = await crypto.subtle.exportKey('spki', publicKey);
-  const buffer = await crypto.subtle.digest('SHA-256', spki);
+  const buffer = await crypto.subtle.digest(CONST.hash.alg, spki);
   return uint8ToBase64(buffer);
 };
 
 export const decryptKey = async (privateKey, encryptedKey) => {
   const encrypted = base64ToUint8(encryptedKey);
 
-  const algorithm = { name: 'RSA-OAEP' };
-  const decrypted = await crypto.subtle.decrypt(algorithm, privateKey, encrypted);
+  const algorithm = { name: CONST.rsa.name };
+  const decrypted = await crypto.subtle.decrypt(
+    algorithm,
+    privateKey,
+    encrypted,
+  );
 
   const key = await crypto.subtle.importKey(
     'raw',
     decrypted,
-    { name: 'AES-CBC' },
+    { name: CONST.aes.name },
     true,
     ['decrypt'],
   );
@@ -86,7 +82,7 @@ export const decryptChunk = async (aesKey, iv, chunk) => {
   const buffer = await chunk.arrayBuffer();
   return crypto.subtle.decrypt(
     {
-      name: 'AES-CBC',
+      name: CONST.aes.name,
       iv: rawIv,
     },
     aesKey,
@@ -99,8 +95,8 @@ const loadPrivateKey = async (keyData) => {
     'pkcs8',
     keyData,
     {
-      name: 'RSA-OAEP',
-      hash: 'SHA-256',
+      name: CONST.rsa.name,
+      hash: CONST.rsa.hash,
     },
     true,
     ['decrypt'],
@@ -151,8 +147,8 @@ const importOpenSSHPubKey = async (text) => {
     'jwk',
     key,
     {
-      name: 'RSA-OAEP',
-      hash: 'SHA-256',
+      name: CONST.rsa.name,
+      hash: CONST.rsa.hash,
     },
     true,
     ['encrypt'],
@@ -186,7 +182,7 @@ export const importPrivateKey = async (keyData, format = 'uint8array') => {
     const pkcs8 = base64ToUint8(keyData);
     return loadPrivateKey(pkcs8);
   }
-  if (format === 'pem' && keyData.startsWith(PEM.pkcs8Header)) {
+  if (format === 'pem' && keyData.startsWith(CONST.pkcs8Header)) {
     const pkcs8 = pemToPkcs8(keyData);
     return loadPrivateKey(pkcs8);
   }

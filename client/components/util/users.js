@@ -3,7 +3,7 @@ import { useApi } from '../api';
 
 export default function useUsers() {
   const api = useApi();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(null);
   useEffect(() => {
     const fetchUsers = async () => {
       if (!api.isReady()) {

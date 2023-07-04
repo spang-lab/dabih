@@ -8,5 +8,4 @@
     settings: {
         'import/resolver': 'node',
     }
-
 }

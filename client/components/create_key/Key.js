@@ -22,7 +22,8 @@ function Key({ data }, ref) {
   if (!data || !dataUrl) {
     return null;
   }
-  const hexData = [...new Uint8Array(data)].map((v) => v.toString(16).toUpperCase().padStart(2, '0'));
+  const hexData = [...new Uint8Array(data)]
+    .map((v) => v.toString(16).toUpperCase().padStart(2, '0'));
   const longRow = 32;
   const shortRow = 14;
   const longRows = 13;
@@ -50,6 +51,7 @@ function Key({ data }, ref) {
   }
 
   const getColor = (v) => {
+    // TODO fix this
     const num = parseInt(v, 16);
     if (num < 50) {
       return 'text-main-200';
