@@ -19,7 +19,7 @@
     "transform": {}
   },
   "devDependencies": {
-    "eslint": "^8.42.0",
+    "eslint": "^8.44.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-github": "^4.8.0",
     "eslint-plugin-import": "^2.27.5",
@@ -35,14 +35,14 @@
     "js-yaml": "^4.1.0",
     "koa": "^2.14.2",
     "koa-body": "^6.0.1",
-    "lru-cache": "^9.1.2",
+    "lru-cache": "^10.0.0",
     "memcached": "^2.2.2",
     "node-schedule": "^2.1.1",
     "p-limit": "^4.0.0",
-    "pg": "^8.11.0",
+    "pg": "^8.11.1",
     "pg-hstore": "^2.3.4",
     "redis": "^4.6.7",
-    "sequelize": "^6.32.0",
+    "sequelize": "^6.32.1",
     "sqlite3": "^5.1.6"
   }
 }
