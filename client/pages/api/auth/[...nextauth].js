@@ -5,11 +5,15 @@ import { getProviders } from '../../../lib';
 
 const apiUser = async (provider, accessToken) => {
   const url = `${process.env.NEXTAUTH_URL}/api/v1/token`;
-  const result = await axios.post(url, {}, {
-    headers: {
-      Authorization: `Bearer ${provider}_${accessToken}`,
+  const result = await axios.post(
+    url,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${provider}_${accessToken}`,
+      },
     },
-  });
+  );
   return result.data;
 };
 
@@ -30,7 +34,7 @@ const sessionCb = async ({ session, token }) => {
   return session;
 };
 
-export default NextAuth({
+const authHandler = NextAuth({
   session: {
     maxAge: 60 * 60,
   },
@@ -41,3 +45,6 @@ export default NextAuth({
     session: sessionCb,
   },
 });
+export default async function handler(...params) {
+  await authHandler(...params);
+}

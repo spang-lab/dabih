@@ -1,9 +1,7 @@
 import GitHubProvider from 'next-auth/providers/github';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 import GoogleProvider from 'next-auth/providers/google';
-import CredentialsProvider from 'next-auth/providers/credentials';
-
-import ldap from 'ldapjs';
+import UniRegensburgProvider from './ur-auth';
 
 export function SpangLabProvider(options) {
   const { clientId, clientSecret } = options;
@@ -17,7 +15,8 @@ export function SpangLabProvider(options) {
     id: 'acrux',
     name: 'Spang Lab Acrux',
     type: 'oauth',
-    wellKnown: 'https://auth.spang-lab.de/oidc/.well-known/openid-configuration',
+    wellKnown:
+      'https://auth.spang-lab.de/oidc/.well-known/openid-configuration',
     endSession: 'https://auth.spang-lab.de/oidc/session/end',
     authorization: {
       params: {
@@ -46,39 +45,6 @@ export function SpangLabProvider(options) {
   return provider;
 }
 
-export function LdapProvider(options) {
-  const client = ldap.createClient({
-    url: process.env.LDAP_URI,
-  })
-  const provider = CredentialsProvider({
-    name: "LDAP", 
-    credentials: {
-        username: { label: "DN", type: "text", placeholder: "" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, req) {
-        return new Promise((resolve, reject) => {
-          client.bind(credentials.username, credentials.password, (error) => {
-            if (error) {
-              console.error("Failed")
-              reject()
-            } else {
-              console.log("Logged in")
-              resolve({
-                username: credentials.username,
-                password: credentials.password,
-              })
-            }
-          })
-        })
-
-  })
-  return provider
-}
-
-
-
-
 const isConfigured = (provider) => {
   if (!provider || !provider.options) {
     return false;
@@ -89,6 +55,9 @@ const isConfigured = (provider) => {
 
 export function getProviders() {
   const providers = [
+    UniRegensburgProvider({
+      enabled: process.env.UR_AUTH,
+    }),
     SpangLabProvider({
       clientId: process.env.SPANGLAB_ID,
       clientSecret: process.env.SPANGLAB_SECRET,

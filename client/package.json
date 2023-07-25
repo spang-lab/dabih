@@ -13,9 +13,11 @@
     "@headlessui/react": "^1.7.15",
     "axios": "^1.4.0",
     "cls-hooked": "^4.2.2",
+    "ldapjs": "^3.0.4",
     "next": "13.4.12",
     "next-auth": "4.22.3",
     "p-limit": "^4.0.0",
+    "pino": "^8.14.1",
     "qr-scanner": "github:nimiq/qr-scanner#pull/191/head",
     "qrcode": "^1.5.3",
     "react": "18.2.0",
@@ -42,5 +44,12 @@
     "next-auth": {
       "next": "13.4.12"
     }
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false,
+    "net": false,
+    "tls": false
   }
 }
