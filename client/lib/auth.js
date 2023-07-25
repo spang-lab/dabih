@@ -1,6 +1,9 @@
 import GitHubProvider from 'next-auth/providers/github';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 import GoogleProvider from 'next-auth/providers/google';
+import CredentialsProvider from 'next-auth/providers/credentials';
+
+import ldap from 'ldapjs';
 
 export function SpangLabProvider(options) {
   const { clientId, clientSecret } = options;
@@ -42,6 +45,39 @@ export function SpangLabProvider(options) {
   };
   return provider;
 }
+
+export function LdapProvider(options) {
+  const client = ldap.createClient({
+    url: process.env.LDAP_URI,
+  })
+  const provider = CredentialsProvider({
+    name: "LDAP", 
+    credentials: {
+        username: { label: "DN", type: "text", placeholder: "" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials, req) {
+        return new Promise((resolve, reject) => {
+          client.bind(credentials.username, credentials.password, (error) => {
+            if (error) {
+              console.error("Failed")
+              reject()
+            } else {
+              console.log("Logged in")
+              resolve({
+                username: credentials.username,
+                password: credentials.password,
+              })
+            }
+          })
+        })
+
+  })
+  return provider
+}
+
+
+
 
 const isConfigured = (provider) => {
   if (!provider || !provider.options) {

@@ -1,7 +1,5 @@
 import { getConfig } from '../util/index.js';
-import {
-  initLocal,
-} from './backends/index.js';
+import { initLocal } from './backends/index.js';
 
 let storageProvider = null;
 

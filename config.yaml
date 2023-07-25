@@ -1,4 +1,3 @@
-
 server:
   port: 8088
 
@@ -16,10 +15,9 @@ ephemeral:
 
 database:
   dialect: sqlite
-  logging: false 
+  logging: false
   storage: ./data/dabih.sqlite
 
 storage:
   backend: local
   path: ./data
-
