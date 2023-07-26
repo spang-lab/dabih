@@ -35,6 +35,7 @@
     "js-yaml": "^4.1.0",
     "koa": "^2.14.2",
     "koa-body": "^6.0.1",
+    "ldapjs": "^3.0.4",
     "lru-cache": "^10.0.0",
     "memcached": "^2.2.2",
     "node-schedule": "^2.1.1",

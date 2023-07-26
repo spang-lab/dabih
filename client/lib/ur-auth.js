@@ -1,11 +1,8 @@
-import CredentialsProvider from 'next-auth/providers/credentials';
-import ldap from 'ldapjs';
+import CredentialsProvider from "next-auth/providers/credentials";
+import ldap from "ldapjs";
 
-import pino from 'pino';
-
-async function connect() {
-  const logger = pino();
-  const url = 'ldaps://ldapclient.uni-regensburg.de:636';
+function urClient() {
+  const url = "ldaps://ldapclient.uni-regensburg.de:636";
   const caCert = `
 -----BEGIN CERTIFICATE-----
 MIIFPDCCBCSgAwIBAgIkAhwR6YFlF5i6vWuka+z6WfC6a4nUyIhzeLOpOYbGAgIc
@@ -41,7 +38,7 @@ T1TPeacy0cS641pS4TFBK+vRFJzKIgl0LA/aAcNj33lw5xudUZGof4GNTfludGxP
 
   const tlsOptions = {
     ca: caCert,
-    host: 'ldapclient.uni-regensburg.de',
+    host: "ldapclient.uni-regensburg.de",
     reconnect: true,
     rejectUnauthorized: false,
   };
@@ -49,16 +46,14 @@ T1TPeacy0cS641pS4TFBK+vRFJzKIgl0LA/aAcNj33lw5xudUZGof4GNTfludGxP
   const client = ldap.createClient({
     url,
     tlsOptions,
-    log: logger,
   });
   return client;
 }
 
-export async function bind(client, username = '', password = '') {
+export async function bind(client, username = "", password = "") {
   return new Promise((resolve, reject) => {
     client.bind(username, password, (error) => {
       if (error) {
-        console.log(error);
         reject(error);
       } else {
         resolve({
@@ -71,30 +66,29 @@ export async function bind(client, username = '', password = '') {
 }
 
 export async function findUser(client, uid) {
-  await bind(client, '', '');
+  await bind(client, "", "");
   const results = [];
   return new Promise((resolve, reject) => {
     client.search(
-      'c=de',
+      "c=de",
       {
         filter: `cn=${uid}`,
-        scope: 'sub',
-        attributes: ['dn', 'cn'],
+        scope: "sub",
+        attributes: ["dn", "cn"],
       },
       (error, emitter) => {
         if (error) {
           reject(error);
           return;
         }
-        emitter.on('error', (err) => {
-          console.log(err);
+        emitter.on("error", (err) => {
           reject(err);
         });
-        emitter.on('searchEntry', (entry) => {
+        emitter.on("searchEntry", (entry) => {
           results.push(entry.pojo);
         });
-        emitter.on('end', () => resolve(results));
-      },
+        emitter.on("end", () => resolve(results));
+      }
     );
   });
 }
@@ -104,14 +98,16 @@ export default function UniRegensburgProvider({ enabled }) {
     return null;
   }
   const provider = CredentialsProvider({
-    name: 'LDAP',
+    name: "Uni Regensburg",
+    id: "ur",
     credentials: {
-      uid: { label: 'RZ Account', type: 'text', placeholder: '' },
-      password: { label: 'Password', type: 'password' },
+      uid: { label: "RZ Account", type: "text", placeholder: "" },
+      password: { label: "Password", type: "password" },
     },
     async authorize(credentials, _req) {
-      const client = await connect();
-      const results = await findUser(client, credentials.uid);
+      const { uid, password } = credentials;
+      const client = urClient();
+      const results = await findUser(client, uid);
       if (results.length === 0) {
         return null;
       }
@@ -119,13 +115,19 @@ export default function UniRegensburgProvider({ enabled }) {
       const dn = user.objectName;
 
       return new Promise((resolve, reject) => {
-        client.bind(dn, credentials.password, (error) => {
+        client.bind(dn, password, (error) => {
           if (error) {
             reject();
           } else {
-            resolve({
+            const payload = {
               dn,
-              password: credentials.password,
+              password,
+            };
+            const token = Buffer.from(JSON.stringify(payload)).toString(
+              "base64"
+            );
+            resolve({
+              access_token: token,
             });
           }
         });

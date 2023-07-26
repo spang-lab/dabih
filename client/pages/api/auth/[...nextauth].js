@@ -17,16 +17,27 @@ const apiUser = async (provider, accessToken) => {
   return result.data;
 };
 
-const jwt = async ({ token, account }) => {
+const jwt = async ({ token, account, user }) => {
   if (account) {
     token.provider = account.provider;
     token.accessToken = account.access_token;
-    token.user = await apiUser(account.provider, account.access_token);
+    if (user && !token.accessToken) {
+      token.accessToken = user.access_token;
+    }
+    try {
+      token.user = await apiUser(token.provider, token.accessToken);
+    } catch (err) {
+      const message = err.response.data || err.message;
+      token.error = message;
+    }
   }
 
   return token;
 };
 const sessionCb = async ({ session, token }) => {
+  if (token.error) {
+    return { error: token.error };
+  }
   // Send properties to the client, like an access_token and user id from a provider.
   session.accessToken = token.accessToken;
   session.provider = token.provider;
@@ -43,6 +54,9 @@ const authHandler = NextAuth({
   callbacks: {
     jwt,
     session: sessionCb,
+  },
+  pages: {
+    error: '/auth/error',
   },
 });
 export default async function handler(...params) {

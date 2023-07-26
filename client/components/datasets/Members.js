@@ -15,6 +15,12 @@ const resolveMembers = (users, mems) => {
 
   const members = [];
   const addable = [];
+  if (!users) {
+    return {
+      members,
+      addable,
+    };
+  }
 
   users.forEach((u) => {
     const member = memberIndex[u.sub];
@@ -55,7 +61,7 @@ export default function Members({ data }) {
             <Disclosure.Button className="flex w-full px-4 my-1 text-lg font-bold text-main-300 focus:outline-none focus-visible:ring focus-visible:ring-gray-1000 focus-visible:ring-opacity-75">
               <ChevronRight
                 size={24}
-                className={`${open ? 'rotate-90 transform' : ''}`}
+                className={open ? 'rotate-90 transform' : ''}
               />
               <Users className="ml-3" size={20} />
               <span className="mx-1 underline-offset-2 hover:underline">
