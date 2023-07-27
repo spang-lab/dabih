@@ -4,6 +4,7 @@ import { useApi } from '../api';
 import TokenModal from './TokenModal';
 import UploadModal from './UploadModal';
 import { SmallButton } from '../util';
+import Token from './Token';
 
 function Tokens() {
   const api = useApi();
@@ -49,11 +50,15 @@ function Tokens() {
       {tokens.map((t) => (
         <Token data={t} key={t.token} onDelete={removeToken} />
       ))}
-      <SmallButton onClick={() => generateToken('api')}>
+      <button
+        className="text-sm rounded text-gray-100 bg-main-200 px-2 py-1"
+        type="button"
+        onClick={() => generateToken('api')}
+      >
         <Plus size={24} className="inline-block" />
         {' '}
         Generate an API Token
-      </SmallButton>
+      </button>
       <SmallButton className="ml-3" onClick={() => generateToken('upload')}>
         <Plus size={24} className="inline-block" />
         {' '}

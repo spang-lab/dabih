@@ -24,18 +24,6 @@ export function BigButton(props) {
   );
 }
 
-export function Button({ onClick, children, className }) {
-  const classes = `
-    px-4 py-2 text-lg rounded-lg
-    focus:outline-none 
-    ${className}`;
-  return (
-    <button type="button" className={classes} onClick={onClick}>
-      {children}
-    </button>
-  );
-}
-
 export function MutedButton({ onClick, children, className }) {
   const classes = `
     px-3 py-2 rounded

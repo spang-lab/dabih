@@ -5,8 +5,14 @@ export default function LocalDate({ value, showTime = true }) {
     return null;
   }
   const locale = process.env.LOCALE || 'de-DE';
-  const dateString = value.replace(/\s\+/, '+');
-  const date = new Date(dateString);
+  let date;
+  if (typeof value === 'number') {
+    date = new Date(value);
+  }
+  if (typeof value === 'string') {
+    const dateString = value.replace(/\s\+/, '+');
+    date = new Date(dateString);
+  }
   if (showTime) {
     return (
       <span>

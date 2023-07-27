@@ -1,7 +1,7 @@
-import GitHubProvider from 'next-auth/providers/github';
-import AzureADProvider from 'next-auth/providers/azure-ad';
-import GoogleProvider from 'next-auth/providers/google';
-import UniRegensburgProvider from './ur-auth';
+import GitHubProvider from "next-auth/providers/github";
+import AzureADProvider from "next-auth/providers/azure-ad";
+import GoogleProvider from "next-auth/providers/google";
+import UniRegensburgProvider from "./ur-auth";
 
 export function SpangLabProvider(options) {
   const { clientId, clientSecret } = options;
@@ -12,33 +12,33 @@ export function SpangLabProvider(options) {
   const provider = {
     clientId,
     clientSecret,
-    id: 'acrux',
-    name: 'Spang Lab Acrux',
-    type: 'oauth',
+    id: "acrux",
+    name: "Spang Lab Acrux",
+    type: "oauth",
     wellKnown:
-      'https://auth.spang-lab.de/oidc/.well-known/openid-configuration',
-    endSession: 'https://auth.spang-lab.de/oidc/session/end',
+      "https://auth.spang-lab.de/oidc/.well-known/openid-configuration",
+    endSession: "https://auth.spang-lab.de/oidc/session/end",
     authorization: {
       params: {
-        scope: 'openid profile grouplist',
+        scope: "openid profile grouplist",
       },
     },
     idToken: true,
-    checks: ['pkce', 'state'],
+    checks: ["pkce", "state"],
     style: {
-      logo: 'images/spang-lab-logo-32.png',
-      logoDark: 'images/spang-lab-logo-32.png',
-      bg: '#fff',
-      bgDark: '#000',
-      text: '#000',
-      textDark: '#fff',
+      logo: "images/spang-lab-logo-32.png",
+      logoDark: "images/spang-lab-logo-32.png",
+      bg: "#fff",
+      bgDark: "#000",
+      text: "#000",
+      textDark: "#fff",
     },
     options,
     profile(profile) {
       return {
         id: profile.sub,
         name: profile.name,
-        image: '',
+        image: "",
       };
     },
   };
