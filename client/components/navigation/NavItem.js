@@ -8,11 +8,11 @@ export default function NavItem(props) {
   if (state === 'complete') {
     return (
       <Link href={href}>
-        <div className="relative flex items-center text-blue">
-          <div className="flex items-center justify-center w-12 h-12 py-3 border-2 rounded-full border-blue">
+        <div className="relative flex items-center text-green">
+          <div className="flex items-center justify-center w-12 h-12 py-3 border-2 rounded-full border-green">
             {children}
           </div>
-          <div className="absolute top-0 w-32 mt-16 -ml-10 text-xs font-medium text-center uppercase text-blue">
+          <div className="absolute top-0 w-32 mt-16 -ml-10 text-xs font-medium text-center uppercase">
             {label}
           </div>
         </div>

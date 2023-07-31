@@ -1,79 +1,133 @@
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  UserPlus,
+  Key,
+  UploadCloud,
+  Share2,
+  Home,
+  User,
+  LogOut,
+  Settings,
+} from 'react-feather';
 import Image from 'next/image';
-import { Disclosure } from '@headlessui/react';
-import { Menu as MenuIcon, X as XIcon } from 'react-feather';
-import { useSession } from 'next-auth/react';
-import NavLink from './NavLink';
-import User from './User';
+import { signOut, useSession, signIn } from 'next-auth/react';
+import { storage } from '../../lib';
+
+import NavItem from './NavItem';
+import NavLine from './NavLine';
 
 export default function Header() {
-  const links = [
-    { href: '/', label: 'Home' },
-    { href: '/docs', label: 'Documentation' },
-    { href: '/contact', label: 'Contact' },
-  ];
-
+  const router = useRouter();
   const { data: session } = useSession();
   const user = session ? session.user : null;
-  if (user) {
-    links.push({ href: '/upload', label: 'Upload' });
-    links.push({ href: '/manage', label: 'Manage' });
-  }
+  const [items, setItems] = useState({});
+  const key = storage.useKey();
+
+  const checkState = useCallback(async () => {
+    if (session === undefined || key === undefined) {
+      return;
+    }
+
+    const getKeyState = () => {
+      if (key && user) return 'complete';
+      if (user) return 'enabled';
+      return 'disabled';
+    };
+
+    const state = {
+      start: 'complete',
+      account: user ? 'complete' : 'enabled',
+      key: getKeyState(),
+      upload: user && key ? 'enabled' : 'disabled',
+      manage: user && key ? 'enabled' : 'disabled',
+      profile: user ? 'enabled' : 'disabled',
+    };
+    const path = router.asPath.split('/')[1] || 'start';
+
+    const current = state[path];
+    if (current === 'disabled') {
+      router.push('/');
+    }
+    if (current === 'complete') {
+      if (path === 'account') {
+        router.push('/key');
+      }
+      if (path === 'key') {
+        router.push('/manage');
+      }
+    }
+
+    state[path] = 'active';
+    setItems(state);
+  }, [router, key, session, user]);
+  useEffect(() => {
+    checkState();
+  }, [checkState]);
+
+  const getSignIn = () => {
+    if (user) {
+      return (
+        <>
+          <NavLine state={items.profile} />
+          <button onClick={() => signOut()} type="button">
+            <NavItem href="" state="enabled" label="Sign Out">
+              <LogOut size={24} />
+            </NavItem>
+          </button>
+        </>
+      );
+    }
+    return (
+      <>
+        <NavLine state={items.profile} />
+        <button onClick={() => signIn()} type="button">
+          <NavItem href="" state="enabled" label="Sign In">
+            <User size={24} />
+          </NavItem>
+        </button>
+      </>
+    );
+  };
 
   return (
-    <Disclosure as="nav" className="bg-gray-700">
-      {({ open }) => (
-        <>
-          <div className="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div className="relative flex items-center justify-between h-16">
-              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:text-white hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                  <span className="sr-only">Open main menu</span>
-                  {open ? (
-                    <XIcon className="block w-6 h-6" aria-hidden="true" />
-                  ) : (
-                    <MenuIcon className="block w-6 h-6" aria-hidden="true" />
-                  )}
-                </Disclosure.Button>
-              </div>
-              <div className="flex items-center justify-start flex-1 pl-12 sm:items-stretch sm:pl-0">
-                <div className="flex items-center flex-shrink-0">
-                  <Image
-                    className="block w-auto h-10 rounded-full"
-                    src="/images/dabih-logo.png"
-                    width={40}
-                    height={40}
-                    alt="Dabih"
-                  />
-                  <span className="px-3 text-xl text-white">Dabih</span>
-                </div>
-                <div className="hidden sm:block sm:ml-6">
-                  <div className="flex space-x-4">
-                    {links.map((item) => (
-                      <NavLink key={item.label} href={item.href}>
-                        {item.label}
-                      </NavLink>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <User />
-              </div>
-            </div>
-          </div>
-
-          <Disclosure.Panel className="sm:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {links.map((item) => (
-                <NavLink block key={item.label} href={item.href}>
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-          </Disclosure.Panel>
-        </>
-      )}
-    </Disclosure>
+    <nav className="bg-blue">
+      <div className="max-w-7xl mx-auto flex items-center py-2">
+        <NavItem href="/" state="enabled" label="Dabih">
+          <Image
+            className="block w-auto h-10 rounded-full"
+            src="/images/dabih-logo.png"
+            width={40}
+            height={40}
+            alt="Dabih"
+          />
+        </NavItem>
+        <NavLine />
+        <NavItem href="/" state={items.start} label="Home">
+          <Home size={24} />
+        </NavItem>
+        <NavLine state={items.account} />
+        <NavItem href="/account" state={items.account} label="Account">
+          <UserPlus size={24} />
+        </NavItem>
+        <NavLine state={items.key} />
+        <NavItem href="/key" state={items.key} label="Key">
+          <Key size={24} />
+        </NavItem>
+        <NavLine state={items.upload} />
+        <NavItem href="/upload" state={items.upload} label="Upload">
+          <UploadCloud size={24} />
+        </NavItem>
+        <NavLine state={items.manage} />
+        <NavItem href="/manage" state={items.manage} label="Manage">
+          <Share2 size={24} />
+        </NavItem>
+        <NavLine state={items.profile} />
+        <NavItem href="/profile" state={items.profile} label="Settings">
+          <Settings size={24} />
+        </NavItem>
+        {getSignIn()}
+      </div>
+    </nav>
   );
 }

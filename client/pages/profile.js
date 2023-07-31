@@ -1,3 +1,3 @@
-export default function Profile() {
-  return 'Profile';
-}
+import { Profile } from "../components";
+
+export default Profile;

@@ -32,25 +32,11 @@ function CloseButton({ onClick }) {
 function ErrorMessage({ text, time, onClick }) {
   return (
     <div
-      className="relative p-3 m-3 text-base text-red bg-red-100 rounded-lg"
+      className="relative p-3 m-3 text-base text-white bg-red/80 rounded-lg"
       role="alert"
     >
-      <span className="px-3 text-gray-400">{time}</span>
+      <span className="px-3">{time}</span>
       <strong className="px-2">Error:</strong>
-      {text}
-      <CloseButton onClick={onClick} />
-    </div>
-  );
-}
-
-function WarningMessage({ text, time, onClick }) {
-  return (
-    <div
-      className="relative p-3 m-3 text-base text-blue bg-yellow-100 rounded-lg"
-      role="alert"
-    >
-      <span className="px-3 text-gray-400">{time}</span>
-      <strong className="px-2">Warning:</strong>
       {text}
       <CloseButton onClick={onClick} />
     </div>
@@ -60,10 +46,10 @@ function WarningMessage({ text, time, onClick }) {
 function SuccessMessage({ text, time, onClick }) {
   return (
     <div
-      className="relative p-3 m-3 text-base text-green bg-green-100 rounded-lg"
+      className="relative p-3 m-3 text-base text-white bg-green/80 rounded-lg"
       role="alert"
     >
-      <span className="px-3 text-gray-400">{time}</span>
+      <span className="px-3">{time}</span>
       {text}
       <CloseButton onClick={onClick} />
     </div>
@@ -73,10 +59,10 @@ function SuccessMessage({ text, time, onClick }) {
 function BaseMessage({ text, time, onClick }) {
   return (
     <div
-      className="relative p-3 m-3 text-base text-gray-800 bg-gray-100 rounded-lg"
+      className="relative p-3 m-3 text-base text-white bg-gray-800 rounded-lg"
       role="alert"
     >
-      <span className="px-3 text-gray-400">{time}</span>
+      <span className="px-3">{time}</span>
       {text}
       <CloseButton onClick={onClick} />
     </div>
@@ -93,9 +79,7 @@ export default function Message(props) {
     switch (type) {
       case 'error':
         return <ErrorMessage text={text} time={time} onClick={onClick} />;
-      case 'warning':
-        return <WarningMessage text={text} time={time} onClick={onClick} />;
-      case 'green':
+      case 'success':
         return <SuccessMessage text={text} time={time} onClick={onClick} />;
       default:
         return <BaseMessage text={text} time={time} onClick={onClick} />;

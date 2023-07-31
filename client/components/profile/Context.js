@@ -1,8 +1,10 @@
 import React, {
   useEffect,
   useMemo,
+  useState,
   createContext,
   useContext,
+  useCallback,
 } from 'react';
 import { useApi } from '../api';
 
@@ -10,15 +12,50 @@ const ProfileContext = createContext();
 
 export function ProfileWrapper({ children }) {
   const api = useApi();
+  const [tokens, setTokens] = useState([]);
+  const [token, setToken] = useState(null);
+
+  const fetchTokens = useCallback(async () => {
+    if (!api.isReady()) {
+      return;
+    }
+    const result = await api.listTokens();
+    if (result.error) {
+      return;
+    }
+    setTokens(result);
+  }, [api]);
 
   useEffect(() => {
-  }, []);
+    fetchTokens();
+  }, [fetchTokens, token]);
+
+  const generateToken = useCallback(
+    async (type) => {
+      const result = await api.generateToken(type);
+      if (result.error) {
+        return;
+      }
+      setToken(result);
+    },
+    [api, setToken],
+  );
+
+  const removeToken = useCallback(
+    async (t) => {
+      await api.removeToken(t);
+      await fetchTokens();
+    },
+    [api, fetchTokens],
+  );
 
   const contextValue = useMemo(
     () => ({
-      tmp: 'Hello',
+      tokens,
+      generateToken,
+      removeToken,
     }),
-    [],
+    [generateToken, removeToken, tokens],
   );
 
   return (

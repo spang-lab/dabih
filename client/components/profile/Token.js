@@ -1,7 +1,6 @@
 import React from 'react';
-import {
-  Trash2, Terminal, Upload,
-} from 'react-feather';
+import { Trash2, Terminal, Upload } from 'react-feather';
+import { LocalDate, DeleteButton } from '../util';
 
 export default function Token({ data, onDelete }) {
   const {
