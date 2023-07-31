@@ -13,6 +13,7 @@ import {
 import Image from 'next/image';
 import { signOut, useSession, signIn } from 'next-auth/react';
 import { storage } from '../../lib';
+import { Link } from '../util';
 
 import NavItem from './NavItem';
 import NavLine from './NavLine';
@@ -93,15 +94,22 @@ export default function Header() {
   return (
     <nav className="bg-blue">
       <div className="max-w-7xl mx-auto flex items-center py-2">
-        <NavItem href="/" state="enabled" label="Dabih">
-          <Image
-            className="block w-auto h-10 rounded-full"
-            src="/images/dabih-logo.png"
-            width={40}
-            height={40}
-            alt="Dabih"
-          />
-        </NavItem>
+        <Link href="/">
+          <div className="relative flex flex-col items-center">
+            <div className="flex items-center justify-center w-10 h-10 py-3 rounded-full">
+              <Image
+                className="block w-auto h-10 rounded-full"
+                src="/images/dabih-logo.png"
+                width={40}
+                height={40}
+                alt="Dabih"
+              />
+            </div>
+            <div className="pt-2 text-xs text-white font-semibold text-center uppercase">
+              Dabih
+            </div>
+          </div>
+        </Link>
         <NavLine />
         <NavItem href="/" state={items.start} label="Home">
           <Home size={24} />
