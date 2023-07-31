@@ -43,12 +43,11 @@ paths = ['components', 'pages']
 files = getJSFiles(paths)
 
 replacements = {
-    'gray-light':'gray-100',
-    'gray-mid':'gray-400',
-    'gray-dark':'gray-800',
-    'main-light':'main-100',
-    'main-mid':'main-200',
-    'main-dark':'main-300',
+    'main-100':'blue-100',
+    'main-200':'blue-200',
+    'main-300':'blue-300',
+    'main-400':'blue-400',
+    'main-500':'blue-500',
 }
 
 for file in files:

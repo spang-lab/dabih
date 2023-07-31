@@ -11,26 +11,38 @@ function NavLink(props) {
   if (block) {
     if (isActive) {
       return (
-        <div className="block px-3 py-2 font-semibold rounded-md text-white bg-main-300" aria-current="page">
+        <div
+          className="block px-3 py-2 font-semibold rounded-md text-white bg-purple-500"
+          aria-current="page"
+        >
           {children}
         </div>
       );
     }
     return (
-      <Link href={href} className="block px-3 py-2 font-semibold rounded-md bg-gray-400 text-white">
+      <Link
+        href={href}
+        className="block px-3 py-2 font-semibold rounded-md bg-blue-100 text-gray-300"
+      >
         {children}
       </Link>
     );
   }
   if (isActive) {
     return (
-      <div className="px-3 py-2 font-semibold rounded-md text-white bg-main-100" aria-current="page">
+      <div
+        className="px-3 py-2 font-semibold rounded-md text-white bg-purple-500"
+        aria-current="page"
+      >
         {children}
       </div>
     );
   }
   return (
-    <Link href={href} className="px-3 py-2 font-semibold rounded-md bg-main-200 hover:text-white text-gray-200">
+    <Link
+      href={href}
+      className="px-3 py-2 font-semibold rounded-md bg-blue-100  hover:text-white text-gray-300"
+    >
       {children}
     </Link>
   );

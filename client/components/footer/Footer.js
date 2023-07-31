@@ -1,7 +1,9 @@
 import React from 'react';
-import { Link } from './util';
+import { Link } from '../util';
+import info from '../../package.json';
 
-function Footer({ version }) {
+function Footer() {
+  const { version } = info;
   return (
     <div className="p-5 text-center text-gray-400 border-t">
       <p>

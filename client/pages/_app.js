@@ -4,15 +4,10 @@ import React from 'react';
 import '../styles/globals.css';
 import { SessionProvider } from 'next-auth/react';
 import {
-  Layout,
-  MessageWrapper,
-  ApiWrapper,
+  MessageWrapper, ApiWrapper, Header, Footer,
 } from '../components';
 
-function App({
-  Component,
-  pageProps: { session, ...pageProps },
-}) {
+function App({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
       <Head>
@@ -20,13 +15,13 @@ function App({
         <meta name="description" content="Spang Lab Web Components" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout>
-        <MessageWrapper>
-          <ApiWrapper>
-            <Component {...pageProps} />
-          </ApiWrapper>
-        </MessageWrapper>
-      </Layout>
+      <Header />
+      <MessageWrapper>
+        <ApiWrapper>
+          <Component {...pageProps} />
+        </ApiWrapper>
+      </MessageWrapper>
+      <Footer />
     </SessionProvider>
   );
 }

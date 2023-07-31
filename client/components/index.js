@@ -1,4 +1,3 @@
-export { default as Layout } from './Layout';
 export { default as Contact } from './Contact';
 export { default as Privacy } from './Privacy';
 export { default as DataPolicy } from './DataPolicy';
@@ -10,6 +9,8 @@ export { default as Navigation } from './navigation/Navigation';
 export { default as Download } from './download/Download';
 export { default as Tokens } from './tokens/Tokens';
 export { default as Docs } from './docs/Docs';
+export { default as Header } from './header/Header';
+export { default as Footer } from './footer/Footer';
 export * from './branding';
 export * from './base';
 export * from './util';

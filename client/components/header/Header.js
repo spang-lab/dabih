@@ -2,13 +2,15 @@ import React from 'react';
 import Image from 'next/image';
 import { Disclosure } from '@headlessui/react';
 import { Menu as MenuIcon, X as XIcon } from 'react-feather';
-import { KeyStatus, UserButton, NavLink } from './util';
+import NavLink from './NavLink';
+import UserDropdown from './UserDropdown';
 
-export default function Header(props) {
-  const {
-    links, user, signIn, signOut,
-  } = props;
-
+export default function Header() {
+  const links = [
+    { href: '/', label: 'Home' },
+    { href: '/docs', label: 'Documentation' },
+    { href: '/contact', label: 'Contact' },
+  ];
   return (
     <Disclosure as="nav" className="bg-gray-700">
       {({ open }) => (
@@ -47,8 +49,7 @@ export default function Header(props) {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <UserButton user={user} signIn={signIn} signOut={signOut} />
-                <KeyStatus />
+                <UserDropdown />
               </div>
             </div>
           </div>
