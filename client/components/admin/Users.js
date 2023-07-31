@@ -7,8 +7,8 @@ function User({ data }) {
 
   return (
     <div className="max-w-sm p-1 m-1 border border-gray-400 rounded-lg">
-      <UserIcon className="inline-block m-2 text-main-200" size={24} />
-      <span className="text-main-200">
+      <UserIcon className="inline-block m-2 text-blue" size={24} />
+      <span className="text-blue">
         {' '}
         {sub}
         {' '}

@@ -12,7 +12,7 @@ function Documentation() {
       <div className="text-lg">
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Installing
-          <span className="text-main-200">
+          <span className="text-blue">
             {' '}
             Dabih
             {' '}
@@ -24,7 +24,7 @@ function Documentation() {
         <ul className="p-4 list-disc">
           <li className="py-1">
             Your own (sub)
-            <span className="font-semibold text-main-200">
+            <span className="font-semibold text-blue">
               {' '}
               domain.
               {' '}
@@ -63,7 +63,7 @@ function Documentation() {
           to install nodejs and the npm package manager. We recommend Node.js version 18.12.x LTS.
         </p>
         <p>
-          <span className="font-semibold text-main-200">
+          <span className="font-semibold text-blue">
             {' '}
             Do not
             {' '}

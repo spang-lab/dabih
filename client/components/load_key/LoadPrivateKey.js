@@ -81,7 +81,7 @@ export default function LoadFile() {
           or click to select the key file.
           <br />
           This file will
-          <span className="font-semibold text-main-200"> not </span>
+          <span className="font-semibold text-blue"> not </span>
           be uploaded.
         </p>
       </div>

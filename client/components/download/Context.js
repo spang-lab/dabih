@@ -69,7 +69,7 @@ export function DownloadWrapper({ children }) {
       if (!data) {
         return {
           prevChunk: chunk,
-          errors: [...errors, `Chunk ${hash} was not downloaded successfully`],
+          errors: [...errors, `Chunk ${hash} was not downloaded greenfully`],
         };
       }
       if (!prevChunk) {

@@ -52,7 +52,7 @@ export function MessageWrapper({ children }) {
   const contextValue = useMemo(() => {
     log.error = (text) => log(text, 'error');
     log.warn = (text) => log(text, 'warning');
-    log.success = (text) => log(text, 'success');
+    log.green = (text) => log(text, 'green');
     return log;
   }, [log]);
 

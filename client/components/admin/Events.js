@@ -15,12 +15,12 @@ function Event({ data }) {
     <div className="flex flex-row p-1 border-b space-x-4">
       <LocalDate value={createdAt} />
       <span>{'>>'}</span>
-      <span className="text-main-200">
+      <span className="text-blue">
         {' '}
         {mnemonic}
         {' '}
       </span>
-      <span className="font-semibold text-main-200">
+      <span className="font-semibold text-blue">
         {' '}
         {sub}
         {' '}

@@ -6,7 +6,7 @@ function BasicLink(props) {
   const {
     href, className, children, muted, target,
   } = props;
-  let aClassName = `${className} text-main-200 hover:text-gray-1000`;
+  let aClassName = `${className} text-blue hover:text-gray-1000`;
   if (muted) {
     aClassName = `${className} text-gray-400 underline hover:underline-offset-2 hover:text-gray-400`;
   }

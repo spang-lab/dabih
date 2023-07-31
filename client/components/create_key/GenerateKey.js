@@ -18,7 +18,7 @@ export default function GenerateKey() {
 
   return (
     <div className="items-start w-full">
-      <div className="px-3 pt-2 pb-10 italic font-semibold text-left text-main-200 text-md">
+      <div className="px-3 pt-2 pb-10 italic font-semibold text-left text-blue text-md">
         Recommended
       </div>
       <div className="text-center">
@@ -70,7 +70,7 @@ export default function GenerateKey() {
                     <div className="mt-2">
                       <p className="text-sm text-gray-400">
                         You
-                        <span className="font-semibold text-main-200">
+                        <span className="font-semibold text-blue">
                           {' '}
                           need
                           {' '}

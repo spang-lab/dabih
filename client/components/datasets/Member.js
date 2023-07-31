@@ -44,7 +44,7 @@ export default function Member({ data, dataset }) {
           <Switch
             checked={enabled}
             onChange={toggle}
-            className={`${enabled ? 'bg-main-200' : 'bg-gray-400'}
+            className={`${enabled ? 'bg-blue' : 'bg-gray-400'}
           relative inline-flex h-[28px] w-[52px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
           >
             <span className="sr-only">User write permission</span>
@@ -74,10 +74,10 @@ export default function Member({ data, dataset }) {
 
   return (
     <div className="flex items-center mx-auto text-sm bg-white border-b border-gray-400 space-x-4">
-      <div className="px-2 shrink-0 text-main-200 justify-self-start">
+      <div className="px-2 shrink-0 text-blue justify-self-start">
         <User size={20} />
       </div>
-      <div className="container font-semibold text-main-200 mx-auto">{name}</div>
+      <div className="container font-semibold text-blue mx-auto">{name}</div>
       {getDelete()}
       {getSwitch()}
     </div>

@@ -13,7 +13,7 @@ function Item({ children, href }) {
 
   if (router.asPath === href) {
     return (
-      <div className="py-2 font-semibold text-white bg-main-200">
+      <div className="py-2 font-semibold text-white bg-blue">
         <span className="mx-4 border-l border-white" />
         {children}
       </div>
@@ -23,7 +23,7 @@ function Item({ children, href }) {
   return (
     <Link href={href}>
       <div className="py-2">
-        <span className="mx-4 border-l border-main-200" />
+        <span className="mx-4 border-l border-blue" />
         {children}
       </div>
     </Link>

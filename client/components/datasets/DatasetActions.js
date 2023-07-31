@@ -15,11 +15,11 @@ import { MutedButton } from '../util';
 
 function ConfirmDialog(props) {
   const {
-    onConfirm, onClose, isOpen, children, title, danger,
+    onConfirm, onClose, isOpen, children, title, red,
   } = props;
-  const className = danger
-    ? 'bg-danger hover:bg-rose-600'
-    : 'bg-main-200 hover:bg-main-200';
+  const className = red
+    ? 'bg-red hover:bg-rose-600'
+    : 'bg-blue hover:bg-blue';
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -86,7 +86,7 @@ function Action({
       return 'text-gray-400';
     }
     if (active) {
-      return 'bg-main-200 text-white';
+      return 'bg-blue text-white';
     }
     return className;
   };
@@ -134,7 +134,7 @@ export default function Actions({ data }) {
         onConfirm={() => submitName()}
       >
         <p className="text-gray-400">Set a new name for the dataset</p>
-        <span className="font-semibold text-main-200">
+        <span className="font-semibold text-blue">
           {' '}
           {mnemonic}
           {' '}
@@ -157,7 +157,7 @@ export default function Actions({ data }) {
         <p className="text-gray-400">
           Are you sure you want to reencrypt the Dataset
         </p>
-        <span className="font-semibold text-main-200">
+        <span className="font-semibold text-blue">
           {' '}
           {mnemonic}
           {' '}
@@ -175,7 +175,7 @@ export default function Actions({ data }) {
         <p className="text-gray-400">
           Are you sure you want to delete the Dataset
         </p>
-        <span className="font-semibold text-main-200">
+        <span className="font-semibold text-blue">
           {' '}
           {mnemonic}
           {' '}
@@ -183,7 +183,7 @@ export default function Actions({ data }) {
       </ConfirmDialog>
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="z-0 inline-flex justify-center w-full px-2 py-1 text-sm font-extrabold border rounded text-main-200 hover:text-main-200">
+          <Menu.Button className="z-0 inline-flex justify-center w-full px-2 py-1 text-sm font-extrabold border rounded text-blue hover:text-blue">
             <Settings size={20} />
             <ChevronDown size={20} aria-hidden="true" />
           </Menu.Button>
@@ -203,7 +203,7 @@ export default function Actions({ data }) {
                 onClick={() => {
                   router.push(`/download/${mnemonic}`);
                 }}
-                className="text-main-200"
+                className="text-blue"
                 enabled
               >
                 <Download className="mx-2" size={24} />
@@ -211,7 +211,7 @@ export default function Actions({ data }) {
               </Action>
               <Action
                 onClick={() => setDialog('rename')}
-                className="text-main-200"
+                className="text-blue"
                 enabled={enabled}
               >
                 <Edit3 className="mx-2" size={24} />
@@ -223,7 +223,7 @@ export default function Actions({ data }) {
                 </span>
                 <Action
                   onClick={() => setDialog('reencrypt')}
-                  className="text-danger"
+                  className="text-red"
                   enabled={enabled}
                 >
                   <div className="relative w-6 h-6 mx-2">
@@ -234,7 +234,7 @@ export default function Actions({ data }) {
                 </Action>
                 <Action
                   onClick={() => setDialog('delete')}
-                  className="text-danger"
+                  className="text-red"
                   enabled={enabled}
                 >
                   <Trash2 className="mx-2" size={24} />

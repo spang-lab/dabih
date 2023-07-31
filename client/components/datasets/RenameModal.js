@@ -58,7 +58,7 @@ export default function DeleteModal({ children, onDelete }) {
                         onDelete();
                         setOpen(false);
                       }}
-                      className="mx-3 text-gray-100 bg-danger hover:bg-rose-600 hover:text-white"
+                      className="mx-3 text-gray-100 bg-red hover:bg-rose-600 hover:text-white"
                     >
                       Reencrypt
                     </MutedButton>

@@ -2,8 +2,9 @@ import React from 'react';
 import Image from 'next/image';
 import { Disclosure } from '@headlessui/react';
 import { Menu as MenuIcon, X as XIcon } from 'react-feather';
+import { useSession } from 'next-auth/react';
 import NavLink from './NavLink';
-import UserDropdown from './UserDropdown';
+import User from './User';
 
 export default function Header() {
   const links = [
@@ -11,6 +12,14 @@ export default function Header() {
     { href: '/docs', label: 'Documentation' },
     { href: '/contact', label: 'Contact' },
   ];
+
+  const { data: session } = useSession();
+  const user = session ? session.user : null;
+  if (user) {
+    links.push({ href: '/upload', label: 'Upload' });
+    links.push({ href: '/manage', label: 'Manage' });
+  }
+
   return (
     <Disclosure as="nav" className="bg-gray-700">
       {({ open }) => (
@@ -49,7 +58,7 @@ export default function Header() {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <UserDropdown />
+                <User />
               </div>
             </div>
           </div>

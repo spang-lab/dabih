@@ -12,7 +12,7 @@ function Action({
       return 'text-gray-400';
     }
     if (active) {
-      return 'bg-main-200 text-white';
+      return 'bg-blue text-white';
     }
     return className;
   };
@@ -40,7 +40,7 @@ export default function Actions({ data, onAction }) {
     <div className="text-right ">
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="z-0 inline-flex justify-center w-full p-2 text-sm font-extrabold text-white border rounded bg-main-200 focus-visible:ring-white focus-visible:ring-opacity-75">
+          <Menu.Button className="z-0 inline-flex justify-center w-full p-2 text-sm font-extrabold text-white border rounded bg-blue focus-visible:ring-white focus-visible:ring-opacity-75">
             Actions
             <ChevronDown className="w-5 h-5 ml-2 -mr-1" aria-hidden="true" />
           </Menu.Button>
@@ -58,7 +58,7 @@ export default function Actions({ data, onAction }) {
             <div className="px-1 py-1 ">
               <Action
                 onClick={() => onAction('delete', mnemonic)}
-                className="text-danger"
+                className="text-red"
                 enabled={!deleted}
               >
                 <Trash2 className="mx-2" size={24} />
@@ -66,7 +66,7 @@ export default function Actions({ data, onAction }) {
               </Action>
               <Action
                 onClick={() => onAction('recover', mnemonic)}
-                className="text-main-200"
+                className="text-blue"
                 enabled={!!deleted}
               >
                 <RotateCcw className="mx-2" size={24} />
@@ -78,7 +78,7 @@ export default function Actions({ data, onAction }) {
                 </span>
                 <Action
                   onClick={() => onAction('destroy', mnemonic)}
-                  className="text-danger"
+                  className="text-red"
                   enabled={!!deleted}
                 >
                   <AlertOctagon className="mx-2 font-extrabold" size={24} />

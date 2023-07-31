@@ -21,7 +21,7 @@ export default function Documentation() {
   return (
     <Docs>
       <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-        <span className="text-main-200">
+        <span className="text-blue">
           {' '}
           API
           {' '}
@@ -347,7 +347,7 @@ export default function Documentation() {
         </p>
       </ApiRoute>
       <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
-        <span className="text-main-200">
+        <span className="text-blue">
           {' '}
           Admin API
           {' '}

@@ -26,7 +26,7 @@ export default function KeyElem({ data, onConfirm, onDelete }) {
       <Switch
         checked={enabled}
         onChange={toggle}
-        className={`${enabled ? 'bg-main-200' : 'bg-gray-400'}
+        className={`${enabled ? 'bg-blue' : 'bg-gray-400'}
           relative inline-flex h-[28px] w-[52px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
       >
         <span className="sr-only">Key enabled</span>
@@ -46,7 +46,7 @@ export default function KeyElem({ data, onConfirm, onDelete }) {
     return (
       <DeleteModal onDelete={() => onDelete(id)}>
         <p className="text-gray-400">Are you sure you want to delete the key</p>
-        <span className="font-semibold text-main-200">
+        <span className="font-semibold text-blue">
           {' '}
           {name}
           {' '}
@@ -57,13 +57,13 @@ export default function KeyElem({ data, onConfirm, onDelete }) {
 
   return (
     <div className="flex items-center p-2 m-2 text-sm bg-white border border-gray-400 rounded-xl space-x-4">
-      <div className="shrink-0 text-main-200 justify-self-start">
+      <div className="shrink-0 text-blue justify-self-start">
         <Key size={40} />
       </div>
       <div className="">
         <div className="font-medium text-black">{name}</div>
         <p>
-          <span className="font-semibold text-main-200">
+          <span className="font-semibold text-blue">
             {' '}
             {sub}
             {' '}

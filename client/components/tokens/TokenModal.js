@@ -91,7 +91,7 @@ export default function TokenModal({ token, onClose, isOpen }) {
                 </div>
                 <p>
                   This token can
-                  <span className="font-semibold text-main-200">
+                  <span className="font-semibold text-blue">
                     {' '}
                     no longer be accessed
                     {' '}

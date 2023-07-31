@@ -51,7 +51,7 @@ function Tokens() {
         <Token data={t} key={t.token} onDelete={removeToken} />
       ))}
       <button
-        className="text-sm rounded text-gray-100 bg-main-200 px-2 py-1"
+        className="text-sm rounded text-gray-100 bg-blue px-2 py-1"
         type="button"
         onClick={() => generateToken('api')}
       >

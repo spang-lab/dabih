@@ -6,7 +6,7 @@ export function BigButton(props) {
   } = props;
   const classes = `
     px-8 py-4 text-2xl rounded-xl
-    text-gray-100 bg-main-200 enabled:hover:bg-main-200
+    text-gray-100 bg-blue enabled:hover:bg-blue
     enabled:hover:text-white focus:outline-none focus:ring-2
     focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     disabled:opacity-50 
@@ -40,7 +40,7 @@ export function MutedButton({ onClick, children, className }) {
 export function ColoredButton({ onClick, children, className }) {
   const classes = `
     px-3 py-2 text-lg rounded
-    text-gray-100 bg-main-200 hover:bg-main-200
+    text-gray-100 bg-blue hover:bg-blue
     hover:text-white focus:outline-none focus:ring-2
     focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     ${className}`;
@@ -54,7 +54,7 @@ export function ColoredButton({ onClick, children, className }) {
 export function SmallButton({ onClick, children, className }) {
   const classes = `
     px-2 py-1 text-sm rounded
-    text-gray-100 bg-main-200 hover:bg-main-200
+    text-gray-100 bg-blue hover:bg-blue
     focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     ${className}`;
   return (
@@ -67,7 +67,7 @@ export function SmallButton({ onClick, children, className }) {
 export function DeleteButton({ onClick, children, className }) {
   const classes = `
     px-2 py-1 text-sm rounded
-    text-gray-100 bg-danger hover:bg-rose-600
+    text-gray-100 bg-red hover:bg-rose-600
     hover:text-white focus:outline-none focus:ring-2
     focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     ${className}`;
@@ -86,7 +86,7 @@ export function LoginButton(props) {
       <button
         type="button"
         onClick={onClick}
-        className="px-5 py-2 rounded-full text-gray-100 bg-main-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+        className="px-5 py-2 rounded-full text-gray-100 bg-blue hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
       >
         Sign In
       </button>
@@ -104,7 +104,7 @@ export function LogoutButton(props) {
       <button
         type="button"
         onClick={onClick}
-        className="px-5 py-2 rounded-full text-gray-1000 bg-main-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+        className="px-5 py-2 rounded-full text-gray-1000 bg-blue hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
       >
         Sign out
       </button>

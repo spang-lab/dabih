@@ -58,7 +58,7 @@ export default function Members({ data }) {
       <Disclosure>
         {({ open }) => (
           <>
-            <Disclosure.Button className="flex w-full px-4 my-1 text-lg font-bold text-main-300 focus:outline-none focus-visible:ring focus-visible:ring-gray-1000 focus-visible:ring-opacity-75">
+            <Disclosure.Button className="flex w-full px-4 my-1 text-lg font-bold text-blue focus:outline-none focus-visible:ring focus-visible:ring-gray-1000 focus-visible:ring-opacity-75">
               <ChevronRight
                 size={24}
                 className={open ? 'rotate-90 transform' : ''}
@@ -67,7 +67,7 @@ export default function Members({ data }) {
               <span className="mx-1 underline-offset-2 hover:underline">
                 Members
               </span>
-              <span className="px-3 py-1 text-sm text-white rounded-full bg-main-200">
+              <span className="px-3 py-1 text-sm text-white rounded-full bg-blue">
                 {getCount()}
               </span>
             </Disclosure.Button>

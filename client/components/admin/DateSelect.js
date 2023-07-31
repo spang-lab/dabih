@@ -10,7 +10,7 @@ export default function DateSelect(props) {
     <div className="">
       <Listbox value={selectedDate} onChange={setDate}>
         <div className="relative mt-1">
-          <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:border-main-200 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+          <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:border-blue focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
             <span className="block truncate">
               <LocalDate showTime={false} value={selectedDate} />
             </span>
@@ -33,7 +33,7 @@ export default function DateSelect(props) {
                 <Listbox.Option
                   key={date}
                   className={({ active }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                    active ? 'bg-gray-100 text-main-300' : 'text-gray-800'
+                    active ? 'bg-gray-100 text-blue' : 'text-gray-800'
                   }`}
                   value={date}
                 >
@@ -47,7 +47,7 @@ export default function DateSelect(props) {
                         <LocalDate value={date} showTime={false} />
                       </span>
                       {selected ? (
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-main-200">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue">
                           <Check size={24} aria-hidden="true" />
                         </span>
                       ) : null}

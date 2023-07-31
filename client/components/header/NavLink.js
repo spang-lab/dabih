@@ -12,7 +12,7 @@ function NavLink(props) {
     if (isActive) {
       return (
         <div
-          className="block px-3 py-2 font-semibold rounded-md text-white bg-purple-500"
+          className="block px-3 py-2 font-semibold rounded-md text-white bg-purple"
           aria-current="page"
         >
           {children}
@@ -22,7 +22,7 @@ function NavLink(props) {
     return (
       <Link
         href={href}
-        className="block px-3 py-2 font-semibold rounded-md bg-blue-100 text-gray-300"
+        className="block px-3 py-2 font-semibold rounded-md bg-blue text-gray-300"
       >
         {children}
       </Link>
@@ -31,7 +31,7 @@ function NavLink(props) {
   if (isActive) {
     return (
       <div
-        className="px-3 py-2 font-semibold rounded-md text-white bg-purple-500"
+        className="px-3 py-2 font-semibold rounded-md text-white bg-purple"
         aria-current="page"
       >
         {children}
@@ -41,7 +41,7 @@ function NavLink(props) {
   return (
     <Link
       href={href}
-      className="px-3 py-2 font-semibold rounded-md bg-blue-100  hover:text-white text-gray-300"
+      className="px-3 py-2 font-semibold rounded-md bg-blue  hover:text-white text-gray-300"
     >
       {children}
     </Link>

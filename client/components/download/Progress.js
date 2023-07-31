@@ -52,7 +52,7 @@ export default function DownloadProgress(props) {
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          className="text-main-200 -rotate-90 origin-center"
+          className="text-blue -rotate-90 origin-center"
         />
         <text
           x={center}

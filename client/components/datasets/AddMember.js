@@ -8,7 +8,7 @@ function MemberOption({ option }) {
   return (
     <Combobox.Option
       className={({ active }) => `relative cursor-default select-none py-2 px-4 ${
-        active ? 'bg-main-200 text-white' : 'text-gray-800'
+        active ? 'bg-blue text-white' : 'text-gray-800'
       }`}
       value={option}
     >

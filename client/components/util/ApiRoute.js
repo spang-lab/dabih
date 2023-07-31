@@ -22,10 +22,10 @@ export default function ApiRoute({
     <div id={id} className="mt-20">
       <div className="flex flex-wrap items-center my-3 text-2xl">
         <div>
-          <span className="w-20 font-extrabold text-main-200">{method}</span>
+          <span className="w-20 font-extrabold text-blue">{method}</span>
         </div>
         <div className="grow">
-          <span className="px-2 py-1 mx-5 text-main-200 border border-main-200 rounded-lg">
+          <span className="px-2 py-1 mx-5 text-blue border border-blue rounded-lg">
             /api/v1
             {path}
           </span>

@@ -39,15 +39,15 @@ export default function Key() {
   if (state === 'unconfirmed_key') {
     return (
       <div className="py-10 text-center">
-        <Clock className="inline-block m-2 text-main-200" size={80} />
+        <Clock className="inline-block m-2 text-blue" size={80} />
         <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
           Please
-          <span className="text-main-200"> wait for an admin </span>
+          <span className="text-blue"> wait for an admin </span>
           to confirm your key
         </h2>
         <div className="text-base text-gray-400 sm:text-lg md:text-xl">
           In order to prevent misuse each new key must be
-          <span className="text-main-200"> unlocked </span>
+          <span className="text-blue"> unlocked </span>
           by a dabih admin.
           <br />
           For now please contact the admin via email:

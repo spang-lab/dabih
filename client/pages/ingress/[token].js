@@ -31,7 +31,7 @@ export default function Upload() {
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Data
           {' '}
-          <span className="text-main-200">ingress</span>
+          <span className="text-blue">ingress</span>
         </h1>
         <div className="text-base text-gray-400 sm:text-lg md:text-xl">
           This page is used to send data to someone else, you
@@ -46,7 +46,7 @@ export default function Upload() {
           <Switch
             checked={agreed}
             onChange={toggle}
-            className={`${agreed ? 'bg-main-200' : 'bg-gray-400'}
+            className={`${agreed ? 'bg-blue' : 'bg-gray-400'}
     relative inline-flex h-[28px] w-[52px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
           >
             <span className="sr-only">Key enabled</span>
@@ -58,7 +58,7 @@ export default function Upload() {
           </Switch>
           <div className="pl-3">
             I agreed to share my data with
-            <span className="font-semibold text-main-200">
+            <span className="font-semibold text-blue">
               {' '}
               {user.name}
               {' '}
@@ -74,7 +74,7 @@ export default function Upload() {
         <p className="pt-5 text-3xl text-center">
           <span className="font-bold">Note: </span>
           Uploaded data will be sent to
-          <span className="font-semibold text-main-200">
+          <span className="font-semibold text-blue">
             {' '}
             {user.name}
             {' '}

@@ -5,7 +5,7 @@ import LoadPrivateKey from './LoadPrivateKey';
 
 function Card({ children }) {
   return (
-    <div className="flex items-center justify-center w-full border-2 rounded-xl h-80 bg-gray-100 border-main-200 sm:h-64">
+    <div className="flex items-center justify-center w-full border-2 rounded-xl h-80 bg-gray-100 border-blue sm:h-64">
       {children}
     </div>
   );

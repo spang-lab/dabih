@@ -33,7 +33,7 @@ export default function Dropzone({ onChange, disabled }) {
       </div>
     );
   };
-  let className = 'border-main-200 bg-gray-100';
+  let className = 'border-blue bg-gray-100';
   if (disabled) {
     className = 'bg-gray-100 border-gray-400';
   }

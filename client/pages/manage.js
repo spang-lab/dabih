@@ -16,7 +16,7 @@ export default function Home() {
       <Container>
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
           Manage
-          <span className="text-main-200">
+          <span className="text-blue">
             {' '}
             your data
             {' '}
@@ -25,7 +25,7 @@ export default function Home() {
         <Datasets />
         <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
           Access
-          <span className="text-main-200">
+          <span className="text-blue">
             {' '}
             tokens
             {' '}

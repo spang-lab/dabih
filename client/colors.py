@@ -43,11 +43,11 @@ paths = ['components', 'pages']
 files = getJSFiles(paths)
 
 replacements = {
-    'main-100':'blue-100',
-    'main-200':'blue-200',
-    'main-300':'blue-300',
-    'main-400':'blue-400',
-    'main-500':'blue-500',
+        'blue-100': 'blue',
+        'blue-200': 'blue',
+        'blue-300': 'blue',
+        'blue-400': 'blue',
+        'blue-500': 'blue',
 }
 
 for file in files:

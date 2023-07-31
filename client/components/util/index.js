@@ -1,5 +1,4 @@
 export { default as Link } from './Link';
-export { default as KeyStatus } from './KeyStatus';
 export { default as DeleteModal } from './DeleteModal';
 export { default as Spinner } from './Spinner';
 export { default as SpinnerSmall } from './SpinnerSmall';

@@ -54,24 +54,24 @@ function Key({ data }, ref) {
     // TODO fix this
     const num = parseInt(v, 16);
     if (num < 50) {
-      return 'text-main-200';
+      return 'text-blue';
     }
     if (num < 100) {
       return 'text-gray-1000';
     }
     if (num < 150) {
-      return 'text-main-200';
+      return 'text-blue';
     }
     if (num < 200) {
-      return 'text-main-200';
+      return 'text-blue';
     }
-    return 'text-main-200';
+    return 'text-blue';
   };
 
   return (
     <div
       ref={ref}
-      className="p-4 mx-0 my-3 text-center border-2 rounded border-main-200"
+      className="p-4 mx-0 my-3 text-center border-2 rounded border-blue"
     >
       <table className="mx-auto text-lg font-semibold leading-none table-fixed">
         <tbody>
@@ -90,7 +90,7 @@ function Key({ data }, ref) {
                           alt="Private Key QR Code"
                         />
                         <br />
-                        <span className="font-semibold text-main-200">
+                        <span className="font-semibold text-blue">
                           {' '}
                           Dabih private key v1
                           {' '}

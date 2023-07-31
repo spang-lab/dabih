@@ -13,7 +13,7 @@ export default function DownloadButton(props) {
   const classes = `
     button
     px-2 py-1 text-sm font-extrabold rounded
-    bg-main-200 hover:bg-main-200
+    bg-blue hover:bg-blue
     text-white focus:outline-none focus:ring-2
     focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white
     ${className}`;

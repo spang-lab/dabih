@@ -8,11 +8,11 @@ export default function NavItem(props) {
   if (state === 'complete') {
     return (
       <Link href={href}>
-        <div className="relative flex items-center text-main-200">
-          <div className="flex items-center justify-center w-12 h-12 py-3 border-2 rounded-full border-main-200">
+        <div className="relative flex items-center text-blue">
+          <div className="flex items-center justify-center w-12 h-12 py-3 border-2 rounded-full border-blue">
             {children}
           </div>
-          <div className="absolute top-0 w-32 mt-16 -ml-10 text-xs font-medium text-center uppercase text-main-200">
+          <div className="absolute top-0 w-32 mt-16 -ml-10 text-xs font-medium text-center uppercase text-blue">
             {label}
           </div>
         </div>
@@ -22,8 +22,8 @@ export default function NavItem(props) {
   if (state === 'enabled') {
     return (
       <Link href={href}>
-        <div className="relative flex items-center text-main-200 border-main-200">
-          <div className="flex items-center justify-center w-12 h-12 py-3 border-2 rounded-full border-main-200">
+        <div className="relative flex items-center text-blue border-blue">
+          <div className="flex items-center justify-center w-12 h-12 py-3 border-2 rounded-full border-blue">
             <div className="text-center">{children}</div>
           </div>
           <div className="absolute top-0 w-32 mt-16 -ml-10 text-xs font-medium text-center uppercase">
@@ -37,10 +37,10 @@ export default function NavItem(props) {
   if (state === 'active') {
     return (
       <div className="relative flex items-center text-white">
-        <div className="flex items-center justify-center w-12 h-12 py-3 border-2 rounded-full bg-main-200 border-main-200">
+        <div className="flex items-center justify-center w-12 h-12 py-3 border-2 rounded-full bg-blue border-blue">
           <div className="text-center">{children}</div>
         </div>
-        <div className="absolute top-0 w-32 mt-16 -ml-10 text-xs font-medium text-center uppercase text-main-200">
+        <div className="absolute top-0 w-32 mt-16 -ml-10 text-xs font-medium text-center uppercase text-blue">
           {label}
         </div>
       </div>
