@@ -48,14 +48,17 @@ export function ProfileWrapper({ children }) {
     },
     [api, fetchTokens],
   );
+  const clearToken = useCallback(() => setToken(null), [setToken]);
 
   const contextValue = useMemo(
     () => ({
+      token,
       tokens,
       generateToken,
       removeToken,
+      clearToken,
     }),
-    [generateToken, removeToken, tokens],
+    [generateToken, token, removeToken, tokens, clearToken],
   );
 
   return (

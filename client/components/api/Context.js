@@ -1,26 +1,63 @@
+/* eslint-disable no-console */
 import React, {
   createContext, useCallback, useContext, useMemo,
 } from 'react';
 import { useRouter } from 'next/router';
 
 import { useSession } from 'next-auth/react';
-import createApi from './axios';
 
-import { useMessages } from '../messages';
+import axios from 'axios';
 
 const ApiContext = createContext();
 
 export function ApiWrapper({ children }) {
-  const log = useMessages();
   const router = useRouter();
   const { data: session } = useSession();
 
-  const api = useMemo(
-    () => createApi({ router, onError: log.error, session }),
-    [log, session, router],
+  const api = axios.create();
+  const getHeaders = (headers) => {
+    if (router && router.query && router.query.token) {
+      const { token } = router.query;
+      return {
+        ...headers,
+        Authorization: `Bearer dabih_${token}`,
+      };
+    }
+    if (session && session.accessToken) {
+      const { provider, accessToken } = session;
+      return {
+        ...headers,
+        Authorization: `Bearer ${provider}_${accessToken}`,
+      };
+    }
+    return headers;
+  };
+
+  const onRequest = (config) => {
+    const baseUrl = config.baseUrl || '/api/v1';
+    const { url, headers } = config;
+    const newUrl = `${baseUrl}${url}`;
+
+    return {
+      ...config,
+      headers: getHeaders(headers),
+      url: newUrl,
+    };
+  };
+  api.interceptors.request.use(onRequest, (err) => console.error(err));
+  api.interceptors.response.use(
+    (r) => r.data,
+    (error) => {
+      if (error.response.status === 401) {
+        router.push('/');
+        return { error: 'Unauthorized' };
+      }
+      const message = error.response.data || error.message;
+      console.error(message);
+      return { error: message };
+    },
   );
 
-  // User
   const listKeyUsers = useCallback(() => api.get('/key/list/user'), [api]);
   const generateToken = useCallback(
     async (type) => api.post(`/token/generate/${type}`),
@@ -31,8 +68,6 @@ export function ApiWrapper({ children }) {
     [api],
   );
   const listTokens = useCallback(async () => api.get('/token/list'), [api]);
-
-  // Upload
   const uploadStart = useCallback(
     (name) => api.post('/upload/start', { name }),
     [api],
@@ -107,10 +142,23 @@ export function ApiWrapper({ children }) {
     [api],
   );
 
+  const admin = useMemo(() => ({
+    listKeys: () => api.get('/admin/key/list'),
+    confirmKey: (keyId, confirmed) => api.post('/admin/key/confirm', { keyId, confirmed }),
+    deleteKey: (keyId) => api.post('/key/remove', { keyId }),
+    listDatasets: () => api.get('/admin/dataset/list'),
+    deleteDataset: (mnemonic) => api.post(`/dataset/${mnemonic}/remove`),
+    destroyDataset: (mnemonic) => api.post(`/dataset/${mnemonic}/destroy`),
+    recoverDataset: (mnemonic) => api.post(`/dataset/${mnemonic}/recover`),
+    listEventDates: () => api.get('/admin/events'),
+    listEvents: (date) => api.get(`/admin/events/${date}`),
+  }), [api]);
+
   const isReady = useCallback(() => session !== undefined, [session]);
 
   const contextValue = useMemo(
     () => ({
+      admin,
       isReady,
       listKeyUsers,
       generateToken,
@@ -132,6 +180,7 @@ export function ApiWrapper({ children }) {
       checkPublicKey,
     }),
     [
+      admin,
       isReady,
       listKeyUsers,
       generateToken,

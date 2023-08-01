@@ -51,8 +51,6 @@ export function MessageWrapper({ children }) {
 
   const contextValue = useMemo(() => {
     log.error = (text) => log(text, 'error');
-    log.warn = (text) => log(text, 'warning');
-    log.green = (text) => log(text, 'green');
     return log;
   }, [log]);
 

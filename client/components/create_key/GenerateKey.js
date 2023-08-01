@@ -3,7 +3,6 @@ import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Cpu } from 'react-feather';
 import Generate from './Generate';
-import styles from './Generate.module.css';
 
 import { BigButton } from '../util';
 
@@ -12,7 +11,7 @@ export default function GenerateKey() {
   const [shake, setShake] = useState('');
 
   const shakeElem = () => {
-    setShake(styles.shaking);
+    setShake('.shaking');
     setTimeout(() => setShake(''), 200);
   };
 
@@ -70,11 +69,7 @@ export default function GenerateKey() {
                     <div className="mt-2">
                       <p className="text-sm text-gray-400">
                         You
-                        <span className="font-semibold text-blue">
-                          {' '}
-                          need
-                          {' '}
-                        </span>
+                        <span className="font-semibold text-blue"> need </span>
                         to save your private key after generating it.
                       </p>
                     </div>

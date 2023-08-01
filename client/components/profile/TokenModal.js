@@ -1,14 +1,17 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Copy } from 'react-feather';
 import { MutedButton } from '../util';
-import styles from './TokenModal.module.css';
+import { useProfile } from './Context';
 
-export default function TokenModal({ token, onClose, isOpen }) {
+export default function TokenModal() {
+  const [baseUrl, setBaseUrl] = useState('');
+  useEffect(() => setBaseUrl(window.location.origin), []);
+  const { token, clearToken } = useProfile();
   const [shake, setShake] = useState('');
 
   const shakeElem = () => {
-    setShake(styles.shaking);
+    setShake('.shaking');
     setTimeout(() => setShake(''), 200);
   };
 
@@ -22,11 +25,49 @@ export default function TokenModal({ token, onClose, isOpen }) {
     if (!token) {
       return '';
     }
-    return token.data;
+    if (token.type === 'api') {
+      return token.data;
+    }
+    return `${baseUrl}/ingress/${token.data}`;
+  };
+  const getText = () => {
+    if (!token) {
+      return null;
+    }
+    if (token.type === 'api') {
+      return (
+        <>
+          <Dialog.Title
+            as="h2"
+            className="pb-3 text-2xl font-extrabold text-gray-800 leading-6"
+          >
+            New Access Token
+          </Dialog.Title>
+          <p className="pb-3">
+            This token can be used by command line tools to validate your
+            identity, By default it will expire 72 hours after your last login.
+          </p>
+        </>
+      );
+    }
+    return (
+      <>
+        <Dialog.Title
+          as="h2"
+          className="pb-3 text-2xl font-extrabold text-gray-800 leading-6"
+        >
+          New Upload Token
+        </Dialog.Title>
+        <p className="pb-3">
+          This url can be used to upload data to your account. By default it
+          will expire 72 hours after your last login.
+        </p>
+      </>
+    );
   };
 
   return (
-    <Transition appear show={!!isOpen} as={Fragment}>
+    <Transition appear show={!!token} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={shakeElem}>
         <Transition.Child
           as={Fragment}
@@ -52,19 +93,9 @@ export default function TokenModal({ token, onClose, isOpen }) {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel
-                className={`${shake} w-full max-w-lg p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all`}
+                className={`${shake} w-full max-w-2xl p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all`}
               >
-                <Dialog.Title
-                  as="h2"
-                  className="pb-3 text-2xl font-extrabold text-gray-800 leading-6"
-                >
-                  New Access Token
-                </Dialog.Title>
-                <p className="pb-3">
-                  This token can be used by command line tools to validate your
-                  identity, By default it will expire 72 hours after your last
-                  login.
-                </p>
+                {getText()}
                 <p>
                   Make sure to copy this token
                   {' '}
@@ -76,7 +107,7 @@ export default function TokenModal({ token, onClose, isOpen }) {
                 <div className="flex flex-row mt-2">
                   <div className="text-center">
                     <input
-                      size={32}
+                      size={58}
                       className="p-2 border border-gray-400 rounded"
                       type="text"
                       readOnly
@@ -99,7 +130,7 @@ export default function TokenModal({ token, onClose, isOpen }) {
                   later, copy it now.
                 </p>
                 <div className="mt-4 text-right">
-                  <MutedButton onClick={onClose}>Done</MutedButton>
+                  <MutedButton onClick={clearToken}>Done</MutedButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

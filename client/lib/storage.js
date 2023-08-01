@@ -51,8 +51,8 @@ const deleteKey = async () => {
 const useKey = () => {
   const [key, setKey] = useState(undefined);
   useEffect(() => {
-    const listener = () => {
-      setKey(hasKey());
+    const listener = async () => {
+      setKey(await readKey());
     };
     listener();
     window.addEventListener('storage', listener);
@@ -66,8 +66,8 @@ const useKey = () => {
 export default {
   isAvailable,
   storeKey,
-  useKey,
   hasKey,
+  useKey,
   readKey,
   deleteKey,
 };

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Trash2, Terminal, Upload } from 'react-feather';
-import { LocalDate, DeleteButton } from '../util';
+import { LocalDate } from '../util';
+import { useProfile } from './Context';
 
-export default function Token({ data, onDelete }) {
+export default function Token({ data }) {
+  const { removeToken } = useProfile();
   const {
     token, timestamp, lifetime, scopes, id,
   } = data;
@@ -26,21 +28,28 @@ export default function Token({ data, onDelete }) {
         {getIcon()}
       </div>
       <div>
-        <div className="text-lg font-medium text-black">
+        <div className="text-sm font-bold text-black">
           {type}
           {' '}
           Token
         </div>
-        <p>
+        <p className="text-xs">
           Expires:
           <LocalDate value={exp} />
         </p>
       </div>
-      <div className="px-3 font-mono text-lg font-semibold grow">{token}</div>
+      <div className="px-3 font-mono font-semibold grow whitespace-nowrap">
+        {token}
+      </div>
       <div className="justify-self-end">
-        <DeleteButton onClick={() => onDelete(id)}>
-          <Trash2 size={24} />
-        </DeleteButton>
+        <button
+          type="button"
+          className="py-1 px-2 bg-red rounded-md text-white inline-flex items-center"
+          onClick={() => removeToken(id)}
+        >
+          Delete
+          <Trash2 className="ml-1" size={24} />
+        </button>
       </div>
     </div>
   );

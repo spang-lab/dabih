@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useRouter } from "next/router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   UserPlus,
   Key,
@@ -9,14 +9,14 @@ import {
   User,
   LogOut,
   Settings,
-} from 'react-feather';
-import Image from 'next/image';
-import { signOut, useSession, signIn } from 'next-auth/react';
-import { storage } from '../../lib';
-import { Link } from '../util';
+} from "react-feather";
+import Image from "next/image";
+import { signOut, useSession, signIn } from "next-auth/react";
+import { storage } from "../../lib";
+import { Link } from "../util";
 
-import NavItem from './NavItem';
-import NavLine from './NavLine';
+import NavItem from "./NavItem";
+import NavLine from "./NavLine";
 
 export default function Header() {
   const router = useRouter();
@@ -31,35 +31,35 @@ export default function Header() {
     }
 
     const getKeyState = () => {
-      if (key && user) return 'complete';
-      if (user) return 'enabled';
-      return 'disabled';
+      if (key && user) return "complete";
+      if (user) return "enabled";
+      return "disabled";
     };
 
     const state = {
-      start: 'complete',
-      account: user ? 'complete' : 'enabled',
+      start: "complete",
+      account: user ? "complete" : "enabled",
       key: getKeyState(),
-      upload: user && key ? 'enabled' : 'disabled',
-      manage: user && key ? 'enabled' : 'disabled',
-      profile: user ? 'enabled' : 'disabled',
+      upload: user && key ? "enabled" : "disabled",
+      manage: user && key ? "enabled" : "disabled",
+      profile: user ? "enabled" : "disabled",
     };
-    const path = router.asPath.split('/')[1] || 'start';
+    const path = router.asPath.split("/")[1] || "start";
 
     const current = state[path];
-    if (current === 'disabled') {
-      router.push('/');
+    if (current === "disabled") {
+      router.push("/");
     }
-    if (current === 'complete') {
-      if (path === 'account') {
-        router.push('/key');
+    if (current === "complete") {
+      if (path === "account") {
+        router.push("/key");
       }
-      if (path === 'key') {
-        router.push('/manage');
+      if (path === "key") {
+        router.push("/manage");
       }
     }
 
-    state[path] = 'active';
+    state[path] = "active";
     setItems(state);
   }, [router, key, session, user]);
   useEffect(() => {
@@ -93,7 +93,7 @@ export default function Header() {
 
   return (
     <nav className="bg-blue">
-      <div className="max-w-7xl mx-auto flex items-center py-2">
+      <div className="max-w-7xl mx-auto flex items-center py-2 px-16">
         <Link href="/">
           <div className="relative flex flex-col items-center">
             <div className="flex items-center justify-center w-10 h-10 py-3 rounded-full">
