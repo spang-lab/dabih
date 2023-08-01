@@ -12,8 +12,63 @@ const ProfileContext = createContext();
 
 export function ProfileWrapper({ children }) {
   const api = useApi();
+
+  const [publicKeys, setPublicKeys] = useState([]);
   const [tokens, setTokens] = useState([]);
   const [token, setToken] = useState(null);
+  const [eventDates, setEventDates] = useState([]);
+  const [selectedDate, setDate] = useState(null);
+  const [events, setEvents] = useState([]);
+
+  const fetchEvents = useCallback(async () => {
+    if (!selectedDate || !api.isAdmin()) {
+      return;
+    }
+    const data = await api.admin.listEvents(selectedDate);
+    if (data.error) {
+      return;
+    }
+    setEvents(data);
+  }, [api, selectedDate]);
+
+  const fetchEventDates = useCallback(async () => {
+    if (!api.isAdmin()) {
+      return;
+    }
+    const data = await api.admin.listEventDates();
+    if (data.error) {
+      return;
+    }
+    setEventDates(data);
+    setDate(data[0]);
+  }, [api]);
+
+  const fetchKeys = useCallback(async () => {
+    if (!api.isAdmin()) {
+      return;
+    }
+    const data = await api.admin.listKeys();
+    if (data.error) {
+      return;
+    }
+    setPublicKeys(data);
+  }, [api]);
+
+  const confirmKey = useCallback(
+    async (keyId, confirmed) => {
+      await api.admin.confirmKey(keyId, confirmed);
+      await fetchKeys();
+    },
+    [api, fetchKeys],
+  );
+
+  const deleteKey = useCallback(
+    async (keyId) => {
+      await api.admin.deleteKey(keyId);
+      await fetchKeys();
+    },
+    [api, fetchKeys],
+  );
 
   const fetchTokens = useCallback(async () => {
     if (!api.isReady()) {
@@ -28,7 +83,13 @@ export function ProfileWrapper({ children }) {
 
   useEffect(() => {
     fetchTokens();
-  }, [fetchTokens, token]);
+    fetchKeys();
+    fetchEventDates();
+  }, [fetchTokens, fetchKeys, fetchEventDates]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [selectedDate, fetchEvents]);
 
   const generateToken = useCallback(
     async (type) => {
@@ -54,11 +115,32 @@ export function ProfileWrapper({ children }) {
     () => ({
       token,
       tokens,
+      confirmKey,
+      deleteKey,
+      publicKeys,
+      events,
+      eventDates,
+      fetchEvents,
+      selectedDate,
+      setDate,
       generateToken,
       removeToken,
       clearToken,
     }),
-    [generateToken, token, removeToken, tokens, clearToken],
+    [
+      generateToken,
+      confirmKey,
+      deleteKey,
+      publicKeys,
+      selectedDate,
+      eventDates,
+      events,
+      fetchEvents,
+      token,
+      removeToken,
+      tokens,
+      clearToken,
+    ],
   );
 
   return (

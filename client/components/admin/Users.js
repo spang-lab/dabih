@@ -1,6 +1,6 @@
 import React from 'react';
 import { User as UserIcon } from 'react-feather';
-import { useUsers } from '../util';
+import { useUsers } from '../hooks';
 
 function User({ data }) {
   const { sub, name } = data;

@@ -1,5 +1,5 @@
-import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import { useRouter } from 'next/router';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   UserPlus,
   Key,
@@ -9,59 +9,58 @@ import {
   User,
   LogOut,
   Settings,
-} from "react-feather";
-import Image from "next/image";
-import { signOut, useSession, signIn } from "next-auth/react";
-import { storage } from "../../lib";
-import { Link } from "../util";
+} from 'react-feather';
+import Image from 'next/image';
+import { signOut, signIn } from 'next-auth/react';
+import { useUser } from '../hooks';
+import { storage } from '../../lib';
+import { Link } from '../util';
 
-import NavItem from "./NavItem";
-import NavLine from "./NavLine";
+import NavItem from './NavItem';
+import NavLine from './NavLine';
 
 export default function Header() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const user = session ? session.user : null;
+  const user = useUser();
   const [items, setItems] = useState({});
   const key = storage.useKey();
 
   const checkState = useCallback(async () => {
-    if (session === undefined || key === undefined) {
+    if (user === undefined || key === undefined) {
       return;
     }
-
     const getKeyState = () => {
-      if (key && user) return "complete";
-      if (user) return "enabled";
-      return "disabled";
+      if (key && user) return 'complete';
+      if (user) return 'enabled';
+      return 'disabled';
     };
 
     const state = {
-      start: "complete",
-      account: user ? "complete" : "enabled",
+      start: 'complete',
+      account: user ? 'complete' : 'enabled',
       key: getKeyState(),
-      upload: user && key ? "enabled" : "disabled",
-      manage: user && key ? "enabled" : "disabled",
-      profile: user ? "enabled" : "disabled",
+      upload: user && key ? 'enabled' : 'disabled',
+      manage: user && key ? 'enabled' : 'disabled',
+      profile: user ? 'enabled' : 'disabled',
     };
-    const path = router.asPath.split("/")[1] || "start";
+    const path = router.asPath.split('/')[1] || 'start';
 
     const current = state[path];
-    if (current === "disabled") {
-      router.push("/");
+    if (current === 'disabled') {
+      router.push('/');
     }
-    if (current === "complete") {
-      if (path === "account") {
-        router.push("/key");
+    if (current === 'complete') {
+      if (path === 'account') {
+        router.push('/key');
       }
-      if (path === "key") {
-        router.push("/manage");
+      if (path === 'key') {
+        router.push('/manage');
       }
     }
 
-    state[path] = "active";
+    state[path] = 'active';
     setItems(state);
-  }, [router, key, session, user]);
+  }, [router, key, user]);
   useEffect(() => {
     checkState();
   }, [checkState]);

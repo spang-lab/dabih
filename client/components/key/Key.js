@@ -3,7 +3,8 @@ import { useSession } from 'next-auth/react';
 import { Clock } from 'react-feather';
 import LoadKey from '../load_key/LoadKey';
 import CreateKey from '../create_key/CreateKey';
-import { Spinner, useUsers } from '../util';
+import { Spinner } from '../util';
+import { useUsers } from '../hooks';
 import { AdminContact } from '../branding';
 
 export default function Key() {

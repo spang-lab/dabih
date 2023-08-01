@@ -1,7 +1,7 @@
 import React from 'react';
 import { Disclosure } from '@headlessui/react';
 import { Users, ChevronRight } from 'react-feather';
-import { useUsers } from '../util';
+import { useUsers } from '../hooks';
 import AddMember from './AddMember';
 import Member from './Member';
 

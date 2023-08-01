@@ -1,21 +1,20 @@
 import React from 'react';
 import { Key } from 'react-feather';
 import { Switch } from '@headlessui/react';
-import { DeleteModal } from '../util';
+import { DeleteModal, LocalDate } from '../../util';
+import { useProfile } from '../Context';
 
-const formatDate = (dbDate) => new Date(dbDate.replace(/ \+/, '+')).toLocaleString('de-DE');
-
-export default function KeyElem({ data, onConfirm, onDelete }) {
+export default function KeyElem({ data }) {
   const {
     id, name, sub, hash, confirmed, confirmedBy, createdAt, isRootKey,
   } = data;
+  const { confirmKey, deleteKey } = useProfile();
   const enabled = !!confirmed || isRootKey;
-  const date = formatDate(createdAt);
   const toggle = async () => {
     if (isRootKey) {
       return;
     }
-    await onConfirm(id, !confirmed);
+    await confirmKey(id, !confirmed);
   };
 
   const getSwitch = () => {
@@ -44,13 +43,11 @@ export default function KeyElem({ data, onConfirm, onDelete }) {
       return '';
     }
     return (
-      <DeleteModal onDelete={() => onDelete(id)}>
-        <p className="text-gray-400">Are you sure you want to delete the key</p>
-        <span className="font-semibold text-blue">
-          {' '}
-          {name}
-          {' '}
-        </span>
+      <DeleteModal
+        type="Public Key"
+        onDelete={() => deleteKey(id)}
+      >
+        {name}
       </DeleteModal>
     );
   };
@@ -69,8 +66,8 @@ export default function KeyElem({ data, onConfirm, onDelete }) {
             {' '}
           </span>
         </p>
-        <p>
-          <span className="text-gray-400">{date}</span>
+        <p className="text-gray-400 font-light">
+          <LocalDate value={createdAt} />
         </p>
         <p className="text-gray-400">{hash}</p>
       </div>

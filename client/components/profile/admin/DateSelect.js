@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronsDown, Check } from 'react-feather';
-import { LocalDate } from '../util';
+import { LocalDate } from '../../util';
+import { useProfile } from '../Context';
 
-export default function DateSelect(props) {
-  const { dates, selectedDate, setDate } = props;
+export default function DateSelect() {
+  const { eventDates, setDate, selectedDate } = useProfile();
 
   return (
     <div className="">
@@ -29,19 +30,17 @@ export default function DateSelect(props) {
             leaveTo="opacity-0"
           >
             <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white shadow-lg max-h-60 rounded-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              {dates.map((date) => (
+              {eventDates.map((date) => (
                 <Listbox.Option
                   key={date}
-                  className={({ active }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                    active ? 'bg-gray-100 text-blue' : 'text-gray-800'
+                  className={({ active }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-gray-100 text-blue' : 'text-gray-800'
                   }`}
                   value={date}
                 >
                   {({ selected }) => (
                     <>
                       <span
-                        className={`block truncate ${
-                          selected ? 'font-medium' : 'font-normal'
+                        className={`block truncate ${selected ? 'font-medium' : 'font-normal'
                         }`}
                       >
                         <LocalDate value={date} showTime={false} />

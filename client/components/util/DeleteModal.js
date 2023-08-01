@@ -1,16 +1,21 @@
 import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Trash2 } from 'react-feather';
-import { DeleteButton, MutedButton } from './Buttons';
 
-export default function DeleteModal({ children, onDelete }) {
+export default function DeleteModal({ children, onDelete, type }) {
   const [isOpen, setOpen] = useState(false);
-
   return (
     <>
-      <DeleteButton onClick={() => setOpen(true)}>
-        <Trash2 size={24} />
-      </DeleteButton>
+      <button
+        type="button"
+        className="pt-1 px-2 bg-red text-white rounded-md"
+        onClick={() => setOpen(true)}
+      >
+        <Trash2 size={24} className="flex justify-self-center" />
+        <div className="text-[10px] font-bold">
+          Delete
+        </div>
+      </button>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -30,7 +35,7 @@ export default function DeleteModal({ children, onDelete }) {
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex items-center justify-center min-h-full p-4 text-center">
+            <div className="flex items-center justify-center min-h-full p-2 text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -40,28 +45,43 @@ export default function DeleteModal({ children, onDelete }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all">
+                <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle shadow-xl transform rounded-2xl transition-all border bg-gray-50 border-gray-300">
                   <Dialog.Title
                     as="h2"
                     className="text-2xl font-extrabold text-gray-800 leading-6"
                   >
-                    Confirm Delete
+                    Confirm
+                    <span className="pl-2 text-red">
+                      Deletion
+                    </span>
                   </Dialog.Title>
-                  <div className="mt-2">{children}</div>
+                  <div className="pt-2">
+                    Are you sure you want to delete the
+                    {' '}
+                    <span className="font-semibold text-blue">{type}</span>
+                  </div>
+                  <div className="py-2 font-semibold text-blue">
+                    {children}
+                  </div>
 
-                  <div className="mt-4 text-right">
-                    <MutedButton
+                  <div className=" text-right">
+                    <button
+                      type="button"
+                      className="mx-3 px-2 py-1 text-gray-100 bg-red hover:text-white rounded-md"
                       onClick={() => {
                         onDelete();
                         setOpen(false);
                       }}
-                      className="mx-3 text-gray-100 bg-red hover:bg-rose-600 hover:text-white"
                     >
                       Delete
-                    </MutedButton>
-                    <MutedButton onClick={() => setOpen(false)}>
+                    </button>
+                    <button
+                      type="button"
+                      className="mx-3 px-2 py-1 text-white bg-gray-400 hover:text-white rounded-md"
+                      onClick={() => setOpen(false)}
+                    >
                       Cancel
-                    </MutedButton>
+                    </button>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
