@@ -104,6 +104,9 @@ export default function UniRegensburgProvider({ enabled }) {
       uid: { label: 'RZ Account', type: 'text', placeholder: '' },
       password: { label: 'Password', type: 'password' },
     },
+    style: {
+      logo: '/images/ur.png',
+    },
     async authorize(credentials, _req) {
       const { uid, password } = credentials;
       const client = urClient();

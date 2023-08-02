@@ -45,7 +45,7 @@ const sessionCb = async ({ session, token }) => {
   return session;
 };
 
-const authHandler = NextAuth({
+export const authOptions = {
   session: {
     maxAge: 60 * 60,
   },
@@ -56,9 +56,12 @@ const authHandler = NextAuth({
     session: sessionCb,
   },
   pages: {
+    signIn: '/account',
     error: '/auth/error',
   },
-});
+};
+
 export default async function handler(...params) {
+  const authHandler = NextAuth(authOptions);
   await authHandler(...params);
 }
