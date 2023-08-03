@@ -72,7 +72,7 @@ export function ApiWrapper({children}) {
 
   const contextValue = useMemo(() => ({
     admin,
-    isReady: () => session !== undefined,
+    isReady: () => session && session.user,
     isAdmin: () => {
       if (!session || !session.user) {
         return false;

@@ -1,7 +1,9 @@
 /* eslint-disable no-await-in-loop */
 import { Op } from 'sequelize';
 import { getModel, getTx } from './util.js';
-import { log, generateMnemonic } from '../../util/index.js';
+import {
+  log, generateMnemonic, getUser, userHasScope,
+} from '../../util/index.js';
 import { rsa } from '../../crypto/index.js';
 
 async function listIncomplete(ctx) {
@@ -31,6 +33,7 @@ async function fromMnemonic(ctx, mnemonic) {
 
 async function listAccessible(ctx, sub) {
   const tx = getTx(ctx);
+  const isAdmin = userHasScope(ctx, 'admin');
   const Dataset = getModel(ctx, 'Dataset');
   const Member = getModel(ctx, 'Member');
 
@@ -71,7 +74,7 @@ async function listAccessible(ctx, sub) {
         permission,
       };
     })
-    .filter((dset) => dset.permission !== 'none');
+    .filter((dset) => isAdmin || dset.permission !== 'none');
 
   return datasets;
 }

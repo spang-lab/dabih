@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  use, useCallback, useEffect, useState,
+} from 'react';
 import {
   UserPlus,
   Key,
@@ -12,6 +14,7 @@ import {
 } from 'react-feather';
 import Image from 'next/image';
 import { signOut, signIn } from 'next-auth/react';
+import { useApi } from '../api';
 import { useUser } from '../hooks';
 import { storage } from '../../lib';
 import { Link } from '../util';
@@ -22,8 +25,24 @@ import NavLine from './NavLine';
 export default function Header() {
   const router = useRouter();
   const user = useUser();
-  const [items, setItems] = useState({});
+  const api = useApi();
   const key = storage.useKey();
+  const [items, setItems] = useState({});
+
+  const [keyState, setKeyState] = useState('');
+
+  const checkKey = useCallback(async () => {
+    if (!api.isReady()) {
+      return;
+    }
+    if (!key || !key.hash) {
+      return;
+    }
+    const { valid, error } = await api.checkPublicKey(key.hash);
+    if (!valid) {
+      await storage.deleteKey();
+    }
+  }, [api, key]);
 
   const checkState = useCallback(async () => {
     if (user === undefined || key === undefined) {
@@ -61,9 +80,14 @@ export default function Header() {
     state[path] = 'active';
     setItems(state);
   }, [router, key, user]);
+
   useEffect(() => {
     checkState();
   }, [checkState]);
+
+  useEffect(() => {
+    checkKey();
+  }, [checkKey]);
 
   const getSignIn = () => {
     if (user) {

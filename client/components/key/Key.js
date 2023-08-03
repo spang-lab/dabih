@@ -60,7 +60,6 @@ export default function Key() {
 
   return (
     <div>
-      {state}
       <LoadKey isVisible={state === 'has_key'} />
       <CreateKey isOpen={state === 'no_key'} />
     </div>

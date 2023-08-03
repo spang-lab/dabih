@@ -1,44 +1,82 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Image from 'next/image';
 
-import { getCsrfToken, getProviders, signIn } from 'next-auth/react';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from './api/auth/[...nextauth]';
+import {getProviders, signIn} from 'next-auth/react';
+import {getServerSession} from 'next-auth/next';
+import {authOptions} from './api/auth/[...nextauth]';
 
-import { BigButton } from '../components';
+function URProvider({provider}) {
+  const [user, setUser] = useState({uid: '', password: ''});
 
-function URProvider({ provider }) {
-  const [user, setUser] = useState({ uid: '', password: '' });
-
-  const setUid = (uid) => setUser({ ...user, uid });
-  const setPassword = (password) => setUser({ ...user, password });
+  const setUid = (uid) => setUser({...user, uid});
+  const setPassword = (password) => setUser({...user, password});
 
   const onSubmit = (e) => {
     e.preventDefault();
     signIn(provider.id, user);
   };
   return (
-    <form method="post" onSubmit={onSubmit}>
-      <label>
-        Username
-        <input name="uid" type="text" value={user.uid} onChange={(e) => setUid(e.target.value)} />
-      </label>
-      <label>
-        Password
-        <input name="password" type="password" value={user.password} onChange={(e) => setPassword(e.target.value)} />
-      </label>
-      <button type="submit">Sign in</button>
-    </form>
+    <div className="flex justify-center">
+      <div className="border-b pb-4 mb-4 ">
+        <form method="post" onSubmit={onSubmit}>
+          <div className="w-full">
+            <label htmlFor="uid">
+              <p className="font-extrabold m-1 text-xl">
+                RZ Account
+              </p>
+              <input
+                className="border w-full rounded-md px-2 py-1 my-1"
+                name="uid"
+                id="uid"
+                type="text"
+                placeholder="abc12345"
+                value={user.uid}
+                onChange={(e) => setUid(e.target.value)}
+              />
+            </label>
+          </div>
+          <div className="w-full">
+            <label htmlFor="password">
+              <p className="font-extrabold m-1 text-xl">
+                Password
+              </p>
+              <input
+                className="border w-full rounded-md px-4 py-1 my-1"
+                name="password"
+                type="password"
+                value={user.password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+          </div>
+          <button
+            className="px-3 py-2 mt-4 inline-flex items-center text-lg font-semibold bg-blue text-white rounded-md"
+            type="submit"
+          >
+            <Image
+              width={32}
+              height={32}
+              className="mx-2"
+              src={provider.style.logo}
+              alt="Provider logo"
+            />
+            Sign in with
+            {' '}
+            {provider.name}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
 
-function Provider({ provider }) {
+function Provider({provider}) {
   if (provider.id === 'ur') {
     return <URProvider provider={provider} />;
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center ">
       <button
         type="button"
         className="px-3 py-2 inline-flex items-center text-lg font-semibold bg-blue text-white rounded-md"
@@ -60,7 +98,7 @@ function Provider({ provider }) {
   );
 }
 
-export default function Account({ providers }) {
+export default function Account({providers}) {
   return (
     <div>
       <h1 className="text-4xl pb-4 font-extrabold tracking-tight sm:text-5xl md:text-6xl">
@@ -102,28 +140,28 @@ export default function Account({ providers }) {
           </li>
         </ul>
       </div>
-      <div>
+      <div className="flex flex-col items-stretch my-10">
         {Object.values(providers).map((p) => (
           <Provider key={p.id} provider={p} />
         ))}
-        <pre className="border p-3 m-3">{JSON.stringify(providers, null, 2)}</pre>
       </div>
     </div>
   );
 }
 
 export async function getServerSideProps(context) {
-  const { req, res } = context;
+  const {req, res} = context;
   const session = await getServerSession(req, res, authOptions);
 
   if (session) {
-    return { redirect: { destination: '/key' } };
+    return {redirect: {destination: '/key'}};
   }
 
   const providers = await getProviders() ?? [];
 
   authOptions.providers.forEach((provider) => {
-    const { id, style } = provider;
+    const id = provider.options.id || provider.id;
+    const style = provider.style || provider.options.style;
     if (providers[id]) {
       providers[id].style = style;
     }

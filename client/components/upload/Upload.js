@@ -65,7 +65,13 @@ export default function Upload({ disabled }) {
       name,
     });
     const dataset = await api.uploadStart(name);
+    if (dataset.error || !dataset.mnemonic) {
+      log.error(dataset.error);
+      setUploadFile(null);
+      return;
+    }
     const { mnemonic } = dataset;
+
     const dataHash = await uploadChunks(file, mnemonic);
     const result = await api.uploadFinish(mnemonic);
     if (result.hash !== dataHash) {
@@ -90,7 +96,7 @@ export default function Upload({ disabled }) {
         <p className="font-extrabold">
           File &quot;
           {uploadSuccess}
-          &quot; uploaded greenfully.
+          &quot; uploaded successfully.
         </p>
         <Link href="/manage">Manage your data here</Link>
       </div>

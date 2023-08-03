@@ -16,19 +16,19 @@ function App({ Component, pageProps: { session, ...pageProps } }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex flex-col min-h-screen">
-        <Header />
-        <div className="bg-gray-50 flex flex-1 justify-stretch items-stretch">
-          <div className="container p-4 mx-auto text-gray-800 md:px-12">
-            <div className="block h-full px-4 py-10 bg-white rounded-lg shadow-lg md:py-12 md:px-8">
-              <MessageWrapper>
-                <ApiWrapper>
+        <MessageWrapper>
+          <ApiWrapper>
+            <Header />
+            <div className="bg-gray-50 flex flex-1 justify-stretch items-stretch">
+              <div className="container p-4 mx-auto text-gray-800 md:px-12">
+                <div className="block h-full px-4 py-10 bg-white rounded-lg shadow-lg md:py-12 md:px-8">
                   <Component {...pageProps} />
-                </ApiWrapper>
-              </MessageWrapper>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <Footer />
+            <Footer />
+          </ApiWrapper>
+        </MessageWrapper>
       </div>
     </SessionProvider>
   );

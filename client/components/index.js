@@ -10,7 +10,6 @@ export { default as Header } from './header/Header';
 export { default as Footer } from './footer/Footer';
 export { default as Profile } from './profile/Profile';
 export * from './branding';
-export * from './base';
 export * from './util';
 export * from './messages';
 export * from './api/Context';
