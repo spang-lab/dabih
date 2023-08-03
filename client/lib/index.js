@@ -1,3 +1,3 @@
 export * from './crypto';
 export { default as storage } from './storage';
-export * from './auth';
+export { default as getProviders } from './auth/providers';

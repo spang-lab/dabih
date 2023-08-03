@@ -34,7 +34,7 @@ function URProvider({ provider }) {
 
 function Provider({ provider }) {
   if (provider.id === 'ur') {
-    return <URProvider />;
+    return <URProvider provider={provider} />;
   }
 
   return (
