@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, {
-  use, useCallback, useEffect, useState,
+  useCallback, useEffect, useState,
 } from 'react';
 import {
   UserPlus,
@@ -29,8 +29,6 @@ export default function Header() {
   const key = storage.useKey();
   const [items, setItems] = useState({});
 
-  const [keyState, setKeyState] = useState('');
-
   const checkKey = useCallback(async () => {
     if (!api.isReady()) {
       return;
@@ -38,7 +36,7 @@ export default function Header() {
     if (!key || !key.hash) {
       return;
     }
-    const { valid, error } = await api.checkPublicKey(key.hash);
+    const { valid } = await api.checkPublicKey(key.hash);
     if (!valid) {
       await storage.deleteKey();
     }

@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import { Key } from "../components";
+import { Key } from '../components';
 
 export default function ManageKey() {
   return (
@@ -11,7 +11,9 @@ export default function ManageKey() {
       </h1>
       <div className="text-base text-gray-400 sm:text-lg md:text-xl">
         <p>
-          <span className="font-semibold text-blue"> Dabih </span> uses
+          <span className="font-semibold text-blue"> Dabih </span>
+          {' '}
+          uses
           asymmetric key pairs for data encryption.
         </p>
         <p>Each key has two parts:</p>
