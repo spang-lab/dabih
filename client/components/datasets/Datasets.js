@@ -3,6 +3,7 @@ import React from 'react';
 import Dataset from './Dataset';
 
 import { DatasetsWrapper, useDatasets } from './Context';
+import { DialogWrapper } from './dialogs/Context';
 import { Link } from '../util';
 
 export function DatasetList() {
@@ -31,7 +32,9 @@ export function DatasetList() {
 export default function Datasets() {
   return (
     <DatasetsWrapper>
-      <DatasetList />
+      <DialogWrapper>
+        <DatasetList />
+      </DialogWrapper>
     </DatasetsWrapper>
   );
 }

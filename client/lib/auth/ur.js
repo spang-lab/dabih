@@ -110,8 +110,13 @@ export default function UniRegensburgProvider({ enabled }) {
     async authorize(credentials, _req) {
       const { uid, password } = credentials;
       const client = urClient();
-      const results = await findUser(client, uid);
-      if (results.length === 0) {
+      try {
+        const results = await findUser(client, uid);
+        if (results.length === 0) {
+          return null;
+        }
+      } catch (err) {
+        console.log(err);
         return null;
       }
       const [user] = results;

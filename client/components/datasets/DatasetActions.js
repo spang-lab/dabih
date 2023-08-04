@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'next/router';
 import { useDatasets } from './Context';
 import { MutedButton } from '../util';
+import { useDialog } from './dialogs/Context';
 
 function ConfirmDialog(props) {
   const {
@@ -97,6 +98,7 @@ function Action({
         <button
           onClick={onClick}
           type="button"
+          disabled={!enabled}
           className={`${getClass(active)} 
           group flex w-full items-center rounded-md px-2 py-2 text-sm`}
         >
@@ -109,8 +111,8 @@ function Action({
 
 export default function Actions({ data }) {
   const { permission, mnemonic } = data;
+  const { openDialog } = useDialog();
   const router = useRouter();
-
   const enabled = permission === 'write';
 
   const [dialog, setDialog] = useState(null);
@@ -210,7 +212,7 @@ export default function Actions({ data }) {
                 Download
               </Action>
               <Action
-                onClick={() => setDialog('rename')}
+                onClick={() => openDialog('rename', { dataset: data })}
                 className="text-blue"
                 enabled={enabled}
               >
