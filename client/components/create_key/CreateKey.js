@@ -39,7 +39,7 @@ export default function CreateKey({ isOpen }) {
             <Disclosure.Button className="flex w-full py-2 text-lg font-bold text-black">
               <ChevronRight
                 size={40}
-                className={`${open ? 'rotate-90 transform' : ''}`}
+                className={open ? 'rotate-90 transform' : ''}
               />
               <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
                 Add a

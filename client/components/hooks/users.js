@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {useApi} from '../api';
+import { useEffect, useState } from 'react';
+import { useApi } from '../api';
 
 export default function useUsers() {
   const api = useApi();
