@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 
 import { Transition } from '@headlessui/react';
-import { useMessages } from '../messages';
 
 import { hashBlob, hashHashes } from '../../lib';
 
@@ -10,10 +9,11 @@ import Dropzone from './DropZone';
 import Progess from './Progress';
 import { useApi } from '../api';
 import { Link } from '../util';
+import useDialog from '../dialog';
 
 export default function Upload({ disabled }) {
-  const log = useMessages();
   const api = useApi();
+  const dialog = useDialog();
   const [uploadBytes, setUploadBytes] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadSuccess, setSuccess] = useState(null);
@@ -23,7 +23,7 @@ export default function Upload({ disabled }) {
       return null;
     }
     if (files.length > 1) {
-      log.error('Sorry, multiple files are currently not supported');
+      dialog.error('Sorry, multiple files are currently not supported');
       return null;
     }
     const [file] = files;
@@ -66,7 +66,7 @@ export default function Upload({ disabled }) {
     });
     const dataset = await api.uploadStart(name);
     if (dataset.error || !dataset.mnemonic) {
-      log.error(dataset.error);
+      dialog.error(dataset.error);
       setUploadFile(null);
       return;
     }
@@ -75,7 +75,7 @@ export default function Upload({ disabled }) {
     const dataHash = await uploadChunks(file, mnemonic);
     const result = await api.uploadFinish(mnemonic);
     if (result.hash !== dataHash) {
-      log.error(
+      dialog.error(
         `Upload hash mismatch server:${result.hash} client:${dataHash}`,
       );
     }

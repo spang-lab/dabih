@@ -12,7 +12,7 @@ export default function AdminContact() {
     <div className="p-2">
       <span>Michael Huttner</span>
       <Link
-        className="px-3 py-1 border rounded-lg border-blue hover:border-gray-1000"
+        className="px-3 py-1 m-3 border rounded-lg border-blue hover:border-gray-1000"
         href={`mailto:${mail}?subject=${subject}&body=${text}`}
       >
         Contact me

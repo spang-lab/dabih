@@ -34,10 +34,8 @@ export default async function init(sequelize) {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    deleted: {
-      type: DataTypes.DATE,
-    },
   }, {
+    paranoid: true,
     tableName: 'token',
   });
   return Token;

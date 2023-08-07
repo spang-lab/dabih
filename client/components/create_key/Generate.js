@@ -5,7 +5,6 @@ import { useReactToPrint } from 'react-to-print';
 import { Download, Printer } from 'react-feather';
 
 import Key from './Key';
-import { useMessages } from '../messages';
 
 import {
   BigButton,
@@ -16,6 +15,7 @@ import {
 import DownloadButton from './DownloadButton';
 import { generateKey, exportPrivateKey } from '../../lib';
 import { useApi } from '../api';
+import useDialog from '../dialog';
 
 const delay = (ms) => new Promise((resolve) => {
   setTimeout(resolve, ms);
@@ -26,7 +26,7 @@ export default function GenerateKey({ onComplete }) {
   const [keyFile, setKeyfile] = useState(null);
   const [publicKey, setPublicKey] = useState(null);
   const [wasSaved, setSaved] = useState(false);
-  const log = useMessages();
+  const dialog = useDialog();
   const keyRef = useRef();
   const { addPublicKey } = useApi();
 
@@ -46,9 +46,9 @@ export default function GenerateKey({ onComplete }) {
       const file = await exportPrivateKey(keypair.privateKey);
       setKeyfile(file);
     } catch (err) {
-      log.error(err);
+      dialog.error(err);
     }
-  }, [log]);
+  }, [dialog]);
 
   const uploadKey = useCallback(async () => {
     await addPublicKey(publicKey);

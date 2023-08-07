@@ -8,11 +8,14 @@ import {
   Download,
   Edit3,
   Settings,
+  AlertTriangle,
+  Repeat,
 } from 'react-feather';
 import { useRouter } from 'next/router';
+import { useUser } from 'components/hooks';
 import { useDatasets } from './Context';
 import { MutedButton } from '../util';
-import { useDialog } from './dialogs/Context';
+import useDialog from '../dialog';
 
 function ConfirmDialog(props) {
   const {
@@ -80,8 +83,11 @@ function ConfirmDialog(props) {
 }
 
 function Action({
-  children, enabled, className, onClick,
+  children, enabled, onClick, show = true,
 }) {
+  if (!show) {
+    return null;
+  }
   const getClass = (active) => {
     if (!enabled) {
       return 'text-gray-400';
@@ -89,7 +95,7 @@ function Action({
     if (active) {
       return 'bg-blue text-white';
     }
-    return className;
+    return 'text-blue';
   };
 
   return (
@@ -110,46 +116,24 @@ function Action({
 }
 
 export default function Actions({ data }) {
-  const { permission, mnemonic } = data;
+  const { permission, mnemonic, deletedAt } = data;
   const { openDialog } = useDialog();
   const router = useRouter();
-  const enabled = permission === 'write';
+  const hasWrite = permission === 'write';
+  const user = useUser();
 
   const [dialog, setDialog] = useState(null);
-  const { removeDataset, reencryptDataset, renameDataset } = useDatasets();
-  const [name, setName] = useState(data.name || '');
-
-  const submitName = async (e) => {
-    if (e) {
-      e.preventDefault();
-    }
-    setDialog(null);
-    await renameDataset(mnemonic, name);
-  };
+  const {
+    removeDataset,
+    reencryptDataset,
+    renameDataset,
+    destroyDataset,
+    recoverDataset,
+  } = useDatasets();
+  const isAdmin = (user) ? user.isAdmin : false;
 
   return (
     <div className="text-right ">
-      <ConfirmDialog
-        title="Rename"
-        isOpen={dialog === 'rename'}
-        onClose={() => setDialog(null)}
-        onConfirm={() => submitName()}
-      >
-        <p className="text-gray-400">Set a new name for the dataset</p>
-        <span className="font-semibold text-blue">
-          {' '}
-          {mnemonic}
-          {' '}
-        </span>
-        <form onSubmit={submitName}>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-2 py-1 my-1 border border-gray-400 rounded"
-          />
-        </form>
-      </ConfirmDialog>
       <ConfirmDialog
         title="Confirm reencrypt"
         isOpen={dialog === 'reencrypt'}
@@ -185,7 +169,7 @@ export default function Actions({ data }) {
       </ConfirmDialog>
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="z-0 inline-flex justify-center w-full px-2 py-1 text-sm font-extrabold border rounded text-blue hover:text-blue">
+          <Menu.Button className="z-0 inline-flex border-gray-400 mx-1 justify-center w-full px-2 py-1 text-sm font-extrabold border rounded text-blue hover:text-blue">
             <Settings size={20} />
             <ChevronDown size={20} aria-hidden="true" />
           </Menu.Button>
@@ -212,12 +196,24 @@ export default function Actions({ data }) {
                 Download
               </Action>
               <Action
-                onClick={() => openDialog('rename', { dataset: data })}
-                className="text-blue"
-                enabled={enabled}
+                onClick={() => openDialog('rename', {
+                  dataset: data,
+                  onSubmit: (name) => renameDataset(mnemonic, name),
+                })}
+                enabled={hasWrite}
               >
                 <Edit3 className="mx-2" size={24} />
                 Rename
+              </Action>
+              <Action
+                show={!!deletedAt && isAdmin}
+                onClick={() => recoverDataset(mnemonic)}
+                enabled={hasWrite || isAdmin}
+              >
+                <div className="inline-flex items-center">
+                  <Repeat className="mx-2" size={24} />
+                  Undo Deletion
+                </div>
               </Action>
               <div className="pt-2 mt-2 border-t">
                 <span className="text-xs font-extrabold text-center">
@@ -226,7 +222,7 @@ export default function Actions({ data }) {
                 <Action
                   onClick={() => setDialog('reencrypt')}
                   className="text-red"
-                  enabled={enabled}
+                  enabled={hasWrite}
                 >
                   <div className="relative w-6 h-6 mx-2">
                     <Key size={25} />
@@ -235,12 +231,35 @@ export default function Actions({ data }) {
                   Reencrypt
                 </Action>
                 <Action
-                  onClick={() => setDialog('delete')}
-                  className="text-red"
-                  enabled={enabled}
+                  show={!deletedAt}
+                  onClick={() => openDialog('delete', {
+                    type: 'Dataset',
+                    name: mnemonic,
+                    onSubmit: () => removeDataset(mnemonic),
+                  })}
+                  enabled={hasWrite || isAdmin}
                 >
-                  <Trash2 className="mx-2" size={24} />
-                  Delete
+                  <div className="text-red inline-flex items-center">
+                    <Trash2 className="mx-2" size={24} />
+                    Delete
+                  </div>
+                </Action>
+                <Action
+                  show={!!deletedAt && isAdmin}
+                  onClick={() => openDialog('destroy', {
+                    type: 'Dataset',
+                    name: mnemonic,
+                    onSubmit: () => destroyDataset(mnemonic),
+                  })}
+                  enabled={hasWrite || isAdmin}
+                >
+                  <div className="text-red inline-flex items-center font-bold text-sm">
+                    <div className="relative w-6 h-6 mx-1">
+                      <Trash2 size={24} />
+                      <AlertTriangle className="absolute -bottom-1 -right-1" size={14} />
+                    </div>
+                    Destroy forever
+                  </div>
                 </Action>
               </div>
             </div>

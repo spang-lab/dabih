@@ -9,12 +9,12 @@ import { BigButton, MutedButton } from '../util';
 import { storage, importPrivateKey } from '../../lib';
 
 import Webcam from './Webcam';
-import { useMessages } from '../messages';
 import { useApi } from '../api';
+import useDialog from '../dialog';
 
 export default function WebcamScan() {
   const [isOpen, setOpen] = useState(false);
-  const log = useMessages();
+  const dialog = useDialog();
   const api = useApi();
   const router = useRouter();
 
@@ -25,19 +25,19 @@ export default function WebcamScan() {
       const keys = await importPrivateKey(array, 'uint8array');
       const { valid, error } = await api.checkPublicKey(keys.hash);
       if (!valid) {
-        log.error(error);
+        dialog.error(error);
         return;
       }
       await storage.storeKey(keys.privateKey);
       router.push('/manage');
     } catch (err) {
-      log.error('Did not find a valid dabih key in the scanned code');
+      dialog.error('Did not find a valid dabih key in the scanned code');
     }
   };
 
   const onError = (err) => {
     setOpen(false);
-    log.error(err);
+    dialog.error(err);
   };
 
   return (

@@ -1,9 +1,22 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 import { Sequelize } from 'sequelize';
+import { createNamespace } from 'cls-hooked';
 import { log, getConfig, getEnv } from '../util/index.js';
-import initModels from './model/index.js';
+
+import {
+  initChunk,
+  initDataset,
+  initEvent,
+  initKey,
+  initMember,
+  initPublicKey,
+  initToken,
+} from './model/index.js';
 
 let sequelize = null;
+
+const namespace = createNamespace('transactions');
+Sequelize.useCLS(namespace);
 
 const isReady = async () => {
   if (!sequelize) {
@@ -35,7 +48,7 @@ const waitForDatabase = async () => {
 };
 
 const connect = async () => {
-  const { database, secrets } = getConfig();
+  const { database } = getConfig();
 
   const { dialect, logging } = database;
 
@@ -69,15 +82,23 @@ const connect = async () => {
 
 export const initDb = async () => {
   await connect();
-  await initModels(sequelize);
-  await sequelize.sync({ force: false });
-};
+  const PublicKey = await initPublicKey(sequelize);
+  await initToken(sequelize);
 
-export const getTx = (ctx) => {
-  if (ctx && ctx.state.sql) {
-    return ctx.state.sql;
-  }
-  throw new Error('No active transaction found for request');
+  const Dataset = await initDataset(sequelize);
+  const Chunk = await initChunk(sequelize);
+  Dataset.hasMany(Chunk, { as: 'chunks', foreignKey: 'datasetId' });
+
+  const Member = await initMember(sequelize);
+  Dataset.hasMany(Member, { as: 'members', foreignKey: 'datasetId' });
+
+  const Key = await initKey(sequelize);
+  Dataset.hasMany(Key, { as: 'keys', foreignKey: 'datasetId' });
+  PublicKey.hasMany(Key, { as: 'keys', foreignKey: 'publicKeyId' });
+
+  await initEvent(sequelize);
+
+  await sequelize.sync({ force: false });
 };
 
 export const getSql = () => sequelize;

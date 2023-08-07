@@ -6,10 +6,8 @@ export default async function init(sequelize) {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    deleted: {
-      type: DataTypes.DATE,
-    },
   }, {
+    paranoid: true,
     tableName: 'key',
   });
   return Key;

@@ -3,12 +3,12 @@ import { useDropzone } from 'react-dropzone';
 
 import { Lock, File, FilePlus } from 'react-feather';
 import { exportJwk, importPublicKey } from '../../lib';
-import { useMessages } from '../messages';
 import { useApi } from '../api';
 import { BigButton } from '../util';
+import useDialog from '../dialog';
 
 export default function LoadFile() {
-  const log = useMessages();
+  const dialog = useDialog();
   const { addPublicKey } = useApi();
 
   const onDrop = async (files) => {
@@ -16,13 +16,13 @@ export default function LoadFile() {
       return;
     }
     if (files.length > 1) {
-      log.error('Only a single file is supported');
+      dialog.error('Only a single file is supported');
       return;
     }
     const [file] = files;
     const maxSize = 10 * 1024; // 10KiB
     if (file.size > maxSize) {
-      log.error('File is too large to be a public key');
+      dialog.error('File is too large to be a public key');
       return;
     }
     const text = await file.text();
@@ -31,7 +31,7 @@ export default function LoadFile() {
       const jwk = await exportJwk(publicKey);
       await addPublicKey(jwk);
     } catch (err) {
-      log.error('File is not a valid public key');
+      dialog.error('File is not a valid public key');
     }
   };
 

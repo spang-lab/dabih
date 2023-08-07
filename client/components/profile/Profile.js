@@ -7,14 +7,14 @@ import Admin from './admin/Admin';
 function Profile() {
   return (
     <div className="flex">
-      <div>
+      <div className="w-1/2">
         <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
           <span className="text-blue"> Access </span>
           Tokens
         </h1>
         <Tokens />
       </div>
-      <div>
+      <div className="w-1/2">
         <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
           <span className="text-blue"> User </span>
           Info

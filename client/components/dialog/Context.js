@@ -1,7 +1,5 @@
 import React, {
-  useEffect,
   useState,
-  useCallback,
   useMemo,
   createContext,
   useContext,
@@ -10,6 +8,9 @@ import React, {
 import { Transition, Dialog } from '@headlessui/react';
 
 import Rename from './Rename';
+import Error from './Error';
+import Delete from './Delete';
+import Destroy from './Destroy';
 
 const DialogContext = createContext();
 export const useDialog = () => useContext(DialogContext);
@@ -69,6 +70,10 @@ export function DialogWrapper({ children }) {
         ctx: null,
       }),
       ...data,
+      error: (error) => setData({
+        dialog: 'error',
+        ctx: { error },
+      }),
     }),
     [data, setData],
   );
@@ -78,6 +83,13 @@ export function DialogWrapper({ children }) {
     switch (dialog) {
       case 'rename':
         return <Rename {...contextValue} />;
+      case 'error':
+        return <Error {...contextValue} />;
+      case 'delete':
+        return <Delete {...contextValue} />;
+      case 'destroy':
+        return <Destroy {...contextValue} />;
+
       default:
         return null;
     }

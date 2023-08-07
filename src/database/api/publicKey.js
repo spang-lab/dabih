@@ -1,20 +1,20 @@
-import { getModel, getTx } from './util.js';
+import { getModel } from './util.js';
 
 async function list(ctx, where = {}) {
   const model = getModel(ctx, 'PublicKey');
-  const tx = getTx(ctx);
-  return model.findAllTx(
-    tx,
+  return model.findAll({
+    raw: true,
     where,
-  );
+  });
 }
 
 async function listAllUsers(ctx) {
-  const tx = getTx(ctx);
   const PublicKey = getModel(ctx, 'PublicKey');
 
-  const keys = await PublicKey.findAllTx(tx, {
-    isRootKey: false,
+  const keys = await PublicKey.findAll({
+    where: {
+      isRootKey: false,
+    },
   });
 
   const users = keys.map((key) => {
@@ -25,24 +25,20 @@ async function listAllUsers(ctx) {
 }
 
 async function add(ctx, properties) {
-  const tx = getTx(ctx);
   const PublicKey = getModel(ctx, 'PublicKey');
-  await PublicKey.createTx(tx, properties);
+  await PublicKey.create(properties);
 }
 async function update(ctx, id, properties) {
-  const tx = getTx(ctx);
   const PublicKey = getModel(ctx, 'PublicKey');
-  await PublicKey.updateTx(tx, properties, { id });
+  await PublicKey.update(properties, { where: { id } });
 }
 async function remove(ctx, id) {
-  const tx = getTx(ctx);
   const PublicKey = getModel(ctx, 'PublicKey');
-  await PublicKey.removeTx(tx, { id });
+  await PublicKey.destroy({ where: { id } });
 }
 async function find(ctx, where) {
-  const tx = getTx(ctx);
   const PublicKey = getModel(ctx, 'PublicKey');
-  return PublicKey.findOneTx(tx, where);
+  return PublicKey.findOne({ where });
 }
 
 export default {

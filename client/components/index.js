@@ -11,5 +11,5 @@ export { default as Footer } from './footer/Footer';
 export { default as Profile } from './profile/Profile';
 export * from './branding';
 export * from './util';
-export * from './messages';
 export * from './api/Context';
+export * from './dialog/Context';

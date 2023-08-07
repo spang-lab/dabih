@@ -7,6 +7,7 @@ import React, {
   useContext,
 } from 'react';
 import pLimit from 'p-limit';
+import useDialog from '../dialog';
 import {
   storage,
   decryptKey,
@@ -20,22 +21,41 @@ const DatasetContext = createContext();
 
 export function DatasetsWrapper({ children }) {
   const api = useApi();
+  const dialog = useDialog();
   const [datasets, setDatasets] = useState([]);
+  const [searchParams, setSearchParams] = useState({
+    deleted: false,
+    all: false,
+  });
 
   const fetchDatasets = useCallback(async () => {
     if (!api.isReady()) {
       return;
     }
-    const data = await api.listDatasets();
+    const data = await api.listDatasets(searchParams);
     if (data.error) {
       return;
     }
     setDatasets(data);
-  }, [api]);
+  }, [api, searchParams]);
 
   const removeDataset = useCallback(
     async (mnemonic) => {
       await api.removeDataset(mnemonic);
+      await fetchDatasets();
+    },
+    [api, fetchDatasets],
+  );
+  const destroyDataset = useCallback(
+    async (mnemonic) => {
+      await api.admin.destroyDataset(mnemonic);
+      await fetchDatasets();
+    },
+    [api, fetchDatasets],
+  );
+  const recoverDataset = useCallback(
+    async (mnemonic) => {
+      await api.admin.recoverDataset(mnemonic);
       await fetchDatasets();
     },
     [api, fetchDatasets],
@@ -129,6 +149,7 @@ export function DatasetsWrapper({ children }) {
       const keys = await storage.readKey();
       const key = await api.fetchKey(mnemonic, keys.hash);
       if (!key || key.error) {
+        dialog.error(key.error);
         return null;
       }
       const { fileName, chunks } = await api.fetchDataset(mnemonic);
@@ -147,7 +168,7 @@ export function DatasetsWrapper({ children }) {
         name: fileName,
       };
     },
-    [api, downloadChunks],
+    [api, downloadChunks, dialog],
   );
 
   useEffect(() => {
@@ -157,7 +178,11 @@ export function DatasetsWrapper({ children }) {
   const contextValue = useMemo(
     () => ({
       datasets,
+      searchParams,
+      setSearchParams,
       removeDataset,
+      destroyDataset,
+      recoverDataset,
       downloadDataset,
       reencryptDataset,
       renameDataset,
@@ -166,7 +191,11 @@ export function DatasetsWrapper({ children }) {
     }),
     [
       datasets,
+      searchParams,
+      setSearchParams,
       removeDataset,
+      recoverDataset,
+      destroyDataset,
       downloadDataset,
       renameDataset,
       reencryptDataset,

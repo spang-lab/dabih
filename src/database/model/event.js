@@ -1,5 +1,5 @@
 import {
-  DataTypes, NOW, literal, fn, col,
+  DataTypes, NOW,
 } from 'sequelize';
 
 export default async function init(sequelize) {
@@ -24,19 +24,9 @@ export default async function init(sequelize) {
       allowNull: false,
       defaultValue: NOW,
     },
-    deleted: {
-      type: DataTypes.DATE,
-    },
   }, {
     tableName: 'event',
   });
-  Event.listDates = (tx) => Event.findAll(
-    {
-      attributes: [[fn('DISTINCT', col('day')), 'day']],
-      order: [['day', 'DESC']],
-      transaction: tx,
-    },
-  );
 
   return Event;
 }

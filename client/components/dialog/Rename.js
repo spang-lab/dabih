@@ -1,19 +1,17 @@
 import { useState } from 'react';
 import { Dialog } from '@headlessui/react';
-import { useApi } from '../../api';
 
 export default function Rename({ ctx, closeDialog }) {
-  const { renameDataset } = useApi();
-  const [name, setName] = useState('');
+  const [name, setName] = useState(ctx.name || '');
 
-  const { dataset } = ctx;
+  const { dataset, onSubmit } = ctx;
   const { mnemonic } = dataset;
 
   const submitName = async (e) => {
     if (e) {
       e.preventDefault();
     }
-    await renameDataset(mnemonic, name);
+    onSubmit(name);
     closeDialog();
   };
 
