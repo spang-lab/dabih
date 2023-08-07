@@ -4,15 +4,15 @@ import { getSub } from '../../util/index.js';
 const route = async (ctx) => {
   const sub = getSub(ctx);
 
-  const { deleted, all, query } = ctx.query;
+  const { body } = ctx.request;
 
-  const params = {
-    deleted: deleted !== 'false',
-    all: all !== 'false',
+  const {
     query,
-  };
+  } = body;
 
-  const datasets = await dataset.listAccessible(ctx, sub, params);
+  const datasets = await dataset.search(ctx, sub, {
+    query,
+  });
   ctx.body = datasets;
 };
 export default route;

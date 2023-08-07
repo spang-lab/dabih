@@ -10,6 +10,9 @@ export default function useUsers() {
         return;
       }
       const userList = await api.listKeyUsers();
+      if (userList.error) {
+        return;
+      }
       setUsers(userList);
     };
     fetchUsers();

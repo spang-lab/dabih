@@ -32,7 +32,7 @@ export function DatasetsWrapper({ children }) {
     if (!api.isReady()) {
       return;
     }
-    const data = await api.listDatasets(searchParams);
+    const data = await api.searchDatasets(searchParams);
     if (data.error) {
       return;
     }

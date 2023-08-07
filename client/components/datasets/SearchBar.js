@@ -1,4 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Switch } from '@headlessui/react';
+import { useCallback, useState } from 'react';
+import { throttle } from 'lodash-es';
 import { useUser } from '../hooks';
 import { useDatasets } from './Context';
 
@@ -68,6 +71,24 @@ function AdminOptions() {
 
 export default function SearchBar() {
   const { searchParams, setSearchParams } = useDatasets();
+  const [query, setQuery] = useState('');
+
+  const search = useCallback(
+    throttle((v) => {
+      setSearchParams({
+        ...searchParams,
+        query: v,
+      });
+    }, 500, { trailing: true }),
+    [setSearchParams],
+  );
+
+  const onChange = (e) => {
+    const { value } = e.target;
+    setQuery(value);
+    const q = (value === '') ? null : value;
+    search(q);
+  };
 
   return (
     <div className="py-5 border border-gray-400 rounded flex flex-row">
@@ -75,6 +96,15 @@ export default function SearchBar() {
         <pre>
           {JSON.stringify(searchParams, null, 2)}
         </pre>
+      </div>
+      <div>
+        <input
+          className="p-2 border border-gray-200 rounded-xl w-80"
+          type="text"
+          placeholder="Search..."
+          value={query}
+          onChange={onChange}
+        />
       </div>
       <div className="grow" />
       <AdminOptions />

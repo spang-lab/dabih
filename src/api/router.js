@@ -51,6 +51,7 @@ const getDatasetRouter = () => {
   router.use(requireScopes('api'));
 
   router.get('/list', dataset.list);
+  router.post('/search', dataset.search);
   router.get('/:mnemonic', dataset.mnemonic);
   router.get('/:mnemonic/chunk/:chunkHash', dataset.chunk);
   router.post('DATASET_REMOVE', '/:mnemonic/remove', dataset.remove);

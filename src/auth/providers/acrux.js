@@ -12,6 +12,9 @@ export default async function acruxProvider(_ctx, accessToken) {
   };
   const response = await fetch(url, { headers });
   const user = await response.json();
+  if (!user || !user.sub || !user.name) {
+    throw new Error('Failed to get user');
+  }
 
   if (hasOverlap(groups, user.grouplist) || subs.includes(user.sub)) {
     scopes.push('admin');
