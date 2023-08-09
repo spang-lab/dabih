@@ -1,0 +1,20 @@
+[package]
+name = "dabih"
+description = "Command Line Interface for dabih"
+authors = ["Michael Huttner<michael@mhuttner.com>"]
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.72"
+clap = { version = "4.3.21", features = ["derive"] }
+crypto = "0.5.1"
+inquire = "0.6.2"
+openssl = "0.10.56"
+reqwest = "0.11.18"
+serde = { version = "1.0.183", features = ["derive"] }
+serde_yaml = "0.9.25"
+tokio = { version = "1.29.1", features = ["full"] }
+url = "2.4.0"
