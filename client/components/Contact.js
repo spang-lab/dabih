@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from './util';
+import Link from 'next/link';
 
 function Contact() {
   return (
@@ -16,7 +16,10 @@ function Contact() {
       <br />
       +49 941 943 5053
       <br />
-      <Link href="mailto:sekretariat.genomik@ur.de">
+      <Link
+        className="text-blue hover:underline"
+        href="mailto:sekretariat.genomik@ur.de"
+      >
         sekretariat.genomik@ur.de
       </Link>
     </div>

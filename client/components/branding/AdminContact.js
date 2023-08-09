@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '../util';
+import Link from 'next/link';
 
 export default function AdminContact() {
   const enc = (text) => encodeURIComponent(text);

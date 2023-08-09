@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { getModel } from './util.js';
 
-async function getWhere(query) {
+function getWhere(query) {
   if (!query) {
     return {
       hash: {
@@ -10,8 +10,10 @@ async function getWhere(query) {
     };
   }
   const q = `%${query}%`;
-  dbg(q);
   return {
+    hash: {
+      [Op.not]: null,
+    },
     [Op.or]: [
       {
         fileName: {
@@ -20,6 +22,11 @@ async function getWhere(query) {
       },
       {
         mnemonic: {
+          [Op.like]: q,
+        },
+      },
+      {
+        name: {
           [Op.like]: q,
         },
       },
@@ -33,24 +40,31 @@ async function getWhere(query) {
 }
 
 async function search(ctx, sub, options) {
-  const { query } = options;
+  const {
+    query, deleted, all, uploader,
+  } = options;
   const Dataset = getModel(ctx, 'Dataset');
   const Member = getModel(ctx, 'Member');
-  dbg(query);
+  const paranoid = !deleted;
+
+  const mWhere = all ? {} : { sub };
+
+  const where = getWhere(query);
+  if (uploader) {
+    where.createdBy = sub;
+  }
 
   return Dataset.findAll({
-    // include: {
-    //   model: Member,
-    //   as: 'members',
-    //   attributes: ['permission', 'sub'],
-    //   where: {
-    //     sub,
-    //   },
-    // },
-    where: getWhere(query),
-    order: [
-      ['createdAt', 'DESC'],
-    ],
+    include: {
+      model: Member,
+      as: 'members',
+      attributes: ['permission', 'sub'],
+      paranoid,
+      where: mWhere,
+    },
+    where,
+    paranoid,
+    order: [['createdAt', 'DESC']],
   });
 }
 

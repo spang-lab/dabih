@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Switch } from '@headlessui/react';
 
-import {
-  Upload as Uploader,
-  useApi,
-  Link,
-} from '../../components';
+import Link from 'next/link';
+import { Upload as Uploader, useApi } from '../../components';
 
 export default function Upload() {
   const [user, setUser] = useState({});
@@ -36,8 +33,8 @@ export default function Upload() {
         {' '}
         <span className="font-bold">do not need</span>
         {' '}
-        and account
-        or a crypo key yourself.
+        and account or a crypo
+        key yourself.
       </div>
 
       <div className="flex flex-row items-center py-3">
@@ -63,7 +60,11 @@ export default function Upload() {
           </span>
           and i have read and agree to the
           {' '}
-          <Link target="_blank" href="/data_policy">
+          <Link
+            className="text-blue hover:underline"
+            target="_blank"
+            href="/data_policy"
+          >
             Data Policy
           </Link>
         </div>

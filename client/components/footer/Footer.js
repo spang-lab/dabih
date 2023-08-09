@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '../util';
+import Link from 'next/link';
 import info from '../../package.json';
 
 function Footer() {
@@ -22,11 +22,17 @@ function Footer() {
         {' '}
         {version}
       </p>
-      <Link href="/contact">Contact/Impressum</Link>
+      <Link className="text-blue hover:underline" href="/contact">
+        Contact/Impressum
+      </Link>
       <span className="px-2"> · </span>
-      <Link href="/privacy">Privacy Policy</Link>
+      <Link className="text-blue hover:underline" href="/privacy">
+        Privacy Policy
+      </Link>
       <span className="px-2"> · </span>
-      <Link href="/data_policy">Data Policy</Link>
+      <Link className="text-blue hover:underline" href="/data_policy">
+        Data Policy
+      </Link>
     </div>
   );
 }

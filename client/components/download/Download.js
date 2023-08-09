@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '../util';
+import Link from 'next/link';
 
 import { DownloadWrapper, useDownload } from './Context';
 import Progress from './Progress';
@@ -31,7 +31,9 @@ export function DownloadMnemonic() {
         </p>
 
         <p>
-          <Link href="/manage">Go Back</Link>
+          <Link className="text-blue hover:underline" href="/manage">
+            Go Back
+          </Link>
         </p>
       </div>
     );

@@ -1,4 +1,3 @@
-import list from './list.js';
 import remove from './remove.js';
 import addMembers from './addMembers.js';
 import setAccess from './setAccess.js';
@@ -10,7 +9,6 @@ import chunk from './chunk.js';
 import search from './search.js';
 
 export default {
-  list,
   search,
   chunk,
   mnemonic,

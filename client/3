@@ -1,17 +1,16 @@
 import React from 'react';
 
-import Link from 'next/link';
 import Dataset from './Dataset';
 import SearchBar from './SearchBar';
 
 import { DatasetsWrapper, useDatasets } from './Context';
+import { Link } from '../util';
 
 export function DatasetList() {
   const { datasets, searchParams } = useDatasets();
   const { query } = searchParams;
   if (!datasets || !datasets.length) {
     if (query) {
-      // return null;
     }
     return (
       <div className="py-10 text-center">
@@ -19,9 +18,7 @@ export function DatasetList() {
           You have no datasets yet. Uploaded datasets will appear here
         </span>
         <p>
-          <Link className="text-blue hover:underline" href="/upload">
-            Go to the Upload page
-          </Link>
+          <Link href="/upload">Go to the Upload page</Link>
         </p>
       </div>
     );

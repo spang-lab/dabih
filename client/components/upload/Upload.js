@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 import { Transition } from '@headlessui/react';
 
@@ -8,7 +9,6 @@ import { hashBlob, hashHashes } from '../../lib';
 import Dropzone from './DropZone';
 import Progess from './Progress';
 import { useApi } from '../api';
-import { Link } from '../util';
 import useDialog from '../dialog';
 
 export default function Upload({ disabled }) {
@@ -98,7 +98,9 @@ export default function Upload({ disabled }) {
           {uploadSuccess}
           &quot; uploaded successfully.
         </p>
-        <Link href="/manage">Manage your data here</Link>
+        <Link className="text-blue hover:underline" href="/manage">
+          Manage your data here
+        </Link>
       </div>
     );
   };
