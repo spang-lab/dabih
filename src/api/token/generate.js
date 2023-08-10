@@ -5,7 +5,7 @@ import { token } from '../../database/index.js';
 
 const route = async (ctx) => {
   const user = getUser(ctx);
-  const { sub, name } = user;
+  const { sub, name, email } = user;
   const n = 32;
 
   const oneMinute = 60 * 1000;
@@ -14,7 +14,11 @@ const route = async (ctx) => {
 
   const vTypes = ['api', 'upload'];
   if (!vTypes.includes(type)) {
-    sendError(ctx, `Invalid token scope ${type}, must be one of [${vTypes.join(', ')}]`, 400);
+    sendError(
+      ctx,
+      `Invalid token scope ${type}, must be one of [${vTypes.join(', ')}]`,
+      400,
+    );
     return;
   }
 
@@ -25,6 +29,7 @@ const route = async (ctx) => {
     timestamp: literal('CURRENT_TIMESTAMP'),
     sub,
     name,
+    email,
     scopes: [type],
   });
   ctx.body = {

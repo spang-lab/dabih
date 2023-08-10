@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Clock } from 'react-feather';
-import LoadKey from '../load_key/LoadKey';
-import CreateKey from '../create_key/CreateKey';
+import LoadKey from './load/LoadKey';
+import CreateKey from './create/CreateKey';
 import { Spinner } from '../util';
 import { useUsers, useUser } from '../hooks';
 import { AdminContact } from '../branding';
 
 export default function Key() {
-  const users = useUsers();
+  const { users } = useUsers();
   const user = useUser();
   const [state, setState] = useState('loading');
 

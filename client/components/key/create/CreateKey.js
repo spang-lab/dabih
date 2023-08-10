@@ -20,11 +20,7 @@ export default function CreateKey({ isOpen }) {
     }
     return (
       <span className="text-lg">
-        <span className="font-extrabold underline text-red">
-          {' '}
-          Warning:
-          {' '}
-        </span>
+        <span className="font-extrabold underline text-red"> Warning: </span>
         You already have a key registered, any new key you registered will not
         automatically gain access to existing data.
       </span>

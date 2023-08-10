@@ -4,7 +4,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Cpu } from 'react-feather';
 import Generate from './Generate';
 
-import { BigButton } from '../util';
+import { BigButton } from '../../util';
 
 export default function GenerateKey() {
   const [isOpen, setOpen] = useState(false);

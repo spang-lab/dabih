@@ -4,28 +4,21 @@ import React, {
 import { useReactToPrint } from 'react-to-print';
 import { Download, Printer } from 'react-feather';
 
+import { useUsers } from '../../hooks';
 import Key from './Key';
 
-import {
-  BigButton,
-  ColoredButton,
-  MutedButton,
-  Spinner,
-} from '../util';
+import { Spinner } from '../../util';
 import DownloadButton from './DownloadButton';
-import { generateKey, exportPrivateKey } from '../../lib';
-import { useApi } from '../api';
-import useDialog from '../dialog';
-
-const delay = (ms) => new Promise((resolve) => {
-  setTimeout(resolve, ms);
-});
+import { generateKey, exportPrivateKey } from '../../../lib';
+import { useApi } from '../../api';
+import useDialog from '../../dialog';
 
 export default function GenerateKey({ onComplete }) {
   const [privateKey, setPrivateKey] = useState(null);
   const [keyFile, setKeyfile] = useState(null);
   const [publicKey, setPublicKey] = useState(null);
   const [wasSaved, setSaved] = useState(false);
+  const { fetchUsers } = useUsers();
   const dialog = useDialog();
   const keyRef = useRef();
   const { addPublicKey } = useApi();
@@ -37,8 +30,6 @@ export default function GenerateKey({ onComplete }) {
   });
 
   const generate = useCallback(async () => {
-    // Generating a keypair is to fast to feel important, so make it slower
-    await delay(300);
     try {
       const keypair = await generateKey();
       setPublicKey(keypair.publicKey);
@@ -52,8 +43,9 @@ export default function GenerateKey({ onComplete }) {
 
   const uploadKey = useCallback(async () => {
     await addPublicKey(publicKey);
+    await fetchUsers();
     onComplete();
-  }, [publicKey, addPublicKey, onComplete]);
+  }, [publicKey, addPublicKey, onComplete, fetchUsers]);
 
   useEffect(() => {
     generate();
@@ -72,11 +64,7 @@ export default function GenerateKey({ onComplete }) {
       <div className="text-center">
         <Key data={privateKey} ref={keyRef} />
         <p className="text-2xl">
-          <span className="font-extrabold underline text-red">
-            {' '}
-            Warning:
-            {' '}
-          </span>
+          <span className="font-extrabold underline text-red"> Warning: </span>
           If you do not save this key you will
           <span className="font-extrabold underline text-red">
             {' '}
@@ -85,11 +73,15 @@ export default function GenerateKey({ onComplete }) {
           </span>
         </p>
         <span className="text-2xl">Please</span>
-        <ColoredButton className="m-2" onClick={print}>
+        <button
+          type="button"
+          className="m-2 px-3 py-2 text-lg rounded bg-blue text-gray-100 hover:text-white"
+          onClick={print}
+        >
           <Printer className="inline-block" size={30} />
           {' '}
           Print the key
-        </ColoredButton>
+        </button>
         <span className="text-2xl">and</span>
         <DownloadButton
           className="m-2"
@@ -103,16 +95,27 @@ export default function GenerateKey({ onComplete }) {
         </DownloadButton>
       </div>
       <div className="text-end">
-        <BigButton
-          className="mx-2 mt-2"
+        <button
+          type="button"
+          className={`
+            px-8 py-4 mx-2 mt-2 text-2xl rounded-xl text-gray-100 bg-blue
+            enabled:hover:bg-blue enabled:hover:text-white
+            focus:outline-none focus:ring-2 focus:ring-offset-2
+            focus:ring-offset-gray-800 focus:ring-white disabled:opacity-50`}
           disabled={!wasSaved}
           onClick={uploadKey}
         >
           Upload this key to
           {' '}
           <span className="font-bold">dabih</span>
-        </BigButton>
-        <MutedButton onClick={() => onComplete()}>Cancel</MutedButton>
+        </button>
+        <button
+          type="button"
+          className="mx-3 px-3 py-2 text-white bg-gray-400 hover:text-white rounded-md"
+          onClick={() => onComplete()}
+        >
+          Cancel
+        </button>
       </div>
     </div>
   );

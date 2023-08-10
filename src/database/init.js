@@ -31,7 +31,9 @@ const isReady = async () => {
   }
 };
 
-const delay = (ms = 1000) => new Promise((r) => { setTimeout(r, ms); });
+const delay = (ms = 1000) => new Promise((r) => {
+  setTimeout(r, ms);
+});
 
 const waitForDatabase = async () => {
   const maxTries = 10;
@@ -70,7 +72,9 @@ const connect = async () => {
       });
       break;
     default:
-      throw new Error(`Unknown database dialect ${dialect}, [sqlite, postgres] are supported`);
+      throw new Error(
+        `Unknown database dialect ${dialect}, [sqlite, postgres] are supported`,
+      );
   }
 
   const isOk = await waitForDatabase();

@@ -23,6 +23,7 @@ export default async function acruxProvider(_ctx, accessToken) {
   return {
     sub: user.sub,
     name: user.name,
+    email: user.email,
     scopes,
   };
 }

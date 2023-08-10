@@ -5,12 +5,12 @@ import { Camera } from 'react-feather';
 
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { BigButton, MutedButton } from '../util';
-import { storage, importPrivateKey } from '../../lib';
+import { BigButton, MutedButton } from '../../util';
+import { storage, importPrivateKey } from '../../../lib';
 
 import Webcam from './Webcam';
-import { useApi } from '../api';
-import useDialog from '../dialog';
+import { useApi } from '../../api';
+import useDialog from '../../dialog';
 
 export default function WebcamScan() {
   const [isOpen, setOpen] = useState(false);

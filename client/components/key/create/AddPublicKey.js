@@ -2,10 +2,9 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { Lock, File, FilePlus } from 'react-feather';
-import { exportJwk, importPublicKey } from '../../lib';
-import { useApi } from '../api';
-import { BigButton } from '../util';
-import useDialog from '../dialog';
+import { exportJwk, importPublicKey } from '../../../lib';
+import { useApi } from '../../api';
+import useDialog from '../../dialog';
 
 export default function LoadFile() {
   const dialog = useDialog();
@@ -58,12 +57,19 @@ export default function LoadFile() {
             <Lock className="absolute inset-0 m-4 mt-6" size={20} />
           </div>
         </div>
-        <BigButton>
+        <button
+          type="button"
+          className={`
+            px-8 py-4 text-2xl rounded-xl text-gray-100 bg-blue
+            enabled:hover:bg-blue enabled:hover:text-white
+            focus:outline-none focus:ring-2 focus:ring-offset-2
+            focus:ring-offset-gray-800 focus:ring-white disabled:opacity-50`}
+        >
           <span className="whitespace-nowrap">
             <File className="inline-block mx-3 mb-1" />
             Open public key file...
           </span>
-        </BigButton>
+        </button>
         <p className="pt-3 text-gray-400">
           Add your own public key
           <br />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Download } from 'react-feather';
-import { SpinnerSmall } from '../util';
+import { Spinner } from '../util';
 import DownloadButton from './DownloadButton';
 import { useDatasets } from './Context';
 
@@ -53,7 +53,7 @@ export default function DownloadDataset({ mnemonic, size, enabled }) {
   if (loading) {
     return (
       <div className="flex flex-row px-2 py-1 font-extrabold text-white rounded bg-blue">
-        <SpinnerSmall />
+        <Spinner small white />
         <span className="pl-2">Downloading...</span>
       </div>
     );
