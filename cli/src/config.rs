@@ -2,6 +2,7 @@ use anyhow::{bail, Result};
 use openssl::rsa::Rsa;
 use serde::{Deserialize, Serialize};
 use std::env;
+use std::fmt;
 use std::fs;
 use std::io::Read;
 use std::io::Write;
@@ -14,13 +15,22 @@ pub struct Config {
     #[serde(rename = "privateKey")]
     pub private_key: String,
 }
+impl fmt::Display for Config {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{{\n  url: {}\n  token: {}\n  private_key: {}\n}}",
+            self.url, self.token, self.private_key
+        )
+    }
+}
 
 fn get_path() -> Result<PathBuf> {
     let filename = "config.yaml";
     let key = "XDG_CONFIG_HOME";
     let config_folder = match env::var(key) {
         Ok(v) => PathBuf::from(v).join("dabih"),
-        Err(_) => match env::home_dir() {
+        Err(_) => match home::home_dir() {
             Some(v) => v.join(".dabih"),
             None => bail!("Could not get home dir"),
         },

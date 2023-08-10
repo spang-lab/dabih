@@ -10,6 +10,9 @@ const isExpired = (user) => {
 
 export default async function dabihProvider(ctx, accessToken) {
   const user = await token.find(ctx, { token: accessToken });
+  if (!user) {
+    throw new Error(`Invalid token ${accessToken}`);
+  }
   if (isExpired(user)) {
     throw new Error(
       `Token ${accessToken} is expired, sign in to the web app to refresh the token`,

@@ -5,13 +5,6 @@ use url::Url;
 
 use crate::config::{read_config, read_private_key, write_config, Config};
 
-async fn check_url(url: Url) -> Result<()> {
-    let healthy_url = url.join("/api/v1/healthy")?;
-    let res = reqwest::get(healthy_url).await?;
-    dbg!(res);
-    Ok(())
-}
-
 fn get_url() -> Result<String> {
     let validator = |input: &str| match Url::parse(input) {
         Ok(url) => {

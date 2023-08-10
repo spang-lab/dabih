@@ -1,8 +1,12 @@
 use clap::{Args, Parser, Subcommand};
 
 use anyhow::{Ok, Result};
-pub mod config;
+mod api;
+mod config;
+mod crypto;
 mod init;
+
+use crate::crypto::CryptoKey;
 
 /// Simple program to greet a person
 #[derive(Parser)]
@@ -48,7 +52,9 @@ async fn main() -> Result<()> {
         }
         Commands::Config => {
             let config = config::read_config()?;
-            dbg!(config);
+            let key = CryptoKey::from(config.private_key.clone())?;
+            println!("Dabih Config: \n {}", config);
+            api::check_key(&config, &key).await?;
         }
     };
     Ok(())
