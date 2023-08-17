@@ -45,10 +45,12 @@ pub async fn init(key_file: String) -> Result<()> {
         }
     }
     let key = read_private_key(key_file)?;
+    let pem_data = key.private_key_to_pem()?;
+    let private_key = String::from_utf8(pem_data)?;
     let config = Config {
         url: get_url()?,
         token: get_token()?,
-        private_key: key,
+        private_key,
     };
     write_config(&config)?;
     Ok(())

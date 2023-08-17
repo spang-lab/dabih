@@ -41,7 +41,11 @@ export function DatasetsWrapper({ children }) {
 
   const removeDataset = useCallback(
     async (mnemonic) => {
-      await api.removeDataset(mnemonic);
+      if (api.isAdmin()) {
+        await api.admin.removeDataset(mnemonic);
+      } else {
+        await api.removeDataset(mnemonic);
+      }
       await fetchDatasets();
     },
     [api, fetchDatasets],

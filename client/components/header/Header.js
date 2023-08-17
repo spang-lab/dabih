@@ -37,8 +37,9 @@ export default function Header() {
     const { valid } = await api.checkPublicKey(key.hash);
     if (!valid) {
       await storage.deleteKey();
+      router.push('/key');
     }
-  }, [api, key, user]);
+  }, [api, key, user, router]);
 
   const checkState = useCallback(async () => {
     if (user === undefined || key === undefined) {

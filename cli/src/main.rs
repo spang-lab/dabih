@@ -5,8 +5,7 @@ mod api;
 mod config;
 mod crypto;
 mod init;
-
-use crate::crypto::CryptoKey;
+mod upload;
 
 /// Simple program to greet a person
 #[derive(Parser)]
@@ -21,7 +20,11 @@ struct Cli {
 enum Commands {
     /// Adds files to myapp
     Add(AddArgs),
+    /// Initialize the dabih configuration
     Init(InitArgs),
+    /// Upload files to dabih
+    Upload(UploadArgs),
+    /// Show the Configuration and check if it is valid
     Config,
 }
 
@@ -34,6 +37,22 @@ struct AddArgs {
 struct InitArgs {
     #[arg(value_name = "privateKeyFile")]
     key_file: String,
+}
+
+#[derive(Args)]
+struct UploadArgs {
+    /// The files that should be uploaded to dabih, this can also be a glob pattern
+    paths: Vec<String>,
+    /// If set, all files in a folder will be uploaded seperately
+    #[arg(short, long)]
+    recursive: bool,
+
+    /// If set, folders will be gziped and then uploaded as single file.
+    #[arg(short, long)]
+    zip: bool,
+    /// Max number of files that should be uploaded, set to -1 for unlimited.
+    #[arg(short, long, default_value_t = 10)]
+    limit: i64,
 }
 
 #[tokio::main]
@@ -51,10 +70,21 @@ async fn main() -> Result<()> {
             init::init(args.key_file.clone()).await?;
         }
         Commands::Config => {
-            let config = config::read_config()?;
-            let key = CryptoKey::from(config.private_key.clone())?;
-            println!("Dabih Config: \n {}", config);
-            api::check_key(&config, &key).await?;
+            let ctx = config::read_context()?;
+            api::check_key(&ctx).await?;
+        }
+        Commands::Upload(args) => {
+            let UploadArgs {
+                paths,
+                recursive,
+                zip,
+                limit,
+            } = args;
+            let files = upload::resolve(paths.clone(), *recursive, *zip, *limit)?;
+            let ctx = config::read_context()?;
+            for file in files {
+                upload::upload(&ctx, file).await?;
+            }
         }
     };
     Ok(())

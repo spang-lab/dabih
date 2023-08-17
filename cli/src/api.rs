@@ -2,12 +2,10 @@ use std::collections::HashMap;
 
 use anyhow::{bail, Result};
 
-use crate::config::Config;
-use crate::crypto::CryptoKey;
-use reqwest::{header, Client};
+use crate::config::Context;
+use reqwest::header::{self, HeaderMap, HeaderName, HeaderValue};
+use reqwest::multipart::{Form, Part};
 use serde::Deserialize;
-use serde_json;
-use url::Url;
 
 #[derive(Debug, Deserialize)]
 struct User {
@@ -15,55 +13,43 @@ struct User {
     pub email: String,
     pub sub: String,
 }
-
 #[derive(Debug, Deserialize)]
 struct KeyStatus {
     pub valid: bool,
     pub error: Option<String>,
 }
-
-fn create_client(config: &Config) -> Result<Client> {
-    let authorization = format!("Bearer dabih_{}", config.token);
-    let mut headers = header::HeaderMap::new();
-    headers.insert(
-        header::AUTHORIZATION,
-        header::HeaderValue::from_str(&authorization)?,
-    );
-    let client = Client::builder().default_headers(headers).build()?;
-    Ok(client)
+#[derive(Debug, Deserialize)]
+struct Upload {
+    pub mnemonic: String,
 }
 
-async fn check_api(config: &Config) -> Result<()> {
-    let url = Url::parse(&config.url)?;
-    let healthy_url = url.join("/api/v1/healthy")?;
+async fn check_api(ctx: &Context) -> Result<()> {
+    let healthy_url = ctx.url.join("/api/v1/healthy")?;
     let res = reqwest::get(healthy_url).await?;
     if !res.status().is_success() {
-        bail!("Failed to contact api endpoint {}", config.url)
+        bail!("Failed to contact api endpoint {}", ctx.url)
     }
     Ok(())
 }
 
-async fn get_user(config: &Config, client: &Client) -> Result<()> {
-    let url = Url::parse(&config.url)?;
-    let token_url = url.join("/api/v1/token")?;
-    let res = client.post(token_url).send().await?;
+async fn get_user(ctx: &Context) -> Result<()> {
+    let token_url = ctx.url.join("/api/v1/token")?;
+    let res = ctx.client.post(token_url).send().await?;
 
     let user: User = res.error_for_status()?.json().await?;
     println!("Successfully authenticated as {}", user.name);
     Ok(())
 }
 
-pub async fn check_key(config: &Config, key: &CryptoKey) -> Result<()> {
-    check_api(config).await?;
-    let client = create_client(config)?;
-    get_user(config, &client).await?;
+pub async fn check_key(ctx: &Context) -> Result<()> {
+    check_api(ctx).await?;
+    get_user(ctx).await?;
 
-    let url = Url::parse(&config.url)?;
-    let key_url = url.join("/api/v1/key/check")?;
+    let key_url = ctx.url.join("/api/v1/key/check")?;
 
     let mut data = HashMap::new();
-    data.insert("keyHash", key.fingerprint.clone());
-    let res = client.post(key_url).json(&data).send().await?;
+    data.insert("keyHash", ctx.fingerprint.clone());
+    let res = ctx.client.post(key_url).json(&data).send().await?;
     let status: KeyStatus = res.json().await?;
     let KeyStatus { error, valid } = status;
 
@@ -74,6 +60,58 @@ pub async fn check_key(config: &Config, key: &CryptoKey) -> Result<()> {
     if !valid {
         bail!("Invalid key")
     }
-    println!("Key with fingerprint {} is valid", &key.fingerprint);
+    println!("Key with fingerprint {} is valid", &ctx.fingerprint);
+    Ok(())
+}
+
+pub async fn upload_start(ctx: &Context, name: String) -> Result<String> {
+    let url = ctx.url.join("/api/v1/upload/start")?;
+    let mut data = HashMap::new();
+    data.insert("name", name);
+
+    let res = ctx.client.post(url).json(&data).send().await?;
+    let Upload { mnemonic } = res.json().await?;
+    Ok(mnemonic)
+}
+
+pub async fn upload_chunk(
+    ctx: &Context,
+    mnemonic: String,
+    start: u64,
+    end: u64,
+    total_size: u64,
+    hash: String,
+    data: &Vec<u8>,
+) -> Result<()> {
+    let mut headers = HeaderMap::new();
+
+    let content_range = format!("bytes {}-{}/{}", start, end, total_size);
+    let digest = format!("sha-256={}", hash);
+
+    headers.insert(
+        header::CONTENT_RANGE,
+        HeaderValue::from_str(&content_range)?,
+    );
+    headers.insert(
+        HeaderName::from_static("digest"),
+        HeaderValue::from_str(&digest)?,
+    );
+
+    let form = Form::new().part("chunk", Part::bytes(data.clone()).file_name("chunk.bin"));
+
+    let url = ctx.url.join("/api/v1/upload/")?.join(&mnemonic)?;
+    ctx.client
+        .put(url)
+        .multipart(form)
+        .headers(headers)
+        .send()
+        .await?;
+    Ok(())
+}
+
+pub async fn upload_finish(ctx: &Context, mnemonic: String) -> Result<()> {
+    let url = ctx.url.join("/api/v1/upload/finish/")?.join(&mnemonic)?;
+    let res = ctx.client.post(url).send().await?;
+    dbg!(res);
     Ok(())
 }

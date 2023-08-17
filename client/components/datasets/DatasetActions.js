@@ -12,7 +12,7 @@ import {
   Repeat,
 } from 'react-feather';
 import { useRouter } from 'next/router';
-import { useUser } from 'components/hooks';
+import { useUser } from '../hooks';
 import { useDatasets } from './Context';
 import { MutedButton } from '../util';
 import useDialog from '../dialog';
@@ -21,9 +21,7 @@ function ConfirmDialog(props) {
   const {
     onConfirm, onClose, isOpen, children, title, red,
   } = props;
-  const className = red
-    ? 'bg-red hover:bg-rose-600'
-    : 'bg-blue hover:bg-blue';
+  const className = red ? 'bg-red hover:bg-rose-600' : 'bg-blue hover:bg-blue';
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -130,7 +128,7 @@ export default function Actions({ data }) {
     destroyDataset,
     recoverDataset,
   } = useDatasets();
-  const isAdmin = (user) ? user.isAdmin : false;
+  const isAdmin = user ? user.isAdmin : false;
 
   return (
     <div className="text-right ">
@@ -256,7 +254,10 @@ export default function Actions({ data }) {
                   <div className="text-red inline-flex items-center font-bold text-sm">
                     <div className="relative w-6 h-6 mx-1">
                       <Trash2 size={24} />
-                      <AlertTriangle className="absolute -bottom-1 -right-1" size={14} />
+                      <AlertTriangle
+                        className="absolute -bottom-1 -right-1"
+                        size={14}
+                      />
                     </div>
                     Destroy forever
                   </div>
