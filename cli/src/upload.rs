@@ -119,7 +119,7 @@ pub async fn upload(ctx: &Context, path: PathBuf) -> Result<()> {
                 let hash = base64::encode_block(&hash_data);
                 api::upload_chunk(
                     ctx,
-                    mnemonic.clone(),
+                    &mnemonic,
                     current,
                     end,
                     file_size,
@@ -137,7 +137,7 @@ pub async fn upload(ctx: &Context, path: PathBuf) -> Result<()> {
     }
     pb.finish();
     let hash = hash_chunks(&chunk_hashes)?;
-    let server_hash = api::upload_finish(ctx, mnemonic).await?;
+    let server_hash = api::upload_finish(ctx, &mnemonic).await?;
     if !hash.eq(&server_hash) {
         bail!("Upload error, hash mismatch");
     }

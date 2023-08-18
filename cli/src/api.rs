@@ -28,6 +28,21 @@ struct UploadResult {
     pub hash: String,
 }
 
+#[derive(Debug, Deserialize)]
+struct Chunk {
+    pub hash: String,
+    pub iv: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct Dataset {
+    pub mnemonic: String,
+    pub hash: String,
+    #[serde(rename = "fileName")]
+    pub file_name: String,
+    pub chunks: Vec<Chunk>,
+}
+
 async fn check_api(ctx: &Context) -> Result<()> {
     let healthy_url = ctx.url.join("/api/v1/healthy")?;
     let res = reqwest::get(healthy_url).await?;
@@ -84,7 +99,7 @@ pub async fn upload_start(ctx: &Context, name: String) -> Result<String> {
 
 pub async fn upload_chunk(
     ctx: &Context,
-    mnemonic: String,
+    mnemonic: &String,
     start: u64,
     end: u64,
     total_size: u64,
@@ -107,7 +122,7 @@ pub async fn upload_chunk(
 
     let form = Form::new().part("chunk", Part::bytes(data.clone()).file_name("chunk.bin"));
 
-    let url = ctx.url.join("/api/v1/upload/")?.join(&mnemonic)?;
+    let url = ctx.url.join("/api/v1/upload/")?.join(mnemonic)?;
     ctx.client
         .put(url)
         .multipart(form)
@@ -117,9 +132,26 @@ pub async fn upload_chunk(
     Ok(())
 }
 
-pub async fn upload_finish(ctx: &Context, mnemonic: String) -> Result<String> {
-    let url = ctx.url.join("/api/v1/upload/finish/")?.join(&mnemonic)?;
+pub async fn upload_finish(ctx: &Context, mnemonic: &String) -> Result<String> {
+    let url = ctx.url.join("/api/v1/upload/finish/")?.join(mnemonic)?;
     let res = ctx.client.post(url).send().await?;
     let UploadResult { hash } = res.json().await?;
     Ok(hash)
+}
+
+pub async fn fetch_dataset(ctx: &Context, mnemonic: &String) -> Result<()> {
+    let url = ctx.url.join("api/v1/dataset/")?.join(mnemonic)?;
+    let dataset = match ctx.client.get(url).send().await {
+        Ok(res) => {
+            let dataset: Dataset = res.json().await?;
+            Some(dataset)
+        }
+        Err(e) => {
+            dbg!(e);
+            None
+        }
+    };
+
+    dbg!(dataset);
+    Ok(())
 }

@@ -1,9 +1,11 @@
 use clap::{Args, Parser, Subcommand};
+use std::path::PathBuf;
 
-use anyhow::{Ok, Result};
+use anyhow::{bail, Result};
 mod api;
 mod config;
 mod crypto;
+mod download;
 mod init;
 mod upload;
 
@@ -22,6 +24,8 @@ enum Commands {
     Init(InitArgs),
     /// Upload files to dabih
     Upload(UploadArgs),
+    /// Download a dataset from dabih
+    Download(DownloadArgs),
     /// Show the Configuration and check if it is valid
     Config,
 }
@@ -46,6 +50,15 @@ struct UploadArgs {
     /// Max number of files that should be uploaded, set to -1 for unlimited.
     #[arg(short, long, default_value_t = 10)]
     limit: i64,
+}
+
+#[derive(Args)]
+struct DownloadArgs {
+    /// The files that should be uploaded to dabih, this can also be a glob pattern
+    mnemonics: Vec<String>,
+    /// If set, all files in a folder will be uploaded seperately
+    #[arg(short, long)]
+    output: Option<String>,
 }
 
 #[tokio::main]
@@ -74,6 +87,18 @@ async fn main() -> Result<()> {
             for file in files {
                 upload::upload(&ctx, file).await?;
             }
+        }
+        Commands::Download(args) => {
+            let DownloadArgs { mnemonics, output } = args;
+            if mnemonics.is_empty() {
+                bail!("Please specify mnemonics to download as arguments")
+            }
+            let download_path = match output {
+                Some(o) => PathBuf::from(o),
+                None => PathBuf::from("."),
+            };
+            let ctx = config::read_context()?;
+            download::resolve_mnemonics(&ctx, mnemonics).await?;
         }
     };
     Ok(())
