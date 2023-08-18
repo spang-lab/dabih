@@ -29,13 +29,15 @@ struct UploadResult {
 }
 
 #[derive(Debug, Deserialize)]
-struct Chunk {
+pub struct Chunk {
     pub hash: String,
+    #[serde(rename = "urlHash")]
+    pub url_hash: String,
     pub iv: String,
 }
 
 #[derive(Debug, Deserialize)]
-struct Dataset {
+pub struct Dataset {
     pub mnemonic: String,
     pub hash: String,
     #[serde(rename = "fileName")]
@@ -139,19 +141,38 @@ pub async fn upload_finish(ctx: &Context, mnemonic: &String) -> Result<String> {
     Ok(hash)
 }
 
-pub async fn fetch_dataset(ctx: &Context, mnemonic: &String) -> Result<()> {
-    let url = ctx.url.join("api/v1/dataset/")?.join(mnemonic)?;
-    let dataset = match ctx.client.get(url).send().await {
+pub async fn fetch_dataset(ctx: &Context, mnemonic: &String) -> Result<Dataset> {
+    let url = ctx.url.join("/api/v1/dataset/")?.join(mnemonic)?;
+    let res = ctx.client.get(url).send().await?;
+    match res.error_for_status() {
         Ok(res) => {
             let dataset: Dataset = res.json().await?;
-            Some(dataset)
+            Ok(dataset)
         }
-        Err(e) => {
-            dbg!(e);
-            None
+        Err(_) => {
+            bail!("Failed to download {}, dataset does not exist", mnemonic);
         }
-    };
+    }
+}
 
-    dbg!(dataset);
+pub async fn fetch_key(ctx: &Context, mnemonic: &String) -> Result<String> {
+    let path = format!("/api/v1/dataset/{}/key", mnemonic);
+    let url = ctx.url.join(&path)?;
+
+    let mut data = HashMap::new();
+    data.insert("keyHash", ctx.fingerprint.clone());
+    let res = ctx.client.post(url).json(&data).send().await?;
+    let key = res.text().await?;
+    Ok(key)
+}
+
+pub async fn fetch_chunk(ctx: &Context, mnemonic: &String, hash: &String) -> Result<()> {
+    dbg!(mnemonic, hash);
+    let path = format!("/api/v1/dataset/{}/chunk/{}", mnemonic, hash);
+    let url = ctx.url.join(&path)?;
+
+    let res = ctx.client.get(url).send().await?.error_for_status()?;
+    let data = res.bytes().await?;
+
     Ok(())
 }

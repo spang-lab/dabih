@@ -1,7 +1,6 @@
 use clap::{Args, Parser, Subcommand};
-use std::path::PathBuf;
 
-use anyhow::{bail, Result};
+use anyhow::Result;
 mod api;
 mod config;
 mod crypto;
@@ -59,6 +58,8 @@ struct DownloadArgs {
     /// If set, all files in a folder will be uploaded seperately
     #[arg(short, long)]
     output: Option<String>,
+    #[arg(short, long)]
+    force: bool,
 }
 
 #[tokio::main]
@@ -89,16 +90,13 @@ async fn main() -> Result<()> {
             }
         }
         Commands::Download(args) => {
-            let DownloadArgs { mnemonics, output } = args;
-            if mnemonics.is_empty() {
-                bail!("Please specify mnemonics to download as arguments")
-            }
-            let download_path = match output {
-                Some(o) => PathBuf::from(o),
-                None => PathBuf::from("."),
-            };
+            let DownloadArgs {
+                mnemonics,
+                output,
+                force,
+            } = args;
             let ctx = config::read_context()?;
-            download::resolve_mnemonics(&ctx, mnemonics).await?;
+            download::download_all(&ctx, mnemonics, output, *force).await?;
         }
     };
     Ok(())

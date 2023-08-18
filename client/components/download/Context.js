@@ -5,14 +5,12 @@ import React, {
   useMemo,
   createContext,
   useContext,
-} from 'react';
-import pLimit from 'p-limit';
-import { useRouter } from 'next/router';
-import {
-  storage, decryptKey, encodeHash, decryptChunk,
-} from '../../lib';
-import { useApi } from '../api';
-import useDialog from '../dialog';
+} from "react";
+import pLimit from "p-limit";
+import { useRouter } from "next/router";
+import { storage, decryptKey, encodeHash, decryptChunk } from "../../lib";
+import { useApi } from "../api";
+import useDialog from "../dialog";
 
 const DownloadContext = createContext();
 
@@ -92,10 +90,10 @@ export function DownloadWrapper({ children }) {
     const { errors } = result;
     const lastChunk = result.prevChunk;
     if (lastChunk.size !== lastChunk.end) {
-      errors.push('Chunks incomplete');
+      errors.push("Chunks incomplete");
     }
     if (errors.length) {
-      const error = errors.join('\n');
+      const error = errors.join("\n");
       dialog.error(error);
       return;
     }
@@ -116,7 +114,7 @@ export function DownloadWrapper({ children }) {
       chunks: chunkCount,
       downloadDataset,
     }),
-    [dataset, file, chunkCount, downloadDataset],
+    [dataset, file, chunkCount, downloadDataset]
   );
 
   return (
