@@ -7,7 +7,7 @@ mod crypto;
 mod init;
 mod upload;
 
-/// Simple program to greet a person
+/// Dabih Command line Interface
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 #[command(propagate_version = true)]
@@ -18,19 +18,12 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Adds files to myapp
-    Add(AddArgs),
     /// Initialize the dabih configuration
     Init(InitArgs),
     /// Upload files to dabih
     Upload(UploadArgs),
     /// Show the Configuration and check if it is valid
     Config,
-}
-
-#[derive(Args)]
-struct AddArgs {
-    name: Option<String>,
 }
 
 #[derive(Args)]
@@ -62,10 +55,6 @@ async fn main() -> Result<()> {
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
-        Commands::Add(args) => {
-            let name = &args.name;
-            println!("'myapp add' was used, name is: {name:?}")
-        }
         Commands::Init(args) => {
             init::init(args.key_file.clone()).await?;
         }

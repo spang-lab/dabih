@@ -19,5 +19,7 @@ export default async function fetchUser(ctx, accessToken) {
   if (!providerFunc) {
     throw new Error(`Unknown Provider "${provider}" in accessToken`);
   }
-  return providerFunc(ctx, token);
+  const user = await providerFunc(ctx, token);
+  user.provider = provider;
+  return user;
 }

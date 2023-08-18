@@ -23,6 +23,11 @@ struct Upload {
     pub mnemonic: String,
 }
 
+#[derive(Debug, Deserialize)]
+struct UploadResult {
+    pub hash: String,
+}
+
 async fn check_api(ctx: &Context) -> Result<()> {
     let healthy_url = ctx.url.join("/api/v1/healthy")?;
     let res = reqwest::get(healthy_url).await?;
@@ -37,7 +42,10 @@ async fn get_user(ctx: &Context) -> Result<()> {
     let res = ctx.client.post(token_url).send().await?;
 
     let user: User = res.error_for_status()?.json().await?;
-    println!("Successfully authenticated as {}", user.name);
+    println!(
+        "Successfully authenticated as {}<{}> (id:{})",
+        user.name, user.email, user.sub
+    );
     Ok(())
 }
 
@@ -109,9 +117,9 @@ pub async fn upload_chunk(
     Ok(())
 }
 
-pub async fn upload_finish(ctx: &Context, mnemonic: String) -> Result<()> {
+pub async fn upload_finish(ctx: &Context, mnemonic: String) -> Result<String> {
     let url = ctx.url.join("/api/v1/upload/finish/")?.join(&mnemonic)?;
     let res = ctx.client.post(url).send().await?;
-    dbg!(res);
-    Ok(())
+    let UploadResult { hash } = res.json().await?;
+    Ok(hash)
 }

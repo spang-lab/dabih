@@ -8,8 +8,6 @@ use zip::write::FileOptions;
 use zip::ZipWriter;
 
 use openssl::base64;
-use openssl::pkey::Private;
-use openssl::rsa::Rsa;
 use openssl::sha::sha256;
 
 use crate::api;
@@ -83,18 +81,15 @@ pub fn resolve(paths: Vec<String>, recursive: bool, zip: bool, limit: i64) -> Re
     Ok(entries)
 }
 
-pub async fn upload_chunk(
-    ctx: &Context,
-    mnemonic: String,
-    start: u64,
-    end: u64,
-    total_size: u64,
-    data: &Vec<u8>,
-) -> Result<()> {
-    let hash_data = sha256(&data);
-    let hash = base64::encode_block(&hash_data);
-    api::upload_chunk(ctx, mnemonic, start, end, total_size, hash, data).await?;
-    Ok(())
+pub fn hash_chunks(hashes: &Vec<String>) -> Result<String> {
+    let mut bytes = Vec::new();
+    for hash in hashes {
+        let mut data = base64::decode_block(&hash)?;
+        bytes.append(&mut data)
+    }
+    let hash_buf = sha256(&bytes);
+    let hash = base64::encode_block(&hash_buf);
+    Ok(hash)
 }
 
 pub async fn upload(ctx: &Context, path: PathBuf) -> Result<()> {
@@ -103,11 +98,14 @@ pub async fn upload(ctx: &Context, path: PathBuf) -> Result<()> {
     let name = file_name.to_str().unwrap().to_owned();
 
     let mnemonic = api::upload_start(ctx, name).await?;
+    let mut chunk_hashes = Vec::new();
 
-    let mut file = File::open(path)?;
+    let mut file = File::open(&path)?;
     let file_size = file.metadata()?.len();
     let mut pb = ProgressBar::new(file_size);
     pb.set_units(Units::Bytes);
+    let message = format!("as {} ", &mnemonic);
+    pb.message(&message);
     let chunk_size = 2 * 1024 * 1024; // 2 MiB
     let mut chunk_buf = vec![0u8; chunk_size];
     let mut current = 0;
@@ -116,15 +114,20 @@ pub async fn upload(ctx: &Context, path: PathBuf) -> Result<()> {
             Ok(0) => break,
             Ok(bytes) => {
                 let delta = bytes as u64;
-                upload_chunk(
+                let end = current + delta;
+                let hash_data = sha256(&chunk_buf);
+                let hash = base64::encode_block(&hash_data);
+                api::upload_chunk(
                     ctx,
                     mnemonic.clone(),
                     current,
-                    current + delta,
+                    end,
                     file_size,
+                    hash.clone(),
                     &chunk_buf,
                 )
                 .await?;
+                chunk_hashes.push(hash);
                 current = pb.add(delta);
             }
             Err(e) => {
@@ -133,7 +136,10 @@ pub async fn upload(ctx: &Context, path: PathBuf) -> Result<()> {
         };
     }
     pb.finish();
-    api::upload_finish(ctx, mnemonic).await?;
-
+    let hash = hash_chunks(&chunk_hashes)?;
+    let server_hash = api::upload_finish(ctx, mnemonic).await?;
+    if !hash.eq(&server_hash) {
+        bail!("Upload error, hash mismatch");
+    }
     Ok(())
 }
