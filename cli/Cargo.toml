@@ -4,6 +4,13 @@ description = "Command Line Interface for dabih"
 authors = ["Michael Huttner<michael@mhuttner.com>"]
 version = "1.4.5"
 edition = "2021"
+licence = "MIT"
+readme = "README.md"
+homepage = "https://github.com/spang-lab/dabih"
+repository = "https://github.com/spang-lab/dabih"
+keywords = ["cli", "dabih"]
+categories = ["command-line-utilities"]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

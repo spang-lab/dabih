@@ -1,8 +1,8 @@
-import {Dialog} from '@headlessui/react';
-import {AdminContact} from 'components/branding';
+import { Dialog } from '@headlessui/react';
+import { AdminContact } from '../branding';
 
-export default function Error({ctx, closeDialog}) {
-  const {error} = ctx;
+export default function Error({ ctx, closeDialog }) {
+  const { error } = ctx;
 
   return (
     <Dialog.Panel className="w-full max-w-xl p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all">
@@ -14,14 +14,9 @@ export default function Error({ctx, closeDialog}) {
       </Dialog.Title>
       <div className="mt-2">
         <p className="text-gray-600">Dabih encountered an Error</p>
-        <p className="font-semibold text-red my-3">
-          {error}
-        </p>
-        <p className="text-gray-600">
-          For help please contact an admin
-        </p>
+        <p className="font-semibold text-red my-3">{error}</p>
+        <p className="text-gray-600">For help please contact an admin</p>
         <AdminContact />
-
       </div>
 
       <div className="mt-4 text-right">
