@@ -22,10 +22,15 @@ const DatasetContext = createContext();
 export function DatasetsWrapper({ children }) {
   const api = useApi();
   const dialog = useDialog();
+
+  const limit = 25;
+
   const [datasets, setDatasets] = useState([]);
   const [searchParams, setSearchParams] = useState({
     deleted: false,
     all: false,
+    page: 1,
+    limit: 25,
   });
 
   const fetchDatasets = useCallback(async () => {
@@ -108,7 +113,7 @@ export function DatasetsWrapper({ children }) {
 
   const downloadChunks = useCallback(
     async (mnemonic, chunks, aesKey, parallel = 1) => {
-      const limit = pLimit(parallel);
+      const plimit = pLimit(parallel);
       const handleChunk = async (chunk) => {
         const { iv, data } = chunk;
         if (data) return chunk;
@@ -123,7 +128,7 @@ export function DatasetsWrapper({ children }) {
           data: new Blob([decrypted]),
         };
       };
-      const promises = chunks.map(async (chunk) => limit(() => handleChunk(chunk)));
+      const promises = chunks.map(async (chunk) => plimit(() => handleChunk(chunk)));
       return Promise.all(promises);
     },
     [api],
@@ -182,6 +187,7 @@ export function DatasetsWrapper({ children }) {
   const contextValue = useMemo(
     () => ({
       datasets,
+      limit,
       searchParams,
       setSearchParams,
       removeDataset,

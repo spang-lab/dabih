@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Switch } from '@headlessui/react';
+import { useRouter } from 'next/router';
 import { useUser } from '../hooks';
 import { useDatasets } from './Context';
 
@@ -63,6 +64,27 @@ function AdminOptions() {
   );
 }
 
+function PageButton({ value }) {
+  return (
+    <div className="text-blue border-blue px-2 py-1">
+      {value}
+    </div>
+  );
+}
+
+function Pagination() {
+  const { datasets, searchParams } = useDatasets();
+  const { page, limit } = searchParams;
+  const numPages = Math.ceil(datasets.length / limit);
+  const pages = [...Array(numPages)].map((_, i) => i);
+
+  return (
+    <div className="px-4 flex">
+      {JSON.stringify(pages)}
+    </div>
+  );
+}
+
 export default function SearchBar() {
   const { searchParams, setSearchParams } = useDatasets();
 
@@ -110,6 +132,7 @@ export default function SearchBar() {
         </Switch>
         <div className="font-semibold">Show only my datasets</div>
       </div>
+      <Pagination />
       <div className="grow" />
       <AdminOptions />
     </div>
