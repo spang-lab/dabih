@@ -26,6 +26,6 @@ popd
 
 
 npm install  # update lockfile
-git add package{,-lock}.json ./**/*.json
+git add package{,-lock}.json ./**/*.json cli/Cargo.toml
 git commit --message "$VERSION"
 git tag -a -m "New version: $VERSION" "$VERSION"
