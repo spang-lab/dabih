@@ -17,7 +17,10 @@ fn expand_dir(path: PathBuf) -> Result<Vec<PathBuf>> {
     let mut files = Vec::new();
     let glob_string = path.join("**/*");
     for entry in glob(&glob_string.to_string_lossy())? {
-        files.push(entry?);
+        let path = entry?;
+        if path.is_file() {
+            files.push(path);
+        }
     }
     Ok(files)
 }
