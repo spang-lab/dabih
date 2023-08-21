@@ -2,7 +2,7 @@
 name = "dabih"
 description = "Command Line Interface for dabih"
 authors = ["Michael Huttner<michael@mhuttner.com>"]
-version = "0.1.0"
+version = "v1.4.2#v"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
