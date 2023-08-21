@@ -354,9 +354,10 @@ dependencies = [
 
 [[package]]
 name = "dabih"
-version = "1.4.10"
+version = "1.4.11"
 dependencies = [
  "anyhow",
+ "base64",
  "clap",
  "crypto",
  "flate2",

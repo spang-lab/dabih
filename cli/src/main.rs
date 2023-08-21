@@ -27,12 +27,22 @@ enum Commands {
     Download(DownloadArgs),
     /// Show the Configuration and check if it is valid
     Config,
+    /// Generate a (root) RSA key pair for use with dabih.
+    Keygen(KeygenArgs),
 }
 
 #[derive(Args)]
 struct InitArgs {
+    /// The dabih private key to use for decryption
     #[arg(value_name = "privateKeyFile")]
     key_file: String,
+}
+
+#[derive(Args)]
+struct KeygenArgs {
+    /// The path where to new key should be stored
+    #[arg(value_name = "rootKeyFile")]
+    key_file: Option<String>,
 }
 
 #[derive(Args)]
@@ -97,6 +107,10 @@ async fn main() -> Result<()> {
             } = args;
             let ctx = config::read_context()?;
             download::download_all(&ctx, mnemonics, output, *force).await?;
+        }
+        Commands::Keygen(args) => {
+            let KeygenArgs { key_file } = args;
+            crypto::generate_keypair(key_file)?;
         }
     };
     Ok(())

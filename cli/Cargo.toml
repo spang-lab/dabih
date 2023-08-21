@@ -16,6 +16,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 anyhow = "1.0.72"
+base64 = "0.21.2"
 clap = { version = "4.3.21", features = ["derive"] }
 crypto = "0.5.1"
 flate2 = "1.0.27"
