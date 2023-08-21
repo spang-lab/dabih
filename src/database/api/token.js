@@ -1,34 +1,31 @@
 import { literal } from 'sequelize';
-import { getModel, getTx } from './util.js';
+import { getModel } from './util.js';
 
 async function list(ctx, where = {}) {
   const model = getModel(ctx, 'Token');
-  const tx = getTx(ctx);
-  return model.findAllTx(
-    tx,
-    where,
+  return model.findAll(
+    {
+      raw: true,
+      where,
+    },
   );
 }
 
 async function add(ctx, properties) {
-  const tx = getTx(ctx);
   const Token = getModel(ctx, 'Token');
-  await Token.createTx(tx, properties);
+  await Token.create(properties);
 }
 async function refresh(ctx, sub) {
-  const tx = getTx(ctx);
   const Token = getModel(ctx, 'Token');
-  await Token.updateTx(tx, { timestamp: literal('CURRENT_TIMESTAMP') }, { sub });
+  await Token.update({ timestamp: literal('CURRENT_TIMESTAMP') }, { where: { sub } });
 }
 async function destroy(ctx, where) {
-  const tx = getTx(ctx);
   const Token = getModel(ctx, 'Token');
-  await Token.destroyTx(tx, where);
+  await Token.destroy({ where });
 }
 async function find(ctx, where) {
-  const tx = getTx(ctx);
   const Token = getModel(ctx, 'Token');
-  return Token.findOneTx(tx, where);
+  return Token.findOne({ where });
 }
 
 export default {

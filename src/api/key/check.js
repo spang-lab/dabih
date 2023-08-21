@@ -14,11 +14,17 @@ const route = async (ctx) => {
   });
 
   if (!key) {
-    sendError(ctx, `Key with hash ${keyHash} is not registered for your account ${sub}`, 400);
+    ctx.body = {
+      valid: false,
+      error: `Key with hash ${keyHash} is not registered for your account ${sub}`,
+    };
     return;
   }
   if (!key.confirmed) {
-    sendError(ctx, `Key with hash ${keyHash} has not been confirmed by an admin yet.`, 400);
+    ctx.body = {
+      valid: false,
+      error: `Key with hash ${keyHash} has not been confirmed by an admin yet.`,
+    };
     return;
   }
   ctx.body = { valid: true };

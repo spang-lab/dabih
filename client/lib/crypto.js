@@ -6,7 +6,7 @@ import {
   pemToPkcs8,
   pkcs8ToPem,
   CONST,
-} from './crypto-util';
+} from "./crypto-util";
 
 export const isCryptoApiAvailable = () => {
   if (!crypto) {
@@ -20,17 +20,17 @@ export const isCryptoApiAvailable = () => {
 
 export const generateKey = async () => {
   const isExportable = true;
-  const keyUses = ['encrypt', 'decrypt'];
+  const keyUses = ["encrypt", "decrypt"];
 
   const { privateKey, publicKey } = await crypto.subtle.generateKey(
     CONST.rsa,
     isExportable,
-    keyUses,
+    keyUses
   );
 
   return {
-    publicKey: await crypto.subtle.exportKey('jwk', publicKey),
-    privateKey: await crypto.subtle.exportKey('pkcs8', privateKey),
+    publicKey: await crypto.subtle.exportKey("jwk", publicKey),
+    privateKey: await crypto.subtle.exportKey("pkcs8", privateKey),
   };
 };
 
@@ -51,7 +51,7 @@ export const hashHashes = async (hashes) => {
 };
 
 export const hashKey = async (publicKey) => {
-  const spki = await crypto.subtle.exportKey('spki', publicKey);
+  const spki = await crypto.subtle.exportKey("spki", publicKey);
   const buffer = await crypto.subtle.digest(CONST.hash.alg, spki);
   return uint8ToBase64(buffer);
 };
@@ -63,15 +63,15 @@ export const decryptKey = async (privateKey, encryptedKey) => {
   const decrypted = await crypto.subtle.decrypt(
     algorithm,
     privateKey,
-    encrypted,
+    encrypted
   );
 
   const key = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     decrypted,
     { name: CONST.aes.name },
     true,
-    ['decrypt'],
+    ["decrypt"]
   );
 
   return key;
@@ -86,20 +86,20 @@ export const decryptChunk = async (aesKey, iv, chunk) => {
       iv: rawIv,
     },
     aesKey,
-    buffer,
+    buffer
   );
 };
 
 const loadPrivateKey = async (keyData) => {
   const privateKey = await crypto.subtle.importKey(
-    'pkcs8',
+    "pkcs8",
     keyData,
     {
       name: CONST.rsa.name,
       hash: CONST.rsa.hash,
     },
     true,
-    ['decrypt'],
+    ["decrypt"]
   );
   const publicKey = await privateKeyToPublicKey(privateKey);
   const hash = await hashKey(publicKey);
@@ -113,9 +113,9 @@ const loadPrivateKey = async (keyData) => {
 // OpenSSH .pub files have a custom format not supported by
 // subtle crypto directly
 const importOpenSSHPubKey = async (text) => {
-  const parts = text.split(' ');
+  const parts = text.split(" ");
   if (parts.length !== 3) {
-    throw new Error('Invalid ssh-rsa Pubkey');
+    throw new Error("Invalid ssh-rsa Pubkey");
   }
   // get the base64 encoded data
   const keyData = parts[1];
@@ -132,61 +132,61 @@ const importOpenSSHPubKey = async (text) => {
     current += len + 4;
   }
   if (data.length !== 3) {
-    throw new Error('Invalid ssh-rsa public key');
+    throw new Error("Invalid ssh-rsa public key");
   }
   const header = new TextDecoder().decode(data[0]);
-  if (header !== 'ssh-rsa') {
+  if (header !== "ssh-rsa") {
     throw new Error(`Invalid ssh-rsa header ${header}`);
   }
   const key = {
-    kty: 'RSA',
+    kty: "RSA",
     e: base64Tobase64Url(uint8ToBase64(data[1])),
     n: base64Tobase64Url(uint8ToBase64(data[2])),
   };
   const publicKey = await crypto.subtle.importKey(
-    'jwk',
+    "jwk",
     key,
     {
       name: CONST.rsa.name,
       hash: CONST.rsa.hash,
     },
     true,
-    ['encrypt'],
+    ["encrypt"]
   );
   return { publicKey, name: keyName };
 };
 
-export const exportJwk = async (key) => crypto.subtle.exportKey('jwk', key);
+export const exportJwk = async (key) => crypto.subtle.exportKey("jwk", key);
 export const exportAesKey = async (key) => {
-  const buffer = await crypto.subtle.exportKey('raw', key);
+  const buffer = await crypto.subtle.exportKey("raw", key);
   return uint8ToBase64(buffer);
 };
 
 export const exportBase64 = async (key) => {
-  const pkcs8 = await crypto.subtle.exportKey('pkcs8', key);
+  const pkcs8 = await crypto.subtle.exportKey("pkcs8", key);
   return uint8ToBase64(pkcs8);
 };
 
 export const importPublicKey = async (keyData) => {
-  if (keyData.startsWith('ssh-rsa')) {
+  if (keyData.startsWith("ssh-rsa")) {
     return importOpenSSHPubKey(keyData);
   }
-  throw new Error('Unknown public key format');
+  throw new Error("Unknown public key format");
 };
 
-export const importPrivateKey = async (keyData, format = 'uint8array') => {
-  if (format === 'uint8array') {
+export const importPrivateKey = async (keyData, format = "uint8array") => {
+  if (format === "uint8array") {
     return loadPrivateKey(keyData);
   }
-  if (format === 'base64') {
+  if (format === "base64") {
     const pkcs8 = base64ToUint8(keyData);
     return loadPrivateKey(pkcs8);
   }
-  if (format === 'pem' && keyData.startsWith(CONST.pkcs8Header)) {
+  if (format === "pem" && keyData.startsWith(CONST.pkcs8Header)) {
     const pkcs8 = pemToPkcs8(keyData);
     return loadPrivateKey(pkcs8);
   }
-  throw new Error('Unknown private key format');
+  throw new Error("Unknown private key format");
 };
 export const exportPrivateKey = async (key) => pkcs8ToPem(key);
 

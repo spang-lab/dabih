@@ -98,8 +98,9 @@ export function ProfileWrapper({ children }) {
         return;
       }
       setToken(result);
+      fetchTokens();
     },
-    [api, setToken],
+    [api, setToken, fetchTokens],
   );
 
   const removeToken = useCallback(

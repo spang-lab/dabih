@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
 import QrScanner from 'qr-scanner';
-import { Spinner } from '../util';
+import { Spinner } from '../../util';
 
 const calculateScanRegion = (video) => {
   const smallestDimension = Math.min(video.videoWidth, video.videoHeight);

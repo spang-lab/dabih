@@ -9,6 +9,9 @@ export default async function init(sequelize) {
     name: {
       type: DataTypes.TEXT,
     },
+    email: {
+      type: DataTypes.TEXT,
+    },
     sub: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -27,10 +30,8 @@ export default async function init(sequelize) {
     confirmed: {
       type: DataTypes.DATE,
     },
-    deleted: {
-      type: DataTypes.DATE,
-    },
   }, {
+    paranoid: true,
     tableName: 'public_key',
   });
   return PublicKey;

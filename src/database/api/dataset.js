@@ -1,70 +1,85 @@
 /* eslint-disable no-await-in-loop */
-import { Op } from 'sequelize';
-import { getModel, getTx } from './util.js';
-import {
-  log, generateMnemonic, getUser, userHasScope,
-} from '../../util/index.js';
-import { rsa } from '../../crypto/index.js';
+import { Op } from "sequelize";
+import { getModel } from "./util.js";
+import { log, generateMnemonic, userHasScope } from "../../util/index.js";
+import { base64ToBase64Url, rsa } from "../../crypto/index.js";
+import search from "./datasetSearch.js";
 
 async function listIncomplete(ctx) {
-  const dataset = getModel(ctx, 'Dataset');
-  const tx = getTx(ctx);
+  const dataset = getModel(ctx, "Dataset");
 
-  return dataset.findAllTx(tx, {
-    hash: {
-      [Op.is]: null,
+  return dataset.findAll({
+    raw: true,
+    where: {
+      hash: {
+        [Op.is]: null,
+      },
     },
   });
 }
-async function listAll(ctx) {
-  const Dataset = getModel(ctx, 'Dataset');
-  const tx = getTx(ctx);
-  return Dataset.findAll({
-    transaction: tx,
+
+async function findMnemonic(ctx, mnemonic) {
+  const Dataset = getModel(ctx, "Dataset");
+  const result = await Dataset.findOne({
+    where: { mnemonic },
+    paranoid: false,
   });
+  if (!result) {
+    return null;
+  }
+  return result.get({ plain: true });
 }
 
 async function fromMnemonic(ctx, mnemonic) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const dataset = await Dataset.fromMnemonic(tx, mnemonic);
-  return dataset.get({ plain: true });
+  const dataset = await findMnemonic(ctx, mnemonic);
+  if (!dataset) {
+    throw new Error(`Dataset ${mnemonic} not found`);
+  }
+  return dataset;
 }
 
-async function listAccessible(ctx, sub) {
-  const tx = getTx(ctx);
-  const isAdmin = userHasScope(ctx, 'admin');
-  const Dataset = getModel(ctx, 'Dataset');
-  const Member = getModel(ctx, 'Member');
+async function listAll(ctx) {
+  const Dataset = getModel(ctx, "Dataset");
+  return Dataset.findAll({
+    raw: true,
+  });
+}
+
+async function listAccessible(ctx, sub, options) {
+  const searchOptions = {
+    limit: null,
+    offset: null,
+    deleted: true,
+    all: false,
+    ...options,
+  };
+
+  const keepAll = searchOptions.all && userHasScope(ctx, "admin");
+  const Dataset = getModel(ctx, "Dataset");
+  const Member = getModel(ctx, "Member");
 
   const results = await Dataset.findAll({
     include: {
       model: Member,
-      as: 'members',
-      attributes: ['permission', 'sub'],
+      as: "members",
+      attributes: ["permission", "sub"],
+      paranoid: !searchOptions.deleted,
       where: {
-        deleted: {
-          [Op.is]: null,
-        },
+        sub,
       },
     },
     where: {
       hash: {
         [Op.not]: null,
       },
-      deleted: {
-        [Op.is]: null,
-      },
     },
-    order: [
-      ['createdAt', 'DESC'],
-    ],
-    transaction: tx,
+    order: [["createdAt", "DESC"]],
+    paranoid: !searchOptions.deleted,
   });
   const datasets = results
     .map((dset) => {
       const plain = dset.get({ plain: true });
-      let permission = 'none';
+      let permission = "none";
       const member = plain.members.find((m) => m.sub === sub);
       if (member) {
         permission = member.permission;
@@ -74,87 +89,84 @@ async function listAccessible(ctx, sub) {
         permission,
       };
     })
-    .filter((dset) => isAdmin || dset.permission !== 'none');
+    .filter((dset) => keepAll || dset.permission !== "none");
 
   return datasets;
 }
 
-async function findMnemonic(ctx) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
+async function create(ctx, properties) {
+  const Dataset = getModel(ctx, "Dataset");
+
   const maxTries = 3;
   for (let i = 0; i < maxTries; i += 1) {
     const mnemonic = generateMnemonic();
-    const existing = await Dataset.findOneTx(tx, { mnemonic });
+    const existing = await findMnemonic(ctx, mnemonic);
     if (!existing) {
-      return mnemonic;
+      return Dataset.create({
+        ...properties,
+        mnemonic,
+      });
     }
   }
-  throw new Error('ID SPACE exhausted, this should never happen');
-}
-async function create(ctx, properties) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const mnemonic = await findMnemonic(ctx);
-  const dataset = await Dataset.createTx(tx, {
-    ...properties,
-    mnemonic,
-  });
-  return dataset;
+  throw new Error("ID SPACE exhausted, this should never happen");
 }
 
 async function listMembers(ctx, mnemonic) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const Member = getModel(ctx, 'Member');
+  const Member = getModel(ctx, "Member");
 
-  const { id } = await Dataset.fromMnemonic(tx, mnemonic);
-  const members = await Member.findAllTx(tx, {
-    datasetId: id,
+  const { id } = await fromMnemonic(ctx, mnemonic);
+  const members = await Member.findAll({
+    raw: true,
+    where: {
+      datasetId: id,
+    },
   });
   return members;
 }
 
 async function getMemberAccess(ctx, mnemonic, sub) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const Member = getModel(ctx, 'Member');
+  const Member = getModel(ctx, "Member");
 
-  const { id } = await Dataset.fromMnemonic(tx, mnemonic);
-  const entry = await Member.findOneTx(tx, {
-    datasetId: id,
-    sub,
+  const { id } = await fromMnemonic(ctx, mnemonic);
+  const entry = await Member.findOne({
+    where: {
+      datasetId: id,
+      sub,
+    },
   });
   return entry.permission;
 }
 async function setMemberAccess(ctx, mnemonic, sub, permission) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const Member = getModel(ctx, 'Member');
+  const Member = getModel(ctx, "Member");
 
-  const { id } = await Dataset.fromMnemonic(tx, mnemonic);
+  const { id } = await fromMnemonic(ctx, mnemonic);
 
-  await Member.updateTx(tx, { permission }, {
-    datasetId: id,
-    sub,
-  });
+  await Member.update(
+    { permission },
+    {
+      where: {
+        datasetId: id,
+        sub,
+      },
+    }
+  );
 }
-async function addMember(ctx, mnemonic, sub, permission = 'read') {
-  const tx = getTx(ctx);
-  const Member = getModel(ctx, 'Member');
-  const Dataset = getModel(ctx, 'Dataset');
+async function addMember(ctx, mnemonic, sub, permission = "read") {
+  const Member = getModel(ctx, "Member");
 
-  const dataset = await Dataset.fromMnemonic(tx, mnemonic);
+  const dataset = await fromMnemonic(ctx, mnemonic);
 
-  const existing = await Member.findOneTx(tx, {
-    sub,
-    datasetId: dataset.id,
+  const existing = await Member.findOne({
+    where: {
+      sub,
+      datasetId: dataset.id,
+    },
   });
-  if (existing && existing.permission === 'none') {
+  if (existing && existing.permission === "none") {
     await setMemberAccess(ctx, mnemonic, sub, permission);
     return;
   }
-  await Member.createTx(tx, {
+  await Member.create({
     sub,
     permission,
     datasetId: dataset.id,
@@ -162,72 +174,77 @@ async function addMember(ctx, mnemonic, sub, permission = 'read') {
 }
 
 async function addChunk(ctx, mnemonic, properties) {
-  const tx = getTx(ctx);
-  const Chunk = getModel(ctx, 'Chunk');
-  const Dataset = getModel(ctx, 'Dataset');
+  const Chunk = getModel(ctx, "Chunk");
 
-  const dataset = await Dataset.fromMnemonic(tx, mnemonic);
-  await Chunk.createTx(tx, {
+  const dataset = await fromMnemonic(ctx, mnemonic);
+  await Chunk.create({
     ...properties,
     datasetId: dataset.id,
   });
 }
 async function listChunks(ctx, mnemonic) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const Chunk = getModel(ctx, 'Chunk');
-  const { id } = await Dataset.fromMnemonic(tx, mnemonic);
-  const chunks = await Chunk.findAllTx(tx, {
-    datasetId: id,
+  const Chunk = getModel(ctx, "Chunk");
+  const { id } = await fromMnemonic(ctx, mnemonic);
+  const chunks = await Chunk.findAll({
+    raw: true,
+    where: {
+      datasetId: id,
+    },
   });
-  return chunks
-    .map((c) => ({
-      ...c,
-      start: parseInt(c.start, 10),
-      end: parseInt(c.end, 10),
-      size: parseInt(c.size, 10),
-    }));
+  return chunks.map((c) => ({
+    ...c,
+    start: parseInt(c.start, 10),
+    end: parseInt(c.end, 10),
+    size: parseInt(c.size, 10),
+    urlHash: base64ToBase64Url(c.hash),
+  }));
 }
 async function updateChunk(ctx, chunkId, properties) {
-  const tx = getTx(ctx);
-  const Chunk = getModel(ctx, 'Chunk');
-  await Chunk.updateTx(tx, properties, {
-    id: chunkId,
+  const Chunk = getModel(ctx, "Chunk");
+  await Chunk.update(properties, {
+    where: {
+      id: chunkId,
+    },
   });
 }
 
 async function listPublicKeys(ctx, mnemonic) {
-  const tx = getTx(ctx);
-  const PublicKey = getModel(ctx, 'PublicKey');
+  const PublicKey = getModel(ctx, "PublicKey");
   const members = await listMembers(ctx, mnemonic);
   const subs = members.map((m) => m.sub);
-  const publicKeys = await PublicKey.findAllTx(tx, {
-    [Op.or]: {
-      sub: {
-        [Op.or]: subs,
+  const publicKeys = await PublicKey.findAll({
+    raw: true,
+    where: {
+      [Op.or]: {
+        sub: {
+          [Op.or]: subs,
+        },
+        isRootKey: true,
       },
-      isRootKey: true,
     },
   });
   return publicKeys;
 }
 
 async function addKeys(ctx, mnemonic, aesKey) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const Key = getModel(ctx, 'Key');
+  const Key = getModel(ctx, "Key");
 
-  const dataset = await Dataset.fromMnemonic(tx, mnemonic);
+  const dataset = await fromMnemonic(ctx, mnemonic);
   const publicKeys = await listPublicKeys(ctx, mnemonic);
-  const existing = await Key.findAllTx(tx, {
-    datasetId: dataset.id,
+  const existing = await Key.findAll({
+    raw: true,
+    where: {
+      datasetId: dataset.id,
+    },
   });
-  const missing = publicKeys.filter((pk) => !existing.find((k) => k.id === pk.publicKeyId));
+  const missing = publicKeys.filter(
+    (pk) => !existing.find((k) => k.id === pk.publicKeyId)
+  );
 
   const promises = missing.map(async (publicKey) => {
     const key = JSON.parse(publicKey.data);
     const encrypted = rsa.encrypt(key, aesKey);
-    await Key.createTx(tx, {
+    await Key.create({
       key: encrypted,
       datasetId: dataset.id,
       publicKeyId: publicKey.id,
@@ -237,129 +254,159 @@ async function addKeys(ctx, mnemonic, aesKey) {
 }
 
 async function dropKeys(ctx, mnemonic) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const Key = getModel(ctx, 'Key');
+  const Key = getModel(ctx, "Key");
 
-  const dataset = await Dataset.fromMnemonic(tx, mnemonic);
+  const dataset = await fromMnemonic(ctx, mnemonic);
   const publicKeys = await listPublicKeys(ctx, mnemonic);
   const publicKeyIds = publicKeys.map((k) => k.id);
-  const surplus = await Key.findAllTx(tx, {
-    datasetId: dataset.id,
-    [Op.not]: {
-      publicKeyId: {
-        [Op.or]: publicKeyIds,
+  const surplus = await Key.findAll({
+    raw: true,
+    where: {
+      datasetId: dataset.id,
+      [Op.not]: {
+        publicKeyId: {
+          [Op.or]: publicKeyIds,
+        },
       },
     },
   });
-  const promises = surplus.map((key) => Key.removeTx(tx, {
-    id: key.id,
-  }));
+  const promises = surplus.map((key) =>
+    Key.destroy({
+      where: {
+        id: key.id,
+      },
+    })
+  );
   await Promise.all(promises);
 }
 
 async function findKey(ctx, mnemonic, publicKeyId) {
-  const tx = getTx(ctx);
-  const Key = getModel(ctx, 'Key');
-  const Dataset = getModel(ctx, 'Dataset');
-  const { id } = await Dataset.fromMnemonic(tx, mnemonic);
-  return Key.findOneTx(tx, {
-    datasetId: id,
-    publicKeyId,
+  const Key = getModel(ctx, "Key");
+  const { id } = await fromMnemonic(ctx, mnemonic);
+  return Key.findOne({
+    where: {
+      datasetId: id,
+      publicKeyId,
+    },
   });
 }
 async function destroyKeys(ctx, mnemonic) {
-  const tx = getTx(ctx);
-  const Key = getModel(ctx, 'Key');
-  const Dataset = getModel(ctx, 'Dataset');
+  const Key = getModel(ctx, "Key");
 
-  const { id } = await Dataset.fromMnemonic(tx, mnemonic);
-  await Key.destroyTx(tx, {
-    datasetId: id,
+  const { id } = await fromMnemonic(ctx, mnemonic);
+  await Key.destroy({
+    where: {
+      datasetId: id,
+    },
+    force: true,
   });
 }
 
 async function destroy(ctx, mnemonic) {
   log.warn(`DESTROYING DATASET ${mnemonic}`);
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const Key = getModel(ctx, 'Key');
-  const Chunk = getModel(ctx, 'Chunk');
-  const Member = getModel(ctx, 'Member');
 
-  const { id } = await Dataset.fromMnemonic(tx, mnemonic);
+  const { id } = await fromMnemonic(ctx, mnemonic);
 
-  await Member.destroyTx(tx, {
-    datasetId: id,
+  const Member = getModel(ctx, "Member");
+  await Member.destroy({
+    where: {
+      datasetId: id,
+    },
+    force: true,
   });
-  await Key.destroyTx(tx, {
-    datasetId: id,
+  const Key = getModel(ctx, "Key");
+  await Key.destroy({
+    where: {
+      datasetId: id,
+    },
+    force: true,
   });
-  await Chunk.destroyTx(tx, {
-    datasetId: id,
+  const Chunk = getModel(ctx, "Chunk");
+  await Chunk.destroy({
+    where: {
+      datasetId: id,
+    },
+    force: true,
   });
-  await Dataset.destroyTx(tx, {
-    id,
+  const Dataset = getModel(ctx, "Dataset");
+  await Dataset.destroy({
+    where: {
+      id,
+    },
+    force: true,
   });
 }
+
 async function remove(ctx, mnemonic) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const Key = getModel(ctx, 'Key');
-  const Chunk = getModel(ctx, 'Chunk');
-  const Member = getModel(ctx, 'Member');
+  const { id } = await fromMnemonic(ctx, mnemonic);
 
-  const { id } = await Dataset.fromMnemonic(tx, mnemonic);
-
-  await Member.removeTx(tx, {
-    datasetId: id,
+  const Member = getModel(ctx, "Member");
+  await Member.destroy({
+    where: {
+      datasetId: id,
+    },
   });
-  await Key.removeTx(tx, {
-    datasetId: id,
+  const Key = getModel(ctx, "Key");
+  await Key.destroy({
+    where: {
+      datasetId: id,
+    },
   });
-  await Chunk.removeTx(tx, {
-    datasetId: id,
+  const Chunk = getModel(ctx, "Chunk");
+  await Chunk.destroy({
+    where: {
+      datasetId: id,
+    },
   });
-  await Dataset.removeTx(tx, {
-    id,
+  const Dataset = getModel(ctx, "Dataset");
+  await Dataset.destroy({
+    where: {
+      id,
+    },
   });
 }
 
 async function recover(ctx, mnemonic) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  const Key = getModel(ctx, 'Key');
-  const Chunk = getModel(ctx, 'Chunk');
-  const Member = getModel(ctx, 'Member');
-
-  const { id } = await Dataset.fromMnemonic(tx, mnemonic);
-
-  await Member.recoverTx(tx, {
-    datasetId: id,
+  const { id } = await fromMnemonic(ctx, mnemonic);
+  const Member = getModel(ctx, "Member");
+  await Member.restore({
+    where: {
+      datasetId: id,
+    },
   });
-  await Key.recoverTx(tx, {
-    datasetId: id,
+  const Key = getModel(ctx, "Key");
+  await Key.restore({
+    where: {
+      datasetId: id,
+    },
   });
-  await Chunk.recoverTx(tx, {
-    datasetId: id,
+  const Chunk = getModel(ctx, "Chunk");
+  await Chunk.restore({
+    where: {
+      datasetId: id,
+    },
   });
-  await Dataset.recoverTx(tx, {
-    id,
+  const Dataset = getModel(ctx, "Dataset");
+  await Dataset.restore({
+    where: {
+      id,
+    },
   });
 }
 
 async function update(ctx, mnemonic, properties) {
-  const tx = getTx(ctx);
-  const Dataset = getModel(ctx, 'Dataset');
-  await Dataset.updateTx(tx, properties, {
-    mnemonic,
+  const Dataset = getModel(ctx, "Dataset");
+  await Dataset.update(properties, {
+    where: {
+      mnemonic,
+    },
   });
 }
 
 export default {
   fromMnemonic,
-  listIncomplete,
   listAll,
+  listIncomplete,
   listAccessible,
   create,
   addMember,
@@ -377,4 +424,5 @@ export default {
   remove,
   recover,
   update,
+  ...search,
 };

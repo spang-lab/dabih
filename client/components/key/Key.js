@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { Clock } from 'react-feather';
-import LoadKey from '../load_key/LoadKey';
-import CreateKey from '../create_key/CreateKey';
+import LoadKey from './load/LoadKey';
+import CreateKey from './create/CreateKey';
 import { Spinner } from '../util';
-import { useUsers } from '../hooks';
+import { useUsers, useUser } from '../hooks';
 import { AdminContact } from '../branding';
 
 export default function Key() {
-  const { data: session } = useSession();
-  const users = useUsers();
+  const { users } = useUsers();
+  const user = useUser();
   const [state, setState] = useState('loading');
 
   useEffect(() => {
-    if (!session || !session.user || !users) {
+    if (!user || !users) {
       return;
     }
-    const { sub } = session.user;
-    const user = users.find((u) => u.sub === sub);
-    if (!user) {
+    const match = users.find((u) => u.sub === user.sub);
+    if (!match) {
       setState('no_key');
       return;
     }
-    if (user.confirmed) {
+    if (match.confirmed) {
       setState('has_key');
       return;
     }
     setState('unconfirmed_key');
-  }, [session, users]);
+  }, [user, users]);
 
   if (state === 'loading') {
     return (

@@ -44,11 +44,7 @@ const readFile = async (req, encrypt, stream) => new Promise((resolve, reject) =
       crc32: crcStream.digest('hex'),
       hash: hashStream.digest('base64'),
     }));
-    file
-      .pipe(hashStream)
-      .pipe(encrypt)
-      .pipe(crcStream)
-      .pipe(stream);
+    file.pipe(hashStream).pipe(encrypt).pipe(crcStream).pipe(stream);
   });
   busboy.on('finish', () => {});
   busboy.on('error', reject);
@@ -79,7 +75,7 @@ const route = async (ctx) => {
       iv: uint8ToBase64(iv),
     };
   } catch (err) {
-    sendError(err);
+    sendError(ctx, err.message);
     return;
   }
   const targetFile = await storage.create(mnemonic, chunk.hash);

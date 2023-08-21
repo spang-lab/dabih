@@ -29,22 +29,9 @@ export default async function init(sequelize) {
     validated: {
       type: DataTypes.DATE,
     },
-    deleted: {
-      type: DataTypes.DATE,
-    },
   }, {
+    paranoid: true,
     tableName: 'dataset',
   });
-
-  Dataset.fromMnemonic = async (tx, mnemonic) => {
-    const result = await Dataset.findOne({
-      where: { mnemonic },
-      transaction: tx,
-    });
-    if (result === null) {
-      throw new Error(`Dataset ${mnemonic} not found`);
-    }
-    return result;
-  };
   return Dataset;
 }

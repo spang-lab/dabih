@@ -34,10 +34,8 @@ export default async function init(sequelize) {
         this.setDataValue('permission', idx);
       },
     },
-    deleted: {
-      type: DataTypes.DATE,
-    },
   }, {
+    paranoid: true,
     tableName: 'member',
   });
   Member.permissionIndex = permissionIndex;

@@ -1,14 +1,16 @@
 import React from 'react';
-import { Key } from 'react-feather';
+import { Trash2, Key } from 'react-feather';
 import { Switch } from '@headlessui/react';
-import { DeleteModal, LocalDate } from '../../util';
+import { LocalDate } from '../../util';
 import { useProfile } from '../Context';
+import useDialog from '../../dialog';
 
 export default function KeyElem({ data }) {
   const {
     id, name, sub, hash, confirmed, confirmedBy, createdAt, isRootKey,
   } = data;
   const { confirmKey, deleteKey } = useProfile();
+  const { openDialog } = useDialog();
   const enabled = !!confirmed || isRootKey;
   const toggle = async () => {
     if (isRootKey) {
@@ -43,12 +45,20 @@ export default function KeyElem({ data }) {
       return '';
     }
     return (
-      <DeleteModal
-        type="Public Key"
-        onDelete={() => deleteKey(id)}
+      <button
+        type="button"
+        className="pt-1 px-2 bg-red text-white rounded-md"
+        onClick={() => openDialog('delete', {
+          type: 'Public Key',
+          name,
+          onSubmit: () => deleteKey(id),
+        })}
       >
-        {name}
-      </DeleteModal>
+        <Trash2 size={24} className="flex justify-self-center" />
+        <div className="text-[10px] font-bold">
+          Delete
+        </div>
+      </button>
     );
   };
 

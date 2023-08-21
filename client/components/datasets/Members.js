@@ -41,7 +41,7 @@ const resolveMembers = (users, mems) => {
 };
 
 export default function Members({ data }) {
-  const users = useUsers();
+  const { users } = useUsers();
   if (!data.members) {
     return null;
   }

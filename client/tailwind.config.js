@@ -24,7 +24,18 @@ module.exports = {
       white: '#ffffff',
       red: '#be123c',
     },
-    extend: {},
+    extend: {
+      animation: {
+        'spin-slow': 'spin 1.5s linear infinite',
+        'spin-reverse': 'reverseSpin 1s linear infinite',
+      },
+      keyframes: {
+        reverseSpin: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(-360deg)' },
+        },
+      },
+    },
   },
   plugins: [],
 };

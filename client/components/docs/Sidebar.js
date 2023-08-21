@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import { Link } from '../util';
+import Link from 'next/link';
 
 function Header({ children }) {
   return (

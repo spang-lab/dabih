@@ -1,8 +1,8 @@
-import ldap from "ldapjs";
-import { getConfig } from "../../util/index.js";
+import ldap from 'ldapjs';
+import { getConfig } from '../../util/index.js';
 
 function urClient() {
-  const url = "ldaps://ldapclient.uni-regensburg.de:636";
+  const url = 'ldaps://ldapclient.uni-regensburg.de:636';
   const caCert = `
 -----BEGIN CERTIFICATE-----
 MIIFPDCCBCSgAwIBAgIkAhwR6YFlF5i6vWuka+z6WfC6a4nUyIhzeLOpOYbGAgIc
@@ -38,7 +38,7 @@ T1TPeacy0cS641pS4TFBK+vRFJzKIgl0LA/aAcNj33lw5xudUZGof4GNTfludGxP
 
   const tlsOptions = {
     ca: caCert,
-    host: "ldapclient.uni-regensburg.de",
+    host: 'ldapclient.uni-regensburg.de',
     reconnect: true,
     rejectUnauthorized: false,
   };
@@ -50,16 +50,15 @@ T1TPeacy0cS641pS4TFBK+vRFJzKIgl0LA/aAcNj33lw5xudUZGof4GNTfludGxP
   return client;
 }
 
-const bind = async (client, dn, password) =>
-  new Promise((resolve, reject) => {
-    client.bind(dn, password, (error) => {
-      if (error) {
-        reject(new Error("LDAP bind failed"));
-      } else {
-        resolve();
-      }
-    });
+const bind = async (client, dn, password) => new Promise((resolve, reject) => {
+  client.bind(dn, password, (error) => {
+    if (error) {
+      reject(new Error('LDAP bind failed'));
+    } else {
+      resolve();
+    }
   });
+});
 
 const attributesToObj = (attributes) => {
   const data = {};
@@ -71,33 +70,32 @@ const attributesToObj = (attributes) => {
   return data;
 };
 
-const userinfo = async (client, dn) =>
-  new Promise((resolve, reject) => {
-    client.search(
-      dn,
-      {
-        scope: "base",
-        attributes: ["dn", "cn", "fullName"],
-      },
-      (error, emitter) => {
-        let result = null;
-        if (error) {
-          reject(error);
-          return;
-        }
-        emitter.on("error", (err) => {
-          reject(err);
-        });
-        emitter.on("searchEntry", (entry) => {
-          result = entry.pojo;
-        });
-        emitter.on("end", () => resolve(result));
+const userinfo = async (client, dn) => new Promise((resolve, reject) => {
+  client.search(
+    dn,
+    {
+      scope: 'base',
+      attributes: ['dn', 'cn', 'fullName', 'mail'],
+    },
+    (error, emitter) => {
+      let result = null;
+      if (error) {
+        reject(error);
+        return;
       }
-    );
-  });
+      emitter.on('error', (err) => {
+        reject(err);
+      });
+      emitter.on('searchEntry', (entry) => {
+        result = entry.pojo;
+      });
+      emitter.on('end', () => resolve(result));
+    },
+  );
+});
 
 const parseToken = (token) => {
-  const string = Buffer.from(token, "base64").toString();
+  const string = Buffer.from(token, 'base64').toString();
   return JSON.parse(string);
 };
 
@@ -108,16 +106,17 @@ export default async function urProvider(ctx, accessToken) {
   const client = urClient();
   await bind(client, dn, password);
   const { attributes } = await userinfo(client, dn);
-  const { cn, fullName } = attributesToObj(attributes);
+  const { cn, fullName, mail } = attributesToObj(attributes);
 
-  const scopes = ["api"];
+  const scopes = ['api'];
   if (subs.includes(cn)) {
-    scopes.push("admin");
+    scopes.push('admin');
   }
 
   return {
     sub: cn,
     name: fullName,
+    email: mail,
     scopes,
   };
 }

@@ -26,9 +26,21 @@ const getAdminRouter = () => {
   router.post('KEY_CONFIRM', '/key/confirm', admin.confirmKey);
   router.post('KEY_REMOVE', '/key/remove', admin.removeKey);
   router.get('/dataset/list', admin.listDatasets);
-  router.post('DATASET_REMOVE', '/dataset/:mnemonic/remove', admin.removeDataset);
-  router.post('DATASET_RECOVER', '/dataset/:mnemonic/recover', admin.recoverDataset);
-  router.post('DATASET_DESTROY', '/dataset/:mnemonic/destroy', admin.destroyDataset);
+  router.post(
+    'DATASET_REMOVE',
+    '/dataset/:mnemonic/remove',
+    admin.removeDataset,
+  );
+  router.post(
+    'DATASET_RECOVER',
+    '/dataset/:mnemonic/recover',
+    admin.recoverDataset,
+  );
+  router.post(
+    'DATASET_DESTROY',
+    '/dataset/:mnemonic/destroy',
+    admin.destroyDataset,
+  );
 
   router.get('/events', admin.listEventDates);
   router.get('/events/:date', admin.listEvents);
@@ -50,11 +62,15 @@ const getDatasetRouter = () => {
   const router = new Router();
   router.use(requireScopes('api'));
 
-  router.get('/list', dataset.list);
+  router.post('/search', dataset.search);
   router.get('/:mnemonic', dataset.mnemonic);
   router.get('/:mnemonic/chunk/:chunkHash', dataset.chunk);
   router.post('DATASET_REMOVE', '/:mnemonic/remove', dataset.remove);
-  router.post('DATASET_MEMBER_ADD', '/:mnemonic/member/add', dataset.addMembers);
+  router.post(
+    'DATASET_MEMBER_ADD',
+    '/:mnemonic/member/add',
+    dataset.addMembers,
+  );
   router.post('DATASET_MEMBER_SET', '/:mnemonic/member/set', dataset.setAccess);
   router.post('DATASET_REENCRYPT', '/:mnemonic/reencrypt', dataset.reencrypt);
   router.post('DATASET_RENAME', '/:mnemonic/rename', dataset.rename);
@@ -91,18 +107,10 @@ const getApiRouter = () => {
   router.use(logEvents);
 
   const adminRouter = getAdminRouter();
-  router.use(
-    '/admin',
-    adminRouter.routes(),
-    adminRouter.allowedMethods(),
-  );
+  router.use('/admin', adminRouter.routes(), adminRouter.allowedMethods());
 
   const uploadRouter = getUploadRouter();
-  router.use(
-    '/upload',
-    uploadRouter.routes(),
-    uploadRouter.allowedMethods(),
-  );
+  router.use('/upload', uploadRouter.routes(), uploadRouter.allowedMethods());
 
   const datasetRouter = getDatasetRouter();
   router.use(
@@ -112,18 +120,10 @@ const getApiRouter = () => {
   );
 
   const keyRouter = getKeyRouter();
-  router.use(
-    '/key',
-    keyRouter.routes(),
-    keyRouter.allowedMethods(),
-  );
+  router.use('/key', keyRouter.routes(), keyRouter.allowedMethods());
 
   const tokenRouter = getTokenRouter();
-  router.use(
-    '/token',
-    tokenRouter.routes(),
-    tokenRouter.allowedMethods(),
-  );
+  router.use('/token', tokenRouter.routes(), tokenRouter.allowedMethods());
 
   return router;
 };
@@ -137,11 +137,7 @@ const getRouter = () => {
   router.get('/api/v1/healthy', healthy);
   const apiRouter = getApiRouter();
 
-  router.use(
-    '/api/v1',
-    apiRouter.routes(),
-    apiRouter.allowedMethods(),
-  );
+  router.use('/api/v1', apiRouter.routes(), apiRouter.allowedMethods());
   return router;
 };
 

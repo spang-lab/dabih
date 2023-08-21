@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from './util';
+import Link from 'next/link';
 
 function Privacy() {
   return (
@@ -50,7 +50,10 @@ function Privacy() {
         We are part of the University of Regensburg
         <br />
         The contact for the university can be found
-        <Link href="https://www.uni-regensburg.de/informationssicherheit/datenschutz/ansprechpartner/index.html">
+        <Link
+          className="text-blue hover:underline"
+          href="https://www.uni-regensburg.de/informationssicherheit/datenschutz/ansprechpartner/index.html"
+        >
           here
         </Link>
       </p>

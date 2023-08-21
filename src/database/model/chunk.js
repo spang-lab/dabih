@@ -25,11 +25,9 @@ export default async function init(sequelize) {
     crc: {
       type: DataTypes.STRING,
     },
-    deleted: {
-      type: DataTypes.DATE,
-    },
   }, {
     tableName: 'chunk',
+    paranoid: true,
   });
   return Chunk;
 }

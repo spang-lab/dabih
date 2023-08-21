@@ -1,5 +1,6 @@
 data/
 dev/
 node_modules/
+cli/target/
 
 .DS_Store

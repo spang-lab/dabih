@@ -3,8 +3,10 @@ import { getUser } from '../../util/index.js';
 
 const route = async (ctx) => {
   try {
-    const user = getUser(ctx);
-    await token.refresh(ctx, user.sub);
+    const user = await getUser(ctx);
+    if (user.provider !== 'dabih') {
+      await token.refresh(ctx, user.sub);
+    }
     ctx.body = user;
   } catch (err) {
     // no user is expected

@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
-import React, {
-  useCallback, useEffect, useState,
-} from 'react';
+import Link from 'next/link';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   UserPlus,
   Key,
@@ -17,7 +16,6 @@ import { signOut, signIn } from 'next-auth/react';
 import { useApi } from '../api';
 import { useUser } from '../hooks';
 import { storage } from '../../lib';
-import { Link } from '../util';
 
 import NavItem from './NavItem';
 import NavLine from './NavLine';
@@ -33,14 +31,15 @@ export default function Header() {
     if (!api.isReady()) {
       return;
     }
-    if (!key || !key.hash) {
+    if (!user || !key || !key.hash) {
       return;
     }
     const { valid } = await api.checkPublicKey(key.hash);
     if (!valid) {
       await storage.deleteKey();
+      router.push('/key');
     }
-  }, [api, key]);
+  }, [api, key, user, router]);
 
   const checkState = useCallback(async () => {
     if (user === undefined || key === undefined) {

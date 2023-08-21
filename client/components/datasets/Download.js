@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Download } from 'react-feather';
-import { Link, SpinnerSmall } from '../util';
+import { Spinner } from '../util';
 import DownloadButton from './DownloadButton';
 import { useDatasets } from './Context';
 
-export default function DownloadDataset({ mnemonic, size }) {
+export default function DownloadDataset({ mnemonic, size, enabled }) {
   const [loading, setLoading] = useState(false);
   const [download, setDownload] = useState(null);
   const { downloadDataset } = useDatasets();
@@ -19,10 +20,29 @@ export default function DownloadDataset({ mnemonic, size }) {
     setLoading(false);
   };
 
+  if (!enabled) {
+    return (
+      <div>
+        <button
+          type="button"
+          disabled
+          className="flex px-2 py-1 text-sm font-extrabold text-white rounded bg-blue/40 flex-nowrap"
+          onClick={onClick}
+        >
+          <Download className="inline-block mr-2" size={20} />
+          Download
+        </button>
+      </div>
+    );
+  }
+
   if (size > sizeThreshold) {
     return (
       <div className="px-2 font-semibold">
-        <Link href={`/download/${mnemonic}`}>
+        <Link
+          className="text-blue hover:underline"
+          href={`/download/${mnemonic}`}
+        >
           <Download className="inline-block mr-2" size={20} />
           Download
         </Link>
@@ -33,7 +53,7 @@ export default function DownloadDataset({ mnemonic, size }) {
   if (loading) {
     return (
       <div className="flex flex-row px-2 py-1 font-extrabold text-white rounded bg-blue">
-        <SpinnerSmall />
+        <Spinner small white />
         <span className="pl-2">Downloading...</span>
       </div>
     );

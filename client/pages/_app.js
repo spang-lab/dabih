@@ -4,7 +4,7 @@ import React from 'react';
 import '../styles/globals.css';
 import { SessionProvider } from 'next-auth/react';
 import {
-  MessageWrapper, ApiWrapper, Header, Footer,
+  DialogWrapper, ApiWrapper, Header, Footer,
 } from '../components';
 
 function App({ Component, pageProps: { session, ...pageProps } }) {
@@ -16,7 +16,7 @@ function App({ Component, pageProps: { session, ...pageProps } }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex flex-col min-h-screen">
-        <MessageWrapper>
+        <DialogWrapper>
           <ApiWrapper>
             <Header />
             <div className="bg-gray-50 flex flex-1 justify-stretch items-stretch">
@@ -28,7 +28,7 @@ function App({ Component, pageProps: { session, ...pageProps } }) {
             </div>
             <Footer />
           </ApiWrapper>
-        </MessageWrapper>
+        </DialogWrapper>
       </div>
     </SessionProvider>
   );

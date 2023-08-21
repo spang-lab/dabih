@@ -5,22 +5,20 @@ import React, {
   useMemo,
   createContext,
   useContext,
-} from 'react';
-import pLimit from 'p-limit';
-import { useRouter } from 'next/router';
-import {
-  storage, decryptKey, encodeHash, decryptChunk,
-} from '../../lib';
-import { useApi } from '../api';
-import { useMessages } from '../messages';
+} from "react";
+import pLimit from "p-limit";
+import { useRouter } from "next/router";
+import { storage, decryptKey, encodeHash, decryptChunk } from "../../lib";
+import { useApi } from "../api";
+import useDialog from "../dialog";
 
 const DownloadContext = createContext();
 
 export function DownloadWrapper({ children }) {
   const router = useRouter();
-  const log = useMessages();
   const { mnemonic } = router.query;
   const api = useApi();
+  const dialog = useDialog();
   const [chunkCount, setChunkCount] = useState({ total: 0, current: 0 });
   const [dataset, setDataset] = useState(null);
   const [file, setFile] = useState(null);
@@ -69,7 +67,7 @@ export function DownloadWrapper({ children }) {
       if (!data) {
         return {
           prevChunk: chunk,
-          errors: [...errors, `Chunk ${hash} was not downloaded greenfully`],
+          errors: [...errors, `Chunk ${hash} was not downloaded successfully`],
         };
       }
       if (!prevChunk) {
@@ -92,17 +90,18 @@ export function DownloadWrapper({ children }) {
     const { errors } = result;
     const lastChunk = result.prevChunk;
     if (lastChunk.size !== lastChunk.end) {
-      errors.push('Chunks incomplete');
+      errors.push("Chunks incomplete");
     }
     if (errors.length) {
-      errors.forEach((e) => log.error(e));
+      const error = errors.join("\n");
+      dialog.error(error);
       return;
     }
     setFile({
       data: new Blob(dataChunks.map((c) => c.data)),
       name: info.fileName,
     });
-  }, [api, mnemonic, log]);
+  }, [api, mnemonic, dialog]);
 
   useEffect(() => {
     downloadDataset();
@@ -115,7 +114,7 @@ export function DownloadWrapper({ children }) {
       chunks: chunkCount,
       downloadDataset,
     }),
-    [dataset, file, chunkCount, downloadDataset],
+    [dataset, file, chunkCount, downloadDataset]
   );
 
   return (

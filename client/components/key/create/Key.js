@@ -24,10 +24,10 @@ function Key({ data }, ref) {
   }
   const hexData = [...new Uint8Array(data)]
     .map((v) => v.toString(16).toUpperCase().padStart(2, '0'));
-  const longRow = 32;
-  const shortRow = 14;
-  const longRows = 13;
-  const shortRows = 23;
+  const longRow = 38;
+  const shortRow = 18;
+  const longRows = 23;
+  const shortRows = 26;
   const shortStart = longRows * longRow;
   const shortEnd = shortStart + shortRows * shortRow;
   const qrIndex = shortStart + shortRow / 2;
@@ -53,19 +53,16 @@ function Key({ data }, ref) {
   const getColor = (v) => {
     // TODO fix this
     const num = parseInt(v, 16);
-    if (num < 50) {
-      return 'text-blue';
-    }
-    if (num < 100) {
-      return 'text-gray-1000';
+    if (num < 75) {
+      return 'text-gray-500';
     }
     if (num < 150) {
+      return 'text-gray-800';
+    }
+    if (num < 225) {
       return 'text-blue';
     }
-    if (num < 200) {
-      return 'text-blue';
-    }
-    return 'text-blue';
+    return 'text-orange';
   };
 
   return (
@@ -73,7 +70,7 @@ function Key({ data }, ref) {
       ref={ref}
       className="p-4 mx-0 my-3 text-center border-2 rounded border-blue"
     >
-      <table className="mx-auto text-lg font-semibold leading-none table-fixed">
+      <table className="mx-auto font-semibold leading-none table-fixed">
         <tbody>
           {rows.map((row) => (
             <tr key={row.key}>

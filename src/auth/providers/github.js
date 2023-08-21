@@ -18,6 +18,7 @@ export default async function githubProvider(_ctx, accessToken) {
   return {
     sub: user.login,
     name: user.name,
+    email: user.email,
     scopes,
   };
 }

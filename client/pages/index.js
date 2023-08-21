@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { storage, isCryptoApiAvailable } from '../lib';
-import { Link, BigButton, Institute } from '../components';
+import { BigButton, Institute } from '../components';
 
 function BrowserSupport() {
   const [hasCrypto, setCrypto] = useState(true);
@@ -28,7 +29,10 @@ function BrowserSupport() {
         Web Storage API is not supported. Dabih needs this API to store private
         keys.
         <p>
-          <Link href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API">
+          <Link
+            className="text-blue hover:underline"
+            href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
+          >
             More Info
           </Link>
         </p>
@@ -50,7 +54,10 @@ function BrowserSupport() {
         Web Crypto API is not supported or cannot be used (no SSL connection?).
         Dabih needs this API to decrypt the data.
         <p>
-          <Link href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API">
+          <Link
+            className="text-blue hover:underline"
+            href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API"
+          >
             More Info
           </Link>
         </p>

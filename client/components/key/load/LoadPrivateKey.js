@@ -3,27 +3,26 @@ import { useDropzone } from 'react-dropzone';
 
 import { Key, File, FilePlus } from 'react-feather';
 import { useRouter } from 'next/router';
-import { BigButton } from '../util';
-import { useMessages } from '../messages';
-import { importPrivateKey, storage } from '../../lib';
-import { useApi } from '../api';
+import { importPrivateKey, storage } from '../../../lib';
+import { useApi } from '../../api';
+import useDialog from '../../dialog';
 
 export default function LoadFile() {
-  const log = useMessages();
   const router = useRouter();
+  const dialog = useDialog();
   const { checkPublicKey } = useApi();
   const onDrop = async (files) => {
     if (!files || !files.length) {
       return;
     }
     if (files.length > 1) {
-      log.error('Only a single file is supported');
+      dialog.error('Only a single file is supported');
       return;
     }
     const [file] = files;
     const maxSize = 10 * 1024; // 10KiB
     if (file.size > maxSize) {
-      log.error('File is too large to be a public key');
+      dialog.error('File is too large to be a public key');
       return;
     }
     const text = await file.text();
@@ -31,13 +30,13 @@ export default function LoadFile() {
       const keys = await importPrivateKey(text, 'pem');
       const { valid, error } = await checkPublicKey(keys.hash);
       if (!valid) {
-        log.error(error);
+        dialog.error(error);
         return;
       }
       await storage.storeKey(keys.privateKey);
       router.push('/manage');
     } catch (err) {
-      log.error('File is not a valid public key');
+      dialog.error('File is not a valid public key');
     }
   };
 
@@ -69,12 +68,19 @@ export default function LoadFile() {
             <Key className="absolute inset-0 m-4 mt-6" size={20} />
           </div>
         </div>
-        <BigButton>
+        <button
+          type="button"
+          className={`
+            px-8 py-4 text-2xl rounded-xl text-gray-100 bg-blue
+            enabled:hover:bg-blue enabled:hover:text-white
+            focus:outline-none focus:ring-2 focus:ring-offset-2
+            focus:ring-offset-gray-800 focus:ring-white disabled:opacity-50`}
+        >
           <span className="whitespace-nowrap">
             <File className="inline-block mx-3 mb-1" />
             Open key file...
           </span>
-        </BigButton>
+        </button>
         <p className="pt-3 text-gray-400">
           Drop your dabih key file here
           <br />
