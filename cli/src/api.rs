@@ -166,13 +166,13 @@ pub async fn fetch_key(ctx: &Context, mnemonic: &String) -> Result<String> {
     Ok(key)
 }
 
-pub async fn fetch_chunk(ctx: &Context, mnemonic: &String, hash: &String) -> Result<()> {
-    dbg!(mnemonic, hash);
+pub async fn fetch_chunk(ctx: &Context, mnemonic: &String, hash: &String) -> Result<Vec<u8>> {
     let path = format!("/api/v1/dataset/{}/chunk/{}", mnemonic, hash);
     let url = ctx.url.join(&path)?;
 
     let res = ctx.client.get(url).send().await?.error_for_status()?;
     let data = res.bytes().await?;
+    let enc = Vec::from_iter(data);
 
-    Ok(())
+    Ok(enc)
 }

@@ -58,7 +58,6 @@ export const hashKey = async (publicKey) => {
 
 export const decryptKey = async (privateKey, encryptedKey) => {
   const encrypted = base64ToUint8(encryptedKey);
-  console.log(encrypted);
 
   const algorithm = { name: CONST.rsa.name };
   const decrypted = await crypto.subtle.decrypt(
@@ -66,7 +65,6 @@ export const decryptKey = async (privateKey, encryptedKey) => {
     privateKey,
     encrypted
   );
-  console.log(uint8ToBase64(decrypted));
 
   const key = await crypto.subtle.importKey(
     "raw",

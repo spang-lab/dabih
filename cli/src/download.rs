@@ -1,4 +1,7 @@
 use anyhow::{bail, Result};
+use openssl::base64;
+use std::fs::File;
+use std::io::Write;
 use std::path::PathBuf;
 
 use crate::api::{self, Dataset};
@@ -32,10 +35,12 @@ pub async fn download_dataset(
 
     let encrypted_key = api::fetch_key(ctx, &dataset.mnemonic).await?;
     let key = crypto::decrypt_key(ctx, &encrypted_key)?;
-    dbg!(key);
 
+    let mut file = File::create(path)?;
     for chunk in &dataset.chunks {
-        //api::fetch_chunk(ctx, &dataset.mnemonic, &chunk.url_hash).await?;
+        let encrypted = api::fetch_chunk(ctx, &dataset.mnemonic, &chunk.url_hash).await?;
+        let decrypted = crypto::decrypt_chunk(chunk, &key, &encrypted)?;
+        file.write(&decrypted)?;
     }
 
     Ok(())
