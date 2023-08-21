@@ -13,7 +13,6 @@ if command -v gsed >/dev/null 2>&1; then
 else
     SED_COMMAND="sed"
 fi
-echo $SED_COMMAND
 
 
 VERSION="$(npm version --no-git-tag-version "$1")"
