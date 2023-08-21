@@ -21,7 +21,7 @@ pushd client
   npm version --no-commit-hooks "$VERSION"
 popd
 pushd cli
-  $SED_COMMAND -i "s/version = .*/version = \"$VERSION\"/" Cargo.toml
+  $SED_COMMAND -i "s/^version = .*/version = \"$VERSION#v\"/" Cargo.toml
 popd
 
 
