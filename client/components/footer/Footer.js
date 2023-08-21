@@ -33,6 +33,10 @@ function Footer() {
       <Link className="text-blue hover:underline" href="/data_policy">
         Data Policy
       </Link>
+      <span className="px-2"> · </span>
+      <Link className="text-blue hover:underline" href="/docs">
+        Documentation
+      </Link>
     </div>
   );
 }

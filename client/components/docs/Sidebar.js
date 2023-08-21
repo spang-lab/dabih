@@ -32,8 +32,8 @@ function Item({ children, href }) {
 
 function Sidebar() {
   return (
-    <div className="w-64 p-4">
-      <div className="pt-5 bg-white rounded-lg shadow-lg">
+    <div className="w-64">
+      <div className="rounded-lg border ">
         <Header>Documentation</Header>
         <Item href="/docs">Overview</Item>
         <Item href="/docs/api">API Reference</Item>

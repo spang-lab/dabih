@@ -4,17 +4,17 @@ services:
   dabih-api:
     container_name: dabih-api
     #update this image version tag to deploy new versions
-    image: thespanglab/dabih-api:v1.0.18
+    image: thespanglab/dabih-api:v1.4.11
     environment:
       - CONFIG=/etc/config.yaml
     restart: always
     ports:
-      - 8001:8001
+      - 8081:8081
     volumes:
       - ./config.yaml:/etc/config.yaml
       - dabih-data:/data
     healthcheck:
-      test: curl --fail http://localhost:8080/healthy
+      test: curl --fail http://localhost:8081/healthy
       interval: 10s
       timeout: 2s
       retries: 10
@@ -24,11 +24,11 @@ services:
   dabih-client:
     container_name: dabih-client
     # update this image version tag to deploy new versions
-    image: thespanglab/dabih-client:v1.0.18
+    image: thespanglab/dabih-client:v1.4.11
     ports:
       - 3000:3000
     environment:
-      - NEXTAUTH_URL=http://localhost:8080
+      - NEXTAUTH_URL=http://localhost:8081
       - NEXTAUTH_SECRET=YOUR_SECRET_HERE
     restart: always
     depends_on:
@@ -57,4 +57,3 @@ volumes:
 networks:
   default:
     name: dabih_default
-
