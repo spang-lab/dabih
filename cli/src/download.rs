@@ -1,5 +1,4 @@
 use anyhow::{bail, Result};
-use openssl::base64;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
@@ -32,6 +31,15 @@ pub async fn download_dataset(
     } else {
         output_path.clone()
     };
+    if path.exists() {
+        if !force {
+            bail!(
+                "Cannot download to {}, file already exists. Use -f to overwrite.",
+                path.display()
+            );
+        }
+        println!("Overwriting {}", path.display());
+    }
 
     let encrypted_key = api::fetch_key(ctx, &dataset.mnemonic).await?;
     let key = crypto::decrypt_key(ctx, &encrypted_key)?;
