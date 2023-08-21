@@ -13,6 +13,7 @@ function AdminOptions() {
     setSearchParams({
       ...searchParams,
       deleted: !deleted,
+      page: 1,
     });
   };
 
@@ -20,6 +21,7 @@ function AdminOptions() {
     setSearchParams({
       ...searchParams,
       all: !all,
+      page: 1,
     });
   };
 
@@ -64,23 +66,43 @@ function AdminOptions() {
   );
 }
 
-function PageButton({ value }) {
+function PageButton({ value, active }) {
+  const { searchParams, setSearchParams } = useDatasets();
+  const setPage = () => setSearchParams({
+    ...searchParams,
+    page: value,
+  });
+
+  if (active) {
+    return (
+      <div className="text-white bg-blue border rounded mx-1 border-blue px-2 py-1">
+        {value}
+      </div>
+    );
+  }
   return (
-    <div className="text-blue border-blue px-2 py-1">
+    <button
+      type="button"
+      onClick={setPage}
+      className="text-blue border rounded mx-1 border-blue px-2 py-1"
+    >
       {value}
-    </div>
+    </button>
   );
 }
 
 function Pagination() {
-  const { datasets, searchParams } = useDatasets();
+  const { datasetCount, searchParams } = useDatasets();
   const { page, limit } = searchParams;
-  const numPages = Math.ceil(datasets.length / limit);
-  const pages = [...Array(numPages)].map((_, i) => i);
+  const numPages = Math.ceil(datasetCount / limit);
+  const pages = [...Array(numPages)].map((_, i) => i + 1);
 
   return (
-    <div className="px-4 flex">
-      {JSON.stringify(pages)}
+    <div className="px-4 flex items-center">
+      <span className="text-lg font-semibold">
+        Page:
+      </span>
+      {pages.map((p) => <PageButton key={p} value={p} active={p === page} />)}
     </div>
   );
 }
@@ -95,6 +117,7 @@ export default function SearchBar() {
     setSearchParams({
       ...searchParams,
       query,
+      page: 1,
     });
   };
   const onlyUploader = searchParams.uploader || false;
@@ -102,6 +125,7 @@ export default function SearchBar() {
     setSearchParams({
       ...searchParams,
       uploader: !onlyUploader,
+      page: 1,
     });
   };
 

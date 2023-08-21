@@ -26,6 +26,7 @@ export function DatasetsWrapper({ children }) {
   const limit = 25;
 
   const [datasets, setDatasets] = useState([]);
+  const [datasetCount, setDatasetCount] = useState(0);
   const [searchParams, setSearchParams] = useState({
     deleted: false,
     all: false,
@@ -41,7 +42,8 @@ export function DatasetsWrapper({ children }) {
     if (data.error) {
       return;
     }
-    setDatasets(data);
+    setDatasets(data.datasets);
+    setDatasetCount(data.count);
   }, [api, searchParams]);
 
   const removeDataset = useCallback(
@@ -188,6 +190,7 @@ export function DatasetsWrapper({ children }) {
     () => ({
       datasets,
       limit,
+      datasetCount,
       searchParams,
       setSearchParams,
       removeDataset,
@@ -202,6 +205,7 @@ export function DatasetsWrapper({ children }) {
     [
       datasets,
       searchParams,
+      datasetCount,
       setSearchParams,
       removeDataset,
       recoverDataset,

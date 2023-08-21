@@ -41,20 +41,20 @@ function getWhere(query) {
 
 async function search(ctx, sub, options) {
   const {
-    query, deleted, all, uploader,
+    query, deleted, all, uploader, page, limit,
   } = options;
   const Dataset = getModel(ctx, 'Dataset');
   const Member = getModel(ctx, 'Member');
   const paranoid = !deleted;
 
   const mWhere = all ? {} : { sub };
+  const offset = (page - 1) * limit;
 
   const where = getWhere(query);
   if (uploader) {
     where.createdBy = sub;
   }
-
-  return Dataset.findAll({
+  const count = await Dataset.count({
     include: {
       model: Member,
       as: 'members',
@@ -66,6 +66,25 @@ async function search(ctx, sub, options) {
     paranoid,
     order: [['createdAt', 'DESC']],
   });
+
+  const datasets = await Dataset.findAll({
+    include: {
+      model: Member,
+      as: 'members',
+      attributes: ['permission', 'sub'],
+      paranoid,
+      where: mWhere,
+    },
+    where,
+    paranoid,
+    order: [['createdAt', 'DESC']],
+    limit,
+    offset,
+  });
+  return {
+    count,
+    datasets,
+  };
 }
 
 export default {

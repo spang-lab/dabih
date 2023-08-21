@@ -22,23 +22,27 @@ const route = async (ctx) => {
   const { body } = ctx.request;
 
   const {
-    query, uploader, deleted, all,
+    query, uploader, deleted, all, page, limit,
   } = body;
 
   let options = {
     query,
     uploader,
+    page,
+    limit,
   };
   if (isAdmin) {
     options = {
-      query,
+      ...options,
       deleted,
-      uploader,
       all,
     };
   }
-  const datasets = await dataset.search(ctx, sub, options);
+  const { count, datasets } = await dataset.search(ctx, sub, options);
   const full = datasets.map(addPermission);
-  ctx.body = full;
+  ctx.body = {
+    count,
+    datasets: full,
+  };
 };
 export default route;
