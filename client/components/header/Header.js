@@ -1,4 +1,6 @@
-import { useRouter } from 'next/router';
+'use client';
+
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -22,6 +24,7 @@ import NavLine from './NavLine';
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const user = useUser();
   const api = useApi();
   const key = storage.useKey();
@@ -59,7 +62,7 @@ export default function Header() {
       manage: user && key ? 'enabled' : 'disabled',
       profile: user ? 'enabled' : 'disabled',
     };
-    const path = router.asPath.split('/')[1] || 'start';
+    const path = pathname.split('/')[1] || 'start';
 
     const current = state[path];
     if (current === 'disabled') {
@@ -76,7 +79,7 @@ export default function Header() {
 
     state[path] = 'active';
     setItems(state);
-  }, [router, key, user]);
+  }, [router, key, user, pathname]);
 
   useEffect(() => {
     checkState();

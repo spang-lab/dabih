@@ -1,6 +1,7 @@
+'use client';
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Switch } from '@headlessui/react';
-import { useRouter } from 'next/router';
 import { useUser } from '../hooks';
 import { useDatasets } from './Context';
 

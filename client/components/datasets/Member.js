@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { Trash2, User } from 'react-feather';
 import { Switch } from '@headlessui/react';

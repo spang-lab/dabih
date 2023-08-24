@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router';
 import React from 'react';
+import { usePathname } from 'next/navigation';
 
 import Link from 'next/link';
 
@@ -9,9 +9,9 @@ function Header({ children }) {
   );
 }
 function Item({ children, href }) {
-  const router = useRouter();
+  const pathname = usePathname();
 
-  if (router.asPath === href) {
+  if (pathname === href) {
     return (
       <div className="py-2 font-semibold text-white bg-blue">
         <span className="mx-4 border-l border-white" />

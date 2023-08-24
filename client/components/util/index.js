@@ -1,3 +1,4 @@
+'use client';
 export { default as Spinner } from './Spinner';
 export { default as Bytes } from './Bytes';
 export * from './Buttons';

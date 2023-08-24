@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 
 export default function Spinner({ small = false, white = false }) {

@@ -12,7 +12,7 @@ function App({ Component, pageProps: { session, ...pageProps } }) {
     <SessionProvider session={session}>
       <Head>
         <title>Spang Lab Dabih</title>
-        <meta name="description" content="Spang Lab Web Components" />
+        <meta name="description" content="Encrypted data management" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex flex-col min-h-screen">

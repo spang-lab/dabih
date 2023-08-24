@@ -1,3 +1,4 @@
+'use client';
 import { useUser } from '../../hooks';
 import PublicKeys from './PublicKeys';
 import Events from './Events';

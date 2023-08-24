@@ -1,4 +1,5 @@
-#!/usr/bin/env node
+'use client';
+
 import { RefreshCcw } from 'react-feather';
 import {
   LocalDate,

@@ -1,3 +1,4 @@
+'use client';
 import { useProfile } from '../Context';
 import Key from './Key';
 

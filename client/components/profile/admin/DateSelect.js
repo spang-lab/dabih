@@ -1,3 +1,4 @@
+'use client';
 import React, { Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronsDown, Check } from 'react-feather';

@@ -1,3 +1,4 @@
+'use client';
 import React, { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Copy } from 'react-feather';

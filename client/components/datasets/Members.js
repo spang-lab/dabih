@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { Disclosure } from '@headlessui/react';
 import { Users, ChevronRight } from 'react-feather';
