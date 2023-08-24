@@ -22,6 +22,9 @@ popd
 pushd cli
   $SED_COMMAND -i "s/^version = .*/version = \"${VERSION#v}\"/" Cargo.toml
 popd
+pushd example
+  find . -name "*.yaml" -type f -exec $SED_COMMAND -r -i "s/v[0-9]+\.[0-9]+\.[0-9]+/$VERSION/" {} +
+popd
 
 
 npm install  # update lockfile
