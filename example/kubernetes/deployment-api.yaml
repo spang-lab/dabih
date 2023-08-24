@@ -4,7 +4,7 @@ metadata:
   labels:
     app: dabih
   name: dabih-deployment
-  namespace: dabih 
+  namespace: dabih
 spec:
   replicas: 1
   selector:
@@ -18,38 +18,38 @@ spec:
         app: dabih
     spec:
       containers:
-      - image: thespanglab/dabih-api:v1.0.18
-        name: dabih
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          httpGet:
-            path: /healthy
-            port: http
-        readinessProbe:
-          httpGet:
-            path: /healthy
-            port: http
-        ports:
-        - containerPort: 8000
-          name: http
-          protocol: TCP
-        env:
-        - name: CONFIG
-          value: /usr/src/app/config/config.yaml
-        - name: EPHEMERAL_SECRET
-          value: YOUR_SECRET_HERE
-        - name: DATABASE_SECRET
-          value: YOUR_POSTGRES_PASSWORD
-        volumeMounts:
-        - mountPath: /usr/src/app/config
-          name: config
-        - mountPath: /usr/src/app/data
-          name: data 
+        - image: thespanglab/dabih-api:v1.0.18
+          name: dabih
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /healthy
+              port: http
+          ports:
+            - containerPort: 3001
+              name: http
+              protocol: TCP
+          env:
+            - name: CONFIG
+              value: /usr/src/app/config/config.yaml
+            - name: EPHEMERAL_SECRET
+              value: YOUR_SECRET_HERE
+            - name: DATABASE_SECRET
+              value: YOUR_POSTGRES_PASSWORD
+          volumeMounts:
+            - mountPath: /usr/src/app/config
+              name: config
+            - mountPath: /usr/src/app/data
+              name: data
       restartPolicy: Always
       volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: dabih-data-pvc
-      - name: config
-        configMap:
-          name: dabih-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: dabih-data-pvc
+        - name: config
+          configMap:
+            name: dabih-config

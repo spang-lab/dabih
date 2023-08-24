@@ -1,12 +1,10 @@
-
 server:
-  port: 8000
+  port: 3001
 
 admins:
   subs: []
   groups:
     - dabih
-
 
 crypto:
   rootKeys: []
@@ -15,7 +13,6 @@ crypto:
 ephemeral:
   adapter: redis
   url: redis://redis.dabih:6379
-
 
 database:
   dialect: postgres
@@ -27,4 +24,4 @@ database:
 
 storage:
   backend: local
-  path: /usr/src/app/data 
+  path: /usr/src/app/data
