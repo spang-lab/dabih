@@ -1,3 +1,5 @@
+'use client';
+
 import React, { Fragment, useState } from 'react';
 import { Combobox, Transition } from '@headlessui/react';
 import { ChevronsDown, UserPlus, User } from 'react-feather';
@@ -7,8 +9,7 @@ import { useDatasets } from './Context';
 function MemberOption({ option }) {
   return (
     <Combobox.Option
-      className={({ active }) => `relative cursor-default select-none py-2 px-4 ${
-        active ? 'bg-blue text-white' : 'text-gray-800'
+      className={({ active }) => `relative cursor-default select-none py-2 px-4 ${active ? 'bg-blue text-white' : 'text-gray-800'
       }`}
       value={option}
     >

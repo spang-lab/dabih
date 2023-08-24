@@ -5,7 +5,6 @@ export { default as Upload } from './upload';
 export { default as Key } from './key/Key';
 export { default as Datasets } from './datasets/Datasets';
 export { default as Download } from './download/Download';
-export { default as Docs } from './docs/Docs';
 export { default as Header } from './header/Header';
 export { default as Footer } from './footer/Footer';
 export { default as Profile } from './profile/Profile';

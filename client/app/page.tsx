@@ -1,80 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { storage, isCryptoApiAvailable } from '../lib';
-import { BigButton, Institute } from '../components';
-
-function BrowserSupport() {
-  const [hasCrypto, setCrypto] = useState(true);
-  const [hasStorage, setStorage] = useState(true);
-
-  useEffect(() => {
-    setCrypto(isCryptoApiAvailable());
-    setStorage(storage.isAvailable());
-  }, []);
-
-  const storageError = () => {
-    if (hasStorage) {
-      return null;
-    }
-    return (
-      <div
-        className="relative p-3 m-3 text-xl font-semibold text-center text-red bg-red-100 rounded-lg"
-        role="alert"
-      >
-        <p className="p-2 text-2xl font-bold">
-          Dabih will not work with this browser
-        </p>
-        Web Storage API is not supported. Dabih needs this API to store private
-        keys.
-        <p>
-          <Link
-            className="text-blue hover:underline"
-            href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
-          >
-            More Info
-          </Link>
-        </p>
-      </div>
-    );
-  };
-  const cryptoError = () => {
-    if (hasCrypto) {
-      return null;
-    }
-    return (
-      <div
-        className="relative p-3 m-3 text-xl font-semibold text-center text-red bg-red-100 rounded-lg"
-        role="alert"
-      >
-        <p className="p-2 text-2xl font-bold">
-          Dabih will not work with this browser
-        </p>
-        Web Crypto API is not supported or cannot be used (no SSL connection?).
-        Dabih needs this API to decrypt the data.
-        <p>
-          <Link
-            className="text-blue hover:underline"
-            href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API"
-          >
-            More Info
-          </Link>
-        </p>
-      </div>
-    );
-  };
-
-  return (
-    <div>
-      {storageError()}
-      {cryptoError()}
-    </div>
-  );
-}
+import { Institute } from '../components';
+import BrowserSupport from './BrowserSupport';
 
 export default function Home() {
-  const router = useRouter();
   return (
     <div>
       <BrowserSupport />
@@ -97,9 +27,12 @@ export default function Home() {
             </ul>
           </div>
           <div className="mt-5">
-            <BigButton onClick={() => router.push('/account')}>
+            <Link
+              className="text-xl text-white bg-blue rounded-md px-3 py-2"
+              href="/account"
+            >
               Get Started
-            </BigButton>
+            </Link>
           </div>
         </div>
         <div className="basis-1/4">
