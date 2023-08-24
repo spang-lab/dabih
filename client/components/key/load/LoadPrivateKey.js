@@ -4,7 +4,7 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { Key, File, FilePlus } from 'react-feather';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { importPrivateKey, storage } from '../../../lib';
 import { useApi } from '../../api';
 import useDialog from '../../dialog';

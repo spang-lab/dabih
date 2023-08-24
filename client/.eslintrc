@@ -2,6 +2,16 @@
   "extends": ["next/core-web-vitals", "airbnb"],
   "plugins": ["unused-imports"],
   "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "off",

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { usePathname } from 'next/navigation';
 
@@ -14,7 +16,7 @@ function Item({ children, href }) {
   if (pathname === href) {
     return (
       <div className="py-2 font-semibold text-white bg-blue">
-        <span className="mx-4 border-l border-white" />
+        <span className="mx-4 py-1 border-l border-white" />
         {children}
       </div>
     );
@@ -23,7 +25,7 @@ function Item({ children, href }) {
   return (
     <Link href={href}>
       <div className="py-2">
-        <span className="mx-4 border-l border-blue" />
+        <span className="mx-4 py-1 border-l border-gray-300 " />
         {children}
       </div>
     </Link>
@@ -32,7 +34,7 @@ function Item({ children, href }) {
 
 function Sidebar() {
   return (
-    <div className="w-64">
+    <div className="bg-white">
       <div className="rounded-lg border ">
         <Header>Documentation</Header>
         <Item href="/docs">Overview</Item>
@@ -40,6 +42,7 @@ function Sidebar() {
         <Header>Getting Started</Header>
         <Item href="/docs/installation">Installation</Item>
         <Item href="/docs/configuration">Configuration Options</Item>
+        <Item href="/docs/cli">Command Line Interface (CLI)</Item>
       </div>
     </div>
   );

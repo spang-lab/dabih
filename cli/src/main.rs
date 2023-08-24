@@ -83,6 +83,10 @@ async fn main() -> Result<()> {
             init::init(args.key_file.clone()).await?;
         }
         Commands::Config => {
+            match config::get_path() {
+                Ok(p) => println!("Reading config from {}", p.display()),
+                Err(e) => println!("{}", e),
+            };
             let ctx = config::read_context()?;
             api::check_key(&ctx).await?;
         }

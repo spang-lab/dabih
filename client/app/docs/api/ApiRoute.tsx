@@ -1,8 +1,7 @@
-'use client';
 import React from 'react';
 
 export default function ApiRoute({
-  children, method, path, action,
+  children, method, path, action = '',
 }) {
   const id = path.slice(1).replace(/\//g, '-').replace(/:/g, '');
   const getAction = () => {

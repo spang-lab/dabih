@@ -13,7 +13,7 @@ import {
   AlertTriangle,
   Repeat,
 } from 'react-feather';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useUser } from '../hooks';
 import { useDatasets } from './Context';
 import { MutedButton } from '../util';

@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { Docs, ApiRoute, CodeBlock } from '../../components';
+import ApiRoute from './ApiRoute';
+import CodeBlock from './CodeBlock';
 
 function RouteLink({ path }) {
   const id = path.slice(1).replace(/\//g, '-').replace(/:/g, '');
@@ -15,7 +16,7 @@ function RouteLink({ path }) {
 
 export default function Documentation() {
   return (
-    <Docs>
+    <div>
       <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
         <span className="text-blue"> API </span>
         Reference
@@ -414,6 +415,6 @@ export default function Documentation() {
 }, ...]`}
         </CodeBlock>
       </ApiRoute>
-    </Docs>
+    </div>
   );
 }

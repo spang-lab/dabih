@@ -19,6 +19,7 @@ pub struct Context {
     pub private_key: Rsa<Private>,
     pub fingerprint: String,
     pub client: Client,
+    pub config_path: PathBuf,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -38,7 +39,7 @@ impl fmt::Display for Config {
     }
 }
 
-fn get_path() -> Result<PathBuf> {
+pub fn get_path() -> Result<PathBuf> {
     let filename = "config.yaml";
     let key = "XDG_CONFIG_HOME";
     let config_folder = match env::var(key) {
@@ -49,6 +50,9 @@ fn get_path() -> Result<PathBuf> {
         },
     };
     let path = config_folder.join(filename);
+    if !path.exists() {
+        bail!("Config file {} does not exist.", path.display())
+    }
     Ok(path)
 }
 
@@ -80,22 +84,18 @@ pub fn read_private_key(key_file: String) -> Result<Rsa<Private>> {
     // Ok(string)
 }
 
-pub fn read_config() -> Result<Config> {
+pub fn read_context() -> Result<Context> {
     let path = get_path()?;
     let file = match fs::File::open(&path) {
         Ok(f) => f,
-        Err(_) => bail!("No config file {}", path.to_string_lossy()),
+        Err(_) => bail!("Failed to open config file {}", path.to_string_lossy()),
     };
-    let config: Config = serde_yaml::from_reader(file)?;
-    Ok(config)
-}
-
-pub fn read_context() -> Result<Context> {
     let Config {
         url,
         token,
         private_key,
-    } = read_config()?;
+    } = serde_yaml::from_reader(file)?;
+
     let pem_data = private_key.as_bytes();
     let key = Rsa::private_key_from_pem(pem_data)?;
     let buffer = key.public_key_to_der()?;
@@ -108,6 +108,7 @@ pub fn read_context() -> Result<Context> {
         private_key: key,
         fingerprint,
         client,
+        config_path: path,
     });
 }
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Institute } from '../components';
+import { Institute } from '@/components';
 import BrowserSupport from './BrowserSupport';
 
 export default function Home() {
@@ -26,9 +26,9 @@ export default function Home() {
               <li> Simple to use </li>
             </ul>
           </div>
-          <div className="mt-5">
+          <div className="py-5">
             <Link
-              className="text-xl text-white bg-blue rounded-md px-3 py-2"
+              className="text-2xl text-white bg-blue rounded-md px-4 py-3"
               href="/account"
             >
               Get Started

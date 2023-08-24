@@ -1,3 +1,3 @@
-import {useDialog} from './Context';
+import { useDialog } from './Context';
 
 export default useDialog;

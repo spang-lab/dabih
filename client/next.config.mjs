@@ -1,3 +1,6 @@
+import createMDX from '@next/mdx';
+import rehypeHighlight from 'rehype-highlight';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
@@ -8,7 +11,12 @@ const nextConfig = {
       destination: 'http://localhost:8088/api/v1/:path*',
     },
   ],
-  pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'mdx'],
 };
-
-export default nextConfig;
+const withMDX = createMDX({
+  options: {
+    extension: /\.mdx?$/,
+    rehypePlugins: [rehypeHighlight],
+  },
+});
+export default withMDX(nextConfig);

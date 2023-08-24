@@ -1,4 +1,5 @@
 'use client';
+
 import { Dialog } from '@headlessui/react';
 
 export default function Destroy({ ctx, closeDialog }) {

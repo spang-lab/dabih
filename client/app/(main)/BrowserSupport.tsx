@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-import { storage, isCryptoApiAvailable } from '../lib';
+import { storage, isCryptoApiAvailable } from '@/lib';
 
 export default function BrowserSupport() {
   const [hasCrypto, setCrypto] = useState(true);
