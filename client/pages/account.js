@@ -1,15 +1,15 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 
-import {getProviders, signIn} from 'next-auth/react';
-import {getServerSession} from 'next-auth/next';
-import {authOptions} from './api/auth/[...nextauth]';
+import { getProviders, signIn } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from './api/auth/[...nextauth]';
 
-function URProvider({provider}) {
-  const [user, setUser] = useState({uid: '', password: ''});
+function URProvider({ provider }) {
+  const [user, setUser] = useState({ uid: '', password: '' });
 
-  const setUid = (uid) => setUser({...user, uid});
-  const setPassword = (password) => setUser({...user, password});
+  const setUid = (uid) => setUser({ ...user, uid });
+  const setPassword = (password) => setUser({ ...user, password });
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -70,7 +70,7 @@ function URProvider({provider}) {
   );
 }
 
-function Provider({provider}) {
+function Provider({ provider }) {
   if (provider.id === 'ur') {
     return <URProvider provider={provider} />;
   }
@@ -98,7 +98,7 @@ function Provider({provider}) {
   );
 }
 
-export default function Account({providers}) {
+export default function Account({ providers }) {
   return (
     <div>
       <h1 className="text-4xl pb-4 font-extrabold tracking-tight sm:text-5xl md:text-6xl">
@@ -150,11 +150,11 @@ export default function Account({providers}) {
 }
 
 export async function getServerSideProps(context) {
-  const {req, res} = context;
+  const { req, res } = context;
   const session = await getServerSession(req, res, authOptions);
 
   if (session) {
-    return {redirect: {destination: '/key'}};
+    return { redirect: { destination: '/key' } };
   }
 
   const providers = await getProviders() ?? [];
