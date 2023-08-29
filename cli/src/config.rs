@@ -52,7 +52,7 @@ impl fmt::Display for Config {
     }
 }
 
-pub fn get_path() -> Result<PathBuf> {
+fn read_path() -> Result<PathBuf> {
     let filename = "config.yaml";
     let key = "XDG_CONFIG_HOME";
     let config_folder = match env::var(key) {
@@ -63,6 +63,11 @@ pub fn get_path() -> Result<PathBuf> {
         },
     };
     let path = config_folder.join(filename);
+    Ok(path)
+}
+
+pub fn get_path() -> Result<PathBuf> {
+    let path = read_path()?;
     if !path.exists() {
         bail!("Config file {} does not exist.", path.display())
     }
@@ -132,7 +137,7 @@ pub fn read_context() -> Result<Context> {
 
 pub fn write_config(config: &Config) -> Result<()> {
     let yaml = serde_yaml::to_string(config)?;
-    let path = get_path()?;
+    let path = read_path()?;
 
     if let Some(parent_dir) = &path.parent() {
         fs::create_dir_all(parent_dir)?;
