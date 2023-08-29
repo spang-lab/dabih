@@ -4,9 +4,9 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { Lock, File, FilePlus } from 'react-feather';
-import { exportJwk, importPublicKey } from '../../../lib';
-import { useApi } from '../../api';
-import useDialog from '../../dialog';
+import { exportJwk, importPublicKey } from '@/lib';
+import { useApi } from '@/components/api';
+import useDialog from '@/components/dialog';
 
 export default function LoadFile() {
   const dialog = useDialog();

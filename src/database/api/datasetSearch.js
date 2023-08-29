@@ -67,7 +67,7 @@ async function search(ctx, sub, options) {
     order: [['createdAt', 'DESC']],
   });
 
-  const datasets = await Dataset.findAll({
+  const datasetIds = (await Dataset.findAll({
     include: {
       model: Member,
       as: 'members',
@@ -76,11 +76,27 @@ async function search(ctx, sub, options) {
       where: mWhere,
     },
     where,
+    attributes: ['id', 'createdAt'],
     paranoid,
     order: [['createdAt', 'DESC']],
     limit,
     offset,
+  })).map((d) => d.id);
+
+  const datasets = await Dataset.findAll({
+    include: {
+      model: Member,
+      as: 'members',
+      attributes: ['permission', 'sub'],
+      paranoid,
+    },
+    where: {
+      id: datasetIds,
+    },
+    paranoid,
+    order: [['createdAt', 'DESC']],
   });
+
   return {
     count,
     datasets,

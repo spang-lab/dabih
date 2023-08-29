@@ -30,6 +30,7 @@ const resolveMembers = (users, mems) => {
       members.push({
         ...member,
         name: u.name,
+        email: u.email,
       });
     } else {
       addable.push(u);

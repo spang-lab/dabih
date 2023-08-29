@@ -3,7 +3,7 @@ import { rsa } from '../../crypto/index.js';
 import { publicKey } from '../../database/index.js';
 
 const route = async (ctx) => {
-  const { sub, name } = getUser(ctx);
+  const { sub, name, email } = getUser(ctx);
   const { body } = ctx.request;
   const pubKey = body.publicKey;
   if (!pubKey) {
@@ -15,6 +15,7 @@ const route = async (ctx) => {
     hash,
     name,
     sub,
+    email,
     data: pubKey,
     isRootKey: false,
   });

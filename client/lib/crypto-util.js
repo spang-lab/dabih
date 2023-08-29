@@ -16,8 +16,11 @@ export const CONST = {
   hash: {
     alg: 'SHA-256',
   },
+  opensshHeader: 'ssh-rsa',
   pkcs8Header: '-----BEGIN PRIVATE KEY-----',
   pkcs8Footer: '-----END PRIVATE KEY-----',
+  spkiHeader: '-----BEGIN PUBLIC KEY-----',
+  spkiFooter: '-----END PUBLIC KEY-----',
 };
 
 export const uint8ToBase64 = (array) => {
@@ -51,6 +54,18 @@ export const pemToPkcs8 = (pem) => {
   const match = regex.exec(string);
   if (!match || match.length !== 2) {
     throw new Error('Invalid pkcs8 Pem File');
+  }
+  const array = base64ToUint8(match[1]);
+  return array;
+};
+export const pemToSpki = (pem) => {
+  const string = pem.replace(/[\n\r]/g, '');
+  const regex = new RegExp(
+    `^${CONST.spkiHeader}([a-zA-Z0-9+/]+={0,2})${CONST.spkiFooter}`,
+  );
+  const match = regex.exec(string);
+  if (!match || match.length !== 2) {
+    throw new Error('Invalid spki Pem File');
   }
   const array = base64ToUint8(match[1]);
   return array;

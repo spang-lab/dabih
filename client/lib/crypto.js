@@ -6,6 +6,7 @@ import {
   pemToPkcs8,
   pkcs8ToPem,
   CONST,
+  pemToSpki,
 } from './crypto-util';
 
 export const isCryptoApiAvailable = () => {
@@ -22,7 +23,7 @@ export const generateKey = async () => {
   const isExportable = true;
   const keyUses = ['encrypt', 'decrypt'];
 
-  const { privateKey, publicKey } = await crypto.subtle.generateKey(
+  const {privateKey, publicKey} = await crypto.subtle.generateKey(
     CONST.rsa,
     isExportable,
     keyUses,
@@ -59,7 +60,7 @@ export const hashKey = async (publicKey) => {
 export const decryptKey = async (privateKey, encryptedKey) => {
   const encrypted = base64ToUint8(encryptedKey);
 
-  const algorithm = { name: CONST.rsa.name };
+  const algorithm = {name: CONST.rsa.name};
   const decrypted = await crypto.subtle.decrypt(
     algorithm,
     privateKey,
@@ -69,7 +70,7 @@ export const decryptKey = async (privateKey, encryptedKey) => {
   const key = await crypto.subtle.importKey(
     'raw',
     decrypted,
-    { name: CONST.aes.name },
+    {name: CONST.aes.name},
     true,
     ['decrypt'],
   );
@@ -153,7 +154,7 @@ const importOpenSSHPubKey = async (text) => {
     true,
     ['encrypt'],
   );
-  return { publicKey, name: keyName };
+  return publicKey;
 };
 
 export const exportJwk = async (key) => crypto.subtle.exportKey('jwk', key);
@@ -168,8 +169,24 @@ export const exportBase64 = async (key) => {
 };
 
 export const importPublicKey = async (keyData) => {
-  if (keyData.startsWith('ssh-rsa')) {
+  if (keyData.startsWith(CONST.opensshHeader)) {
     return importOpenSSHPubKey(keyData);
+  }
+  if (keyData.startsWith(CONST.spkiHeader)) {
+    const raw = pemToSpki(keyData);
+    const publicKey = await crypto.subtle.importKey(
+      'spki',
+      raw,
+      CONST.rsa,
+      true,
+      ['encrypt'],
+    );
+    return publicKey;
+  }
+  if (keyData.startsWith(CONST.pkcs8Header)) {
+    const pkcs8 = pemToPkcs8(keyData);
+    const {publicKey} = await loadPrivateKey(pkcs8);
+    return publicKey;
   }
   throw new Error('Unknown public key format');
 };

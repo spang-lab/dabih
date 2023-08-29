@@ -9,7 +9,7 @@ import { useDatasets } from './Context';
 export default function Member({ data, dataset }) {
   const { mnemonic } = dataset;
   const {
-    sub, name, permission,
+    sub, name, email, permission,
   } = data;
   const { setAccess } = useDatasets();
   const enabled = permission === 'write';
@@ -79,7 +79,15 @@ export default function Member({ data, dataset }) {
       <div className="px-2 shrink-0 text-blue justify-self-start">
         <User size={20} />
       </div>
-      <div className="container font-semibold text-blue mx-auto">{name}</div>
+      <div className="font-semibold text-blue">{name}</div>
+      <div className="">{email}</div>
+      <div className="text-gray-800">
+        (id:
+        {' '}
+        {sub}
+        )
+      </div>
+      <div className="grow" />
       {getDelete()}
       {getSwitch()}
     </div>

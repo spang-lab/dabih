@@ -18,8 +18,12 @@ async function listAllUsers(ctx) {
   });
 
   const users = keys.map((key) => {
-    const { name, sub, confirmed } = key;
-    return { name, sub, confirmed: !!confirmed };
+    const {
+      name, sub, email, confirmed,
+    } = key;
+    return {
+      name, sub, email, confirmed: !!confirmed,
+    };
   });
   return users;
 }

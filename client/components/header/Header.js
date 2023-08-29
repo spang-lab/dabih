@@ -37,11 +37,8 @@ export default function Header() {
     if (!user || !key || !key.hash) {
       return;
     }
-    const { valid, error } = await api.checkPublicKey(key.hash);
-    if (error) {
-      return;
-    }
-    if (!valid) {
+    const { valid } = await api.checkPublicKey(key.hash);
+    if (valid === false) {
       await storage.deleteKey();
       router.push('/key');
     }
