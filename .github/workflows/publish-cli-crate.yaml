@@ -1,9 +1,5 @@
 name: Publish Crates.io cli crate
 
-defaults:
-  run:
-    working-directory: cli
-
 on:
   push:
     tags:
@@ -27,7 +23,7 @@ jobs:
         with:
           use-cross: true
           command: build
-          args: --target x86_64-pc-windows-gnu
+          args: --release --manifest-path cli/Cargo.toml --target x86_64-pc-windows-gnu
   publish:
     name: Publish
     runs-on: ubuntu-latest
@@ -43,6 +39,7 @@ jobs:
           override: true
 
       - name: Cargo publish
+        working-directory: ./cli
         run: cargo publish --token ${CRATES_TOKEN}
         env:
           CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
