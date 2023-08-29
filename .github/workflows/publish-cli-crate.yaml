@@ -20,8 +20,8 @@ jobs:
           override: true
       - name: Build the package
         uses: actions-rs/cargo@v1
-        working-directory: ./cli
         with:
+          working-directory: ./cli
           use-cross: true
           command: build
           args: --target x86_64-pc-windows-gnu
