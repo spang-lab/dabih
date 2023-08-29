@@ -6,9 +6,21 @@ on:
       - "v*"
 
 jobs:
-  windows_binary:
-    name: Windows Binary
+  binaries:
+    name: Binaries
     runs-on: ubuntu-latest
+    strategy:
+    matrix:
+      target:
+        [
+          x86_64-unknown-linux-gnu,
+          x86_64-unknown-linux-musl,
+          x86_64-pc-windows-gnu,
+          x86_64-apple-darwin,
+          aarch64-apple-darwin,
+          aarch64-pc-windows-msvc,
+        ]
+
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -16,14 +28,25 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          target: x86_64-pc-windows-gnu
+          target: ${{ matrix.target }}
           override: true
       - name: Build the package
         uses: actions-rs/cargo@v1
         with:
           use-cross: true
           command: build
-          args: --release --manifest-path cli/Cargo.toml --target x86_64-pc-windows-gnu
+          args: --release --manifest-path cli/Cargo.toml --target ${{ matrix.target }}
+      - name: Package
+        shell: bash
+        run: |
+          #strip target/${{ matrix.target }}/release/dabih
+          cd target/${{ matrix.target }}/release          
+          tar czvf ../../../dabih-${{ matrix.target }}.tar.gz dabih
+          cd -
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "dabih*"
   publish:
     name: Publish
     runs-on: ubuntu-latest
