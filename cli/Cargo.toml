@@ -11,6 +11,11 @@ repository = "https://github.com/spang-lab/dabih"
 keywords = ["cli", "dabih"]
 categories = ["command-line-utilities"]
 
+[features]
+default = []
+sftp = ["dep:openssh-sftp-client", "dep:openssh"]
+
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -32,3 +37,5 @@ serde_yaml = "0.9.25"
 tokio = { version = "1.29.1", features = ["full"] }
 url = "2.4.0"
 zip = "0.6.6"
+openssh = { version = "0.10.0", optional = true }
+openssh-sftp-client = {version = "0.14.0", optional = true }

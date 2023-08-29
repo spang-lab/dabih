@@ -23,9 +23,14 @@ fn get_url() -> Result<String> {
     Ok(text)
 }
 
-fn get_token() -> Result<String> {
+fn get_token(url: String) -> Result<String> {
+    let profile = Url::parse(&url)?.join("profile")?;
+    let help_message = format!(
+        "You can generaten an Api Token on the dabih web interface.\n Go to {} ",
+        profile
+    );
     let text = Text::new("Api Token: ")
-        .with_help_message("You can generaten an Api Token on the dabih web interface")
+        .with_help_message(&help_message)
         .prompt()?;
     Ok(text)
 }
@@ -47,9 +52,11 @@ pub async fn init(key_file: String) -> Result<()> {
     let key = read_private_key(key_file)?;
     let pem_data = key.private_key_to_pem()?;
     let private_key = String::from_utf8(pem_data)?;
+    let url = get_url()?;
+
     let config = Config {
-        url: get_url()?,
-        token: get_token()?,
+        token: get_token(url.clone())?,
+        url,
         private_key,
     };
     write_config(&config)?;

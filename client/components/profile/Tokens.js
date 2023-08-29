@@ -15,7 +15,7 @@ export default function Tokens() {
         <Token data={t} key={t.token} />
       ))}
       <button
-        className="mx-1 text-sm rounded text-white font-semibold bg-blue px-2 py-1"
+        className="m-1 text-sm rounded text-white font-semibold bg-blue px-2 py-1"
         type="button"
         onClick={() => generateToken('api')}
       >
@@ -24,7 +24,7 @@ export default function Tokens() {
         Generate an API Token
       </button>
       <button
-        className="mx-1 text-sm rounded text-white font-semibold bg-blue px-2 py-1"
+        className="m-1 text-sm rounded text-white font-semibold bg-blue px-2 py-1"
         type="button"
         onClick={() => generateToken('upload')}
       >

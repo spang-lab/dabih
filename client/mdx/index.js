@@ -18,14 +18,20 @@ function Text(props) {
 }
 
 function ResponsiveImage(props) {
-  const { alt } = props;
+  const { alt, src } = props;
   return (
-    <Image
-      alt={alt}
-      {...props}
-    />
+    <span className="relative h-80 p-2 m-2 block">
+      <Image
+        className="object-contain object-left"
+        alt={alt}
+        fill
+        sizes="100vw"
+        src={src}
+      />
+    </span>
   );
 }
+
 const components = {
   img: ResponsiveImage,
   p: Text,

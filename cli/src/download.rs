@@ -1,4 +1,5 @@
 use anyhow::{bail, Result};
+use pbr::{ProgressBar, Units};
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
@@ -45,11 +46,24 @@ pub async fn download_dataset(
     let key = crypto::decrypt_key(ctx, &encrypted_key)?;
 
     let mut file = File::create(path)?;
+
+    let total_size = match dataset.chunks.get(0) {
+        Some(c) => c.size,
+        None => 0,
+    };
+
+    let mut pb = ProgressBar::new(total_size);
+    pb.set_units(Units::Bytes);
+    let message = format!("Downloading {} ", &dataset.mnemonic);
+    pb.message(&message);
     for chunk in &dataset.chunks {
+        let chunk_size = chunk.end - chunk.start;
+        pb.add(chunk_size);
         let encrypted = api::fetch_chunk(ctx, &dataset.mnemonic, &chunk.url_hash).await?;
         let decrypted = crypto::decrypt_chunk(chunk, &key, &encrypted)?;
         file.write(&decrypted)?;
     }
+    pb.finish();
 
     Ok(())
 }

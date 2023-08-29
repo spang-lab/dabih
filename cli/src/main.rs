@@ -8,6 +8,9 @@ mod download;
 mod init;
 mod upload;
 
+#[cfg(feature = "sftp")]
+pub mod sftp;
+
 /// Dabih Command line Interface
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -29,6 +32,9 @@ enum Commands {
     Config,
     /// Generate a (root) RSA key pair for use with dabih.
     Keygen(KeygenArgs),
+    #[cfg(feature = "sftp")]
+    /// Use SFTP to scan for files to upload.
+    Sftp(SftpArgs),
 }
 
 #[derive(Args)]
@@ -72,6 +78,17 @@ struct DownloadArgs {
     force: bool,
 }
 
+#[derive(Args)]
+struct SftpArgs {
+    /// The files that should be uploaded to dabih, this can also be a glob pattern
+    mnemonics: Vec<String>,
+    /// If set, all files in a folder will be uploaded seperately
+    #[arg(short, long)]
+    output: Option<String>,
+    #[arg(short, long)]
+    force: bool,
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -88,6 +105,7 @@ async fn main() -> Result<()> {
                 Err(e) => println!("{}", e),
             };
             let ctx = config::read_context()?;
+            println!("{}", &ctx);
             api::check_key(&ctx).await?;
         }
         Commands::Upload(args) => {
@@ -115,6 +133,11 @@ async fn main() -> Result<()> {
         Commands::Keygen(args) => {
             let KeygenArgs { key_file } = args;
             crypto::generate_keypair(key_file)?;
+        }
+        #[cfg(feature = "sftp")]
+        Commands::Sftp(args) => {
+            let ctx = config::read_context()?;
+            sftp::scan(&ctx)?;
         }
     };
     Ok(())

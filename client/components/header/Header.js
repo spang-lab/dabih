@@ -37,7 +37,10 @@ export default function Header() {
     if (!user || !key || !key.hash) {
       return;
     }
-    const { valid } = await api.checkPublicKey(key.hash);
+    const { valid, error } = await api.checkPublicKey(key.hash);
+    if (error) {
+      return;
+    }
     if (!valid) {
       await storage.deleteKey();
       router.push('/key');
@@ -66,7 +69,7 @@ export default function Header() {
 
     const current = state[path];
     if (current === 'disabled') {
-      router.push('/');
+      router.push('/account');
     }
     if (current === 'complete') {
       if (path === 'account') {

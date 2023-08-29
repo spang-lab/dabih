@@ -34,6 +34,9 @@ pub struct Chunk {
     #[serde(rename = "urlHash")]
     pub url_hash: String,
     pub iv: String,
+    pub start: u64,
+    pub end: u64,
+    pub size: u64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -58,7 +61,13 @@ async fn get_user(ctx: &Context) -> Result<()> {
     let token_url = ctx.url.join("/api/v1/token")?;
     let res = ctx.client.post(token_url).send().await?;
 
-    let user: User = res.error_for_status()?.json().await?;
+    let user: User = match res.error_for_status_ref() {
+        Ok(_) => res.json().await?,
+        Err(_) => {
+            let text = res.text().await?;
+            bail!(text);
+        }
+    };
     println!(
         "Successfully authenticated as {}<{}> (id:{})",
         user.name, user.email, user.sub
@@ -75,7 +84,10 @@ pub async fn check_key(ctx: &Context) -> Result<()> {
     let mut data = HashMap::new();
     data.insert("keyHash", ctx.fingerprint.clone());
     let res = ctx.client.post(key_url).json(&data).send().await?;
-    let status: KeyStatus = res.json().await?;
+    let status: KeyStatus = match res.error_for_status() {
+        Ok(res) => res.json().await?,
+        Err(e) => bail!(e),
+    };
     let KeyStatus { error, valid } = status;
 
     if let Some(err) = error {

@@ -1,5 +1,4 @@
 use anyhow::{bail, Result};
-use openssl::base64;
 use openssl::pkey::Private;
 use openssl::rsa::Rsa;
 use openssl::sha::sha256;
@@ -17,9 +16,23 @@ pub struct Context {
     pub url: Url,
     pub token: String,
     pub private_key: Rsa<Private>,
+    pub public_key: String,
     pub fingerprint: String,
     pub client: Client,
     pub config_path: PathBuf,
+}
+impl fmt::Display for Context {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "Config: {{\n  config_file:{}\n  url: {}\n  token: {}\n  key_fingerprint: {}\n  public_key: \n{}\n}}",
+            self.config_path.display(),
+            self.url,
+            self.token,
+            self.fingerprint,
+            self.public_key,
+        )
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -99,8 +112,12 @@ pub fn read_context() -> Result<Context> {
     let pem_data = private_key.as_bytes();
     let key = Rsa::private_key_from_pem(pem_data)?;
     let buffer = key.public_key_to_der()?;
+
+    let buffer2 = key.public_key_to_pem_pkcs1()?;
+    let public_key = String::from_utf8(buffer2)?;
+
     let hash = sha256(&buffer);
-    let fingerprint = base64::encode_block(&hash);
+    let fingerprint = openssl::base64::encode_block(&hash);
     let client = create_client(token.clone())?;
     return Ok(Context {
         url: Url::parse(&url)?,
@@ -109,6 +126,7 @@ pub fn read_context() -> Result<Context> {
         fingerprint,
         client,
         config_path: path,
+        public_key,
     });
 }
 
