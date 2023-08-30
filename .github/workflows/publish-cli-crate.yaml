@@ -40,7 +40,7 @@ jobs:
         run: |
           #strip target/${{ matrix.target }}/release/dabih
           cd cli/target/${{ matrix.target }}/release          
-          tar czvf ../../../dabih-${{ matrix.target }}.tar.gz dabih
+          tar czvf ../../../dabih-${{ matrix.target }}.tar.gz dabih*
           cd -
       - name: Publish
         uses: softprops/action-gh-release@v1
