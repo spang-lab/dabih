@@ -15,7 +15,7 @@ const resolveMembers = (users, mems) => {
     return acc;
   }, {});
 
-  const members = [];
+  let members = [];
   const addable = [];
   if (!users) {
     return {
@@ -24,6 +24,7 @@ const resolveMembers = (users, mems) => {
     };
   }
 
+  let numWriters = 0;
   users.forEach((u) => {
     const member = memberIndex[u.sub];
     if (member) {
@@ -32,14 +33,22 @@ const resolveMembers = (users, mems) => {
         name: u.name,
         email: u.email,
       });
+      if (member.permission === 'write') {
+        numWriters += 1;
+      }
     } else {
       addable.push(u);
     }
   });
+  members = members.map((m) => ({
+    ...m,
+    disabled: m.permission === 'write' && numWriters <= 1,
+  }));
 
   return {
     members,
     addable,
+    canRemoveWrite: numWriters > 1,
   };
 };
 

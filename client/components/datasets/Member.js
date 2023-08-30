@@ -9,7 +9,7 @@ import { useDatasets } from './Context';
 export default function Member({ data, dataset }) {
   const { mnemonic } = dataset;
   const {
-    sub, name, email, permission,
+    sub, name, email, permission, disabled,
   } = data;
   const { setAccess } = useDatasets();
   const enabled = permission === 'write';
@@ -17,7 +17,7 @@ export default function Member({ data, dataset }) {
   const canEdit = dataset.permission === 'write';
 
   const toggle = async () => {
-    if (!canEdit) {
+    if (!canEdit || disabled) {
       return;
     }
     if (enabled) {
@@ -36,9 +36,10 @@ export default function Member({ data, dataset }) {
         </span>
       );
     }
-    if (!canEdit) {
+    if (!canEdit || disabled) {
       return <span className="px-3 text-gray-400">{permission}</span>;
     }
+
     return (
       <>
         <div className="text-xs text-center">Can edit</div>
@@ -62,7 +63,7 @@ export default function Member({ data, dataset }) {
   };
 
   const getDelete = () => {
-    if (!canEdit || removed) {
+    if (!canEdit || removed || disabled) {
       return null;
     }
     return (
@@ -79,7 +80,7 @@ export default function Member({ data, dataset }) {
       <div className="px-2 shrink-0 text-blue justify-self-start">
         <User size={20} />
       </div>
-      <div className="font-semibold text-blue">{name}</div>
+      <div className="font-semibold text-blue py-2">{name}</div>
       <div className="">{email}</div>
       <div className="text-gray-800">
         (id:

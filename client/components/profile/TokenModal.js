@@ -16,13 +16,6 @@ export default function TokenModal() {
     setShake('.shaking');
     setTimeout(() => setShake(''), 200);
   };
-
-  const copyToken = () => {
-    if (!token) {
-      return;
-    }
-    navigator.clipboard.writeText(token.data);
-  };
   const getValue = () => {
     if (!token) {
       return '';
@@ -31,6 +24,13 @@ export default function TokenModal() {
       return token.data;
     }
     return `${baseUrl}/ingress/${token.data}`;
+  };
+
+  const copyToken = () => {
+    if (!token) {
+      return;
+    }
+    navigator.clipboard.writeText(getValue());
   };
   const getText = () => {
     if (!token) {
