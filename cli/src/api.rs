@@ -101,10 +101,20 @@ pub async fn check_key(ctx: &Context) -> Result<()> {
     Ok(())
 }
 
-pub async fn upload_start(ctx: &Context, name: String) -> Result<String> {
+pub async fn upload_start(
+    ctx: &Context,
+    file_name: String,
+    name: Option<String>,
+) -> Result<String> {
     let url = ctx.url.join("/api/v1/upload/start")?;
     let mut data = HashMap::new();
-    data.insert("name", name);
+    data.insert("fileName", file_name);
+    match name {
+        Some(n) => {
+            data.insert("name", n);
+        }
+        None => {}
+    };
 
     let res = ctx.client.post(url).json(&data).send().await?;
     let Upload { mnemonic } = res.json().await?;

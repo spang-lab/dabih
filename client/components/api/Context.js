@@ -87,7 +87,7 @@ export function ApiWrapper({ children }) {
       generateToken: async (type) => api.post(`/token/generate/${type}`),
       removeToken: async (tokenId) => api.post('/token/remove', { tokenId }),
       listTokens: async () => api.get('/token/list'),
-      uploadStart: (name) => api.post('/upload/start', { name }),
+      uploadStart: (fileName) => api.post('/upload/start', { fileName }),
       uploadChunk: async (chunk, mnemonic) => {
         const {
           start, end, hash, data, totalSize,

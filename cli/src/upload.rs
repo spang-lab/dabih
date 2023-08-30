@@ -95,12 +95,12 @@ pub fn hash_chunks(hashes: &Vec<String>) -> Result<String> {
     Ok(hash)
 }
 
-pub async fn upload(ctx: &Context, path: PathBuf) -> Result<()> {
+pub async fn upload(ctx: &Context, path: PathBuf, name: Option<String>) -> Result<()> {
     println!("Uploading file \"{}\"...", path.display());
     let file_name = path.file_name().unwrap();
-    let name = file_name.to_str().unwrap().to_owned();
+    let fname = file_name.to_str().unwrap().to_owned();
 
-    let mnemonic = api::upload_start(ctx, name).await?;
+    let mnemonic = api::upload_start(ctx, fname, name).await?;
     let mut chunk_hashes = Vec::new();
 
     let mut file = File::open(&path)?;

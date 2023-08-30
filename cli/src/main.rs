@@ -1,6 +1,6 @@
 use clap::{Args, Parser, Subcommand};
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 mod api;
 mod config;
 mod crypto;
@@ -59,6 +59,10 @@ struct UploadArgs {
     #[arg(short, long)]
     recursive: bool,
 
+    /// Set the name for the dataset
+    #[arg(short, long)]
+    name: Option<String>,
+
     /// If set, folders will be gziped and then uploaded as single file.
     #[arg(short, long)]
     zip: bool,
@@ -112,13 +116,17 @@ async fn main() -> Result<()> {
             let UploadArgs {
                 paths,
                 recursive,
+                name,
                 zip,
                 limit,
             } = args;
             let files = upload::resolve(paths.clone(), *recursive, *zip, *limit)?;
+            if files.is_empty() {
+                bail!("Did not find any files to upload.");
+            }
             let ctx = config::read_context()?;
             for file in files {
-                upload::upload(&ctx, file).await?;
+                upload::upload(&ctx, file, name.clone()).await?;
             }
         }
         Commands::Download(args) => {

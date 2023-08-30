@@ -5,17 +5,27 @@ import { getSub } from '../../util/index.js';
 import { aes, sha256 } from '../../crypto/index.js';
 import { aesKey } from '../../ephemeral/index.js';
 
-const getFileName = (ctx) => {
+const getNames = (ctx) => {
   const { body } = ctx.request;
   if (!body) {
     return null;
   }
-  return body.name;
+  const {
+    name,
+    fileName,
+  } = body;
+  return {
+    name,
+    fileName,
+  };
 };
 
 const route = async (ctx) => {
   const sub = getSub(ctx);
-  const fileName = getFileName(ctx);
+  const {
+    name,
+    fileName,
+  } = getNames(ctx);
   const key = await aes.randomKey();
   const keyHash = sha256.hash(key);
 
@@ -23,6 +33,7 @@ const route = async (ctx) => {
     keyHash,
     createdBy: sub,
     fileName,
+    name,
   });
   const { mnemonic } = dbDataset;
   await dataset.addMember(ctx, mnemonic, sub, 'write');

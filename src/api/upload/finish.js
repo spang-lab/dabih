@@ -27,6 +27,7 @@ const route = async (ctx) => {
     sendError(ctx, 'Uploaded chunks are incomplete');
     return;
   }
+
   const { size } = chunks[0];
   const fullHash = sha256.hashChunks(chunks);
 
