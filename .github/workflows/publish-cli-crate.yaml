@@ -38,9 +38,13 @@ jobs:
       - name: Package
         shell: bash
         run: |
-          #strip target/${{ matrix.target }}/release/dabih
+          # tmp
           cd cli/target/${{ matrix.target }}/release          
-          tar czvf ../../../dabih-${{ matrix.target }}.tar.gz dabih*
+          if [ "${{ matrix.target }}" = "x86_64-pc-windows-gnu" ]; then
+            zip ../../../dabih-${{ matrix.target }}.zip dabih.exe
+          else
+            tar czvf ../../../dabih-${{ matrix.target }}.tar.gz dabih
+          fi
           cd -
       - name: Publish
         uses: softprops/action-gh-release@v1
