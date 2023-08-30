@@ -39,13 +39,13 @@ jobs:
         shell: bash
         run: |
           #strip target/${{ matrix.target }}/release/dabih
-          cd target/${{ matrix.target }}/release          
+          cd cli/target/${{ matrix.target }}/release          
           tar czvf ../../../dabih-${{ matrix.target }}.tar.gz dabih
           cd -
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          files: "dabih*"
+          files: "cli/dabih*"
   publish:
     name: Publish
     runs-on: ubuntu-latest
