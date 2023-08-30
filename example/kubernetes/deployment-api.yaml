@@ -18,7 +18,7 @@ spec:
         app: dabih
     spec:
       containers:
-        - image: thespanglab/dabih-api:v1.6.16
+        - image: thespanglab/dabih-api:v1.6.17
           name: dabih
           imagePullPolicy: IfNotPresent
           livenessProbe:
