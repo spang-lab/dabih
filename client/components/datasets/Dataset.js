@@ -4,7 +4,9 @@ import React from 'react';
 import {
   File, FileText, Lock, X,
 } from 'react-feather';
-import { Bytes, LocalDate, TimeSince } from '../util';
+import {
+  Bytes, LocalDate, TimeSince, Bytes10,
+} from '../util';
 import Download from './Download';
 import Members from './Members';
 import DatasetActions from './DatasetActions';
@@ -13,7 +15,6 @@ export default function Dataset({ data }) {
   const {
     mnemonic,
     name,
-    hash,
     size,
     fileName,
     createdBy,
@@ -108,17 +109,18 @@ export default function Dataset({ data }) {
           <p className="font-semibold">Upload Date</p>
           <LocalDate value={createdAt} />
         </div>
-        <div className="px-3 py-2 leading-none text-center border-gray-400 border-r-2 w-52">
-          <p className="font-semibold">Hash</p>
-          <span className="text-[10px] font-mono break-words">{hash}</span>
-        </div>
         <div className="px-3 py-2 text-center border-gray-400 border-r-2">
           <p className="font-semibold">Uploaded by</p>
           {createdBy}
         </div>
         <div className="px-3 py-2 text-center border-gray-400 border-r-2">
           <p className="font-semibold">Size</p>
-          <Bytes value={size} />
+          <span className="text-sm">
+            <Bytes value={size} />
+            (
+            <Bytes10 value={size} />
+            )
+          </span>
         </div>
         {getName()}
         {getDeleted()}

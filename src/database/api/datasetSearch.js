@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { Op, col } from 'sequelize';
 import { getModel } from './util.js';
 
 function getWhere(query) {
@@ -39,13 +39,22 @@ function getWhere(query) {
   };
 }
 
+const getOrder = (column, direction) => {
+  if (!column || !direction) {
+    return [['createdAt', 'DESC']];
+  }
+  return [[col(column), direction]];
+};
+
 async function search(ctx, sub, options) {
   const {
     query, deleted, all, uploader, page, limit,
+    column, direction,
   } = options;
   const Dataset = getModel(ctx, 'Dataset');
   const Member = getModel(ctx, 'Member');
   const paranoid = !deleted;
+  const order = getOrder(column, direction);
 
   const mWhere = all ? {} : { sub };
   const offset = (page - 1) * limit;
@@ -64,7 +73,6 @@ async function search(ctx, sub, options) {
     },
     where,
     paranoid,
-    order: [['createdAt', 'DESC']],
   });
 
   const datasetIds = (await Dataset.findAll({
@@ -76,9 +84,8 @@ async function search(ctx, sub, options) {
       where: mWhere,
     },
     where,
-    attributes: ['id', 'createdAt'],
     paranoid,
-    order: [['createdAt', 'DESC']],
+    order,
     limit,
     offset,
   })).map((d) => d.id);
@@ -94,7 +101,7 @@ async function search(ctx, sub, options) {
       id: datasetIds,
     },
     paranoid,
-    order: [['createdAt', 'DESC']],
+    order,
   });
 
   return {

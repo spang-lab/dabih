@@ -2,10 +2,27 @@
 
 import React from 'react';
 
-export default function Bytes({ value }) {
+export function Bytes({ value }) {
   const formatBytes = (bytes, decimals = 2) => {
     if (!bytes || bytes === 0) return '0 B';
     const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
+  };
+  return (
+    <span>
+      {' '}
+      {formatBytes(value)}
+      {' '}
+    </span>
+  );
+}
+export function Bytes10({ value }) {
+  const formatBytes = (bytes, decimals = 2) => {
+    if (!bytes || bytes === 0) return '0 B';
+    const k = 1000;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));

@@ -4,6 +4,7 @@
 import { Switch } from '@headlessui/react';
 import { useUser } from '../hooks';
 import { useDatasets } from './Context';
+import SortBy from './SortBy';
 
 function AdminOptions() {
   const { searchParams, setSearchParams } = useDatasets();
@@ -159,6 +160,7 @@ export default function SearchBar() {
       </div>
       <Pagination />
       <div className="grow" />
+      <SortBy />
       <AdminOptions />
     </div>
   );

@@ -22,7 +22,8 @@ const route = async (ctx) => {
   const { body } = ctx.request;
 
   const {
-    query, uploader, deleted, all, page, limit,
+    query, uploader, deleted, all,
+    page, limit, column, direction,
   } = body;
 
   let options = {
@@ -30,6 +31,8 @@ const route = async (ctx) => {
     uploader,
     page,
     limit,
+    column,
+    direction,
   };
   if (isAdmin) {
     options = {
