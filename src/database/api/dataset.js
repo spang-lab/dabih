@@ -197,7 +197,7 @@ async function listChunks(ctx, mnemonic) {
     end: parseInt(c.end, 10),
     size: parseInt(c.size, 10),
     urlHash: base64ToBase64Url(c.hash),
-  }));
+  })).sort((c1, c2) => c1.start - c2.start);
 }
 async function updateChunk(ctx, chunkId, properties) {
   const Chunk = getModel(ctx, 'Chunk');
