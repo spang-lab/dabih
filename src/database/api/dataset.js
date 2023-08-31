@@ -18,6 +18,10 @@ async function listIncomplete(ctx) {
   });
 }
 
+async function findUpload(ctx) {
+  const Dataset = getModel(ctx, 'Dataset');
+}
+
 async function findMnemonic(ctx, mnemonic) {
   const Dataset = getModel(ctx, 'Dataset');
   const result = await Dataset.findOne({

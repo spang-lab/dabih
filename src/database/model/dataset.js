@@ -17,7 +17,7 @@ export default async function init(sequelize) {
       type: DataTypes.STRING,
     },
     size: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
     },
     keyHash: {
       type: DataTypes.STRING,

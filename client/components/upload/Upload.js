@@ -1,7 +1,7 @@
 'use client';
 
 /* eslint-disable no-await-in-loop */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 import { Transition } from '@headlessui/react';
@@ -19,6 +19,16 @@ export default function Upload({ disabled }) {
   const [uploadBytes, setUploadBytes] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadSuccess, setSuccess] = useState(null);
+
+  useEffect(() => {
+    if (!api.isReady()) {
+      return;
+    }
+    const checkExisting = async () => {
+      await api.uploadCheck();
+    };
+    checkExisting();
+  }, [api]);
 
   const getFile = (files) => {
     if (!files.length) {
@@ -94,7 +104,7 @@ export default function Upload({ disabled }) {
       return null;
     }
     return (
-      <div className="p-3 m-3 text-base text-center text-green bg-green-100 rounded-lg">
+      <div className="p-3 m-3 text-base text-center text-green bg-green/20 rounded-lg">
         <p className="font-extrabold">
           File &quot;
           {uploadSuccess}

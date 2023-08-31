@@ -52,6 +52,7 @@ const getUploadRouter = () => {
   const router = new Router();
   router.use(requireScopes(['upload', 'api']));
 
+  router.get('/check', upload.check);
   router.post('UPLOAD_START', '/start', upload.start);
   router.put('/:mnemonic', upload.chunk);
   router.post('UPLOAD_FINISH', '/finish/:mnemonic', upload.finish);
