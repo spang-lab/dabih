@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 import React, { createContext, useContext, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 import { useSession } from 'next-auth/react';
 
@@ -12,12 +12,13 @@ const ApiContext = createContext();
 
 export function ApiWrapper({ children }) {
   const router = useRouter();
+  const params = useParams();
   const { data: session } = useSession();
 
   const api = axios.create();
   const getHeaders = (headers) => {
-    if (router && router.query && router.query.token) {
-      const { token } = router.query;
+    if (params && params.token) {
+      const { token } = params;
       return {
         ...headers,
         Authorization: `Bearer dabih_${token}`,
@@ -84,6 +85,7 @@ export function ApiWrapper({ children }) {
         return session.user.scopes.includes('admin');
       },
       listKeyUsers: () => api.get('/key/list/user'),
+      getUser: async () => api.post('/token'),
       generateToken: async (type) => api.post(`/token/generate/${type}`),
       removeToken: async (tokenId) => api.post('/token/remove', { tokenId }),
       listTokens: async () => api.get('/token/list'),

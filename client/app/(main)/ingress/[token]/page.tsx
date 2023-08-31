@@ -1,8 +1,10 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Switch } from '@headlessui/react';
 
 import Link from 'next/link';
-import { Upload as Uploader, useApi } from '../../components';
+import { Upload as Uploader, useApi } from '@/components';
 
 export default function Upload() {
   const [user, setUser] = useState({});
@@ -16,9 +18,7 @@ export default function Upload() {
       const u = await api.getUser();
       setUser(u);
     };
-    if (api.isReady()) {
-      fetchUser();
-    }
+    fetchUser();
   }, [api]);
 
   return (

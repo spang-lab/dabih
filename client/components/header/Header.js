@@ -62,7 +62,7 @@ export default function Header() {
       manage: user && key ? 'enabled' : 'disabled',
       profile: user ? 'enabled' : 'disabled',
     };
-    const path = pathname.split('/')[1] || 'start';
+    const path = pathname?.split('/')[1] || 'start';
 
     const current = state[path];
     if (current === 'disabled') {
