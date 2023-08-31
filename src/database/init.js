@@ -56,6 +56,8 @@ const connect = async () => {
 
   const config = {
     ...database,
+    supportBigNumbers: true,
+    bigNumberStrings: true,
   };
   if (logging) {
     config.logging = (msg) => log.verbose(msg);
@@ -102,7 +104,7 @@ export const initDb = async () => {
 
   await initEvent(sequelize);
 
-  await sequelize.sync({ force: false });
+  await sequelize.sync({ force: false, alter: false });
 };
 
 export const getSql = () => sequelize;

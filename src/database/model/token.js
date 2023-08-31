@@ -4,6 +4,11 @@ export default async function init(sequelize) {
   const Token = sequelize.define(
     'Token',
     {
+      id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       token: {
         type: DataTypes.STRING,
         allowNull: false,

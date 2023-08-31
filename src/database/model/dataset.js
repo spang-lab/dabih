@@ -2,6 +2,11 @@ import { DataTypes } from 'sequelize';
 
 export default async function init(sequelize) {
   const Dataset = sequelize.define('Dataset', {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     mnemonic: {
       type: DataTypes.STRING,
       unique: true,

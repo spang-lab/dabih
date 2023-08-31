@@ -2,6 +2,11 @@ import { DataTypes } from 'sequelize';
 
 export default async function init(sequelize) {
   const PublicKey = sequelize.define('PublicKey', {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     hash: {
       type: DataTypes.STRING,
       allowNull: false,

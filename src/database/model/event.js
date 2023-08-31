@@ -4,6 +4,11 @@ import {
 
 export default async function init(sequelize) {
   const Event = sequelize.define('Event', {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     sub: {
       type: DataTypes.TEXT,
     },

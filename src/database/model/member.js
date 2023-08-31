@@ -20,6 +20,11 @@ function permission(idx) {
 
 export default async function init(sequelize) {
   const Member = sequelize.define('Member', {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     sub: {
       type: DataTypes.TEXT,
     },
