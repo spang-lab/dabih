@@ -9,7 +9,7 @@ import React, {
   useContext,
 } from 'react';
 import pLimit from 'p-limit';
-import { useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import {
   storage, decryptKey, encodeHash, decryptChunk,
 } from '../../lib';
@@ -19,7 +19,7 @@ import useDialog from '../dialog';
 const DownloadContext = createContext();
 
 export function DownloadWrapper({ children }) {
-  const { mnemonic } = useSearchParams();
+  const { mnemonic } = useParams();
   const api = useApi();
   const dialog = useDialog();
   const [chunkCount, setChunkCount] = useState({ total: 0, current: 0 });
