@@ -1,16 +1,7 @@
 'use client';
 
 import React from 'react';
-import styles from './Progress.module.css';
-
-const formatBytes = (bytes, decimals = 2) => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
-};
+import { formatBytes } from '../util';
 
 export default function DownloadProgress(props) {
   const { current, total, fileName } = props;
@@ -96,7 +87,7 @@ export default function DownloadProgress(props) {
         </text>
       </svg>
       <div>
-        <span className={styles.loader} />
+        <div className="animate-download mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded m-4  box-border" />
       </div>
     </div>
   );

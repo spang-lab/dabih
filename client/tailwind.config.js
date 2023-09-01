@@ -25,16 +25,77 @@ module.exports = {
       orange: '#ea580c',
       white: '#ffffff',
       red: '#be123c',
+      transparent: 'transparent',
     },
     extend: {
       animation: {
         'spin-slow': 'spin 1.5s linear infinite',
         'spin-reverse': 'reverseSpin 1s linear infinite',
+        upload: 'shadowRollingUp 2s linear infinite',
+        download: 'shadowRollingDown 2s linear infinite',
       },
       keyframes: {
         reverseSpin: {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(-360deg)' },
+        },
+        shadowRollingUp: {
+          '0%': {
+            boxShadow: '0 0px theme(colors.transparent), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent)',
+          },
+          '12%': {
+            boxShadow: '0 -200px theme(colors.blue), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent)',
+          },
+          '25%': {
+            boxShadow: '0 -220px theme(colors.blue), 0 -200px theme(colors.blue), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent)',
+          },
+          '36%': {
+            boxShadow: '0 -240px theme(colors.blue), 0 -220px theme(colors.blue), 0 -200px theme(colors.blue), 0 0px theme(colors.transparent)',
+          },
+          '50%': {
+            boxShadow: '0 -260px theme(colors.blue), 0 -240px theme(colors.blue), 0 -220px theme(colors.blue), 0 -200px theme(colors.blue)',
+          },
+          '62%': {
+            boxShadow: '0 -400px theme(colors.transparent), 0 -260px theme(colors.blue), 0 -240px theme(colors.blue), 0 -220px theme(colors.blue)',
+          },
+          '75%': {
+            boxShadow: '0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -260px theme(colors.blue), 0 -240px theme(colors.blue)',
+          },
+          '87%': {
+            boxShadow: '0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -260px theme(colors.blue)',
+          },
+          '100%': {
+            boxShadow: '0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent)',
+          },
+        },
+        shadowRollingDown: {
+          '0%': {
+            boxShadow: '0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent)',
+          },
+          '12%': {
+            boxShadow: '0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -260px theme(colors.blue)',
+          },
+          '25%': {
+            boxShadow: '0 -400px theme(colors.transparent), 0 -400px theme(colors.transparent), 0 -260px theme(colors.blue), 0 -240px theme(colors.blue)',
+          },
+          '36%': {
+            boxShadow: '0 -400px theme(colors.transparent), 0 -260px theme(colors.blue), 0 -240px theme(colors.blue), 0 -220px theme(colors.blue)',
+          },
+          '50%': {
+            boxShadow: '0 -260px theme(colors.blue), 0 -240px theme(colors.blue), 0 -220px theme(colors.blue), 0 -200px theme(colors.blue)',
+          },
+          '62%': {
+            boxShadow: '0 -240px theme(colors.blue), 0 -220px theme(colors.blue), 0 -200px theme(colors.blue), 0 0px theme(colors.transparent)',
+          },
+          '75%': {
+            boxShadow: '0 -220px theme(colors.blue), 0 -200px theme(colors.blue), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent)',
+          },
+          '87%': {
+            boxShadow: '0 -200px theme(colors.blue), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent)',
+          },
+          '100%': {
+            boxShadow: '0 0px theme(colors.transparent), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent), 0 0px theme(colors.transparent)',
+          },
         },
       },
     },
