@@ -13,15 +13,22 @@ import Rename from './Rename';
 import Error from './Error';
 import Delete from './Delete';
 import Destroy from './Destroy';
+import Webcam from './Webcam';
+import Generate from './generate/Generate';
 
 const DialogContext = createContext();
 export const useDialog = () => useContext(DialogContext);
 
 function DialogHelper({ children }) {
-  const { closeDialog, dialog } = useDialog();
+  const { closeDialog, dialog, ctx } = useDialog();
+
+  const onClose = () => {
+    closeDialog();
+  };
+
   return (
     <Transition appear show={!!dialog} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={() => closeDialog()}>
+      <Dialog as="div" className="relative z-10" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -91,8 +98,18 @@ export function DialogWrapper({ children }) {
         return <Delete {...contextValue} />;
       case 'destroy':
         return <Destroy {...contextValue} />;
+      case 'webcam':
+        return <Webcam {...contextValue} />;
+      case 'generate':
+        return <Generate {...contextValue} />;
+      case null:
+        return null;
 
       default:
+        setData({
+          dialog: 'error',
+          ctx: { error: `Unknown Dialog ${dialog}` },
+        });
         return null;
     }
   };

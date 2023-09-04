@@ -3,15 +3,16 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import { Lock, File, FilePlus } from 'react-feather';
-import { exportJwk, importPublicKey } from '@/lib';
+import { Key, File, FilePlus } from 'react-feather';
+import { useRouter } from 'next/navigation';
+import { importPrivateKey, storage } from '@/lib/';
 import { useApi } from '@/components/api';
 import useDialog from '@/components/dialog';
 
-export default function LoadFile() {
+export default function Dropzone() {
+  const router = useRouter();
   const dialog = useDialog();
-  const { addPublicKey } = useApi();
-
+  const { checkPublicKey } = useApi();
   const onDrop = async (files) => {
     if (!files || !files.length) {
       return;
@@ -28,9 +29,14 @@ export default function LoadFile() {
     }
     const text = await file.text();
     try {
-      const publicKey = await importPublicKey(text);
-      const jwk = await exportJwk(publicKey);
-      await addPublicKey(jwk);
+      const keys = await importPrivateKey(text, 'pem');
+      const { valid, error } = await checkPublicKey(keys.hash);
+      if (!valid) {
+        dialog.error(error);
+        return;
+      }
+      await storage.storeKey(keys.privateKey);
+      router.push('/manage');
     } catch (err) {
       dialog.error('File is not a valid public key');
     }
@@ -38,7 +44,12 @@ export default function LoadFile() {
 
   const {
     getRootProps, getInputProps, isDragActive, isDragReject,
-  } = useDropzone({ onDrop });
+  } = useDropzone({
+    onDrop,
+    accept: {
+      'text/plain': ['.pem'],
+    },
+  });
 
   const getCenter = () => {
     if (isDragReject) {
@@ -56,39 +67,39 @@ export default function LoadFile() {
         <div className="py-3">
           <div className="relative mx-auto w-14 h-14">
             <File className="" size={56} />
-            <Lock className="absolute inset-0 m-4 mt-6" size={20} />
+            <Key className="absolute inset-0 m-4 mt-6" size={20} />
           </div>
         </div>
         <button
           type="button"
-          className={`
-            px-8 py-4 text-2xl rounded-xl text-gray-100 bg-blue
+          className="
+            px-4 py-3 text-2xl rounded-xl text-gray-100 bg-blue
             enabled:hover:bg-blue enabled:hover:text-white
             focus:outline-none focus:ring-2 focus:ring-offset-2
-            focus:ring-offset-gray-800 focus:ring-white disabled:opacity-50`}
+            focus:ring-offset-gray-800 focus:ring-white disabled:opacity-50"
         >
           <span className="whitespace-nowrap">
             <File className="inline-block mx-3 mb-1" />
-            Open public key file...
+            Open key file...
           </span>
         </button>
         <p className="pt-3 text-gray-400">
-          Add your own public key
+          Drop your dabih key file here
           <br />
+          or click to select the key file.
+          <br />
+          This file will
+          <span className="font-semibold text-blue"> not </span>
+          be uploaded.
         </p>
       </div>
     );
   };
 
   return (
-    <div className="w-full">
-      <div className="px-3 pt-2 italic font-semibold text-left text-gray-400 text-md">
-        Advanced users
-      </div>
-      <div {...getRootProps()} className="w-full grid place-content-center">
-        <input {...getInputProps()} />
-        {getCenter()}
-      </div>
+    <div {...getRootProps()} className="w-full p-5 grid place-content-center">
+      <input {...getInputProps()} />
+      {getCenter()}
     </div>
   );
 }

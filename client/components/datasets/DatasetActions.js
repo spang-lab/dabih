@@ -152,21 +152,6 @@ export default function Actions({ data }) {
           This is only useful if a dabih was lost or stolen.
         </p>
       </ConfirmDialog>
-      <ConfirmDialog
-        title="Confirm delete"
-        onClose={() => setDialog(null)}
-        isOpen={dialog === 'delete'}
-        onConfirm={() => removeDataset(mnemonic)}
-      >
-        <p className="text-gray-400">
-          Are you sure you want to delete the Dataset
-        </p>
-        <span className="font-semibold text-blue">
-          {' '}
-          {mnemonic}
-          {' '}
-        </span>
-      </ConfirmDialog>
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button className="z-0 inline-flex border-gray-400 mx-1 justify-center w-full px-2 py-1 text-sm font-extrabold border rounded text-blue hover:text-blue">

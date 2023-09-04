@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import { getProviders, signIn } from 'next-auth/react';
 import { getServerSession } from 'next-auth/next';
+import { SignInError } from '@/components';
 import { authOptions } from './api/auth/[...nextauth]';
 
 function URProvider({ provider }) {
@@ -18,6 +19,7 @@ function URProvider({ provider }) {
   return (
     <div className="flex justify-center">
       <div className="border-b pb-4 mb-4 ">
+        <SignInError />
         <form method="post" onSubmit={onSubmit}>
           <div className="w-full">
             <label htmlFor="uid">

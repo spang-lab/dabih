@@ -6,24 +6,19 @@ import React, {
 import { useReactToPrint } from 'react-to-print';
 import { Download, Printer } from 'react-feather';
 
-import { useUsers } from '../../hooks';
+import { generateKey, exportPrivateKey } from '@/lib';
+import { Dialog } from '@headlessui/react';
+import { Spinner } from '@/components/util';
+
+import DownloadButton from './DownloadButton';
 import Key from './Key';
 
-import { Spinner } from '../../util';
-import DownloadButton from './DownloadButton';
-import { generateKey, exportPrivateKey } from '../../../lib';
-import { useApi } from '../../api';
-import useDialog from '../../dialog';
-
-export default function GenerateKey({ onComplete }) {
-  const [privateKey, setPrivateKey] = useState(null);
+export default function GenerateKey({ ctx, closeDialog }) {
+  const { onSubmit } = ctx;
+  const [keys, setKeys] = useState(null);
   const [keyFile, setKeyfile] = useState(null);
-  const [publicKey, setPublicKey] = useState(null);
   const [wasSaved, setSaved] = useState(false);
-  const { fetchUsers } = useUsers();
-  const dialog = useDialog();
   const keyRef = useRef();
-  const { addPublicKey } = useApi();
 
   const print = useReactToPrint({
     pageStyle:
@@ -34,37 +29,55 @@ export default function GenerateKey({ onComplete }) {
   const generate = useCallback(async () => {
     try {
       const keypair = await generateKey();
-      setPublicKey(keypair.publicKey);
-      setPrivateKey(keypair.privateKey);
+      setKeys(keypair);
       const file = await exportPrivateKey(keypair.privateKey);
       setKeyfile(file);
     } catch (err) {
-      dialog.error(err);
+      onSubmit({ error: err });
+      closeDialog();
     }
-  }, [dialog]);
+  }, [onSubmit, closeDialog]);
 
-  const uploadKey = useCallback(async () => {
-    await addPublicKey(publicKey);
-    await fetchUsers();
-    onComplete();
-  }, [publicKey, addPublicKey, onComplete, fetchUsers]);
+  const uploadKey = () => {
+    onSubmit(keys.publicKey);
+    closeDialog();
+  };
 
   useEffect(() => {
     generate();
   }, [generate]);
 
-  if (!privateKey || !publicKey) {
-    return (
-      <div className="flex items-center justify-center h-32">
-        <Spinner />
-      </div>
-    );
-  }
+  const getLoader = () => {
+    if (!keys) {
+      return (
+        <div className="flex my-10 items-center justify-center h-32">
+          <Spinner />
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div>
+    <Dialog.Panel
+      className=" w-full max-w-5xl p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all"
+    >
+      <Dialog.Title
+        as="h2"
+        className="text-2xl font-extrabold text-gray-800 leading-6"
+      >
+        Generate a new keypair
+      </Dialog.Title>
+      <div className="mt-2">
+        <p className="text-sm text-gray-400">
+          You
+          <span className="font-semibold text-blue"> need </span>
+          to save your private key after generating it.
+        </p>
+      </div>
       <div className="text-center">
-        <Key data={privateKey} ref={keyRef} />
+        {getLoader()}
+        <Key data={keys} ref={keyRef} />
         <p className="text-2xl">
           <span className="font-extrabold underline text-red"> Warning: </span>
           If you do not save this key you will
@@ -114,11 +127,11 @@ export default function GenerateKey({ onComplete }) {
         <button
           type="button"
           className="mx-3 px-3 py-2 text-white bg-gray-400 hover:text-white rounded-md"
-          onClick={() => onComplete()}
+          onClick={closeDialog}
         >
           Cancel
         </button>
       </div>
-    </div>
+    </Dialog.Panel>
   );
 }

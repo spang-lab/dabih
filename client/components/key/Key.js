@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { Clock } from 'react-feather';
-import LoadKey from './load/LoadKey';
-import CreateKey from './create/CreateKey';
+import LoadKey from './LoadKey';
+import CreateKey from './CreateKey';
 import { Spinner } from '../util';
 import { useUsers, useUser } from '../hooks';
 import { AdminContact } from '../branding';
 
 export default function Key() {
-  const { users } = useUsers();
+  const { users, fetchUsers } = useUsers();
   const user = useUser();
   const [state, setState] = useState('loading');
 
@@ -28,14 +28,6 @@ export default function Key() {
     }
     setState('unconfirmed_key');
   }, [user, users]);
-
-  if (state === 'loading') {
-    return (
-      <div className="flex justify-center mt-10">
-        <Spinner />
-      </div>
-    );
-  }
 
   if (state === 'unconfirmed_key') {
     return (
@@ -57,11 +49,21 @@ export default function Key() {
       </div>
     );
   }
+  if (state === 'has_key') {
+    return (
+      <LoadKey onChange={fetchUsers} />
+    );
+  }
 
+  if (state === 'no_key') {
+    return (
+      <CreateKey onChange={fetchUsers} />
+    );
+  }
+  // loading
   return (
-    <div>
-      <LoadKey isVisible={state === 'has_key'} />
-      <CreateKey isOpen={state === 'no_key'} />
+    <div className="flex justify-center mt-10">
+      <Spinner />
     </div>
   );
 }

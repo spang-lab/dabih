@@ -41,9 +41,11 @@ function getWhere(query) {
 
 const getOrder = (column, direction) => {
   if (!column || !direction) {
-    return [['createdAt', 'DESC']];
+    return [[col('dataset.createdAt'), 'DESC']];
   }
-  return [[col(column), direction]];
+  const dcolumn = `dataset.${column}`;
+
+  return [[col(dcolumn), direction]];
 };
 
 async function search(ctx, sub, options) {

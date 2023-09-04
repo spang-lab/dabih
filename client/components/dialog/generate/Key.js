@@ -4,12 +4,21 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import Image from 'next/image';
 import QRCode from 'qrcode';
+import { uint8ToBase64 } from '@/lib/crypto-util';
 
-const createDataUrl = async (privateKey) => {
+const createDataUrl = async (keys) => {
+  if (!keys) {
+    return '';
+  }
   const options = {
-    errorCorrectionLevel: 'L',
+    errorCorrectionLevel: 'M',
+    width: 600,
+    height: 600,
   };
-  return QRCode.toDataURL([{ data: privateKey, mode: 'byte' }], options);
+  const { compressedKey } = keys;
+
+  const text = JSON.stringify(compressedKey);
+  return QRCode.toDataURL(text, options);
 };
 
 function Key({ data }, ref) {
@@ -24,12 +33,12 @@ function Key({ data }, ref) {
   if (!data || !dataUrl) {
     return null;
   }
-  const hexData = [...new Uint8Array(data)]
+  const hexData = [...new Uint8Array(data.privateKey)]
     .map((v) => v.toString(16).toUpperCase().padStart(2, '0'));
-  const longRow = 38;
-  const shortRow = 18;
-  const longRows = 23;
-  const shortRows = 26;
+  const longRow = 48;
+  const shortRow = 22;
+  const longRows = 10;
+  const shortRows = 40;
   const shortStart = longRows * longRow;
   const shortEnd = shortStart + shortRows * shortRow;
   const qrIndex = shortStart + shortRow / 2;
@@ -53,7 +62,6 @@ function Key({ data }, ref) {
   }
 
   const getColor = (v) => {
-    // TODO fix this
     const num = parseInt(v, 16);
     if (num < 75) {
       return 'text-gray-500';
@@ -72,7 +80,7 @@ function Key({ data }, ref) {
       ref={ref}
       className="p-4 mx-0 my-3 text-center border-2 rounded border-blue"
     >
-      <table className="mx-auto font-semibold leading-none table-fixed">
+      <table className="mx-auto font-semibold leading-none table-fixed text-xs">
         <tbody>
           {rows.map((row) => (
             <tr key={row.key}>
@@ -84,12 +92,12 @@ function Key({ data }, ref) {
                         <Image
                           className="mx-auto"
                           src={dataUrl}
-                          width={400}
-                          height={400}
+                          width={600}
+                          height={600}
                           alt="Private Key QR Code"
                         />
                         <br />
-                        <span className="font-semibold text-blue">
+                        <span className="font-semibold text-blue text-lg">
                           {' '}
                           Dabih private key v1
                           {' '}

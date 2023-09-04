@@ -27,7 +27,7 @@ const jwt = async ({ token, account, user }) => {
     try {
       token.user = await apiUser(token.provider, token.accessToken);
     } catch (err) {
-      const message = err.response.data || err.message;
+      const message = err?.response?.data || err?.message;
       token.error = message;
     }
   }

@@ -32,7 +32,7 @@ export default function Delete({ ctx, closeDialog }) {
         {name}
       </div>
 
-      <div className=" text-right">
+      <div className="text-right">
         <button
           type="button"
           className="mx-3 px-2 py-1 text-gray-100 bg-red hover:text-white rounded-md"

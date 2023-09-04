@@ -124,10 +124,10 @@ export default function UniRegensburgProvider({ enabled }) {
       const [user] = results;
       const dn = user.objectName;
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         client.bind(dn, password, (error) => {
           if (error) {
-            reject();
+            resolve(null);
           } else {
             const payload = {
               dn,
