@@ -1,5 +1,5 @@
 import { Op, col } from 'sequelize';
-import { getModel } from './util.js';
+import { getModel, getDialect } from './util.js';
 
 function getWhere(query) {
   if (!query) {
@@ -39,9 +39,9 @@ function getWhere(query) {
   };
 }
 
-const getOrder = (column, direction) => {
-  if (!column || !direction) {
-    return [[col('createdAt'), 'DESC']];
+const getOrder = (column = 'createdAt', direction = 'DESC', dialect = 'postgres') => {
+  if (dialect === 'sqlite') {
+    return [[col(`dataset.${column}`), direction]];
   }
   return [[col(column), direction]];
 };
@@ -51,10 +51,12 @@ async function search(ctx, sub, options) {
     query, deleted, all, uploader, page, limit,
     column, direction,
   } = options;
+  const dialect = getDialect(ctx);
+
   const Dataset = getModel(ctx, 'Dataset');
   const Member = getModel(ctx, 'Member');
   const paranoid = !deleted;
-  const order = getOrder(column, direction);
+  const order = getOrder(column, direction, dialect);
 
   const mWhere = all ? {} : { sub };
   const offset = (page - 1) * limit;

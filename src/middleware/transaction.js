@@ -2,6 +2,7 @@ import { getSql } from '../database/index.js';
 
 export default async (ctx, next) => {
   const sql = getSql();
+  console.log(sql.options.dialect);
   ctx.state.sql = sql;
   const { method } = ctx.request;
   if (method === 'GET') {
@@ -9,7 +10,7 @@ export default async (ctx, next) => {
     await next();
     return;
   }
-  await sql.transaction(async (_transaction) => {
+  await sql.transaction(async () => {
     await next();
   });
 };
