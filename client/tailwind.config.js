@@ -33,8 +33,16 @@ module.exports = {
         'spin-reverse': 'reverseSpin 1s linear infinite',
         upload: 'shadowRollingUp 2s linear infinite',
         download: 'shadowRollingDown 2s linear infinite',
+        shaking: 'shaking 0.2s linear 2',
       },
       keyframes: {
+        shaking: {
+          '0%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(1deg)' },
+          '50%': { transform: 'rotate(0deg)' },
+          '75%': { transform: 'rotate(-1deg)' },
+          '100%': { transform: 'rotate(0deg)' },
+        },
         reverseSpin: {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(-360deg)' },

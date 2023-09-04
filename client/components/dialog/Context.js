@@ -22,7 +22,15 @@ export const useDialog = () => useContext(DialogContext);
 function DialogHelper({ children }) {
   const { closeDialog, dialog, ctx } = useDialog();
 
+  const [shakeClass, setShake] = useState('');
+
   const onClose = () => {
+    const shake = ctx?.shake;
+    if (shake) {
+      setShake('animate-shaking');
+      setTimeout(() => setShake('animate-none'), 200);
+      return;
+    }
     closeDialog();
   };
 
@@ -43,7 +51,7 @@ function DialogHelper({ children }) {
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-full p-4 text-center">
             <Transition.Child
-              as={Fragment}
+              as="div"
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
               enterTo="opacity-100 scale-100"
@@ -51,7 +59,7 @@ function DialogHelper({ children }) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div>
+              <div className={shakeClass}>
                 {children}
               </div>
             </Transition.Child>
