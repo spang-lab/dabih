@@ -6,6 +6,7 @@ import { Download } from 'react-feather';
 import { Spinner } from '../util';
 import DownloadButton from './DownloadButton';
 import { useDatasets } from './Context';
+import FilesystemDownload from './FilesystemDownload';
 
 export default function DownloadDataset({ mnemonic, size, enabled }) {
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,8 @@ export default function DownloadDataset({ mnemonic, size, enabled }) {
 
   const oneMiB = 1024 * 1024;
   const sizeThreshold = 80 * oneMiB;
+
+  const doesSupportFileSystem = !!window.showSaveFilePicker;
 
   const onClick = async () => {
     setLoading(true);
@@ -36,6 +39,10 @@ export default function DownloadDataset({ mnemonic, size, enabled }) {
         </button>
       </div>
     );
+  }
+
+  if (doesSupportFileSystem) {
+    return <FilesystemDownload mnemonic={mnemonic} />;
   }
 
   if (size > sizeThreshold) {
