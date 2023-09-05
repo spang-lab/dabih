@@ -9,6 +9,7 @@ import React, {
   useContext,
 } from 'react';
 import pLimit from 'p-limit';
+import { useRouter } from 'next/navigation';
 import useDialog from '../dialog';
 import {
   storage,
@@ -24,6 +25,7 @@ const DatasetContext = createContext();
 export function DatasetsWrapper({ children }) {
   const api = useApi();
   const dialog = useDialog();
+  const router = useRouter();
 
   const limit = 25;
 
@@ -184,6 +186,25 @@ export function DatasetsWrapper({ children }) {
     [api, downloadChunks, dialog],
   );
 
+  const downloadDecryptedDataset = useCallback(
+    async (mnemonic) => {
+      const keys = await storage.readKey();
+      const key = await api.fetchKey(mnemonic, keys.hash);
+      if (!key || key.error) {
+        dialog.error(key.error);
+        return;
+      }
+      const aesKey = await decryptKey(keys.privateKey, key);
+      const encoded = await exportAesKey(aesKey);
+      const { token, error } = await api.storeKey(mnemonic, encoded);
+      if (!error) {
+        const url = `/api/v1/dataset/${mnemonic}/download/?token=${token}`;
+        router.push(url);
+      }
+    },
+    [api, dialog, router],
+  );
+
   useEffect(() => {
     fetchDatasets();
   }, [fetchDatasets]);
@@ -199,6 +220,7 @@ export function DatasetsWrapper({ children }) {
       destroyDataset,
       recoverDataset,
       downloadDataset,
+      downloadDecryptedDataset,
       reencryptDataset,
       renameDataset,
       addMembers,
@@ -213,6 +235,7 @@ export function DatasetsWrapper({ children }) {
       recoverDataset,
       destroyDataset,
       downloadDataset,
+      downloadDecryptedDataset,
       renameDataset,
       reencryptDataset,
       addMembers,

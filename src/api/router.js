@@ -61,6 +61,7 @@ const getUploadRouter = () => {
 
 const getDatasetRouter = () => {
   const router = new Router();
+  router.get('DATASET_DOWNLOAD', '/:mnemonic/download', requireScopes('download'), dataset.download);
   router.use(requireScopes('api'));
 
   router.post('/search', dataset.search);
@@ -75,6 +76,7 @@ const getDatasetRouter = () => {
   router.post('DATASET_MEMBER_SET', '/:mnemonic/member/set', dataset.setAccess);
   router.post('DATASET_REENCRYPT', '/:mnemonic/reencrypt', dataset.reencrypt);
   router.post('DATASET_RENAME', '/:mnemonic/rename', dataset.rename);
+  router.post('DATASET_STORE_KEY', '/:mnemonic/download', dataset.storeKey);
   router.post('DATASET_KEY_FETCH', '/:mnemonic/key', dataset.key);
 
   return router;

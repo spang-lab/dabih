@@ -42,7 +42,11 @@ export default function DownloadDataset({ mnemonic, size, enabled }) {
   }
 
   if (doesSupportFileSystem) {
-    return <FilesystemDownload mnemonic={mnemonic} />;
+    return (
+      <div>
+        <FilesystemDownload mnemonic={mnemonic} />
+      </div>
+    );
   }
 
   if (size > sizeThreshold) {

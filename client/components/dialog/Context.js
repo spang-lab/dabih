@@ -14,6 +14,7 @@ import Error from './Error';
 import Delete from './Delete';
 import Destroy from './Destroy';
 import Webcam from './Webcam';
+import Reencrypt from './Reencrypt';
 import Generate from './generate/Generate';
 
 const DialogContext = createContext();
@@ -110,6 +111,8 @@ export function DialogWrapper({ children }) {
         return <Webcam {...contextValue} />;
       case 'generate':
         return <Generate {...contextValue} />;
+      case 'reencrypt':
+        return <Reencrypt {...contextValue} />;
       case null:
         return null;
 

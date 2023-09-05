@@ -44,9 +44,12 @@ export default async function init(sequelize) {
         type: DataTypes.DATE,
         allowNull: false,
       },
+      refresh: {
+        type: DataTypes.BOOLEAN,
+      },
     },
     {
-      paranoid: true,
+      paranoid: false,
       tableName: 'token',
     },
   );

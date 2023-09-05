@@ -1,13 +1,7 @@
-import { literal } from 'sequelize';
-import { getUser, sendError } from '../../util/index.js';
-import { randomToken } from '../../crypto/index.js';
+import { sendError } from '../../util/index.js';
 import { token } from '../../database/index.js';
 
 const route = async (ctx) => {
-  const user = getUser(ctx);
-  const { sub, name, email } = user;
-  const n = 32;
-
   const oneMinute = 60 * 1000;
   const oneDay = 24 * 60 * oneMinute;
   const { type } = ctx.params;
@@ -21,20 +15,12 @@ const route = async (ctx) => {
     );
     return;
   }
-
-  const tokenString = await randomToken(n);
-  await token.add(ctx, {
-    token: tokenString,
+  const result = await token.generate(ctx, {
     lifetime: 3 * oneDay,
-    timestamp: literal('CURRENT_TIMESTAMP'),
-    sub,
-    name,
-    email,
     scopes: [type],
+    refresh: true,
   });
-  ctx.body = {
-    data: tokenString,
-    type,
-  };
+
+  ctx.body = result;
 };
 export default route;

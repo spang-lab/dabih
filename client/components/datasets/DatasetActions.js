@@ -12,75 +12,12 @@ import {
   Settings,
   AlertTriangle,
   Repeat,
+  DownloadCloud,
 } from 'react-feather';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../hooks';
 import { useDatasets } from './Context';
-import { MutedButton } from '../util';
 import useDialog from '../dialog';
-
-function ConfirmDialog(props) {
-  const {
-    onConfirm, onClose, isOpen, children, title, red,
-  } = props;
-  const className = red ? 'bg-red hover:bg-rose-600' : 'bg-blue hover:bg-blue';
-
-  return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-full p-4 text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all">
-                <Dialog.Title
-                  as="h2"
-                  className="text-2xl font-extrabold text-gray-800 leading-6"
-                >
-                  {title}
-                </Dialog.Title>
-                <div className="mt-2">{children}</div>
-
-                <div className="mt-4 text-right">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onConfirm();
-                      onClose();
-                    }}
-                    className={`mx-3 px-3 py-2 rounded text-gray-100 ${className} hover:text-white`}
-                  >
-                    {title}
-                  </button>
-                  <MutedButton onClick={onClose}>Cancel</MutedButton>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
-  );
-}
 
 function Action({
   children, enabled, onClick, show = true,
@@ -122,36 +59,18 @@ export default function Actions({ data }) {
   const hasWrite = permission === 'write';
   const user = useUser();
 
-  const [dialog, setDialog] = useState(null);
   const {
     removeDataset,
     reencryptDataset,
     renameDataset,
     destroyDataset,
     recoverDataset,
+    downloadDecryptedDataset,
   } = useDatasets();
   const isAdmin = user ? user.isAdmin : false;
 
   return (
     <div className="text-right ">
-      <ConfirmDialog
-        title="Confirm reencrypt"
-        isOpen={dialog === 'reencrypt'}
-        onClose={() => setDialog(null)}
-        onConfirm={() => reencryptDataset(mnemonic)}
-      >
-        <p className="text-gray-400">
-          Are you sure you want to reencrypt the Dataset
-        </p>
-        <span className="font-semibold text-blue">
-          {' '}
-          {mnemonic}
-          {' '}
-        </span>
-        <p className="text-gray-400">
-          This is only useful if a dabih was lost or stolen.
-        </p>
-      </ConfirmDialog>
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button className="z-0 inline-flex border-gray-400 mx-1 justify-center w-full px-2 py-1 text-sm font-extrabold border rounded text-blue hover:text-blue">
@@ -181,6 +100,17 @@ export default function Actions({ data }) {
                 Download
               </Action>
               <Action
+                onClick={() => downloadDecryptedDataset(mnemonic)}
+                className="text-blue"
+                enabled
+              >
+                <DownloadCloud className="mx-2" size={24} />
+                <div>
+                  Download
+                  <p className="text-xs"> (server decrypt) </p>
+                </div>
+              </Action>
+              <Action
                 onClick={() => openDialog('rename', {
                   dataset: data,
                   onSubmit: (name) => renameDataset(mnemonic, name),
@@ -205,7 +135,10 @@ export default function Actions({ data }) {
                   Danger
                 </span>
                 <Action
-                  onClick={() => setDialog('reencrypt')}
+                  onClick={() => openDialog('reencrypt', {
+                    mnemonic,
+                    onSubmit: () => reencryptDataset(mnemonic),
+                  })}
                   className="text-red"
                   enabled={hasWrite}
                 >

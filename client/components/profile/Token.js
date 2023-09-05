@@ -1,14 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Trash2, Terminal, Upload } from 'react-feather';
+import {
+  Trash2, Terminal, Upload, Download,
+} from 'react-feather';
 import { LocalDate } from '../util';
 import { useProfile } from './Context';
 
 export default function Token({ data }) {
   const { removeToken } = useProfile();
   const {
-    token, timestamp, lifetime, scopes, id,
+    token, timestamp, lifetime, scopes, id, isExpired,
   } = data;
   const exp = lifetime + new Date(timestamp).getTime();
 
@@ -16,12 +18,28 @@ export default function Token({ data }) {
   if (scopes.includes('upload')) {
     type = 'Upload';
   }
+  if (scopes.includes('download')) {
+    type = 'Download';
+  }
 
   const getIcon = () => {
     if (type === 'API') {
       return <Terminal size={24} />;
     }
+    if (type === 'Download') {
+      return <Download size={24} />;
+    }
     return <Upload size={24} />;
+  };
+  const getExpired = () => {
+    if (!isExpired) {
+      return null;
+    }
+    return (
+      <span className="text-red mx-1">
+        Expired
+      </span>
+    );
   };
 
   return (
@@ -34,6 +52,7 @@ export default function Token({ data }) {
           {type}
           {' '}
           Token
+          {getExpired()}
         </div>
         <p className="text-xs">
           Expires:

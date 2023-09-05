@@ -10,12 +10,11 @@ const timeToString = (timeMs) => {
 export default async (ctx, next) => {
   const start = Date.now();
   const { url, method } = ctx.request;
-  log(`-> Req ${url} ${method}`);
   await next();
   const timeMs = Date.now() - start;
 
   const time = timeToString(timeMs);
   const { status } = ctx.response;
 
-  log(`<- Res ${url} ${status} ${time}`);
+  log(`${method} ${url} ${status} ${time}`);
 };

@@ -20,10 +20,10 @@ export default function TokenModal() {
     if (!token) {
       return '';
     }
-    if (token.type === 'api') {
-      return token.data;
+    if (token.scopes[0] === 'api') {
+      return token.token;
     }
-    return `${baseUrl}/ingress/${token.data}`;
+    return `${baseUrl}/ingress/${token.token}`;
   };
 
   const copyToken = () => {
@@ -36,7 +36,7 @@ export default function TokenModal() {
     if (!token) {
       return null;
     }
-    if (token.type === 'api') {
+    if (token.scopes[0] === 'api') {
       return (
         <>
           <Dialog.Title
