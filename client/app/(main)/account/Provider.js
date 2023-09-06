@@ -5,9 +5,11 @@ import { signIn } from 'next-auth/react';
 import URProvider from './UrProvider';
 
 export default function Provider({ provider }) {
-  if (provider.id === 'ur') {
+  const { id } = provider;
+  if (id === 'ur') {
     return <URProvider provider={provider} />;
   }
+  const logoSrc = `/images/providers/${id}.png`;
 
   return (
     <div className="flex justify-center ">
@@ -20,7 +22,7 @@ export default function Provider({ provider }) {
           width={32}
           height={32}
           className="mx-2"
-          src={provider.style.logo}
+          src={logoSrc}
           alt="Provider logo"
         />
         Sign in with

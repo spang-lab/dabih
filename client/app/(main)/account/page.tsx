@@ -1,17 +1,8 @@
 import { getProviders } from 'next-auth/react';
-import authOptions from '@/app/api/auth/options';
 import Provider from './Provider';
 
 export default async function Account() {
   const providers = await getProviders() ?? [];
-
-  authOptions.providers.forEach((provider) => {
-    const id = provider.options.id || provider.id;
-    const style = provider.style || provider.options.style;
-    if (providers[id]) {
-      providers[id].style = style;
-    }
-  });
   return (
     <div>
       <h1 className="text-4xl pb-4 font-extrabold tracking-tight sm:text-5xl md:text-6xl">

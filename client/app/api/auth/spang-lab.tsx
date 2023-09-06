@@ -21,14 +21,6 @@ export default function SpangLabProvider(options:
     },
     idToken: true,
     checks: ['pkce', 'state'],
-    style: {
-      logo: '/images/spang-lab-logo-32.png',
-      logoDark: 'images/spang-lab-logo-32.png',
-      bg: '#fff',
-      bgDark: '#000',
-      text: '#000',
-      textDark: '#fff',
-    },
     options,
     profile(profile: {sub: String, name: String}): User {
       return {

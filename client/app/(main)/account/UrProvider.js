@@ -10,6 +10,7 @@ export default function URProvider({ provider }) {
 
   const setUid = (uid) => setUser({ ...user, uid });
   const setPassword = (password) => setUser({ ...user, password });
+  const logoSrc = '/images/providers/ur.png';
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -58,7 +59,7 @@ export default function URProvider({ provider }) {
               width={32}
               height={32}
               className="mx-2"
-              src={provider.style.logo}
+              src={logoSrc}
               alt="Provider logo"
             />
             Sign in with
