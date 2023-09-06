@@ -1,6 +1,6 @@
 {
   "name": "dabih-client",
-  "version": "1.9.11",
+  "version": "1.9.12",
   "private": true,
   "scripts": {
     "dev": "PORT=8080 next dev",
