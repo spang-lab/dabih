@@ -1,8 +1,11 @@
 import { getProviders } from 'next-auth/react';
 import Provider from './Provider';
 
+export const revalidate = 1;
+
 export default async function Account() {
   const providers = await getProviders() ?? [];
+
   return (
     <div>
       <h1 className="text-4xl pb-4 font-extrabold tracking-tight sm:text-5xl md:text-6xl">
@@ -44,7 +47,7 @@ export default async function Account() {
           </li>
         </ul>
       </div>
-      <div className="flex flex-col items-stretch my-10">
+      <div className="flex flex-col max-w-md mx-auto my-10">
         {Object.values(providers).map((p) => (
           <Provider key={p.id} provider={p} />
         ))}

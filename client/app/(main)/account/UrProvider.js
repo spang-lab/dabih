@@ -17,7 +17,7 @@ export default function URProvider({ provider }) {
     signIn(provider.id, user);
   };
   return (
-    <div className="flex justify-center">
+    <div className="flex">
       <div className="border-b pb-4 mb-4 ">
         <SignInError />
         <form method="post" onSubmit={onSubmit}>

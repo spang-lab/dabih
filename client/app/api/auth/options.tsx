@@ -65,12 +65,12 @@ const authOptions = {
       enabled: process.env.UR_AUTH,
     }),
     SpangLabProvider({
-      clientId: process.env.SPANGLAB_ID || '',
-      clientSecret: process.env.SPANGLAB_SECRET || '',
+      clientId: process.env.SPANGLAB_ID as string,
+      clientSecret: process.env.SPANGLAB_SECRET as string,
     }),
     GitHubProvider({
-      clientId: process.env.GITHUB_ID || '',
-      clientSecret: process.env.GITHUB_SECRET || '',
+      clientId: process.env.GITHUB_ID as string,
+      clientSecret: process.env.GITHUB_SECRET as string,
     }),
   ].filter(isConfigured),
   callbacks: {

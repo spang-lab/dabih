@@ -12,7 +12,7 @@ export default function Provider({ provider }) {
   const logoSrc = `/images/providers/${id}.png`;
 
   return (
-    <div className="flex justify-center ">
+    <div className="flex p-2">
       <button
         type="button"
         className="px-3 py-2 inline-flex items-center text-lg font-semibold bg-blue text-white rounded-md"

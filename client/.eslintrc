@@ -1,6 +1,11 @@
 {
-  "extends": ["next/core-web-vitals", "airbnb"],
-  "plugins": ["unused-imports"],
+  "extends": [
+    "next/core-web-vitals",
+    "airbnb"
+  ],
+  "plugins": [
+    "unused-imports"
+  ],
   "rules": {
     "import/extensions": [
       "error",
@@ -12,13 +17,18 @@
         "tsx": "never"
       }
     ],
+    "import/prefer-default-export": "off",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "off",
     "react/jsx-filename-extension": [
       1,
       {
-        "extensions": [".js", ".ts", ".tsx"]
+        "extensions": [
+          ".js",
+          ".ts",
+          ".tsx"
+        ]
       }
     ],
     "no-unused-vars": "off", // or "@typescript-eslint/no-unused-vars": "off",
