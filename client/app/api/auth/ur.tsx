@@ -95,7 +95,7 @@ export async function findUser(client: Client, uid: string): Promise<any[]> {
   });
 }
 
-export default function UniRegensburgProvider(): Provider {
+export default function UniRegensburgProvider({ enabled }): Provider {
   const provider = CredentialsProvider({
     name: 'Uni Regensburg',
     id: 'ur',
@@ -138,5 +138,6 @@ export default function UniRegensburgProvider(): Provider {
       });
     },
   });
+  provider.options.enabled = enabled;
   return provider as Provider;
 }

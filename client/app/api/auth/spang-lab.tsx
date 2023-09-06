@@ -2,7 +2,7 @@ import { Provider } from 'next-auth/providers';
 import { User } from 'next-auth';
 
 export default function SpangLabProvider(options:
-{clientId: string, clientSecret: string}): Provider {
+{clientId: string, clientSecret: string }): Provider {
   const { clientId, clientSecret } = options;
 
   const provider = {
