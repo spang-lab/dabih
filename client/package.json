@@ -6,7 +6,7 @@
     "dev": "PORT=8080 next dev",
     "build": "next build",
     "start": "PORT=8080 next dev",
-    "prod": "NODE_ENV=production PORT=8080 next start",
+    "prod": "NODE_ENV=production next start",
     "lint": "next lint"
   },
   "dependencies": {

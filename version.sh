@@ -17,6 +17,7 @@ fi
 
 VERSION="$(npm version --no-git-tag-version "$1")"
 pushd client
+  npm run build
   npm version --no-commit-hooks "$VERSION"
 popd
 pushd cli
