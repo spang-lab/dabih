@@ -1,8 +1,9 @@
-export default function SpangLabProvider(options) {
+import { Provider } from 'next-auth/providers';
+import { User } from 'next-auth';
+
+export default function SpangLabProvider(options:
+{clientId: string, clientSecret: string}): Provider {
   const { clientId, clientSecret } = options;
-  if (!clientId || !clientSecret) {
-    return null;
-  }
 
   const provider = {
     clientId,
@@ -15,7 +16,7 @@ export default function SpangLabProvider(options) {
     endSession: 'https://auth.spang-lab.de/oidc/session/end',
     authorization: {
       params: {
-        scope: 'openid name email grouplist',
+        scope: 'openid profile grouplist',
       },
     },
     idToken: true,
@@ -29,14 +30,13 @@ export default function SpangLabProvider(options) {
       textDark: '#fff',
     },
     options,
-    profile(profile) {
+    profile(profile: {sub: String, name: String}): User {
       return {
         id: profile.sub,
         name: profile.name,
-        email: profile.email,
         image: '',
-      };
+      } as User;
     },
   };
-  return provider;
+  return provider as Provider;
 }

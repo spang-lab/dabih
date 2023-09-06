@@ -1,6 +1,7 @@
-/* eslint-disable no-console */
+import { Provider } from 'next-auth/providers';
+import ldap, { Client } from 'ldapjs';
+
 import CredentialsProvider from 'next-auth/providers/credentials';
-import ldap from 'ldapjs';
 
 function urClient() {
   const url = 'ldaps://ldapclient.uni-regensburg.de:636';
@@ -51,7 +52,7 @@ T1TPeacy0cS641pS4TFBK+vRFJzKIgl0LA/aAcNj33lw5xudUZGof4GNTfludGxP
   return client;
 }
 
-export async function bind(client, username = '', password = '') {
+export async function bind(client: Client, username = '', password = '') {
   return new Promise((resolve, reject) => {
     client.bind(username, password, (error) => {
       if (error) {
@@ -66,9 +67,9 @@ export async function bind(client, username = '', password = '') {
   });
 }
 
-export async function findUser(client, uid) {
+export async function findUser(client: Client, uid: string): Promise<any[]> {
   await bind(client, '', '');
-  const results = [];
+  const results: string[] = [];
   return new Promise((resolve, reject) => {
     client.search(
       'c=de',
@@ -82,10 +83,10 @@ export async function findUser(client, uid) {
           reject(error);
           return;
         }
-        emitter.on('error', (err) => {
+        emitter.on('error', (err: any) => {
           reject(err);
         });
-        emitter.on('searchEntry', (entry) => {
+        emitter.on('searchEntry', (entry: {pojo: string}) => {
           results.push(entry.pojo);
         });
         emitter.on('end', () => resolve(results));
@@ -94,10 +95,7 @@ export async function findUser(client, uid) {
   });
 }
 
-export default function UniRegensburgProvider({ enabled }) {
-  if (!enabled) {
-    return null;
-  }
+export default function UniRegensburgProvider(): Provider {
   const provider = CredentialsProvider({
     name: 'Uni Regensburg',
     id: 'ur',
@@ -105,29 +103,27 @@ export default function UniRegensburgProvider({ enabled }) {
       uid: { label: 'RZ Account', type: 'text', placeholder: '' },
       password: { label: 'Password', type: 'password' },
     },
+    // @ts-ignore
     style: {
       logo: '/images/ur.png',
     },
     async authorize(credentials, _req) {
-      const { uid, password } = credentials;
-      const client = urClient();
-      let results = [];
-      try {
-        results = await findUser(client, uid);
-      } catch (err) {
-        console.error(err);
+      if (!credentials) {
         return null;
       }
-      if (!results || results.length === 0) {
+      const { uid, password } = credentials;
+      const client = urClient();
+      const results = await findUser(client, uid);
+      if (results.length === 0) {
         return null;
       }
       const [user] = results;
       const dn = user.objectName;
 
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         client.bind(dn, password, (error) => {
           if (error) {
-            resolve(null);
+            reject();
           } else {
             const payload = {
               dn,
@@ -137,6 +133,8 @@ export default function UniRegensburgProvider({ enabled }) {
               'base64',
             );
             resolve({
+              id: dn,
+              // @ts-ignore
               access_token: token,
             });
           }
@@ -144,5 +142,5 @@ export default function UniRegensburgProvider({ enabled }) {
       });
     },
   });
-  return provider;
+  return provider as Provider;
 }
