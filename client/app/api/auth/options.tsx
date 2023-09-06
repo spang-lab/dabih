@@ -43,24 +43,23 @@ const sessionCb = async ({ session, token }) => {
   return session;
 };
 
-const { env } = process;
 const providers: Provider[] = [];
-if (env.UR_AUTH) {
+if (process.env.UR_AUTH) {
   providers.push(UniRegensburgProvider());
 }
-if (env.SPANGLAB_ID && env.SPANGLAB_SECRET) {
+if (process.env.SPANGLAB_ID && process.env.SPANGLAB_SECRET) {
   providers.push(
     SpangLabProvider({
-      clientId: env.SPANGLAB_ID,
-      clientSecret: env.SPANGLAB_SECRET,
+      clientId: process.env.SPANGLAB_ID,
+      clientSecret: process.env.SPANGLAB_SECRET,
     }),
   );
 }
-if (env.GITHUB_ID && env.GITHUB_SECRET) {
+if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
   providers.push(
     GitHubProvider({
-      clientId: env.GITHUB_ID,
-      clientSecret: env.GITHUB_SECRET,
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
     }),
   );
 }

@@ -8,10 +8,12 @@ import {
 import React, { useCallback, useState } from 'react';
 import { Download } from 'react-feather';
 import { useApi } from '../api';
+import useDialog from '../dialog';
 import Progress from './Progress';
 
 export default function FilesystemDownload({ mnemonic }) {
   const api = useApi();
+  const dialog = useDialog();
 
   const [size, setSize] = useState(null);
   const [current, setCurrent] = useState(0);
@@ -24,7 +26,7 @@ export default function FilesystemDownload({ mnemonic }) {
         });
         return result;
       } catch (err) {
-        console.log(err);
+        dialog.error(err);
         return null;
       }
     };
@@ -55,7 +57,7 @@ export default function FilesystemDownload({ mnemonic }) {
     }
     await stream.close();
     setSize(null);
-  }, [api, mnemonic]);
+  }, [api, mnemonic, dialog]);
 
   if (size) {
     return (
