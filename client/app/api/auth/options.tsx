@@ -43,33 +43,36 @@ const sessionCb = async ({ session, token }) => {
   return session;
 };
 
-const providers: Provider[] = [];
-if (process.env.UR_AUTH) {
-  providers.push(UniRegensburgProvider());
-}
-if (process.env.SPANGLAB_ID && process.env.SPANGLAB_SECRET) {
-  providers.push(
-    SpangLabProvider({
-      clientId: process.env.SPANGLAB_ID,
-      clientSecret: process.env.SPANGLAB_SECRET,
-    }),
-  );
-}
-if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
-  providers.push(
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
-  );
-}
+const getProviders = () => {
+  const providers: Provider[] = [];
+  if (process.env.UR_AUTH) {
+    providers.push(UniRegensburgProvider());
+  }
+  if (process.env.SPANGLAB_ID && process.env.SPANGLAB_SECRET) {
+    providers.push(
+      SpangLabProvider({
+        clientId: process.env.SPANGLAB_ID,
+        clientSecret: process.env.SPANGLAB_SECRET,
+      }),
+    );
+  }
+  if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
+    providers.push(
+      GitHubProvider({
+        clientId: process.env.GITHUB_ID,
+        clientSecret: process.env.GITHUB_SECRET,
+      }),
+    );
+  }
+  return providers;
+};
 
 const authOptions = {
   session: {
     maxAge: 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
-  providers,
+  providers: getProviders(),
   callbacks: {
     jwt,
     session: sessionCb,
