@@ -8,6 +8,7 @@ export { default as Download } from './download/Download';
 export { default as Header } from './header/Header';
 export { default as Footer } from './footer/Footer';
 export { default as Profile } from './profile/Profile';
+export { default as Provider } from './provider/Provider';
 export * from './branding';
 export * from './util';
 export * from './api/Context';

@@ -1,9 +1,9 @@
 'use client';
 
-import { SignInError } from '@/components';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
+import SignInError from './SignInError';
 
 export default function URProvider({ provider }) {
   const [user, setUser] = useState({ uid: '', password: '' });

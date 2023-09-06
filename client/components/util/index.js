@@ -5,4 +5,3 @@ export * from './Bytes';
 export * from './Buttons';
 export { default as LocalDate } from './LocalDate';
 export { default as TimeSince } from './TimeSince';
-export { default as SignInError } from './SignInError';
