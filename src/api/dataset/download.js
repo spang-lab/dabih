@@ -59,7 +59,7 @@ const route = async (ctx) => {
   }
 
   const info = await dataset.fromMnemonic(ctx, mnemonic);
-  const { fileName } = info;
+  const { fileName, size } = info;
   const chunks = await dataset.listChunks(ctx, mnemonic);
 
   const promises = chunks.map(async (chunk) => {
@@ -73,6 +73,8 @@ const route = async (ctx) => {
   const streams = await Promise.all(promises);
   const combined = new MultiStream(streams);
 
+  ctx.set('Content-Length', size);
+  ctx.set('Content-Type', 'application/octet-stream');
   ctx.attachment(fileName);
   ctx.body = combined;
 };
