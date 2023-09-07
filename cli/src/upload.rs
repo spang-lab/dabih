@@ -116,20 +116,13 @@ pub async fn upload(ctx: &Context, path: PathBuf, name: Option<String>) -> Resul
         match file.read(&mut chunk_buf) {
             Ok(0) => break,
             Ok(bytes) => {
+                let data = chunk_buf[0..bytes].to_vec();
                 let delta = bytes as u64;
                 let end = current + delta;
-                let hash_data = sha256(&chunk_buf);
+                let hash_data = sha256(&data);
                 let hash = base64::encode_block(&hash_data);
-                api::upload_chunk(
-                    ctx,
-                    &mnemonic,
-                    current,
-                    end,
-                    file_size,
-                    hash.clone(),
-                    &chunk_buf,
-                )
-                .await?;
+                api::upload_chunk(ctx, &mnemonic, current, end, file_size, hash.clone(), &data)
+                    .await?;
                 chunk_hashes.push(hash);
                 current = pb.add(delta);
             }
