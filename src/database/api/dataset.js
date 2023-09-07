@@ -18,8 +18,20 @@ async function listIncomplete(ctx) {
   });
 }
 
-async function findUpload(ctx) {
+async function findUpload(ctx, sub) {
   const Dataset = getModel(ctx, 'Dataset');
+  const incomplete = await Dataset.findOne({
+    where: {
+      createdBy: sub,
+      hash: {
+        [Op.is]: null,
+      },
+    },
+  });
+  if (!incomplete) {
+    return null;
+  }
+  return incomplete.get({ plain: true });
 }
 
 async function findMnemonic(ctx, mnemonic) {
@@ -175,6 +187,20 @@ async function addMember(ctx, mnemonic, sub, permission = 'read') {
     permission,
     datasetId: dataset.id,
   });
+}
+async function findChunk(ctx, mnemonic, hash) {
+  const Chunk = getModel(ctx, 'Chunk');
+  const dataset = await fromMnemonic(ctx, mnemonic);
+  const result = await Chunk.findOne({
+    where: {
+      hash,
+      datasetId: dataset.id,
+    },
+  });
+  if (!result) {
+    return null;
+  }
+  return result.get({ plain: true });
 }
 
 async function addChunk(ctx, mnemonic, properties) {
@@ -412,6 +438,7 @@ export default {
   fromMnemonic,
   listAll,
   listIncomplete,
+  findUpload,
   listAccessible,
   create,
   addMember,
@@ -422,6 +449,7 @@ export default {
   dropKeys,
   destroyKeys,
   findKey,
+  findChunk,
   addChunk,
   listChunks,
   updateChunk,

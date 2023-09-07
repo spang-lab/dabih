@@ -4,7 +4,15 @@ import React from 'react';
 import { formatBytes } from '../util';
 
 export default function UploadProgress(props) {
-  const { current, total, fileName } = props;
+  const {
+    current, total, fileName, running,
+  } = props;
+  if (!current && current !== 0) {
+    return null;
+  }
+  if (!total && total !== 0) {
+    return null;
+  }
 
   const percent = Math.round((1000 * current) / total) / 10;
 
@@ -13,6 +21,20 @@ export default function UploadProgress(props) {
   const radius = center - width / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - percent / 100);
+
+  const getLoader = () => {
+    if (running) {
+      return (
+        <div className="animate-upload mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded m-4  box-border" />
+      );
+    }
+    return (
+      <div className="text-center p-2 text-gray-500">
+        <p className="font-bold text-red">Upload has been interrupted.</p>
+        Select the file again to continue uploading.
+      </div>
+    );
+  };
 
   return (
     <div className="w-1/2 pt-5 mx-auto">
@@ -83,8 +105,8 @@ export default function UploadProgress(props) {
           )
         </text>
       </svg>
-      <div className="">
-        <div className="animate-upload mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded m-4  box-border" />
+      <div>
+        {getLoader()}
       </div>
     </div>
   );

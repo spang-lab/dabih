@@ -1,6 +1,6 @@
 'use client';
 
-/* eslint-disable no-await-in-loop */
+/* eslint-disable no-await-in-loop, no-continue */
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
@@ -16,19 +16,79 @@ import useDialog from '../dialog';
 export default function Upload({ disabled }) {
   const api = useApi();
   const dialog = useDialog();
-  const [uploadBytes, setUploadBytes] = useState(null);
-  const [uploadFile, setUploadFile] = useState(null);
   const [uploadSuccess, setSuccess] = useState(null);
+
+  const [upload, setUpload] = useState(null);
+  const lastChunk = upload?.chunks.at(-1);
+  const bytes = lastChunk?.end || 0;
 
   useEffect(() => {
     if (!api.isReady()) {
       return;
     }
     const checkExisting = async () => {
-      await api.uploadCheck();
+      const existing = await api.uploadCheck();
+      if (existing) {
+        setUpload({
+          ...existing,
+          file: null,
+        });
+      }
     };
     checkExisting();
   }, [api]);
+
+  useEffect(() => {
+    const uploadChunk = async () => {
+      await new Promise((resolve) => { setTimeout(resolve, 200); });
+      if (!upload || !upload.file) {
+        return;
+      }
+      if (upload.hash) {
+        const result = await api.uploadFinish(upload.mnemonic);
+        if (result.hash !== upload.hash) {
+          dialog.error(
+            `Upload hash mismatch server:${result.hash} client:${upload.hash}`,
+          );
+        }
+        setSuccess(upload.fileName);
+        setUpload(null);
+        return;
+      }
+      const { mnemonic, file, chunks } = upload;
+      const { size } = file;
+      const oneMiB = 1024 * 1024;
+      const chunkSize = 2 * oneMiB;
+      const b = chunks.at(-1)?.end || 0;
+      if (b === size) {
+        const hashes = chunks.map((c) => c.hash);
+        const hash = await hashHashes(hashes);
+        setUpload({
+          ...upload,
+          hash,
+        });
+        return;
+      }
+      if (b > size) {
+        throw new Error('Unknown upload failure');
+      }
+      const blob = file.slice(b, b + chunkSize);
+      const hash = await hashBlob(blob);
+      const chunk = {
+        start: b,
+        end: b + blob.size,
+        totalSize: size,
+        data: blob,
+        hash,
+      };
+      const newChunk = await api.uploadChunk(chunk, mnemonic);
+      setUpload({
+        ...upload,
+        chunks: [...chunks, newChunk],
+      });
+    };
+    uploadChunk();
+  }, [upload, api, dialog]);
 
   const getFile = (files) => {
     if (!files.length) {
@@ -42,62 +102,36 @@ export default function Upload({ disabled }) {
     return file;
   };
 
-  const uploadChunks = async (file, mnemonic) => {
-    const { size } = file;
-    const oneMiB = 1024 * 1024;
-    const chunkSize = 2 * oneMiB;
-    const hashes = [];
-
-    for (let i = 0; i < size; i += chunkSize) {
-      setUploadBytes(i);
-      const blob = file.slice(i, i + chunkSize);
-      const hash = await hashBlob(blob);
-      hashes.push(hash);
-      const chunk = {
-        start: i,
-        end: i + blob.size,
-        totalSize: size,
-        data: blob,
-        hash,
-      };
-      await api.uploadChunk(chunk, mnemonic);
-    }
-
-    const fullHash = await hashHashes(hashes);
-    setUploadBytes(size);
-    return fullHash;
+  const cancelUpload = async () => {
+    const { mnemonic } = upload;
+    setUpload(null);
+    await api.uploadCancel(mnemonic);
   };
 
   const onFileChange = async (files) => {
     const file = getFile(files);
     if (!file) return;
     const { name, size } = file;
-    setUploadFile({
-      size,
-      name,
-    });
-    const dataset = await api.uploadStart(name);
-    if (dataset.error || !dataset.mnemonic) {
-      dialog.error(dataset.error);
-      setUploadFile(null);
+
+    if (upload && upload.fileName === name) {
+      setUpload({
+        ...upload,
+        file,
+      });
       return;
     }
-    const { mnemonic } = dataset;
 
-    const dataHash = await uploadChunks(file, mnemonic);
-    const result = await api.uploadFinish(mnemonic);
-    if (result.hash !== dataHash) {
-      dialog.error(
-        `Upload hash mismatch server:${result.hash} client:${dataHash}`,
-      );
+    const dataset = await api.uploadStart(name, size);
+    if (dataset.error || !dataset.mnemonic) {
+      dialog.error(dataset.error);
+      return;
     }
-    setSuccess(file.name);
-    setUploadFile(null);
+    setUpload({
+      ...dataset,
+      chunks: [],
+      file,
+    });
   };
-
-  const fileName = uploadFile ? uploadFile.name : '';
-  const total = uploadFile ? uploadFile.size : '';
-  const current = uploadBytes || 0;
 
   const getSuccessMessage = () => {
     if (!uploadSuccess) {
@@ -121,21 +155,35 @@ export default function Upload({ disabled }) {
     <div>
       {getSuccessMessage()}
       <Transition
-        enter="transition-opacity duration-150"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        show={!uploadFile}
-      >
-        <Dropzone disabled={disabled} onChange={onFileChange} />
-      </Transition>
-      <Transition
         appear
         enter="transition-opacity duration-300"
         enterFrom="opacity-0"
         enterTo="opacity-100"
-        show={!!uploadFile}
+        show={!!upload}
       >
-        <Progess fileName={fileName} current={current} total={total} />
+        <Progess
+          fileName={upload?.fileName}
+          running={!!(upload?.file)}
+          current={bytes}
+          total={upload?.size}
+        />
+        <div className="flex justify-center">
+          <button
+            type="button"
+            className="bg-gray-500 text-white px-2 py-2 rounded-md"
+            onClick={cancelUpload}
+          >
+            Cancel Upload
+          </button>
+        </div>
+      </Transition>
+      <Transition
+        enter="transition-opacity duration-150"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        show={!upload?.file}
+      >
+        <Dropzone disabled={disabled} onChange={onFileChange} />
       </Transition>
     </div>
   );

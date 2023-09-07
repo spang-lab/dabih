@@ -17,7 +17,9 @@ const get = async (mnemonic, lifetime = thirtyMinutes) => {
   if (!keyData) {
     return null;
   }
-  await emphClient.touch(key, lifetime);
+  if (lifetime) {
+    await emphClient.touch(key, lifetime);
+  }
   const aesKey = base64ToUint8(keyData);
   return aesKey;
 };

@@ -8,7 +8,7 @@ const cleanup = async (ctx) => {
 
   const promises = incompleteUploads.map(async (dset) => {
     const { mnemonic } = dset;
-    const key = await aesKey.get(mnemonic);
+    const key = await aesKey.get(mnemonic, null);
     if (key) {
       return;
     }

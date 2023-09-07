@@ -56,6 +56,7 @@ const getUploadRouter = () => {
   router.post('UPLOAD_START', '/start', upload.start);
   router.put('/:mnemonic', upload.chunk);
   router.post('UPLOAD_FINISH', '/finish/:mnemonic', upload.finish);
+  router.post('UPLOAD_CANCEL', '/cancel/:mnemonic', upload.cancel);
   return router;
 };
 

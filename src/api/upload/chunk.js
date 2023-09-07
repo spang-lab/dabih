@@ -28,8 +28,8 @@ const readHeaders = (ctx) => {
   return {
     digest,
     hash,
-    start,
-    end,
+    start: parseInt(start, 10),
+    end: parseInt(end, 10),
     size: parseInt(size, 10),
   };
 };
@@ -78,6 +78,18 @@ const route = async (ctx) => {
     sendError(ctx, err.message);
     return;
   }
+  if (await storage.exists(mnemonic, chunk.hash)) {
+    const existing = await dataset.findChunk(
+      ctx,
+      mnemonic,
+      chunk.hash,
+    );
+    if (!existing) {
+      ctx.body = existing;
+      return;
+    }
+  }
+
   const targetFile = await storage.create(mnemonic, chunk.hash);
   const stream = targetFile.createWriteStream();
   const encrypt = aes.encryptStream(key, iv);

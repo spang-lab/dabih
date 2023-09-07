@@ -35,6 +35,9 @@ const init = async () => {
 
   const { ephemeral } = getConfig();
   const { url } = ephemeral;
+  if (!url) {
+    throw new Error('No memcached url, please config.ephemeral.url');
+  }
   log(`Memcached connect to ${url}`);
   await connect(url);
   const memcached = new Memcached(url, opts);

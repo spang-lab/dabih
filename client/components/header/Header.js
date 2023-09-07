@@ -34,7 +34,8 @@ export default function Header() {
     if (!api.isReady()) {
       return;
     }
-    if (!user || !key || !key.hash) {
+    const path = pathname?.split('/')[1] || 'start';
+    if (!user || !key || !key.hash || path === 'ingress') {
       return;
     }
     const { valid } = await api.checkPublicKey(key.hash);
@@ -42,7 +43,7 @@ export default function Header() {
       await storage.deleteKey();
       router.push('/key');
     }
-  }, [api, key, user, router]);
+  }, [api, key, user, router, pathname]);
 
   const checkState = useCallback(async () => {
     if (user === undefined || key === undefined) {

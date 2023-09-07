@@ -49,11 +49,11 @@ export function ApiWrapper({ children }) {
   api.interceptors.response.use(
     (r) => r.data,
     (error) => {
-      if (error.response.status === 401) {
+      if (error.response?.status === 401) {
         router.push('/logout');
         return { error: 'Unauthorized' };
       }
-      const message = error.response.data || error.message;
+      const message = error.response?.data || error.message;
       console.error(message);
       return { error: message };
     },
@@ -90,7 +90,7 @@ export function ApiWrapper({ children }) {
       removeToken: async (tokenId) => api.post('/token/remove', { tokenId }),
       listTokens: async () => api.get('/token/list'),
       uploadCheck: async () => api.get('/upload/check'),
-      uploadStart: (fileName) => api.post('/upload/start', { fileName }),
+      uploadStart: (fileName, size) => api.post('/upload/start', { fileName, size }),
       uploadChunk: async (chunk, mnemonic) => {
         const {
           start, end, hash, data, totalSize,
@@ -108,8 +108,8 @@ export function ApiWrapper({ children }) {
         return api.put(url, formData, { headers });
       },
       uploadFinish: async (mnemonic) => api.post(`/upload/finish/${mnemonic}`),
+      uploadCancel: async (mnemonic) => api.post(`/upload/cancel/${mnemonic}`),
       addPublicKey: async (publicKey) => api.post('/key/add', { publicKey }),
-
       checkPublicKey: async (keyHash) => api.post('/key/check', { keyHash }),
       searchDatasets: async (data) => api.post('/dataset/search', data),
       fetchKey: async (mnemonic, keyHash) => api.post(`/dataset/${mnemonic}/key`, { keyHash }),

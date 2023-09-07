@@ -72,7 +72,7 @@ const init = async () => {
     const { folder, path } = resolveId(mnemonic, chunkHash);
     try {
       await mkdirNx(folder);
-      const file = await open(path, 'wx');
+      const file = await open(path, 'w');
       return file;
     } catch (err) {
       log.error(err);
@@ -89,6 +89,11 @@ const init = async () => {
       throw new Error(`${target} already exists`);
     }
     await rename(folder, target);
+  };
+
+  const chunkExists = async (mnemonic, chunkHash) => {
+    const { path } = resolveId(mnemonic, chunkHash);
+    return exists(path);
   };
 
   const openChunk = async (mnemonic, chunkHash) => {
@@ -118,6 +123,7 @@ const init = async () => {
     create,
     move,
     open: openChunk,
+    exists: chunkExists,
     destroyDataset,
     close,
   };
