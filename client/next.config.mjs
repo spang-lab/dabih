@@ -11,9 +11,6 @@ const nextConfig = {
       destination: 'http://localhost:8088/api/v1/:path*',
     },
   ],
-  serverRuntimeConfig: {
-    MY_VAR: process.env.MY_VAR,
-  },
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'mdx'],
 };
 const withMDX = createMDX({
