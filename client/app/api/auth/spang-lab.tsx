@@ -16,7 +16,7 @@ export default function SpangLabProvider(options:
     endSession: 'https://auth.spang-lab.de/oidc/session/end',
     authorization: {
       params: {
-        scope: 'openid profile grouplist',
+        scope: 'openid profile grouplist email',
       },
     },
     idToken: true,
