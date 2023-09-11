@@ -3,11 +3,11 @@ import { formatBytes } from './Bytes';
 
 export default function Upload({ data }: {data: any}) {
   const {
-    mnemonic, total, current, path,
+    mnemonic, total, current, path, state,
   } = data;
   const fileName = path.split('/').at(-1);
 
-  if (!mnemonic) {
+  if (state === 'waiting') {
     return (
       <div className="border border-gray-600 rounded-md p-2 m-2">
         <h3 className="text-lg font-extrabold">
@@ -27,8 +27,29 @@ export default function Upload({ data }: {data: any}) {
       </div>
     );
   }
+  if (state === 'skipped') {
+    return (
+      <div className="border border-gray-600 rounded-md p-2 m-2">
+        <h3 className="text-lg font-extrabold">
+          <CheckCircle className="inline-flex mx-3 text-blue" size={30} />
+          Skipped
+          <span className="px-3">
+            &quot;
+            {fileName}
+            &quot;
+          </span>
+          File exists already.
+        </h3>
+        <p className="text-xs font-thin text-gray-400">
+          Full path:
+          {' '}
+          {path}
+        </p>
+      </div>
+    );
+  }
 
-  if (current === total) {
+  if (state === 'complete') {
     return (
       <div className="border border-gray-600 rounded-md p-2 m-2">
         <h3 className="text-lg font-extrabold">

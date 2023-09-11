@@ -12,8 +12,9 @@ pub struct User {
     pub sub: String,
 }
 #[derive(Debug, Deserialize)]
-struct Upload {
+pub struct Upload {
     pub mnemonic: String,
+    pub duplicate: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -71,10 +72,18 @@ pub async fn get_user(ctx: &Config) -> Result<User> {
     Ok(user)
 }
 
-pub async fn upload_start(ctx: &Config, file_name: String, name: Option<String>) -> Result<String> {
+pub async fn upload_start(
+    ctx: &Config,
+    file_name: String,
+    size: u64,
+    chunk_hash: String,
+    name: Option<String>,
+) -> Result<Upload> {
     let url = ctx.url.join("/api/v1/upload/start")?;
     let mut data = HashMap::new();
     data.insert("fileName", file_name);
+    data.insert("chunkHash", chunk_hash);
+    data.insert("size", size.to_string());
     match name {
         Some(n) => {
             data.insert("name", n);
@@ -83,8 +92,8 @@ pub async fn upload_start(ctx: &Config, file_name: String, name: Option<String>)
     };
 
     let res = ctx.client.post(url).json(&data).send().await?;
-    let Upload { mnemonic } = res.json().await?;
-    Ok(mnemonic)
+    let result = res.json().await?;
+    Ok(result)
 }
 
 pub async fn upload_chunk(

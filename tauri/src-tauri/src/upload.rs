@@ -3,7 +3,7 @@ use glob::glob;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::fs::File;
-use std::io::{self, Read};
+use std::io::{self, Read, Seek};
 use std::path::PathBuf;
 use tauri::Manager;
 
@@ -66,11 +66,47 @@ pub fn hash_chunks(hashes: &Vec<String>) -> Result<String> {
     Ok(hash)
 }
 
-pub async fn upload_start(ctx: &Config, path: PathBuf, name: Option<String>) -> Result<String> {
+pub async fn upload_start(
+    ctx: &Config,
+    path: PathBuf,
+    name: Option<String>,
+) -> Result<Option<String>> {
     let file_name = path.file_name().unwrap();
     let fname = file_name.to_str().unwrap().to_owned();
-    let mnemonic = api::upload_start(ctx, fname, name).await?;
-    return Ok(mnemonic);
+    let mut file = File::open(&path)?;
+    let file_size = file.metadata()?.len();
+    let chunk_size = 2 * 1024 * 1024; // 2 MiB
+    let mut chunk_buf = vec![0u8; chunk_size];
+    let size = file.read(&mut chunk_buf)?;
+    let data = chunk_buf[0..size].to_vec();
+    let hash = sha256(&data);
+    let api::Upload {
+        mnemonic,
+        duplicate,
+    } = api::upload_start(ctx, fname, file_size, hash, name).await?;
+    if let Some(hash) = duplicate {
+        let mut chunk_hashes = Vec::new();
+        file.seek(io::SeekFrom::Start(0))?;
+        loop {
+            match file.read(&mut chunk_buf) {
+                Ok(0) => break,
+                Ok(bytes) => {
+                    let data = chunk_buf[0..bytes].to_vec();
+                    let hash = sha256(&data);
+                    chunk_hashes.push(hash);
+                }
+                Err(e) => {
+                    return Err(e.into());
+                }
+            };
+        }
+        let full_hash = hash_chunks(&chunk_hashes)?;
+        if full_hash == hash {
+            return Ok(None);
+        }
+    }
+
+    return Ok(Some(mnemonic));
 }
 
 pub async fn upload_chunks(

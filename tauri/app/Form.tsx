@@ -10,7 +10,7 @@ export default function Form() {
   } = useApi();
   const [value, setValue] = useState('');
 
-  const onChange = async (e) => {
+  const onChange = async (e:any) => {
     const url = e.target.value;
     setValue(url);
     setUrl(url);

@@ -17,10 +17,12 @@ export default function Open() {
           if (f.mnemonic !== mnemonic) {
             return f;
           }
+          const state = (current < total) ? 'uploading' : 'complete';
           return {
             ...f,
             current,
             total,
+            state,
           };
         })));
       });
@@ -36,27 +38,34 @@ export default function Open() {
   useEffect(() => {
     const checkFiles = async () => {
       const { invoke } = await import('@tauri-apps/api');
-      const active = files.find((f) => f.mnemonic && f.current !== f.total);
+      const active = files.find((f) => f.state === 'uploading');
       if (active) {
         return;
       }
 
-      const newUpload = files.find((f) => !f.mnemonic);
+      const newUpload = files.find((f) => f.state === 'waiting');
       if (!newUpload) {
         return;
       }
-      const { path } = newUpload;
+      const { path, id } = newUpload;
       const mnemonic = await invoke('upload', {
         file: path,
         name: 'hello',
       });
       const newFiles = files.map((f) => {
-        if (f.path !== path) {
+        if (f.id !== id) {
           return f;
+        }
+        if (!mnemonic) {
+          return {
+            ...f,
+            state: 'skipped',
+          };
         }
         return {
           ...f,
           mnemonic,
+          state: 'uploading',
         };
       });
       setFiles(newFiles);
@@ -81,12 +90,19 @@ export default function Open() {
       const paths:string[] = await invoke('scan', {
         files: selected,
       });
-      const data = paths.map((p) => ({
-        path: p,
-        mnemonic: null,
-        current: 0,
-        total: null,
-      }));
+
+      const data = paths.map((p) => {
+        const rand = Math.floor(Math.random() * 16 ** 5).toString(16);
+        const id = `${p}-${rand}`;
+        return {
+          id,
+          path: p,
+          state: 'waiting',
+          mnemonic: null,
+          current: 0,
+          total: null,
+        };
+      });
 
       const newFiles = [
         ...files,

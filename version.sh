@@ -20,6 +20,9 @@ pushd client
   npm run build
   npm version --no-commit-hooks "$VERSION"
 popd
+pushd tauri 
+  npm version --no-commit-hooks "$VERSION"
+popd
 pushd cli
   $SED_COMMAND -i "s/^version = .*/version = \"${VERSION#v}\"/" Cargo.toml
 popd
