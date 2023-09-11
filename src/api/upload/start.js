@@ -12,11 +12,14 @@ const route = async (ctx) => {
     name,
     fileName,
     size,
+    chunkHash,
   } = body;
   if (!fileName) {
     sendError(ctx, 'body.fileName is undefined', 400);
     return;
   }
+
+  const duplicate = await dataset.findDuplicate(ctx, sub, fileName, size, chunkHash);
 
   const key = await aes.randomKey();
   const keyHash = sha256.hash(key);
@@ -32,6 +35,10 @@ const route = async (ctx) => {
   await dataset.addMember(ctx, mnemonic, sub, 'write');
   await aesKey.store(mnemonic, key);
   await dataset.addKeys(ctx, mnemonic, key);
+
+  if (duplicate) {
+    dbDataset.duplicate = duplicate;
+  }
 
   ctx.body = dbDataset;
 };

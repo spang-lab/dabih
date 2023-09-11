@@ -13,6 +13,21 @@ import Progess from './Progress';
 import { useApi } from '../api';
 import useDialog from '../dialog';
 
+const oneMiB = 1024 * 1024;
+const chunkSize = 2 * oneMiB;
+
+const hashFile = async (file) => {
+  const { size } = file;
+
+  const hashes = [];
+  for (let b = 0; b < size; b += chunkSize) {
+    const blob = file.slice(b, b + chunkSize);
+    const hash = await hashBlob(blob);
+    hashes.push(hash);
+  }
+  return hashHashes(hashes);
+};
+
 export default function Upload({ disabled }) {
   const api = useApi();
   const dialog = useDialog();
@@ -40,7 +55,6 @@ export default function Upload({ disabled }) {
 
   useEffect(() => {
     const uploadChunk = async () => {
-      await new Promise((resolve) => { setTimeout(resolve, 200); });
       if (!upload || !upload.file) {
         return;
       }
@@ -51,14 +65,13 @@ export default function Upload({ disabled }) {
             `Upload hash mismatch server:${result.hash} client:${upload.hash}`,
           );
         }
-        setSuccess(upload.fileName);
+        const message = `File "${upload.fileName}" uploaded successfully`;
+        setSuccess(message);
         setUpload(null);
         return;
       }
       const { mnemonic, file, chunks } = upload;
       const { size } = file;
-      const oneMiB = 1024 * 1024;
-      const chunkSize = 2 * oneMiB;
       const b = chunks.at(-1)?.end || 0;
       if (b === size) {
         const hashes = chunks.map((c) => c.hash);
@@ -82,6 +95,11 @@ export default function Upload({ disabled }) {
         hash,
       };
       const newChunk = await api.uploadChunk(chunk, mnemonic);
+
+      if (newChunk.error) {
+        return;
+      }
+
       setUpload({
         ...upload,
         chunks: [...chunks, newChunk],
@@ -104,8 +122,8 @@ export default function Upload({ disabled }) {
 
   const cancelUpload = async () => {
     const { mnemonic } = upload;
-    setUpload(null);
     await api.uploadCancel(mnemonic);
+    setUpload(null);
   };
 
   const onFileChange = async (files) => {
@@ -121,11 +139,27 @@ export default function Upload({ disabled }) {
       return;
     }
 
-    const dataset = await api.uploadStart(name, size);
+    const firstChunk = file.slice(0, chunkSize);
+    const chunkHash = await hashBlob(firstChunk);
+
+    const dataset = await api.uploadStart(name, size, chunkHash);
     if (dataset.error || !dataset.mnemonic) {
       dialog.error(dataset.error);
       return;
     }
+
+    if (dataset.duplicate) {
+      // dataset could be a duplicate, check the total hash to be sure
+      const hash = await hashFile(file);
+      if (hash === dataset.duplicate) {
+        setUpload(null);
+        await api.uploadCancel(dataset.mnemonic);
+        const message = `File ${dataset.fileName} skipped, you already uploaded it`;
+        setSuccess(message);
+        return;
+      }
+    }
+
     setUpload({
       ...dataset,
       chunks: [],
@@ -140,9 +174,7 @@ export default function Upload({ disabled }) {
     return (
       <div className="p-3 m-3 text-base text-center text-green bg-green/20 rounded-lg">
         <p className="font-extrabold">
-          File &quot;
           {uploadSuccess}
-          &quot; uploaded successfully.
         </p>
         <Link className="text-blue hover:underline" href="/manage">
           Manage your data here
