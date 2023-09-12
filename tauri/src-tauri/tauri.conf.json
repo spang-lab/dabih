@@ -13,13 +13,18 @@
   "tauri": {
     "allowlist": {
       "fs": {
-        "all": true,
+        "all": false,
+        "readFile": true,
+        "writeFile": true,
+        "readDir": true,
+        "createDir": true,
+        "exists": true,
         "scope": [
           "$APPCONFIG/**/*"
         ]
       },
       "window": {
-        "all": true
+        "all": false
       },
       "dialog": {
         "all": false,
@@ -30,7 +35,7 @@
         "save": false
       },
       "path": {
-        "all": true
+        "all": false
       },
       "http": {
         "all": true,
@@ -44,7 +49,7 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
+      "category": "Utility",
       "copyright": "",
       "deb": {
         "depends": []
@@ -58,7 +63,7 @@
         "icons/icon.ico"
       ],
       "identifier": "de.spang-lab.dabih",
-      "longDescription": "",
+      "longDescription": "Spang Lab dabih data upload tool",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -68,7 +73,13 @@
       },
       "resources": [],
       "shortDescription": "",
-      "targets": "all",
+      "targets": [
+        "deb",
+        "appimage",
+        "msi",
+        "app",
+        "dmg"
+      ],
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
@@ -84,7 +95,7 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 800,
+        "height": 1000,
         "resizable": true,
         "title": "Dabih",
         "width": 1000

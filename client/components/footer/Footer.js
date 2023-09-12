@@ -2,10 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import info from '../../package.json';
+import { Version } from '../util';
 
 function Footer() {
-  const { version } = info;
   return (
     <div className="p-5 text-center text-gray-400 border-t">
       <p>
@@ -22,7 +21,7 @@ function Footer() {
         <span className="px-2"> · </span>
         Version
         {' '}
-        {version}
+        <Version />
       </p>
       <Link className="text-blue hover:underline" href="/contact">
         Contact/Impressum
