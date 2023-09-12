@@ -38,3 +38,4 @@ url = "2.4.0"
 zip = "0.6.6"
 openssh = { version = "0.10.0", optional = true }
 openssh-sftp-client = {version = "0.14.0", optional = true }
+sha2 = "0.10.7"

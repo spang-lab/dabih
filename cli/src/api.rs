@@ -19,8 +19,9 @@ struct KeyStatus {
     pub error: Option<String>,
 }
 #[derive(Debug, Deserialize)]
-struct Upload {
+pub struct Upload {
     pub mnemonic: String,
+    pub duplicate: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -104,11 +105,15 @@ pub async fn check_key(ctx: &Context) -> Result<()> {
 pub async fn upload_start(
     ctx: &Context,
     file_name: String,
+    size: u64,
+    chunk_hash: String,
     name: Option<String>,
-) -> Result<String> {
+) -> Result<Upload> {
     let url = ctx.url.join("/api/v1/upload/start")?;
     let mut data = HashMap::new();
     data.insert("fileName", file_name);
+    data.insert("chunkHash", chunk_hash);
+    data.insert("size", size.to_string());
     match name {
         Some(n) => {
             data.insert("name", n);
@@ -117,8 +122,8 @@ pub async fn upload_start(
     };
 
     let res = ctx.client.post(url).json(&data).send().await?;
-    let Upload { mnemonic } = res.json().await?;
-    Ok(mnemonic)
+    let result = res.json().await?;
+    Ok(result)
 }
 
 pub async fn upload_chunk(
@@ -161,6 +166,13 @@ pub async fn upload_finish(ctx: &Context, mnemonic: &String) -> Result<String> {
     let res = ctx.client.post(url).send().await?;
     let UploadResult { hash } = res.json().await?;
     Ok(hash)
+}
+
+pub async fn upload_cancel(ctx: &Context, mnemonic: &String) -> Result<()> {
+    let url = ctx.url.join("/api/v1/upload/cancel/")?.join(mnemonic)?;
+    let res = ctx.client.post(url).send().await?;
+    res.error_for_status()?;
+    Ok(())
 }
 
 pub async fn fetch_dataset(ctx: &Context, mnemonic: &String) -> Result<Dataset> {

@@ -26,22 +26,16 @@ async fn scan(app_handle: tauri::AppHandle, files: Vec<&str>) -> Result<Vec<Path
 }
 
 #[tauri::command]
-async fn upload(
-    app_handle: tauri::AppHandle,
-    file: &str,
-    name: Option<&str>,
-) -> Result<Option<String>> {
+async fn upload(app_handle: tauri::AppHandle, file: &str) -> Result<Option<String>> {
     let config_path = match app_handle.path_resolver().app_config_dir() {
         Some(p) => p,
         None => return Err(Error::ConfigDirError()),
     };
     let config_file = config_path.join("config/app.conf");
     let config = config::Config::from(config_file)?;
-    let label = match name {
-        Some(s) => Some(s.to_owned()),
-        None => None,
-    };
     let path = PathBuf::from(file);
+
+    let label = config.name.clone();
 
     let mnemonic = match upload::upload_start(&config, path.clone(), label).await? {
         Some(m) => m,

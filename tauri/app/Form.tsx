@@ -19,6 +19,22 @@ export default function Form() {
   if (isReady) {
     const { name, email } = user;
     const { baseUrl, token } = auth;
+
+    const getName = () => {
+      if (!auth.name) {
+        return null;
+      }
+      return (
+        <p>
+          Name:
+          {' '}
+          <span className="text-white font-extrabold px-3">
+            {auth.name}
+          </span>
+        </p>
+      );
+    };
+
     return (
       <div className="bg-green/30 rounded-md p-2">
         <h2 className="text-2xl font-extrabold text-green">
@@ -39,13 +55,14 @@ export default function Form() {
               {' '}
               <span className="text-blue">{baseUrl}</span>
             </p>
-            <p>
+            <p className="text-sm">
               Token:
               {' '}
-              <span className="font-mono">
+              <span className="font-mono text-white">
                 {token}
               </span>
             </p>
+            {getName()}
           </div>
           <div className="text-center">
             <button

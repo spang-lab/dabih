@@ -6,6 +6,7 @@ use anyhow::Result;
 use openssl::rsa::Rsa;
 use openssl::symm::decrypt;
 use openssl::symm::Cipher;
+use sha2::{Digest, Sha256};
 use std::fs::File;
 use std::io::Write;
 
@@ -13,7 +14,6 @@ use openssl::{encrypt::Decrypter, hash::MessageDigest, pkey::PKey, rsa::Padding}
 
 use crate::api::Chunk;
 use base64::{engine::general_purpose, Engine as _};
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -29,8 +29,35 @@ struct RootKeys {
     root_keys: Vec<Jwk>,
 }
 
+pub fn decode_base64(value: &String) -> Result<Vec<u8>> {
+    let decoder = general_purpose::STANDARD;
+    let data = decoder.decode(value)?;
+    return Ok(data);
+}
+pub fn decode_base64_url(value: &String) -> Result<Vec<u8>> {
+    let decoder = general_purpose::URL_SAFE_NO_PAD;
+    let data = decoder.decode(value)?;
+    return Ok(data);
+}
+
+pub fn encode_base64(value: &Vec<u8>) -> String {
+    let encoder = general_purpose::STANDARD;
+    encoder.encode(value)
+}
+pub fn encode_base64_url(value: &Vec<u8>) -> String {
+    let encoder = general_purpose::URL_SAFE_NO_PAD;
+    encoder.encode(value)
+}
+pub fn sha256(bytes: &Vec<u8>) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(&bytes);
+    let result = hasher.finalize().to_vec();
+    let hash = encode_base64(&result);
+    return hash;
+}
+
 pub fn decrypt_key(ctx: &Context, key: &String) -> Result<Vec<u8>> {
-    let data = openssl::base64::decode_block(key)?;
+    let data = decode_base64(key)?;
     let pkey = PKey::from_rsa(ctx.private_key.clone())?;
     let mut decrypter = Decrypter::new(&pkey)?;
     decrypter.set_rsa_padding(Padding::PKCS1_OAEP)?;
@@ -47,7 +74,7 @@ pub fn decrypt_key(ctx: &Context, key: &String) -> Result<Vec<u8>> {
 
 pub fn decrypt_chunk(chunk: &Chunk, key: &Vec<u8>, data: &Vec<u8>) -> Result<Vec<u8>> {
     let cipher = Cipher::aes_256_cbc();
-    let iv = openssl::base64::decode_block(&chunk.iv)?;
+    let iv = decode_base64(&chunk.iv)?;
     let decrypted = decrypt(cipher, &key, Some(&iv), data)?;
     Ok(decrypted)
 }
@@ -72,10 +99,8 @@ pub fn generate_keypair(key_file: &Option<String>) -> Result<()> {
     let pem = key.private_key_to_pem()?;
     file.write_all(&pem)?;
 
-    let encoder = general_purpose::URL_SAFE_NO_PAD;
-
-    let n = encoder.encode(key.n().to_vec());
-    let e = encoder.encode(key.e().to_vec());
+    let n = encode_base64_url(&key.n().to_vec());
+    let e = encode_base64_url(&key.e().to_vec());
 
     let jwk = Jwk {
         kty: "RSA".to_string(),

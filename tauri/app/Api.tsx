@@ -86,7 +86,7 @@ export function ApiWrapper({ children }) {
       if (!string.startsWith('http')) {
         testUrl = `https://${string}`;
       }
-      const { origin, pathname } = new URL(testUrl);
+      const { origin, pathname, searchParams } = new URL(testUrl);
       const match = pathname.match(/\/ingress\/(.*)/);
 
       if (!match || !match.length === 2) {
@@ -96,6 +96,7 @@ export function ApiWrapper({ children }) {
         return;
       }
       const [_, token] = match;
+      const name = searchParams.get('name');
       const baseUrl = `${origin}/api/v1`;
       if (token.length !== 32) {
         setUser({
@@ -103,7 +104,7 @@ export function ApiWrapper({ children }) {
         });
         return;
       }
-      setAuth({ baseUrl, token });
+      setAuth({ baseUrl, token, name });
     } catch (err) {
       setUser({
         error: 'Failed to parse url',

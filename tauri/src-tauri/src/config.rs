@@ -11,6 +11,7 @@ pub struct ConfigFile {
     #[serde(rename = "baseUrl")]
     pub url: String,
     pub token: String,
+    pub name: Option<String>,
 }
 
 #[derive(Debug)]
@@ -18,6 +19,7 @@ pub struct Config {
     pub url: Url,
     pub token: String,
     pub client: Client,
+    pub name: Option<String>,
     pub config_path: PathBuf,
 }
 impl fmt::Display for Config {
@@ -35,7 +37,7 @@ impl fmt::Display for Config {
 impl Config {
     pub fn from(path: PathBuf) -> Result<Config> {
         let file = fs::File::open(&path)?;
-        let ConfigFile { url, token } = serde_json::from_reader(file)?;
+        let ConfigFile { url, token, name } = serde_json::from_reader(file)?;
         let authorization = format!("Bearer dabih_{}", token);
         let mut headers = header::HeaderMap::new();
         headers.insert(
@@ -47,6 +49,7 @@ impl Config {
             url: Url::parse(&url)?,
             token,
             client,
+            name,
             config_path: path,
         })
     }

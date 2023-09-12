@@ -102,6 +102,7 @@ pub async fn upload_start(
         }
         let full_hash = hash_chunks(&chunk_hashes)?;
         if full_hash == hash {
+            api::upload_cancel(ctx, &mnemonic).await?;
             return Ok(None);
         }
     }
@@ -115,8 +116,6 @@ pub async fn upload_chunks(
     path: PathBuf,
     mnemonic: String,
 ) -> Result<()> {
-    println!("Uploading file \"{}\"...", path.display());
-
     let mut chunk_hashes = Vec::new();
 
     let mut file = File::open(&path)?;

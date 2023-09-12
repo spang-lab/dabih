@@ -1,7 +1,6 @@
 use anyhow::{bail, Result};
 use openssl::pkey::Private;
 use openssl::rsa::Rsa;
-use openssl::sha::sha256;
 use reqwest::{header, Client};
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -11,6 +10,8 @@ use std::io::Read;
 use std::io::Write;
 use std::path::PathBuf;
 use url::Url;
+
+use crate::crypto::sha256;
 
 pub struct Context {
     pub url: Url,
@@ -121,8 +122,8 @@ pub fn read_context() -> Result<Context> {
     let buffer2 = key.public_key_to_pem_pkcs1()?;
     let public_key = String::from_utf8(buffer2)?;
 
-    let hash = sha256(&buffer);
-    let fingerprint = openssl::base64::encode_block(&hash);
+    let fingerprint = sha256(&buffer);
+
     let client = create_client(token.clone())?;
     return Ok(Context {
         url: Url::parse(&url)?,

@@ -57,7 +57,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "de.spang-lab.dabih",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

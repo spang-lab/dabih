@@ -65,10 +65,6 @@ pub async fn get_user(ctx: &Config) -> Result<User> {
             return Err(Error::ResponseError(text));
         }
     };
-    println!(
-        "Successfully authenticated as {}<{}> (id:{})",
-        user.name, user.email, user.sub
-    );
     Ok(user)
 }
 
@@ -136,4 +132,11 @@ pub async fn upload_finish(ctx: &Config, mnemonic: &String) -> Result<String> {
     let res = ctx.client.post(url).send().await?;
     let UploadResult { hash } = res.json().await?;
     Ok(hash)
+}
+
+pub async fn upload_cancel(ctx: &Config, mnemonic: &String) -> Result<()> {
+    let url = ctx.url.join("/api/v1/upload/cancel/")?.join(mnemonic)?;
+    let res = ctx.client.post(url).send().await?;
+    res.error_for_status()?;
+    Ok(())
 }
