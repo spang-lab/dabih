@@ -5,7 +5,7 @@ description = "Dabih Uploader"
 authors = ["Michael Huttner"]
 license = "MIT"
 repository = "https://github.com/spang-lab/dabih"
-default-run = "app"
+default-run = "dabih"
 edition = "2021"
 rust-version = "1.60"
 

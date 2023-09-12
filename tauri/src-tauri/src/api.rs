@@ -42,18 +42,6 @@ pub struct Dataset {
     pub chunks: Vec<Chunk>,
 }
 
-pub async fn check_api(ctx: &Config) -> Result<()> {
-    let healthy_url = ctx.url.join("/api/v1/healthy")?;
-    let res = reqwest::get(healthy_url).await?;
-    if !res.status().is_success() {
-        return Err(Error::ApiError(format!(
-            "Failed to contact api endpoint {}",
-            ctx.url
-        )));
-    }
-    Ok(())
-}
-
 pub async fn get_user(ctx: &Config) -> Result<User> {
     let token_url = ctx.url.join("/api/v1/token")?;
     let res = ctx.client.post(token_url).send().await?;

@@ -1,5 +1,3 @@
-use std::ffi::OsString;
-
 use serde::{ser::Serializer, Serialize};
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -28,8 +26,6 @@ pub enum Error {
     TauriError(#[from] tauri::Error),
     #[error("{0}")]
     ResponseError(String),
-    #[error("{0}")]
-    ApiError(String),
     #[error("{0}")]
     Error(String),
 }

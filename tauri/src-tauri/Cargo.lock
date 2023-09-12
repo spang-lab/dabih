@@ -74,27 +74,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
 
 [[package]]
-name = "app"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "base64 0.21.3",
- "flate2",
- "glob",
- "reqwest",
- "serde",
- "serde_json",
- "sha2",
- "sha256",
- "tauri",
- "tauri-build",
- "thiserror",
- "tokio",
- "url",
- "zip",
-]
-
-[[package]]
 name = "async-trait"
 version = "0.1.73"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -564,6 +543,27 @@ checksum = "6d2301688392eb071b0bf1a37be05c469d3cc4dbbd95df672fe28ab021e6a096"
 dependencies = [
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "dabih"
+version = "1.10.3"
+dependencies = [
+ "anyhow",
+ "base64 0.21.3",
+ "flate2",
+ "glob",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sha256",
+ "tauri",
+ "tauri-build",
+ "thiserror",
+ "tokio",
+ "url",
+ "zip",
 ]
 
 [[package]]
