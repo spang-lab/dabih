@@ -22,6 +22,9 @@ pushd client
 popd
 pushd tauri 
   npm version --no-commit-hooks "$VERSION"
+  pushd src-tauri
+    $SED_COMMAND -i "s/^version = .*/version = \"${VERSION#v}\"/" Cargo.toml
+  popd
 popd
 pushd cli
   $SED_COMMAND -i "s/^version = .*/version = \"${VERSION#v}\"/" Cargo.toml
