@@ -24,6 +24,7 @@ pushd tauri
   npm version --no-commit-hooks "$VERSION"
   pushd src-tauri
     $SED_COMMAND -i "s/^version = .*/version = \"${VERSION#v}\"/" Cargo.toml
+    $SED_COMMAND -i "s/\"version\": .*/\"version\": \"${VERSION#v}\"/" tauri.conf.json 
   popd
 popd
 pushd cli
