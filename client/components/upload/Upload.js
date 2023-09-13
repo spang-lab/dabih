@@ -3,6 +3,7 @@
 /* eslint-disable no-await-in-loop, no-continue */
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import { Transition } from '@headlessui/react';
 
@@ -32,6 +33,7 @@ export default function Upload({ disabled }) {
   const api = useApi();
   const dialog = useDialog();
   const [uploadSuccess, setSuccess] = useState(null);
+  const searchParams = useSearchParams();
 
   const [upload, setUpload] = useState(null);
   const lastChunk = upload?.chunks.at(-1);
@@ -129,9 +131,10 @@ export default function Upload({ disabled }) {
   const onFileChange = async (files) => {
     const file = getFile(files);
     if (!file) return;
-    const { name, size } = file;
+    const { size } = file;
+    const fileName = file.name;
 
-    if (upload && upload.fileName === name) {
+    if (upload && upload.fileName === fileName) {
       setUpload({
         ...upload,
         file,
@@ -141,8 +144,9 @@ export default function Upload({ disabled }) {
 
     const firstChunk = file.slice(0, chunkSize);
     const chunkHash = await hashBlob(firstChunk);
+    const name = searchParams.get('name');
 
-    const dataset = await api.uploadStart(name, size, chunkHash);
+    const dataset = await api.uploadStart(fileName, size, chunkHash, name);
     if (dataset.error || !dataset.mnemonic) {
       dialog.error(dataset.error);
       return;
