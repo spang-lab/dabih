@@ -1,6 +1,6 @@
 [package]
 name = "dabih"
-version = "1.10.5"
+version = "1.10.6"
 description = "Dabih Uploader"
 authors = ["Michael Huttner"]
 license = "MIT"
