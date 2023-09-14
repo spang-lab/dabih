@@ -7,16 +7,26 @@ import { SmallButton } from '../util';
 import { useDatasets } from './Context';
 
 function MemberOption({ option }) {
+  const { name, email, sub } = option;
   return (
     <Combobox.Option
-      className={({ active }) => `relative cursor-default select-none py-2 px-4 ${active ? 'bg-blue text-white' : 'text-gray-800'
-      }`}
+      className={({ active }) => `relative cursor-default select-none py-2 px-4 ${active ? 'bg-blue/40' : ''}`}
       value={option}
     >
-      <span className="text-gray-400">
+      <span className="text-gray-800">
         <User className="inline-block" size={14} />
-        <span className="px-1">User</span>
-        {option.name}
+        <span className="text-blue font-semibold">
+          {name}
+        </span>
+        <span className="text-gray-600 px-3">
+          {email}
+        </span>
+        <span className="text-gray-600 px-3">
+          (id:
+          {' '}
+          {sub}
+          )
+        </span>
       </span>
     </Combobox.Option>
   );
