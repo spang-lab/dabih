@@ -40,8 +40,10 @@ export default function AddMember({ dataset, options }) {
   const { mnemonic, permission } = dataset;
 
   const onAdd = async () => {
+    if (!selected || !selected.sub) {
+      return;
+    }
     addMembers(mnemonic, [selected.sub]);
-
     setQuery('');
     setSelected(null);
   };
@@ -109,10 +111,16 @@ export default function AddMember({ dataset, options }) {
         </div>
       </Combobox>
       <div className="px-3">
-        <SmallButton className="whitespace-nowrap" onClick={onAdd}>
+
+        <button
+          type="button"
+          disabled={!selected}
+          className="whitespace-nowrap bg-blue py-1 px-2 text-white text-sm rounded-md disabled:bg-blue/50"
+          onClick={onAdd}
+        >
           <UserPlus className="inline-block mr-2" size={18} />
           Add
-        </SmallButton>
+        </button>
       </div>
     </div>
   );

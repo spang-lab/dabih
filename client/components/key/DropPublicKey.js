@@ -30,7 +30,11 @@ export default function DropPublicKey({ onKey }) {
     try {
       const publicKey = await importPublicKey(text);
       const jwk = await exportJwk(publicKey);
-      await addPublicKey(jwk);
+      const { error } = await addPublicKey(jwk);
+      if (error) {
+        dialog.error(error);
+        return;
+      }
       if (onKey) {
         onKey();
       }
