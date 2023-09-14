@@ -68,6 +68,7 @@ export default function Actions({ data }) {
     downloadDecryptedDataset,
   } = useDatasets();
   const isAdmin = user ? user.isAdmin : false;
+  const canDownload = !deletedAt && permission !== 'none';
 
   return (
     <div className="text-right ">
@@ -94,7 +95,7 @@ export default function Actions({ data }) {
                   router.push(`/download/${mnemonic}`);
                 }}
                 className="text-blue"
-                enabled
+                enabled={canDownload}
               >
                 <Download className="mx-2" size={24} />
                 Download
@@ -102,7 +103,7 @@ export default function Actions({ data }) {
               <Action
                 onClick={() => downloadDecryptedDataset(mnemonic)}
                 className="text-blue"
-                enabled
+                enabled={canDownload}
               >
                 <DownloadCloud className="mx-2" size={24} />
                 <div>

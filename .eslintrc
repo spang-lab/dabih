@@ -1,11 +1,15 @@
 {
-    extends: ['airbnb'],
-    plugins: ['github'],
-    rules: {
-      'github/no-then': 'error',
-      'import/extensions': 'off',
-    },
-    settings: {
-        'import/resolver': 'node',
-    }
+  "extends": [
+    "airbnb"
+  ],
+  "plugins": [
+    "github"
+  ],
+  "rules": {
+    "github/no-then": "error",
+    "import/extensions": "off"
+  },
+  "settings": {
+    "import/resolver": "node"
+  }
 }
