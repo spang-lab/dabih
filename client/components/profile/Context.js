@@ -66,7 +66,7 @@ export function ProfileWrapper({ children }) {
 
   const deleteKey = useCallback(
     async (keyId) => {
-      await api.admin.deleteKey(keyId);
+      await api.removePublicKey(keyId);
       await fetchKeys();
     },
     [api, fetchKeys],

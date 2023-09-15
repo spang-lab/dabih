@@ -63,7 +63,6 @@ export function ApiWrapper({ children }) {
     () => ({
       listKeys: () => api.get('/admin/key/list'),
       confirmKey: (keyId, confirmed) => api.post('/admin/key/confirm', { keyId, confirmed }),
-      deleteKey: (keyId) => api.post('/admin/key/remove', { keyId }),
       listDatasets: () => api.get('/admin/dataset/list'),
       removeDataset: (mnemonic) => api.post(`/admin/dataset/${mnemonic}/remove`),
       destroyDataset: (mnemonic) => api.post(`/admin/dataset/${mnemonic}/destroy`),
@@ -113,6 +112,7 @@ export function ApiWrapper({ children }) {
       uploadCancel: async (mnemonic) => api.post(`/upload/cancel/${mnemonic}`),
       addPublicKey: async (publicKey) => api.post('/key/add', { publicKey }),
       checkPublicKey: async (keyHash) => api.post('/key/check', { keyHash }),
+      removePublicKey: async (keyId) => api.post('/key/remove', { keyId }),
       searchDatasets: async (data) => api.post('/dataset/search', data),
       fetchKey: async (mnemonic, keyHash) => api.post(`/dataset/${mnemonic}/key`, { keyHash }),
       removeDataset: async (mnemonic) => api.post(`/dataset/${mnemonic}/remove`),

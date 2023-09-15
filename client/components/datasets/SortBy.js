@@ -32,6 +32,12 @@ export default function SortBy() {
     {
       label: 'Uploaded by', text: 'Z-A', value: 'createdBy', direction: 'DESC',
     },
+    {
+      label: 'Name', text: 'A-Z', value: 'name', direction: 'ASC',
+    },
+    {
+      label: 'Name', text: 'Z-A', value: 'name', direction: 'DESC',
+    },
   ].map((o) => ({
     ...o,
     id: `${o.value}-${o.direction}`,

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Trash2, User } from 'react-feather';
+import { RefreshCw, Trash2, User } from 'react-feather';
 import { Switch } from '@headlessui/react';
 import { DeleteButton } from '../util';
 import { useDatasets } from './Context';
@@ -11,7 +11,7 @@ export default function Member({ data, dataset }) {
   const {
     sub, name, email, permission, disabled,
   } = data;
-  const { setAccess } = useDatasets();
+  const { setAccess, addMembers } = useDatasets();
   const enabled = permission === 'write';
   const removed = permission === 'none';
   const canEdit = dataset.permission === 'write';
@@ -33,6 +33,15 @@ export default function Member({ data, dataset }) {
       return (
         <span className="px-3 font-semibold text-gray-400 whitespace-nowrap">
           Access removed
+          <button
+            type="button"
+            disabled={!canEdit}
+            onClick={() => addMembers(mnemonic, [sub])}
+            className="inline-flex items-center rounded-md bg-blue disabled:bg-blue/40 text-white px-2 py-1 ml-2"
+          >
+            <RefreshCw className="mr-2" size={14} />
+            Restore
+          </button>
         </span>
       );
     }

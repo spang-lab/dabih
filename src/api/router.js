@@ -24,7 +24,6 @@ const getAdminRouter = () => {
 
   router.get('/key/list', admin.listKeys);
   router.post('KEY_CONFIRM', '/key/confirm', admin.confirmKey);
-  router.post('KEY_REMOVE', '/key/remove', admin.removeKey);
   router.get('/dataset/list', admin.listDatasets);
   router.post(
     'DATASET_REMOVE',
@@ -89,6 +88,7 @@ const getKeyRouter = () => {
   router.get('/list/user', key.listUsers);
   router.post('KEY_ADD', '/add', key.add);
   router.post('/check', key.check);
+  router.post('KEY_REMOVE', '/remove', key.remove);
 
   return router;
 };

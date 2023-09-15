@@ -1,6 +1,5 @@
 import listKeys from './listKeys.js';
 import confirmKey from './confirmKey.js';
-import removeKey from './removeKey.js';
 import listDatasets from './listDatasets.js';
 import destroyDataset from './destroyDataset.js';
 import recoverDataset from './recoverDataset.js';
@@ -11,7 +10,6 @@ import listEventDates from './eventDates.js';
 export default {
   listKeys,
   confirmKey,
-  removeKey,
   listDatasets,
   destroyDataset,
   recoverDataset,

@@ -1,4 +1,6 @@
-import { Op, col } from 'sequelize';
+import {
+  Op, col, fn, where,
+} from 'sequelize';
 import { getModel, getDialect } from './util.js';
 
 function getWhere(query) {
@@ -9,24 +11,16 @@ function getWhere(query) {
       },
     };
   }
-  const q = `%${query}%`;
+  const q = `%${query.toLowerCase()}%`;
   return {
     hash: {
       [Op.not]: null,
     },
     [Op.or]: [
-      {
-        fileName: {
-          [Op.like]: q,
-        },
-      },
+      where(fn('LOWER', col('name')), Op.like, q),
+      where(fn('LOWER', col('fileName')), Op.like, q),
       {
         mnemonic: {
-          [Op.like]: q,
-        },
-      },
-      {
-        name: {
           [Op.like]: q,
         },
       },
@@ -41,9 +35,9 @@ function getWhere(query) {
 
 const getOrder = (column = 'createdAt', direction = 'DESC', dialect = 'postgres') => {
   if (dialect === 'sqlite') {
-    return [[col(`dataset.${column}`), direction]];
+    return [[col(`dataset.${column}`), direction, 'NULLS LAST']];
   }
-  return [[col(column), direction]];
+  return [[col(column), direction, 'NULLS LAST']];
 };
 
 async function search(ctx, sub, options) {
@@ -61,9 +55,10 @@ async function search(ctx, sub, options) {
   const mWhere = all ? {} : { sub };
   const offset = (page - 1) * limit;
 
-  const where = getWhere(query);
+  const dWhere = getWhere(query);
+
   if (uploader) {
-    where.createdBy = sub;
+    dWhere.createdBy = sub;
   }
   const count = await Dataset.count({
     include: {
@@ -73,7 +68,7 @@ async function search(ctx, sub, options) {
       paranoid,
       where: mWhere,
     },
-    where,
+    where: dWhere,
     paranoid,
   });
 
@@ -85,7 +80,7 @@ async function search(ctx, sub, options) {
       paranoid,
       where: mWhere,
     },
-    where,
+    where: dWhere,
     paranoid,
     order,
     limit,

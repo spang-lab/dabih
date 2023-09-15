@@ -9,9 +9,7 @@ import Member from './Member';
 
 const resolveMembers = (users, mems) => {
   const memberIndex = mems.reduce((acc, m) => {
-    if (m.permission !== 'none') {
-      acc[m.sub] = m;
-    }
+    acc[m.sub] = m;
     return acc;
   }, {});
 
