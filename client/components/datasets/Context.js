@@ -9,7 +9,7 @@ import React, {
   useContext,
 } from 'react';
 import pLimit from 'p-limit';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import useDialog from '../dialog';
 import {
   storage,
@@ -18,11 +18,11 @@ import {
   decryptChunk,
   exportAesKey,
 } from '../../lib';
-import { useApi } from '../api';
+import {useApi} from '../api';
 
 const DatasetContext = createContext();
 
-export function DatasetsWrapper({ children }) {
+export function DatasetsWrapper({children}) {
   const api = useApi();
   const dialog = useDialog();
   const router = useRouter();
@@ -30,6 +30,7 @@ export function DatasetsWrapper({ children }) {
   const limit = 25;
 
   const [datasets, setDatasets] = useState([]);
+  const [orphans, setOrphans] = useState([]);
   const [datasetCount, setDatasetCount] = useState(0);
   const [searchParams, setSearchParams] = useState({
     deleted: false,
@@ -50,6 +51,14 @@ export function DatasetsWrapper({ children }) {
     setDatasetCount(data.count);
   }, [api, searchParams]);
 
+  const fetchOrphans = useCallback(async () => {
+    if (!api.isAdmin()) {
+      return;
+    }
+    const data = await api.admin.listOrphans();
+    setOrphans(data);
+  }, [api]);
+
   const removeDataset = useCallback(
     async (mnemonic) => {
       if (api.isAdmin()) {
@@ -58,22 +67,25 @@ export function DatasetsWrapper({ children }) {
         await api.removeDataset(mnemonic);
       }
       await fetchDatasets();
+      await fetchOrphans();
     },
-    [api, fetchDatasets],
+    [api, fetchDatasets, fetchOrphans],
   );
   const destroyDataset = useCallback(
     async (mnemonic) => {
       await api.admin.destroyDataset(mnemonic);
       await fetchDatasets();
+      await fetchOrphans();
     },
-    [api, fetchDatasets],
+    [api, fetchDatasets, fetchOrphans],
   );
   const recoverDataset = useCallback(
     async (mnemonic) => {
       await api.admin.recoverDataset(mnemonic);
       await fetchDatasets();
+      await fetchOrphans();
     },
-    [api, fetchDatasets],
+    [api, fetchDatasets, fetchOrphans],
   );
 
   const addMembers = useCallback(
@@ -121,7 +133,7 @@ export function DatasetsWrapper({ children }) {
     async (mnemonic, chunks, aesKey, parallel = 1) => {
       const plimit = pLimit(parallel);
       const handleChunk = async (chunk) => {
-        const { iv, data } = chunk;
+        const {iv, data} = chunk;
         if (data) return chunk;
         const hash = encodeHash(chunk.hash);
         const encrypted = await api.fetchChunk(mnemonic, hash);
@@ -167,7 +179,7 @@ export function DatasetsWrapper({ children }) {
         dialog.error(key.error);
         return null;
       }
-      const { fileName, chunks } = await api.fetchDataset(mnemonic);
+      const {fileName, chunks} = await api.fetchDataset(mnemonic);
       const aesKey = await decryptKey(keys.privateKey, key);
 
       let dataChunks = await downloadChunks(mnemonic, chunks, aesKey, 5);
@@ -196,7 +208,7 @@ export function DatasetsWrapper({ children }) {
       }
       const aesKey = await decryptKey(keys.privateKey, key);
       const encoded = await exportAesKey(aesKey);
-      const { token, error } = await api.storeKey(mnemonic, encoded);
+      const {token, error} = await api.storeKey(mnemonic, encoded);
       if (!error) {
         const url = `/api/v1/dataset/${mnemonic}/download/?token=${token}`;
         router.push(url);
@@ -207,11 +219,13 @@ export function DatasetsWrapper({ children }) {
 
   useEffect(() => {
     fetchDatasets();
-  }, [fetchDatasets]);
+    fetchOrphans();
+  }, [fetchDatasets, fetchOrphans]);
 
   const contextValue = useMemo(
     () => ({
       datasets,
+      orphans,
       limit,
       datasetCount,
       searchParams,
@@ -228,6 +242,7 @@ export function DatasetsWrapper({ children }) {
     }),
     [
       datasets,
+      orphans,
       searchParams,
       datasetCount,
       setSearchParams,

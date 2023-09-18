@@ -63,7 +63,7 @@ export function ApiWrapper({ children }) {
     () => ({
       listKeys: () => api.get('/admin/key/list'),
       confirmKey: (keyId, confirmed) => api.post('/admin/key/confirm', { keyId, confirmed }),
-      listDatasets: () => api.get('/admin/dataset/list'),
+      listOrphans: () => api.get('/admin/dataset/orphan'),
       removeDataset: (mnemonic) => api.post(`/admin/dataset/${mnemonic}/remove`),
       destroyDataset: (mnemonic) => api.post(`/admin/dataset/${mnemonic}/destroy`),
       recoverDataset: (mnemonic) => api.post(`/admin/dataset/${mnemonic}/recover`),

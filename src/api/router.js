@@ -24,7 +24,7 @@ const getAdminRouter = () => {
 
   router.get('/key/list', admin.listKeys);
   router.post('KEY_CONFIRM', '/key/confirm', admin.confirmKey);
-  router.get('/dataset/list', admin.listDatasets);
+  router.get('/dataset/orphan', admin.listOrphans);
   router.post(
     'DATASET_REMOVE',
     '/dataset/:mnemonic/remove',

@@ -1,9 +1,10 @@
 /* eslint-disable no-await-in-loop */
-import { Op } from 'sequelize';
-import { getModel } from './util.js';
-import { log, generateMnemonic, userHasScope } from '../../util/index.js';
-import { base64ToBase64Url, rsa } from '../../crypto/index.js';
+import {col, fn, Op} from 'sequelize';
+import {getModel} from './util.js';
+import {log, generateMnemonic} from '../../util/index.js';
+import {base64ToBase64Url, rsa} from '../../crypto/index.js';
 import search from './datasetSearch.js';
+import {permissionIndex} from '../model/member.js';
 
 async function listIncomplete(ctx) {
   const dataset = getModel(ctx, 'Dataset');
@@ -31,19 +32,19 @@ async function findUpload(ctx, sub) {
   if (!incomplete) {
     return null;
   }
-  return incomplete.get({ plain: true });
+  return incomplete.get({plain: true});
 }
 
 async function findMnemonic(ctx, mnemonic) {
   const Dataset = getModel(ctx, 'Dataset');
   const result = await Dataset.findOne({
-    where: { mnemonic },
+    where: {mnemonic},
     paranoid: false,
   });
   if (!result) {
     return null;
   }
-  return result.get({ plain: true });
+  return result.get({plain: true});
 }
 
 async function fromMnemonic(ctx, mnemonic) {
@@ -83,7 +84,7 @@ async function listAccessible(ctx, sub) {
   });
   const datasets = results
     .map((dset) => {
-      const plain = dset.get({ plain: true });
+      const plain = dset.get({plain: true});
       let permission = 'none';
       const member = plain.members.find((m) => m.sub === sub);
       if (member) {
@@ -95,6 +96,34 @@ async function listAccessible(ctx, sub) {
       };
     });
   return datasets;
+}
+
+async function listOrphans(ctx) {
+  const Dataset = getModel(ctx, 'Dataset');
+  const Member = getModel(ctx, 'Member');
+
+  const results = await Dataset.findAll({
+    include: {
+      required: false,
+      model: Member,
+      as: 'members',
+      attributes: ['permission', 'sub'],
+    },
+    where: {
+      hash: {
+        [Op.not]: null,
+      },
+    },
+    paranoid: false,
+    order: [['createdAt', 'DESC']],
+  });
+  const orphans = results.filter((dset) => {
+    const readers = dset.members.filter(
+      (m) => m.permission !== 'none',
+    );
+    return readers.length === 0;
+  });
+  return orphans;
 }
 
 async function create(ctx, properties) {
@@ -109,7 +138,7 @@ async function create(ctx, properties) {
         ...properties,
         mnemonic,
       });
-      return newDataset.get({ plain: true });
+      return newDataset.get({plain: true});
     }
   }
   throw new Error('ID SPACE exhausted, this should never happen');
@@ -118,7 +147,7 @@ async function create(ctx, properties) {
 async function listMembers(ctx, mnemonic) {
   const Member = getModel(ctx, 'Member');
 
-  const { id } = await fromMnemonic(ctx, mnemonic);
+  const {id} = await fromMnemonic(ctx, mnemonic);
   const members = await Member.findAll({
     where: {
       datasetId: id,
@@ -130,7 +159,7 @@ async function listMembers(ctx, mnemonic) {
 async function getMemberAccess(ctx, mnemonic, sub) {
   const Member = getModel(ctx, 'Member');
 
-  const { id } = await fromMnemonic(ctx, mnemonic);
+  const {id} = await fromMnemonic(ctx, mnemonic);
   const entry = await Member.findOne({
     where: {
       datasetId: id,
@@ -142,10 +171,10 @@ async function getMemberAccess(ctx, mnemonic, sub) {
 async function setMemberAccess(ctx, mnemonic, sub, permission) {
   const Member = getModel(ctx, 'Member');
 
-  const { id } = await fromMnemonic(ctx, mnemonic);
+  const {id} = await fromMnemonic(ctx, mnemonic);
 
   await Member.update(
-    { permission },
+    {permission},
     {
       where: {
         datasetId: id,
@@ -188,7 +217,7 @@ async function findChunk(ctx, mnemonic, hash) {
   if (!result) {
     return null;
   }
-  return result.get({ plain: true });
+  return result.get({plain: true});
 }
 
 async function findDuplicate(ctx, sub, fileName, size, chunkHash) {
@@ -206,7 +235,7 @@ async function findDuplicate(ctx, sub, fileName, size, chunkHash) {
   if (!result) {
     return null;
   }
-  const { id, hash } = result.get({ plain: true });
+  const {id, hash} = result.get({plain: true});
   const Chunk = getModel(ctx, 'Chunk');
   const match = await Chunk.findOne({
     where: {
@@ -232,7 +261,7 @@ async function addChunk(ctx, mnemonic, properties) {
 }
 async function listChunks(ctx, mnemonic) {
   const Chunk = getModel(ctx, 'Chunk');
-  const { id } = await fromMnemonic(ctx, mnemonic);
+  const {id} = await fromMnemonic(ctx, mnemonic);
   const chunks = await Chunk.findAll({
     raw: true,
     where: {
@@ -333,7 +362,7 @@ async function dropKeys(ctx, mnemonic) {
 
 async function findKey(ctx, mnemonic, publicKeyId) {
   const Key = getModel(ctx, 'Key');
-  const { id } = await fromMnemonic(ctx, mnemonic);
+  const {id} = await fromMnemonic(ctx, mnemonic);
   return Key.findOne({
     where: {
       datasetId: id,
@@ -344,7 +373,7 @@ async function findKey(ctx, mnemonic, publicKeyId) {
 async function destroyKeys(ctx, mnemonic) {
   const Key = getModel(ctx, 'Key');
 
-  const { id } = await fromMnemonic(ctx, mnemonic);
+  const {id} = await fromMnemonic(ctx, mnemonic);
   await Key.destroy({
     where: {
       datasetId: id,
@@ -356,7 +385,7 @@ async function destroyKeys(ctx, mnemonic) {
 async function destroy(ctx, mnemonic) {
   log.warn(`DESTROYING DATASET ${mnemonic}`);
 
-  const { id } = await fromMnemonic(ctx, mnemonic);
+  const {id} = await fromMnemonic(ctx, mnemonic);
 
   const Member = getModel(ctx, 'Member');
   await Member.destroy({
@@ -389,7 +418,7 @@ async function destroy(ctx, mnemonic) {
 }
 
 async function remove(ctx, mnemonic) {
-  const { id } = await fromMnemonic(ctx, mnemonic);
+  const {id} = await fromMnemonic(ctx, mnemonic);
 
   const Member = getModel(ctx, 'Member');
   await Member.destroy({
@@ -418,7 +447,7 @@ async function remove(ctx, mnemonic) {
 }
 
 async function recover(ctx, mnemonic) {
-  const { id } = await fromMnemonic(ctx, mnemonic);
+  const {id} = await fromMnemonic(ctx, mnemonic);
   const Member = getModel(ctx, 'Member');
   await Member.restore({
     where: {
@@ -458,6 +487,7 @@ export default {
   fromMnemonic,
   listAll,
   listIncomplete,
+  listOrphans,
   findUpload,
   listAccessible,
   create,

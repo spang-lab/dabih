@@ -7,6 +7,7 @@ import Dataset from './Dataset';
 import SearchBar from './SearchBar';
 
 import { DatasetsWrapper, useDatasets } from './Context';
+import Orphans from './Orphans';
 
 export function DatasetList() {
   const { datasets, searchParams } = useDatasets();
@@ -30,6 +31,7 @@ export function DatasetList() {
   }
   return (
     <div>
+      <Orphans />
       {datasets.map((dset) => (
         <Dataset key={dset.mnemonic} data={dset} />
       ))}

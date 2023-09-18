@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 
 const permissions = ['none', 'read', 'write'];
 
-function permissionIndex(p) {
+export function permissionIndex(p) {
   const perm = p.toLowerCase();
   const idx = permissions.indexOf(perm);
   if (idx === -1) {
@@ -11,7 +11,7 @@ function permissionIndex(p) {
   return idx;
 }
 
-function permission(idx) {
+export function permission(idx) {
   if (idx < 0 || idx >= permissions.length) {
     throw new Error(`Invalid permission idx, must be between 0 and ${permissions.length}`);
   }

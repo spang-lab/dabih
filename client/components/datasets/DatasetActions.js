@@ -1,7 +1,7 @@
 'use client';
 
-import React, { Fragment, useState } from 'react';
-import { Menu, Transition, Dialog } from '@headlessui/react';
+import React, { Fragment } from 'react';
+import { Menu, Transition } from '@headlessui/react';
 import {
   ChevronDown,
   Trash2,
