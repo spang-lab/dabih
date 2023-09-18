@@ -3,7 +3,8 @@ use inquire::Text;
 use inquire::{validator::Validation, Confirm};
 use url::Url;
 
-use crate::config::{read_context, read_private_key, write_config, Config};
+use crate::config::{read_context, write_config, Config};
+use crate::crypto::read_private_key;
 
 fn get_url() -> Result<String> {
     let validator = |input: &str| match Url::parse(input) {
@@ -35,7 +36,7 @@ fn get_token(url: String) -> Result<String> {
     Ok(text)
 }
 
-pub async fn init(key_file: String) -> Result<()> {
+pub async fn init(key_file: &String) -> Result<()> {
     let existing = match read_context() {
         Ok(_) => true,
         Err(_) => false,

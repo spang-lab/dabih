@@ -1,6 +1,7 @@
 import { sha256 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 import { sendError } from '../../util/index.js';
+import { getStorage } from '../../storage/init.js';
 
 const areChunksComplete = (chunks) => {
   const n = chunks.length;
@@ -20,8 +21,10 @@ const areChunksComplete = (chunks) => {
 
 const route = async (ctx) => {
   const { mnemonic } = ctx.params;
+  const storage = getStorage();
 
   const chunks = await dataset.listChunks(ctx, mnemonic);
+  const keys = await dataset.listRecoveryKeys(ctx, mnemonic);
 
   if (!areChunksComplete(chunks)) {
     sendError(ctx, 'Uploaded chunks are incomplete');
@@ -35,6 +38,16 @@ const route = async (ctx) => {
     hash: fullHash,
     size,
   });
+
+  const dset = await dataset.fromMnemonic(ctx, mnemonic);
+  const recovery = {
+    dataset: {
+      ...dset,
+      chunks,
+    },
+    keys,
+  };
+  await storage.writeRecovery(mnemonic, recovery);
 
   ctx.body = { hash: fullHash };
 };

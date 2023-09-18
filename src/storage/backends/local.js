@@ -5,11 +5,13 @@ import {
   rename,
   rm,
   constants,
+  writeFile,
 } from 'node:fs/promises';
 import {
   resolve,
   join,
 } from 'node:path';
+import yaml from 'js-yaml';
 import {
   base64ToBase64Url,
 } from '../../crypto/index.js';
@@ -79,6 +81,18 @@ const init = async () => {
       throw new Error(`Failed to create file ${path}`);
     }
   };
+
+  const writeRecovery = async (mnemonic, recovery) => {
+    const fileName = 'recovery.yaml';
+    const folder = join(basePath, mnemonic);
+    if (!await exists(folder)) {
+      return;
+    }
+    const filePath = join(folder, fileName);
+    const content = yaml.dump(recovery);
+    await writeFile(filePath, content);
+  };
+
   const move = async (mnemonic, newMnemonic) => {
     const folder = join(basePath, mnemonic);
     if (!await exists(folder)) {
@@ -122,6 +136,7 @@ const init = async () => {
   return {
     create,
     move,
+    writeRecovery,
     open: openChunk,
     exists: chunkExists,
     destroyDataset,

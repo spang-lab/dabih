@@ -248,6 +248,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_complete"
+version = "4.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4110a1e6af615a9e6d0a36f805d5c99099f8bab9b8042f5bc1fa220a4a89e36f"
+dependencies = [
+ "clap",
+]
+
+[[package]]
 name = "clap_derive"
 version = "4.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -378,11 +387,12 @@ dependencies = [
 
 [[package]]
 name = "dabih"
-version = "1.9.17"
+version = "1.10.8"
 dependencies = [
  "anyhow",
  "base64",
  "clap",
+ "clap_complete",
  "flate2",
  "glob",
  "home",

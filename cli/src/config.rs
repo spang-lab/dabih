@@ -6,11 +6,11 @@ use serde::{Deserialize, Serialize};
 use std::env;
 use std::fmt;
 use std::fs;
-use std::io::Read;
 use std::io::Write;
 use std::path::PathBuf;
 use url::Url;
 
+use crate::crypto::fingerprint;
 use crate::crypto::sha256;
 
 pub struct Context {
@@ -86,23 +86,6 @@ pub fn create_client(token: String) -> Result<Client> {
     Ok(client)
 }
 
-pub fn read_private_key(key_file: String) -> Result<Rsa<Private>> {
-    let rel_path = PathBuf::from(key_file);
-    let path = fs::canonicalize(&rel_path)?;
-    let mut pem_data = Vec::new();
-    let mut file = fs::File::open(path)?;
-    file.read_to_end(&mut pem_data)?;
-
-    let key = match Rsa::private_key_from_pem(&pem_data) {
-        Ok(f) => f,
-        Err(_) => bail!("Invalid key file"),
-    };
-    Ok(key)
-
-    // let string = String::from_utf8(pem_data)?;
-    // Ok(string)
-}
-
 pub fn read_context() -> Result<Context> {
     let path = get_path()?;
     let file = match fs::File::open(&path) {
@@ -117,12 +100,10 @@ pub fn read_context() -> Result<Context> {
 
     let pem_data = private_key.as_bytes();
     let key = Rsa::private_key_from_pem(pem_data)?;
-    let buffer = key.public_key_to_der()?;
+    let fingerprint = fingerprint(&key)?;
 
-    let buffer2 = key.public_key_to_pem_pkcs1()?;
-    let public_key = String::from_utf8(buffer2)?;
-
-    let fingerprint = sha256(&buffer);
+    let buffer = key.public_key_to_pem_pkcs1()?;
+    let public_key = String::from_utf8(buffer)?;
 
     let client = create_client(token.clone())?;
     return Ok(Context {

@@ -1,4 +1,6 @@
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, CommandFactory, Parser, Subcommand};
+use clap_complete::{generate, Generator, Shell};
+use std::io;
 
 use anyhow::{bail, Result};
 mod api;
@@ -6,6 +8,7 @@ mod config;
 mod crypto;
 mod download;
 mod init;
+mod recovery;
 mod upload;
 
 #[cfg(feature = "sftp")]
@@ -28,10 +31,14 @@ enum Commands {
     Upload(UploadArgs),
     /// Download a dataset from dabih
     Download(DownloadArgs),
+    /// Recover a dataset with a root key
+    Recover(RecoverArgs),
     /// Show the Configuration and check if it is valid
     Config,
     /// Generate a (root) RSA key pair for use with dabih.
     Keygen(KeygenArgs),
+    /// Generate shell completions
+    Completion(CompletionArgs),
     #[cfg(feature = "sftp")]
     /// Use SFTP to scan for files to upload.
     Sftp(SftpArgs),
@@ -49,6 +56,23 @@ struct KeygenArgs {
     /// The path where to new key should be stored
     #[arg(value_name = "rootKeyFile")]
     key_file: Option<String>,
+}
+
+#[derive(Args)]
+struct RecoverArgs {
+    /// The path where to new key should be stored
+    #[arg(short, long, value_name = "rootKeyFile")]
+    key_file: String,
+    #[arg(short, long)]
+    output: Option<String>,
+
+    path: String,
+}
+
+#[derive(Args)]
+struct CompletionArgs {
+    /// One of [Bash, Elvish, Fish, PowerShell, Zsh]
+    shell: Shell,
 }
 
 #[derive(Args)]
@@ -101,7 +125,8 @@ async fn main() -> Result<()> {
     // matches just as you would the top level cmd
     match &cli.command {
         Commands::Init(args) => {
-            init::init(args.key_file.clone()).await?;
+            let InitArgs { key_file } = args;
+            init::init(key_file).await?;
         }
         Commands::Config => {
             match config::get_path() {
@@ -141,6 +166,23 @@ async fn main() -> Result<()> {
         Commands::Keygen(args) => {
             let KeygenArgs { key_file } = args;
             crypto::generate_keypair(key_file)?;
+        }
+        Commands::Recover(args) => {
+            let RecoverArgs {
+                key_file,
+                path,
+                output,
+            } = args;
+            recovery::recover(key_file, path, output)?;
+        }
+        Commands::Completion(args) => {
+            let CompletionArgs { shell } = args;
+            generate(
+                shell.clone(),
+                &mut Cli::command(),
+                "dabih",
+                &mut io::stdout(),
+            );
         }
         #[cfg(feature = "sftp")]
         Commands::Sftp(args) => {
