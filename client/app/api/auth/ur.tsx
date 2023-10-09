@@ -108,6 +108,9 @@ export default function UniRegensburgProvider({ enabled }): Provider {
         return null;
       }
       const { uid, password } = credentials;
+      if (!password || !password.length) {
+        return null;
+      }
       const client = urClient();
       const results = await findUser(client, uid);
       if (results.length === 0) {
