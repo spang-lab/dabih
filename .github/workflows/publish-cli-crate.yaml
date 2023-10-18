@@ -9,10 +9,13 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [linux, macos, arm_macos, windows]
-        target: [x86_64-unknown-linux-gnu, x86_64-apple-darwin, aarch64-apple-darwin, x86_64-pc-windows-gnu]
+        os:
+          - { name: linux, target: x86_64-unknown-linux-gnu }
+          - { name: macos, target: x86_64-apple-darwin }
+          - { name: arm_macos, target: aarch64-apple-darwin }
+          - { name: windows, target: x86_64-pc-windows-gnu }
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os.name }}
 
     steps:
     - name: Checkout code
@@ -23,16 +26,16 @@ jobs:
       with:
         toolchain: stable
 
-    - name: Build CLI for ${{ matrix.target }}
-      run: cargo build --manifest-path cli/Cargo.toml --release --target ${{ matrix.target }}
+    - name: Build CLI for ${{ matrix.os.target }}
+      run: cargo build --manifest-path cli/Cargo.toml --release --target ${{ matrix.os.target }}
 
     - name: Archive Artifact
       run: |
         cd cli
-        if [[ "${{ matrix.os }}" == "windows" ]]; then
-          7z a -tzip dabih_${{ matrix.os }}.zip target/${{ matrix.target }}/release/dabih.exe
+        if [[ "${{ matrix.os.name }}" == "windows" ]]; then
+          7z a -tzip dabih_${{ matrix.os.name }}.zip target/${{ matrix.os.target }}/release/dabih.exe
         else
-          tar czf dabih_${{ matrix.os }}.tar.gz -C target/${{ matrix.target }}/release .
+          tar czf dabih_${{ matrix.os }}.tar.gz -C target/${{ matrix.os.target }}/release .
         fi
         cd -
 
@@ -40,10 +43,10 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        files: cli/dabih_${{ matrix.os }}.zip
+        files: cli/dabih_${{ matrix.os.name }}.zip
 
     - name: Publish Release ID
-      run: echo "RELEASE_ID_${{ matrix.os}}=${{ steps.create_release.outputs.id }}" >> $GITHUB_ENV
+      run: echo "RELEASE_ID_${{ matrix.os.name}}=${{ steps.create_release.outputs.id }}" >> $GITHUB_ENV
 
   publish:
     name: Publish
