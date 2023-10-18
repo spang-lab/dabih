@@ -114,7 +114,6 @@ async function listOrphans(ctx) {
         [Op.not]: null,
       },
     },
-    paranoid: false,
     order: [['createdAt', 'DESC']],
   });
   const orphans = results.filter((dset) => {
