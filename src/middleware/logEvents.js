@@ -18,7 +18,7 @@ const getMessage = (ctx, eventName) => {
     case 'KEY_ADD':
       return 'New key added';
     case 'DATASET_MEMBER_ADD':
-      return `${body.members.join(', ')} added to dataset`;
+      return 'User added to dataset';
     case 'DATASET_MEMBER_SET':
       return `${body.user} permission set to ${body.permission}`;
     case 'DATASET_REENCRYPT':

@@ -85,7 +85,12 @@ pub fn recover(key_file: &String, path_str: &String, output: &Option<String>) ->
 
     let mut file = File::create(output_path)?;
 
-    let total_size = match dataset.chunks.get(0) {
+    let chunks = match dataset.chunks {
+        Some(c) => c,
+        None => bail!("No chunks in dataset"),
+    };
+
+    let total_size = match chunks.get(0) {
         Some(c) => c.size,
         None => 0,
     };
@@ -94,7 +99,7 @@ pub fn recover(key_file: &String, path_str: &String, output: &Option<String>) ->
     pb.set_units(Units::Bytes);
     let message = format!("Recovering {} ", &dataset.mnemonic);
     pb.message(&message);
-    for chunk in &dataset.chunks {
+    for chunk in &chunks {
         let chunk_size = chunk.end - chunk.start;
         pb.add(chunk_size);
         let encrypted = read_chunk(&path, &chunk.url_hash)?;

@@ -47,7 +47,12 @@ pub async fn download_dataset(
 
     let mut file = File::create(path)?;
 
-    let total_size = match dataset.chunks.get(0) {
+    let chunks = match &dataset.chunks {
+        Some(c) => c,
+        None => bail!("No chunks in dataset"),
+    };
+
+    let total_size = match chunks.get(0) {
         Some(c) => c.size,
         None => 0,
     };
@@ -56,7 +61,7 @@ pub async fn download_dataset(
     pb.set_units(Units::Bytes);
     let message = format!("Downloading {} ", &dataset.mnemonic);
     pb.message(&message);
-    for chunk in &dataset.chunks {
+    for chunk in chunks {
         let chunk_size = chunk.end - chunk.start;
         pb.add(chunk_size);
         let encrypted = api::fetch_chunk(ctx, &dataset.mnemonic, &chunk.url_hash).await?;

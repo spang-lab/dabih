@@ -16,7 +16,11 @@ const route = async (ctx) => {
     sendError(ctx, 'You do not have permission to add members', 400);
     return;
   }
-  const { members, key } = ctx.request.body;
+  const { member, members, key } = ctx.request.body;
+  const memberList = members || [];
+  if (member) {
+    memberList.push(member);
+  }
 
   const aesKey = base64ToUint8(key);
   const keyHash = sha256.hash(aesKey);
@@ -24,7 +28,7 @@ const route = async (ctx) => {
     sendError(ctx, 'Invalid AES Key', 400);
     return;
   }
-  const promises = members.map(async (user) => {
+  const promises = memberList.map(async (user) => {
     await dataset.addMember(ctx, mnemonic, user, 'read');
   });
   await Promise.all(promises);

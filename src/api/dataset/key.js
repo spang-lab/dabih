@@ -11,6 +11,13 @@ const route = async (ctx) => {
     sendError(ctx, 'No mnemonic', 400);
     return;
   }
+  try {
+    await dataset.fromMnemonic(ctx, mnemonic);
+  } catch (err) {
+    sendError(ctx, `Dataset ${mnemonic} does not exist`);
+    return;
+  }
+
   const pubKey = await publicKey.find(ctx, {
     sub,
     hash: keyHash,
@@ -19,6 +26,7 @@ const route = async (ctx) => {
     sendError(ctx, `User ${sub} has no key with hash ${keyHash}`);
     return;
   }
+
   try {
     const { key } = await dataset.findKey(ctx, mnemonic, pubKey.id);
     ctx.body = key;

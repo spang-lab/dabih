@@ -5,7 +5,7 @@ use anyhow::{bail, Result};
 use crate::config::Context;
 use reqwest::header::{self, HeaderMap, HeaderName, HeaderValue};
 use reqwest::multipart::{Form, Part};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 struct User {
@@ -29,7 +29,7 @@ struct UploadResult {
     pub hash: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Chunk {
     pub hash: String,
     #[serde(rename = "urlHash")]
@@ -40,13 +40,30 @@ pub struct Chunk {
     pub size: u64,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Member {
+    pub sub: String,
+    pub permission: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Dataset {
     pub mnemonic: String,
+    pub name: Option<String>,
     pub hash: String,
     #[serde(rename = "fileName")]
     pub file_name: String,
-    pub chunks: Vec<Chunk>,
+    pub size: String,
+    #[serde(rename = "createdBy")]
+    pub created_by: String,
+    pub chunks: Option<Vec<Chunk>>,
+    pub members: Option<Vec<Member>>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SearchResult {
+    pub count: u64,
+    pub datasets: Vec<Dataset>,
 }
 
 async fn check_api(ctx: &Context) -> Result<()> {
@@ -189,6 +206,78 @@ pub async fn fetch_dataset(ctx: &Context, mnemonic: &String) -> Result<Dataset> 
     }
 }
 
+pub async fn search_datasets(
+    ctx: &Context,
+    query: String,
+    uploader: bool,
+    deleted: bool,
+    all: bool,
+) -> Result<Vec<Dataset>> {
+    let url = ctx.url.join("/api/v1/dataset/search")?;
+    let mut data = HashMap::new();
+    data.insert("query", query);
+    if uploader {
+        data.insert("uploader", "true".to_owned());
+    }
+    if deleted {
+        data.insert("deleted", "true".to_owned());
+    }
+    if all {
+        data.insert("all", "true".to_owned());
+    }
+    let res = ctx.client.post(url).json(&data).send().await?;
+    match res.error_for_status() {
+        Ok(res) => {
+            let SearchResult { count: _, datasets } = res.json().await?;
+            return Ok(datasets);
+        }
+        Err(e) => {
+            bail!("Failed to search: {}", e);
+        }
+    }
+}
+
+pub async fn add_member(
+    ctx: &Context,
+    mnemonic: &String,
+    sub: &String,
+    key: &String,
+) -> Result<()> {
+    let path = format!("/api/v1/dataset/{}/member/add", mnemonic);
+    let url = ctx.url.join(&path)?;
+    let mut data = HashMap::new();
+    data.insert("member", sub);
+    data.insert("key", key);
+    let res = ctx.client.post(url).json(&data).send().await?;
+    match res.error_for_status_ref() {
+        Ok(_) => Ok(()),
+        Err(_) => {
+            let text = res.text().await?;
+            bail!(text);
+        }
+    }
+}
+pub async fn set_member_access(
+    ctx: &Context,
+    mnemonic: &String,
+    sub: &String,
+    permission: &String,
+) -> Result<()> {
+    let path = format!("/api/v1/dataset/{}/member/set", mnemonic);
+    let url = ctx.url.join(&path)?;
+    let mut data = HashMap::new();
+    data.insert("user", sub);
+    data.insert("permission", permission);
+    let res = ctx.client.post(url).json(&data).send().await?;
+    match res.error_for_status_ref() {
+        Ok(_) => Ok(()),
+        Err(_) => {
+            let text = res.text().await?;
+            bail!(text);
+        }
+    }
+}
+
 pub async fn fetch_key(ctx: &Context, mnemonic: &String) -> Result<String> {
     let path = format!("/api/v1/dataset/{}/key", mnemonic);
     let url = ctx.url.join(&path)?;
@@ -196,8 +285,15 @@ pub async fn fetch_key(ctx: &Context, mnemonic: &String) -> Result<String> {
     let mut data = HashMap::new();
     data.insert("keyHash", ctx.fingerprint.clone());
     let res = ctx.client.post(url).json(&data).send().await?;
-    let key = res.text().await?;
-    Ok(key)
+    match res.error_for_status_ref() {
+        Ok(_) => {
+            let key = res.text().await?;
+            Ok(key)
+        }
+        Err(_) => {
+            bail!(res.text().await?)
+        }
+    }
 }
 
 pub async fn fetch_chunk(ctx: &Context, mnemonic: &String, hash: &String) -> Result<Vec<u8>> {

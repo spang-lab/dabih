@@ -8,6 +8,7 @@ mod config;
 mod crypto;
 mod download;
 mod init;
+mod member;
 mod recovery;
 mod upload;
 
@@ -37,6 +38,10 @@ enum Commands {
     Config,
     /// Generate a (root) RSA key pair for use with dabih.
     Keygen(KeygenArgs),
+    /// Search dabih
+    Search(SearchArgs),
+    /// Add a member to a dataset
+    AddMember(AddMemberArgs),
     /// Generate shell completions
     Completion(CompletionArgs),
     #[cfg(feature = "sftp")]
@@ -73,6 +78,29 @@ struct RecoverArgs {
 struct CompletionArgs {
     /// One of [Bash, Elvish, Fish, PowerShell, Zsh]
     shell: Shell,
+}
+
+#[derive(Args)]
+struct SearchArgs {
+    query: Option<String>,
+    #[arg(short, long, default_value_t = false)]
+    uploader: bool,
+    #[arg(short, long, default_value_t = false)]
+    deleted: bool,
+    #[arg(short, long, default_value_t = false)]
+    all: bool,
+    #[arg(short, long, default_value_t = false)]
+    id: bool,
+}
+#[derive(Args)]
+struct AddMemberArgs {
+    /// the mnemonic of the dataset you want to edit
+    mnemonic: String,
+    /// the userid of the new member
+    sub: String,
+    /// give the new member write permission
+    #[arg(short, long, default_value_t = false)]
+    write: bool,
 }
 
 #[derive(Args)]
@@ -174,6 +202,39 @@ async fn main() -> Result<()> {
                 output,
             } = args;
             recovery::recover(key_file, path, output)?;
+        }
+        Commands::Search(args) => {
+            let SearchArgs {
+                query,
+                uploader,
+                deleted,
+                all,
+                id,
+            } = args;
+
+            let q = match query {
+                Some(q) => q.clone(),
+                None => "".to_owned(),
+            };
+            let ctx = config::read_context()?;
+            let datasets = api::search_datasets(&ctx, q, *uploader, *deleted, *all).await?;
+            if *id {
+                for dataset in datasets {
+                    println!("{}", dataset.mnemonic);
+                }
+            } else {
+                let json = serde_json::to_string_pretty(&datasets)?;
+                println!("{}", json);
+            }
+        }
+        Commands::AddMember(args) => {
+            let AddMemberArgs {
+                mnemonic,
+                sub,
+                write,
+            } = args;
+            let ctx = config::read_context()?;
+            member::add_member(&ctx, mnemonic, sub, *write).await?;
         }
         Commands::Completion(args) => {
             let CompletionArgs { shell } = args;
