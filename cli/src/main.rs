@@ -86,10 +86,6 @@ struct SearchArgs {
     #[arg(short, long, default_value_t = false)]
     uploader: bool,
     #[arg(short, long, default_value_t = false)]
-    deleted: bool,
-    #[arg(short, long, default_value_t = false)]
-    all: bool,
-    #[arg(short, long, default_value_t = false)]
     id: bool,
 }
 #[derive(Args)]
@@ -207,8 +203,6 @@ async fn main() -> Result<()> {
             let SearchArgs {
                 query,
                 uploader,
-                deleted,
-                all,
                 id,
             } = args;
 
@@ -217,7 +211,7 @@ async fn main() -> Result<()> {
                 None => "".to_owned(),
             };
             let ctx = config::read_context()?;
-            let datasets = api::search_datasets(&ctx, q, *uploader, *deleted, *all).await?;
+            let datasets = api::search_datasets(&ctx, q, *uploader).await?;
             if *id {
                 for dataset in datasets {
                     println!("{}", dataset.mnemonic);

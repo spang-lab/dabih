@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::os::macos::raw;
 
 use anyhow::{bail, Result};
 
@@ -50,10 +51,10 @@ pub struct Member {
 pub struct Dataset {
     pub mnemonic: String,
     pub name: Option<String>,
-    pub hash: String,
+    pub hash: Option<String>,
     #[serde(rename = "fileName")]
     pub file_name: String,
-    pub size: String,
+    pub size: Option<String>,
     #[serde(rename = "createdBy")]
     pub created_by: String,
     pub chunks: Option<Vec<Chunk>>,
@@ -206,24 +207,12 @@ pub async fn fetch_dataset(ctx: &Context, mnemonic: &String) -> Result<Dataset> 
     }
 }
 
-pub async fn search_datasets(
-    ctx: &Context,
-    query: String,
-    uploader: bool,
-    deleted: bool,
-    all: bool,
-) -> Result<Vec<Dataset>> {
+pub async fn search_datasets(ctx: &Context, query: String, uploader: bool) -> Result<Vec<Dataset>> {
     let url = ctx.url.join("/api/v1/dataset/search")?;
     let mut data = HashMap::new();
     data.insert("query", query);
     if uploader {
         data.insert("uploader", "true".to_owned());
-    }
-    if deleted {
-        data.insert("deleted", "true".to_owned());
-    }
-    if all {
-        data.insert("all", "true".to_owned());
     }
     let res = ctx.client.post(url).json(&data).send().await?;
     match res.error_for_status() {
