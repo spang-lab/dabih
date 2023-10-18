@@ -6,51 +6,45 @@ on:
       - "v*"
 
 jobs:
-  binaries:
-    name: Binaries
-    runs-on: ubuntu-latest
+  build:
     strategy:
       matrix:
-        target: [
-            x86_64-unknown-linux-gnu,
-            x86_64-unknown-linux-musl,
-            x86_64-pc-windows-gnu,
-            #x86_64-apple-darwin,
-            #aarch64-apple-darwin,
-            #aarch64-pc-windows-msvc,
-          ]
+        os: [linux, macos, arm_macos, windows]
+        target: [x86_64-unknown-linux-gnu, x86_64-apple-darwin, aarch64-apple-darwin, x86_64-pc-windows-gnu]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-      - name: Install the windows toolchain.
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{ matrix.target }}
-          override: true
-      - name: Build the package
-        uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --release --manifest-path cli/Cargo.toml --target ${{ matrix.target }}
-      - name: Package
-        shell: bash
-        run: |
-          # tmp
-          cd cli/target/${{ matrix.target }}/release          
-          if [ "${{ matrix.target }}" = "x86_64-pc-windows-gnu" ]; then
-            zip ../../../dabih-${{ matrix.target }}.zip dabih.exe
-          else
-            tar czvf ../../../dabih-${{ matrix.target }}.tar.gz dabih
-          fi
-          cd -
-      - name: Publish
-        uses: softprops/action-gh-release@v1
-        with:
-          name: Dabih CLI
-          files: "cli/dabih*"
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Build CLI for ${{ matrix.target }}
+      run: cargo build --manifest-path cli/Cargo.toml --release --target ${{ matrix.target }}
+
+    - name: Archive Artifact
+      run: |
+        cd cli
+        if [[ "${{ matrix.os }}" == "windows" ]]; then
+          7z a -tzip dabih_${{ matrix.os }}.zip target/${{ matrix.target }}/release/dabih.exe
+        else
+          tar czf dabih_${{ matrix.os }}.tar.gz -C target/${{ matrix.target }}/release .
+        fi
+        cd -
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: cli/dabih_${{ matrix.os }}.zip
+
+    - name: Publish Release ID
+      run: echo "RELEASE_ID_${{ matrix.os}}=${{ steps.create_release.outputs.id }}" >> $GITHUB_ENV
+
   publish:
     name: Publish
     runs-on: ubuntu-latest
