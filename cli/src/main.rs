@@ -1,5 +1,5 @@
 use clap::{Args, CommandFactory, Parser, Subcommand};
-use clap_complete::{generate, Generator, Shell};
+use clap_complete::{generate, Shell};
 use std::io;
 
 use anyhow::{bail, Result};

@@ -1,6 +1,5 @@
 use std::path::PathBuf;
 
-use crate::config::Context;
 use anyhow::bail;
 use anyhow::Result;
 use openssl::pkey::Private;
@@ -57,7 +56,7 @@ pub fn decode_base64(value: &String) -> Result<Vec<u8>> {
     let data = decoder.decode(value)?;
     return Ok(data);
 }
-pub fn decode_base64_url(value: &String) -> Result<Vec<u8>> {
+pub fn _decode_base64_url(value: &String) -> Result<Vec<u8>> {
     let decoder = general_purpose::URL_SAFE_NO_PAD;
     let data = decoder.decode(value)?;
     return Ok(data);

@@ -11,7 +11,6 @@ use std::path::PathBuf;
 use url::Url;
 
 use crate::crypto::fingerprint;
-use crate::crypto::sha256;
 
 pub struct Context {
     pub url: Url,
