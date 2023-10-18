@@ -1,6 +1,6 @@
 {
   "name": "dabih-tauri",
-  "version": "1.10.14",
+  "version": "1.10.15",
   "private": true,
   "scripts": {
     "dev": "next dev",
