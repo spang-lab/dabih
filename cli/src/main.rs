@@ -7,6 +7,7 @@ mod api;
 mod config;
 mod crypto;
 mod download;
+mod hash;
 mod init;
 mod member;
 mod recovery;
@@ -40,6 +41,8 @@ enum Commands {
     Keygen(KeygenArgs),
     /// Search dabih
     Search(SearchArgs),
+    /// Hash files
+    Hash(HashArgs),
     /// Add a member to a dataset
     AddMember(AddMemberArgs),
     /// Generate shell completions
@@ -117,6 +120,12 @@ struct UploadArgs {
     /// Max number of files that should be uploaded, set to -1 for unlimited.
     #[arg(short, long, default_value_t = 10)]
     limit: i64,
+}
+
+#[derive(Args)]
+struct HashArgs {
+    /// The files that should be hashed , this can also be a glob pattern
+    paths: Vec<String>,
 }
 
 #[derive(Args)]
@@ -220,6 +229,11 @@ async fn main() -> Result<()> {
                 let json = serde_json::to_string_pretty(&datasets)?;
                 println!("{}", json);
             }
+        }
+        Commands::Hash(args) => {
+            let HashArgs { paths } = args;
+            let files = upload::resolve(paths.clone(), true, false, -1)?;
+            hash::hash_files(&files)?;
         }
         Commands::AddMember(args) => {
             let AddMemberArgs {
