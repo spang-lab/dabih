@@ -13,6 +13,8 @@ mod member;
 mod recovery;
 mod upload;
 
+use config::Context;
+
 #[cfg(feature = "sftp")]
 pub mod sftp;
 
@@ -56,7 +58,7 @@ enum Commands {
 struct InitArgs {
     /// The dabih private key to use for decryption
     #[arg(value_name = "privateKeyFile")]
-    key_file: String,
+    key_file: Option<String>,
 }
 
 #[derive(Args)]
@@ -162,12 +164,7 @@ async fn main() -> Result<()> {
             init::init(key_file).await?;
         }
         Commands::Config => {
-            match config::get_path() {
-                Ok(p) => println!("Reading config from {}", p.display()),
-                Err(e) => println!("{}", e),
-            };
-            let ctx = config::read_context()?;
-            println!("{}", &ctx);
+            let ctx = Context::read()?;
             api::check_key(&ctx).await?;
         }
         Commands::Upload(args) => {
@@ -182,7 +179,7 @@ async fn main() -> Result<()> {
             if files.is_empty() {
                 bail!("Did not find any files to upload.");
             }
-            let ctx = config::read_context()?;
+            let ctx = Context::read_without_key()?;
             for file in files {
                 upload::upload(&ctx, file, name.clone()).await?;
             }
@@ -193,7 +190,7 @@ async fn main() -> Result<()> {
                 output,
                 force,
             } = args;
-            let ctx = config::read_context()?;
+            let ctx = Context::read()?;
             download::download_all(&ctx, mnemonics, output, *force).await?;
         }
         Commands::Keygen(args) => {
@@ -219,7 +216,7 @@ async fn main() -> Result<()> {
                 Some(q) => q.clone(),
                 None => "".to_owned(),
             };
-            let ctx = config::read_context()?;
+            let ctx = Context::read()?;
             let datasets = api::search_datasets(&ctx, q, *uploader).await?;
             if *id {
                 for dataset in datasets {
@@ -241,7 +238,7 @@ async fn main() -> Result<()> {
                 sub,
                 write,
             } = args;
-            let ctx = config::read_context()?;
+            let ctx = Context::read()?;
             member::add_member(&ctx, mnemonic, sub, *write).await?;
         }
         Commands::Completion(args) => {

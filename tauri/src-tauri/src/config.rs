@@ -14,7 +14,7 @@ pub struct ConfigFile {
     pub name: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Config {
     pub url: Url,
     pub token: String,

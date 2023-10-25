@@ -43,7 +43,8 @@ pub async fn download_dataset(
     }
 
     let encrypted_key = api::fetch_key(ctx, &dataset.mnemonic).await?;
-    let key = crypto::decrypt_key(ctx.private_key.clone(), &encrypted_key)?;
+    let private_key = ctx.key()?;
+    let key = private_key.decrypt_key(&encrypted_key)?;
 
     let mut file = File::create(path)?;
 

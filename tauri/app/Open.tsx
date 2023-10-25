@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Switch } from '@headlessui/react';
 import Upload from './Upload';
 import useApi from './Api';
 
 export default function Open() {
   const { isReady } = useApi();
   const [files, setFiles] = useState<any[]>([]);
+  const [zip, setZip] = useState<boolean>(true);
+  const toggleZip = () => setZip(!zip);
 
   useEffect(() => {
     const listenProgress = async () => {
@@ -87,8 +90,9 @@ export default function Open() {
       if (!Array.isArray(selected)) {
         selected = [selected];
       }
-      const paths:string[] = await invoke('scan', {
+      const paths: string[] = await invoke('scan', {
         files: selected,
+        zip,
       });
 
       const data = paths.map((p) => {
@@ -123,20 +127,46 @@ export default function Open() {
         {' '}
         <span className="text-blue">your files</span>
       </h2>
-      <button
-        type="button"
-        onClick={() => onClick(false)}
-        className="bg-blue mx-1 text-white px-3 py-2 rounded-md"
-      >
-        Upload Files...
-      </button>
-      <button
-        type="button"
-        onClick={() => onClick(true)}
-        className="bg-blue mx-1 text-white px-3 py-2 rounded-md"
-      >
-        Upload Directory...
-      </button>
+      <div className="flex flex-row py-1">
+        <button
+          type="button"
+          onClick={() => onClick(false)}
+          className="bg-blue mx-1 text-white px-3 py-2 rounded-md"
+        >
+          Upload Files...
+        </button>
+        <button
+          type="button"
+          onClick={() => onClick(true)}
+          className="bg-blue mx-1 text-white px-3 py-1 rounded-md"
+        >
+          Upload Directory...
+          <p className="text-[10px]">
+            {(zip) ? 'as zip' : 'recursively'}
+          </p>
+        </button>
+        <div className="flex flex-row items-center px-2">
+          <Switch
+            checked={zip}
+            onChange={toggleZip}
+            className={`${zip ? 'bg-blue' : 'bg-gray-400'}
+            relative inline-flex h-[20px] w-[38px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+          >
+            <span
+              aria-hidden="true"
+              className={`${zip ? 'translate-x-4' : 'translate-x-0'}
+              pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+            />
+          </Switch>
+          <span className="text-xs font-bold pl-3">
+            Zip directories
+            <br />
+            before upload
+          </span>
+        </div>
+
+      </div>
+
       <div>
         {files.map((f) => <Upload key={f.path} data={f} />)}
       </div>

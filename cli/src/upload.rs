@@ -100,6 +100,7 @@ pub async fn upload_start(
 ) -> Result<Option<String>> {
     let file_name = path.file_name().unwrap();
     let fname = file_name.to_str().unwrap().to_owned();
+    let path_str = path.to_string_lossy().to_string();
     let mut file = File::open(&path)?;
     let file_size = file.metadata()?.len();
     let chunk_size = 2 * 1024 * 1024; // 2 MiB
@@ -110,7 +111,7 @@ pub async fn upload_start(
     let api::Upload {
         mnemonic,
         duplicate,
-    } = api::upload_start(ctx, fname, file_size, hash, name).await?;
+    } = api::upload_start(ctx, fname, path_str, file_size, hash, name).await?;
     if let Some(hash) = duplicate {
         let mut chunk_hashes = Vec::new();
         file.seek(io::SeekFrom::Start(0))?;

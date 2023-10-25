@@ -11,6 +11,7 @@ const route = async (ctx) => {
   const {
     name,
     fileName,
+    path,
     size,
     chunkHash,
   } = body;
@@ -28,6 +29,7 @@ const route = async (ctx) => {
     keyHash,
     createdBy: sub,
     fileName,
+    path,
     size,
     name,
   });

@@ -1,3 +1,4 @@
+use std::fs;
 use std::path::PathBuf;
 
 use anyhow::bail;
@@ -29,26 +30,91 @@ struct RootKeys {
     root_keys: Vec<Jwk>,
 }
 
-pub fn read_private_key(key_file: &String) -> Result<Rsa<Private>> {
-    let rel_path = PathBuf::from(key_file);
-    let path = canonicalize(&rel_path)?;
-    if !path.is_file() {
-        bail!("{} does not exist or is not readable", path.display());
-    }
-    let mut pem_data = Vec::new();
-    let mut file = File::open(path)?;
-    file.read_to_end(&mut pem_data)?;
-
-    let key = match Rsa::private_key_from_pem(&pem_data) {
-        Ok(f) => f,
-        Err(_) => bail!("Invalid key file"),
-    };
-    Ok(key)
+#[derive(Debug, Clone)]
+pub struct Key {
+    data: Rsa<Private>,
+    pub path: PathBuf,
 }
-pub fn fingerprint(key: &Rsa<Private>) -> Result<String> {
-    let buffer = key.public_key_to_der()?;
-    let fingerprint = sha256(&buffer);
-    Ok(fingerprint)
+
+impl Key {
+    pub fn from(path: PathBuf) -> Result<Key> {
+        let path = canonicalize(&path)?;
+        if !path.is_file() {
+            bail!("{} does not exist or is not readable", path.display());
+        }
+        let mut pem_data = Vec::new();
+        let mut file = File::open(&path)?;
+        file.read_to_end(&mut pem_data)?;
+
+        let key = match Rsa::private_key_from_pem(&pem_data) {
+            Ok(f) => f,
+            Err(_) => bail!("Invalid key file"),
+        };
+        Ok(Key { data: key, path })
+    }
+    pub fn fingerprint(&self) -> Result<String> {
+        let buffer = self.data.public_key_to_der()?;
+        let fingerprint = sha256(&buffer);
+        Ok(fingerprint)
+    }
+    pub fn find_in(path: PathBuf) -> Result<Option<Key>> {
+        let files = fs::read_dir(&path)?;
+        let mut keys = Vec::new();
+        for entry in files {
+            let file_path = entry?.path();
+            if file_path.is_dir() {
+                continue;
+            }
+            match Key::from(file_path) {
+                Ok(k) => keys.push(k),
+                Err(_e) => {}
+            }
+        }
+        if keys.len() == 0 {
+            return Ok(None);
+        }
+        let key = keys.pop().unwrap();
+        if keys.len() > 1 {
+            bail!(
+                "Multiple possible keys found in {}. Using {}",
+                path.display(),
+                key.path.display()
+            )
+        }
+        Ok(Some(key))
+    }
+
+    pub fn to_pem(&self) -> Result<String> {
+        let pem_data = self.data.private_key_to_pem()?;
+        let key = String::from_utf8(pem_data)?;
+        Ok(key)
+    }
+    pub fn decrypt_key(&self, encrypted: &String) -> Result<Vec<u8>> {
+        let data = decode_base64(encrypted)?;
+        let pkey = PKey::from_rsa(self.data.clone())?;
+        let mut decrypter = Decrypter::new(&pkey)?;
+        decrypter.set_rsa_padding(Padding::PKCS1_OAEP)?;
+        decrypter.set_rsa_oaep_md(MessageDigest::sha256())?;
+        let len = decrypter.decrypt_len(&data)?;
+        let mut decrypted = vec![0u8; len];
+        let dlen = decrypter.decrypt(&data, &mut decrypted)?;
+        decrypted.truncate(dlen);
+        Ok(decrypted)
+    }
+    pub fn write_to(&self, path: PathBuf) -> Result<()> {
+        if !path.is_dir() {
+            bail!("Path {} needs to be a directory", path.display());
+        }
+        let filename = match self.path.file_name() {
+            Some(s) => s,
+            None => bail!("No filename in {}", path.display()),
+        };
+        let new_path = path.join(filename);
+        let mut file = File::create(new_path)?;
+        let pem = self.to_pem()?;
+        file.write_all(pem.as_bytes())?;
+        Ok(())
+    }
 }
 
 pub fn decode_base64(value: &String) -> Result<Vec<u8>> {
@@ -76,20 +142,6 @@ pub fn sha256(bytes: &Vec<u8>) -> String {
     let result = hasher.finalize().to_vec();
     let hash = encode_base64(&result);
     return hash;
-}
-
-pub fn decrypt_key(private_key: Rsa<Private>, key: &String) -> Result<Vec<u8>> {
-    let data = decode_base64(key)?;
-    let pkey = PKey::from_rsa(private_key)?;
-    let mut decrypter = Decrypter::new(&pkey)?;
-    decrypter.set_rsa_padding(Padding::PKCS1_OAEP)?;
-    decrypter.set_rsa_oaep_md(MessageDigest::sha256())?;
-
-    let len = decrypter.decrypt_len(&data)?;
-    let mut decrypted = vec![0u8; len];
-    let dlen = decrypter.decrypt(&data, &mut decrypted)?;
-    decrypted.truncate(dlen);
-    Ok(decrypted)
 }
 
 pub fn decrypt_chunk(chunk: &Chunk, key: &Vec<u8>, data: &Vec<u8>) -> Result<Vec<u8>> {

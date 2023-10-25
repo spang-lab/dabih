@@ -1,129 +1,118 @@
 use anyhow::{bail, Result};
-use openssl::pkey::Private;
-use openssl::rsa::Rsa;
 use reqwest::{header, Client};
 use serde::{Deserialize, Serialize};
 use std::env;
-use std::fmt;
 use std::fs;
 use std::io::Write;
 use std::path::PathBuf;
 use url::Url;
 
-use crate::crypto::fingerprint;
-
-pub struct Context {
-    pub url: Url,
-    pub token: String,
-    pub private_key: Rsa<Private>,
-    pub public_key: String,
-    pub fingerprint: String,
-    pub client: Client,
-    pub config_path: PathBuf,
-}
-impl fmt::Display for Context {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "Config: {{\n  config_file:{}\n  url: {}\n  token: {}\n  key_fingerprint: {}\n  public_key: \n{}\n}}",
-            self.config_path.display(),
-            self.url,
-            self.token,
-            self.fingerprint,
-            self.public_key,
-        )
-    }
-}
+use crate::crypto::Key;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
     pub url: String,
     pub token: String,
-    #[serde(rename = "privateKey")]
-    pub private_key: String,
 }
-impl fmt::Display for Config {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{{\n  url: {}\n  token: {}\n  private_key: ******\n}}",
-            self.url, self.token
-        )
+
+pub struct Context {
+    pub url: Url,
+    pub token: String,
+    pub key: Option<Key>,
+    pub client: Client,
+}
+
+impl Context {
+    fn get_path() -> Result<PathBuf> {
+        let filename = "config.yaml";
+        let key = "XDG_CONFIG_HOME";
+        let config_folder = match env::var(key) {
+            Ok(v) => PathBuf::from(v).join("dabih"),
+            Err(_) => match home::home_dir() {
+                Some(v) => v.join(".dabih"),
+                None => bail!("Could not get home dir"),
+            },
+        };
+        let path = config_folder.join(filename);
+        Ok(path)
     }
-}
+    pub fn from(url: String, token: String) -> Result<Context> {
+        let authorization = format!("Bearer dabih_{}", token);
+        let mut headers = header::HeaderMap::new();
+        headers.insert(
+            header::AUTHORIZATION,
+            header::HeaderValue::from_str(&authorization)?,
+        );
+        let client = Client::builder().default_headers(headers).build()?;
 
-fn read_path() -> Result<PathBuf> {
-    let filename = "config.yaml";
-    let key = "XDG_CONFIG_HOME";
-    let config_folder = match env::var(key) {
-        Ok(v) => PathBuf::from(v).join("dabih"),
-        Err(_) => match home::home_dir() {
-            Some(v) => v.join(".dabih"),
-            None => bail!("Could not get home dir"),
-        },
-    };
-    let path = config_folder.join(filename);
-    Ok(path)
-}
-
-pub fn get_path() -> Result<PathBuf> {
-    let path = read_path()?;
-    if !path.exists() {
-        bail!("Config file {} does not exist.", path.display())
+        Ok(Context {
+            url: Url::parse(&url)?,
+            token,
+            key: None,
+            client,
+        })
     }
-    Ok(path)
-}
-
-pub fn create_client(token: String) -> Result<Client> {
-    let authorization = format!("Bearer dabih_{}", token);
-    let mut headers = header::HeaderMap::new();
-    headers.insert(
-        header::AUTHORIZATION,
-        header::HeaderValue::from_str(&authorization)?,
-    );
-    let client = Client::builder().default_headers(headers).build()?;
-    Ok(client)
-}
-
-pub fn read_context() -> Result<Context> {
-    let path = get_path()?;
-    let file = match fs::File::open(&path) {
-        Ok(f) => f,
-        Err(_) => bail!("Failed to open config file {}", path.to_string_lossy()),
-    };
-    let Config {
-        url,
-        token,
-        private_key,
-    } = serde_yaml::from_reader(file)?;
-
-    let pem_data = private_key.as_bytes();
-    let key = Rsa::private_key_from_pem(pem_data)?;
-    let fingerprint = fingerprint(&key)?;
-
-    let buffer = key.public_key_to_pem_pkcs1()?;
-    let public_key = String::from_utf8(buffer)?;
-
-    let client = create_client(token.clone())?;
-    return Ok(Context {
-        url: Url::parse(&url)?,
-        token,
-        private_key: key,
-        fingerprint,
-        client,
-        config_path: path,
-        public_key,
-    });
-}
-
-pub fn write_config(config: &Config) -> Result<()> {
-    let yaml = serde_yaml::to_string(config)?;
-    let path = read_path()?;
-
-    if let Some(parent_dir) = &path.parent() {
-        fs::create_dir_all(parent_dir)?;
+    pub fn read_without_key() -> Result<Context> {
+        let path = Self::get_path()?;
+        if !path.exists() {
+            bail!("Config file {} does not exist.", path.display())
+        }
+        let file = match fs::File::open(&path) {
+            Ok(f) => f,
+            Err(_) => bail!("Failed to open config file {}", path.to_string_lossy()),
+        };
+        let Config { url, token } = serde_yaml::from_reader(file)?;
+        Self::from(url, token)
     }
-    let mut file = fs::File::create(&path)?;
-    file.write_all(yaml.as_bytes())?;
-    Ok(())
+    pub fn read() -> Result<Context> {
+        let mut ctx = Self::read_without_key()?;
+        let path = Self::get_path()?;
+        let folder = match path.parent() {
+            Some(p) => PathBuf::from(p),
+            None => bail!("Could not get parent folder of {}", path.display()),
+        };
+        let key = Key::find_in(folder)?;
+        ctx.key = key;
+        return Ok(ctx);
+    }
+    pub fn build(url: String, token: String, key_file: Option<String>) -> Result<Context> {
+        let mut ctx = Self::from(url, token)?;
+        if let Some(kfile) = key_file {
+            let path = PathBuf::from(kfile);
+            let key = Key::from(path)?;
+            ctx.key = Some(key);
+        }
+        Ok(ctx)
+    }
+    pub fn key(&self) -> Result<Key> {
+        match self.key.clone() {
+            Some(k) => Ok(k),
+            None => bail!("Private Key is required but not in config folder"),
+        }
+    }
+
+    pub fn write(&self) -> Result<()> {
+        let config = Config {
+            url: self.url.clone().into(),
+            token: self.token.clone(),
+        };
+        let yaml = serde_yaml::to_string(&config)?;
+        let path = Self::get_path()?;
+
+        if let Some(parent_dir) = &path.parent() {
+            fs::create_dir_all(parent_dir)?;
+        }
+        let mut file = fs::File::create(&path)?;
+        file.write_all(yaml.as_bytes())?;
+
+        if let Some(key) = self.key.clone() {
+            let folder = match path.parent() {
+                Some(p) => PathBuf::from(p),
+                None => bail!("Could not get parent folder of {}", path.display()),
+            };
+            key.write_to(folder)?;
+        }
+
+        Ok(())
+    }
 }

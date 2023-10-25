@@ -11,7 +11,7 @@ use config::Config;
 use std::path::PathBuf;
 
 #[tauri::command]
-async fn scan(app_handle: tauri::AppHandle, files: Vec<&str>) -> Result<Vec<PathBuf>> {
+async fn scan(app_handle: tauri::AppHandle, files: Vec<&str>, zip: bool) -> Result<Vec<PathBuf>> {
     let config_path = match app_handle.path_resolver().app_config_dir() {
         Some(p) => p,
         None => return Err(Error::ConfigDirError()),
@@ -20,7 +20,7 @@ async fn scan(app_handle: tauri::AppHandle, files: Vec<&str>) -> Result<Vec<Path
     let config = config::Config::from(config_file)?;
     api::get_user(&config).await?;
 
-    let files = upload::resolve(files)?;
+    let files = upload::resolve(files, zip)?;
     let paths = files.clone();
     Ok(paths)
 }

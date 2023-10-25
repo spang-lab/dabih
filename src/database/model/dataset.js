@@ -18,6 +18,9 @@ export default async function init(sequelize) {
     fileName: {
       type: DataTypes.TEXT,
     },
+    path: {
+      type: DataTypes.TEXT,
+    },
     hash: {
       type: DataTypes.STRING,
     },

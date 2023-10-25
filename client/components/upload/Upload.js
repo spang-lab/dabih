@@ -130,6 +130,7 @@ export default function Upload({ disabled }) {
 
   const onFileChange = async (files) => {
     const file = getFile(files);
+    console.log(file);
     if (!file) return;
     const { size } = file;
     const fileName = file.name;

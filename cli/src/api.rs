@@ -97,10 +97,17 @@ pub async fn check_key(ctx: &Context) -> Result<()> {
     check_api(ctx).await?;
     get_user(ctx).await?;
 
+    if ctx.key.is_none() {
+        println!("No private_key, only upload will work.");
+        return Ok(());
+    }
+
+    let fingerprint = ctx.key()?.fingerprint()?;
+
     let key_url = ctx.url.join("/api/v1/key/check")?;
 
     let mut data = HashMap::new();
-    data.insert("keyHash", ctx.fingerprint.clone());
+    data.insert("keyHash", &fingerprint);
     let res = ctx.client.post(key_url).json(&data).send().await?;
     let status: KeyStatus = match res.error_for_status() {
         Ok(res) => res.json().await?,
@@ -115,13 +122,14 @@ pub async fn check_key(ctx: &Context) -> Result<()> {
     if !valid {
         bail!("Invalid key")
     }
-    println!("Key with fingerprint {} is valid", &ctx.fingerprint);
+    println!("Key with fingerprint {} is valid", fingerprint);
     Ok(())
 }
 
 pub async fn upload_start(
     ctx: &Context,
     file_name: String,
+    path: String,
     size: u64,
     chunk_hash: String,
     name: Option<String>,
@@ -129,6 +137,7 @@ pub async fn upload_start(
     let url = ctx.url.join("/api/v1/upload/start")?;
     let mut data = HashMap::new();
     data.insert("fileName", file_name);
+    data.insert("path", path);
     data.insert("chunkHash", chunk_hash);
     data.insert("size", size.to_string());
     match name {
@@ -271,7 +280,7 @@ pub async fn fetch_key(ctx: &Context, mnemonic: &String) -> Result<String> {
     let url = ctx.url.join(&path)?;
 
     let mut data = HashMap::new();
-    data.insert("keyHash", ctx.fingerprint.clone());
+    data.insert("keyHash", ctx.key()?.fingerprint()?);
     let res = ctx.client.post(url).json(&data).send().await?;
     match res.error_for_status_ref() {
         Ok(_) => {

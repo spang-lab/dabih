@@ -38,13 +38,15 @@ fn sha256(bytes: &Vec<u8>) -> String {
     return hash;
 }
 
-pub fn resolve(paths: Vec<&str>) -> Result<Vec<PathBuf>> {
+pub fn resolve(paths: Vec<&str>, zip: bool) -> Result<Vec<PathBuf>> {
     let mut entries: Vec<PathBuf> = Vec::new();
     for path in paths {
         for entry in glob(&path)? {
             let path: PathBuf = entry?;
             if path.is_file() {
                 entries.push(path);
+            } else if path.is_dir() && zip {
+                dbg!(path);
             } else if path.is_dir() {
                 let mut files = expand_dir(path)?;
                 entries.append(&mut files);

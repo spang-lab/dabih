@@ -3,8 +3,7 @@ use inquire::Text;
 use inquire::{validator::Validation, Confirm};
 use url::Url;
 
-use crate::config::{read_context, write_config, Config};
-use crate::crypto::read_private_key;
+use crate::config::Context;
 
 fn get_url() -> Result<String> {
     let validator = |input: &str| match Url::parse(input) {
@@ -36,8 +35,8 @@ fn get_token(url: String) -> Result<String> {
     Ok(text)
 }
 
-pub async fn init(key_file: &String) -> Result<()> {
-    let existing = match read_context() {
+pub async fn init(key_file: &Option<String>) -> Result<()> {
+    let existing = match Context::read() {
         Ok(_) => true,
         Err(_) => false,
     };
@@ -50,16 +49,10 @@ pub async fn init(key_file: &String) -> Result<()> {
             return Ok(());
         }
     }
-    let key = read_private_key(key_file)?;
-    let pem_data = key.private_key_to_pem()?;
-    let private_key = String::from_utf8(pem_data)?;
-    let url = get_url()?;
 
-    let config = Config {
-        token: get_token(url.clone())?,
-        url,
-        private_key,
-    };
-    write_config(&config)?;
+    let url = get_url()?;
+    let token = get_token(url.clone())?;
+    let ctx = Context::build(url, token, key_file.clone())?;
+    ctx.write()?;
     Ok(())
 }

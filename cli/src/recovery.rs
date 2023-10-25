@@ -2,7 +2,7 @@ use anyhow::{bail, Result};
 use pbr::{ProgressBar, Units};
 
 use crate::api::Dataset;
-use crate::crypto::{decrypt_chunk, decrypt_key, fingerprint, read_private_key};
+use crate::crypto::{decrypt_chunk, Key};
 use serde::Deserialize;
 use std::fs::File;
 use std::io::{Read, Write};
@@ -52,8 +52,9 @@ fn read_chunk(path: &PathBuf, hash: &String) -> Result<Vec<u8>> {
 }
 
 pub fn recover(key_file: &String, path_str: &String, output: &Option<String>) -> Result<()> {
-    let key = read_private_key(key_file)?;
-    let root_fingerprint = fingerprint(&key)?;
+    let path = PathBuf::from(key_file);
+    let key = Key::from(path)?;
+    let root_fingerprint = key.fingerprint()?;
 
     let path = PathBuf::from(path_str);
     let recovery_path = path.join("recovery.yaml");
@@ -80,7 +81,7 @@ pub fn recover(key_file: &String, path_str: &String, output: &Option<String>) ->
         Some(k) => k,
         None => bail!("Root key {} is not in the recovery keys.", root_fingerprint),
     };
-    let aes_key = decrypt_key(key, &encrypted)?;
+    let aes_key = key.decrypt_key(&encrypted)?;
     let output_path = get_output_path(&path, &dataset.file_name, output)?;
 
     let mut file = File::create(output_path)?;
