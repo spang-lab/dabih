@@ -138,8 +138,13 @@ pub async fn upload_start(
     return Ok(Some(mnemonic));
 }
 
-pub async fn upload(ctx: &Context, path: PathBuf, name: Option<String>) -> Result<()> {
+pub async fn upload(ctx: &Context, path: PathBuf, cname: Option<String>) -> Result<()> {
     println!("Uploading file \"{}\"...", path.display());
+
+    let name = match cname {
+        Some(n) => Some(n),
+        None => ctx.name.clone(),
+    };
 
     let mnemonic = match upload_start(ctx, path.clone(), name).await? {
         Some(m) => m,

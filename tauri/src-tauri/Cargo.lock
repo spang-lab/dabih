@@ -675,9 +675,7 @@ dependencies = [
 
 [[package]]
 name = "dabih"
-version = "1.10.20"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "836f3212efe88e846a836357f750f58ac29339aa4f4480be744453712046b87c"
+version = "1.11.0"
 dependencies = [
  "anyhow",
  "base64 0.21.3",

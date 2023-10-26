@@ -3,24 +3,25 @@
 
 'use client';
 
+import yaml from 'js-yaml';
 import { Body } from '@tauri-apps/api/http';
 import React, {
   createContext, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 
-const defaultCtx:any = {};
+const defaultCtx: any = {};
 const ApiContext = createContext(defaultCtx);
 
 export function ApiWrapper({ children }) {
   const [auth, setAuth] = useState(null);
   const [user, setUser] = useState(null);
-  const configFile = 'config/app.conf';
+  const configFile = 'config/app.yaml';
 
   const loadConfig = async () => {
     const { readTextFile, BaseDirectory } = await import('@tauri-apps/api/fs');
     try {
-      const json = await readTextFile(configFile, { dir: BaseDirectory.AppConfig });
-      const config = JSON.parse(json);
+      const yamlStr = await readTextFile(configFile, { dir: BaseDirectory.AppConfig });
+      const config = yaml.load(yamlStr);
       setAuth(config);
     } catch (err) {
       // do nothing if config file does not exist
@@ -32,7 +33,7 @@ export function ApiWrapper({ children }) {
       exists, createDir, writeTextFile, BaseDirectory,
     } = await import('@tauri-apps/api/fs');
     const configDir = BaseDirectory.AppConfig;
-    const json = JSON.stringify(conf, null, 2);
+    const yamlStr = yaml.dump(conf);
 
     const dirExists = await exists('config', { dir: configDir });
     if (!dirExists) {
@@ -41,16 +42,16 @@ export function ApiWrapper({ children }) {
 
     await writeTextFile(
       configFile,
-      json,
+      yamlStr,
       { dir: BaseDirectory.AppConfig },
     );
   };
 
-  const post = useCallback(async (url, body = {}) => {
+  const post = useCallback(async (urlPath, body = {}) => {
     const { getClient } = await import('@tauri-apps/api/http');
     const client = await getClient();
-    const { baseUrl, token } = auth;
-    const fullUrl = `${baseUrl}${url}`;
+    const { url, token } = auth;
+    const fullUrl = `${url}${urlPath}`;
     return client.post(fullUrl, Body.json(body), {
       headers: {
         Authorization: `Bearer dabih_${token}`,
@@ -104,7 +105,7 @@ export function ApiWrapper({ children }) {
         });
         return;
       }
-      setAuth({ baseUrl, token, name });
+      setAuth({ url: baseUrl, token, name });
     } catch (err) {
       setUser({
         error: 'Failed to parse url',

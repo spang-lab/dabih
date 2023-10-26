@@ -75,7 +75,7 @@ async fn check_api(ctx: &Context) -> Result<()> {
     Ok(())
 }
 
-async fn get_user(ctx: &Context) -> Result<()> {
+pub async fn get_user(ctx: &Context) -> Result<()> {
     let token_url = ctx.url.join("/api/v1/token")?;
     let res = ctx.client.post(token_url).send().await?;
 

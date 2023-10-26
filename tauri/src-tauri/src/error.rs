@@ -28,6 +28,8 @@ pub enum Error {
     ResponseError(String),
     #[error("{0}")]
     Error(String),
+    #[error("{0}")]
+    CliError(#[from] anyhow::Error),
 }
 
 impl Serialize for Error {

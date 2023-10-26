@@ -13,6 +13,7 @@ use crate::crypto::Key;
 pub struct Config {
     pub url: String,
     pub token: String,
+    pub name: Option<String>,
 }
 
 pub struct Context {
@@ -21,6 +22,7 @@ pub struct Context {
     pub key: Option<Key>,
     pub client: Client,
     pub path: PathBuf,
+    pub name: Option<String>,
 }
 
 impl Context {
@@ -37,7 +39,12 @@ impl Context {
         let path = config_folder.join(filename);
         Ok(path)
     }
-    pub fn from(path: PathBuf, url: String, token: String) -> Result<Context> {
+    pub fn from(
+        path: PathBuf,
+        url: String,
+        token: String,
+        name: Option<String>,
+    ) -> Result<Context> {
         let authorization = format!("Bearer dabih_{}", token);
         let mut headers = header::HeaderMap::new();
         headers.insert(
@@ -52,6 +59,7 @@ impl Context {
             key: None,
             client,
             path,
+            name,
         })
     }
     pub fn read_without_key(path: PathBuf) -> Result<Context> {
@@ -62,8 +70,8 @@ impl Context {
             Ok(f) => f,
             Err(_) => bail!("Failed to open config file {}", path.to_string_lossy()),
         };
-        let Config { url, token } = serde_yaml::from_reader(file)?;
-        Self::from(path, url, token)
+        let Config { url, token, name } = serde_yaml::from_reader(file)?;
+        Self::from(path, url, token, name)
     }
     pub fn read(path: PathBuf) -> Result<Context> {
         let mut ctx = Self::read_without_key(path.clone())?;
@@ -80,8 +88,9 @@ impl Context {
         url: String,
         token: String,
         key_file: Option<String>,
+        name: Option<String>,
     ) -> Result<Context> {
-        let mut ctx = Self::from(path, url, token)?;
+        let mut ctx = Self::from(path, url, token, name)?;
         if let Some(kfile) = key_file {
             let path = PathBuf::from(kfile);
             let key = Key::from(path)?;
@@ -100,6 +109,7 @@ impl Context {
         let config = Config {
             url: self.url.clone().into(),
             token: self.token.clone(),
+            name: self.name.clone(),
         };
         let yaml = serde_yaml::to_string(&config)?;
 

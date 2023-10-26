@@ -53,7 +53,7 @@ pub async fn init(key_file: &Option<String>) -> Result<()> {
 
     let url = get_url()?;
     let token = get_token(url.clone())?;
-    let ctx = Context::build(path, url, token, key_file.clone())?;
+    let ctx = Context::build(path, url, token, key_file.clone(), None)?;
     ctx.write()?;
     Ok(())
 }

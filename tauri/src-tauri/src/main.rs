@@ -4,10 +4,8 @@
 mod error;
 use error::{Error, Result};
 
-mod api;
-mod config;
 mod upload;
-use config::Config;
+use dabih::{api, Context};
 use std::path::PathBuf;
 
 #[tauri::command]
@@ -16,9 +14,9 @@ async fn scan(app_handle: tauri::AppHandle, files: Vec<&str>, zip: bool) -> Resu
         Some(p) => p,
         None => return Err(Error::ConfigDirError()),
     };
-    let config_file = config_path.join("config/app.conf");
-    let config = config::Config::from(config_file)?;
-    api::get_user(&config).await?;
+    let config_file = config_path.join("config/app.yaml");
+    let ctx = Context::read_without_key(config_file)?;
+    api::get_user(&ctx).await?;
 
     let files = upload::resolve(files, zip)?;
     let paths = files.clone();
@@ -31,13 +29,13 @@ async fn upload(app_handle: tauri::AppHandle, file: &str) -> Result<Option<Strin
         Some(p) => p,
         None => return Err(Error::ConfigDirError()),
     };
-    let config_file = config_path.join("config/app.conf");
-    let config = config::Config::from(config_file)?;
+    let config_file = config_path.join("config/app.yaml");
+    let ctx = Context::read_without_key(config_file)?;
     let path = PathBuf::from(file);
 
-    let label = config.name.clone();
+    let label = ctx.name.clone();
 
-    let mnemonic = match upload::upload_start(&config, path.clone(), label).await? {
+    let mnemonic = match dabih::upload::upload_start(&ctx, path.clone(), label).await? {
         Some(m) => m,
         None => {
             return Ok(None);
@@ -46,7 +44,7 @@ async fn upload(app_handle: tauri::AppHandle, file: &str) -> Result<Option<Strin
 
     let result = mnemonic.clone();
     tauri::async_runtime::spawn(async move {
-        match upload::upload_chunks(&app_handle, &config, path, result).await {
+        match upload::upload_chunks(&app_handle, &ctx, path, result).await {
             Ok(_) => {}
             Err(_) => {}
         };
