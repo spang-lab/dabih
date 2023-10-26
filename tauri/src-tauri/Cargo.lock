@@ -701,7 +701,7 @@ dependencies = [
 
 [[package]]
 name = "dabih-uploader"
-version = "1.10.20"
+version = "1.11.0"
 dependencies = [
  "anyhow",
  "base64 0.21.3",
