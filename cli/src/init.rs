@@ -36,7 +36,8 @@ fn get_token(url: String) -> Result<String> {
 }
 
 pub async fn init(key_file: &Option<String>) -> Result<()> {
-    let existing = match Context::read() {
+    let path = Context::default_path()?;
+    let existing = match Context::read(path.clone()) {
         Ok(_) => true,
         Err(_) => false,
     };
@@ -52,7 +53,7 @@ pub async fn init(key_file: &Option<String>) -> Result<()> {
 
     let url = get_url()?;
     let token = get_token(url.clone())?;
-    let ctx = Context::build(url, token, key_file.clone())?;
+    let ctx = Context::build(path, url, token, key_file.clone())?;
     ctx.write()?;
     Ok(())
 }

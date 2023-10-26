@@ -20,10 +20,11 @@ pub struct Context {
     pub token: String,
     pub key: Option<Key>,
     pub client: Client,
+    pub path: PathBuf,
 }
 
 impl Context {
-    fn get_path() -> Result<PathBuf> {
+    pub fn default_path() -> Result<PathBuf> {
         let filename = "config.yaml";
         let key = "XDG_CONFIG_HOME";
         let config_folder = match env::var(key) {
@@ -36,7 +37,7 @@ impl Context {
         let path = config_folder.join(filename);
         Ok(path)
     }
-    pub fn from(url: String, token: String) -> Result<Context> {
+    pub fn from(path: PathBuf, url: String, token: String) -> Result<Context> {
         let authorization = format!("Bearer dabih_{}", token);
         let mut headers = header::HeaderMap::new();
         headers.insert(
@@ -50,10 +51,10 @@ impl Context {
             token,
             key: None,
             client,
+            path,
         })
     }
-    pub fn read_without_key() -> Result<Context> {
-        let path = Self::get_path()?;
+    pub fn read_without_key(path: PathBuf) -> Result<Context> {
         if !path.exists() {
             bail!("Config file {} does not exist.", path.display())
         }
@@ -62,11 +63,10 @@ impl Context {
             Err(_) => bail!("Failed to open config file {}", path.to_string_lossy()),
         };
         let Config { url, token } = serde_yaml::from_reader(file)?;
-        Self::from(url, token)
+        Self::from(path, url, token)
     }
-    pub fn read() -> Result<Context> {
-        let mut ctx = Self::read_without_key()?;
-        let path = Self::get_path()?;
+    pub fn read(path: PathBuf) -> Result<Context> {
+        let mut ctx = Self::read_without_key(path.clone())?;
         let folder = match path.parent() {
             Some(p) => PathBuf::from(p),
             None => bail!("Could not get parent folder of {}", path.display()),
@@ -75,8 +75,13 @@ impl Context {
         ctx.key = key;
         return Ok(ctx);
     }
-    pub fn build(url: String, token: String, key_file: Option<String>) -> Result<Context> {
-        let mut ctx = Self::from(url, token)?;
+    pub fn build(
+        path: PathBuf,
+        url: String,
+        token: String,
+        key_file: Option<String>,
+    ) -> Result<Context> {
+        let mut ctx = Self::from(path, url, token)?;
         if let Some(kfile) = key_file {
             let path = PathBuf::from(kfile);
             let key = Key::from(path)?;
@@ -97,18 +102,17 @@ impl Context {
             token: self.token.clone(),
         };
         let yaml = serde_yaml::to_string(&config)?;
-        let path = Self::get_path()?;
 
-        if let Some(parent_dir) = &path.parent() {
+        if let Some(parent_dir) = &self.path.parent() {
             fs::create_dir_all(parent_dir)?;
         }
-        let mut file = fs::File::create(&path)?;
+        let mut file = fs::File::create(&self.path)?;
         file.write_all(yaml.as_bytes())?;
 
         if let Some(key) = self.key.clone() {
-            let folder = match path.parent() {
+            let folder = match &self.path.parent() {
                 Some(p) => PathBuf::from(p),
-                None => bail!("Could not get parent folder of {}", path.display()),
+                None => bail!("Could not get parent folder of {}", self.path.display()),
             };
             key.write_to(folder)?;
         }

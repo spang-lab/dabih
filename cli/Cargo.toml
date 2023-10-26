@@ -13,8 +13,14 @@ categories = ["command-line-utilities"]
 
 [features]
 default = []
-sftp = ["dep:openssh-sftp-client", "dep:openssh"]
 
+[lib]
+name = "dabih"
+path = "src/lib.rs"
+
+[[bin]]
+name = "dabih"
+path = "src/main.rs"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

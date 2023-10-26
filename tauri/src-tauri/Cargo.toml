@@ -1,23 +1,23 @@
 [package]
-name = "dabih"
+name = "dabih-uploader"
 version = "1.10.20"
 description = "Dabih Uploader"
 authors = ["Michael Huttner"]
 license = "MIT"
 repository = "https://github.com/spang-lab/dabih"
-default-run = "dabih"
+default-run = "dabih-uploader"
 edition = "2021"
 rust-version = "1.60"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.4.0", features = [] }
+tauri-build = { version = "1.5.0", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4.0", features = [ "fs-read-dir", "fs-exists", "fs-write-file", "fs-create-dir", "fs-read-file", "http-all", "dialog-open"] }
+tauri = { version = "1.5.0", features = [ "fs-read-dir", "fs-exists", "fs-write-file", "fs-create-dir", "fs-read-file", "http-all", "dialog-open"] }
 anyhow = "1.0.72"
 base64 = "0.21.2"
 sha256 = "1.4.0"
@@ -29,6 +29,7 @@ zip = "0.6.6"
 thiserror = "1.0.48"
 glob = "0.3.1"
 sha2 = "0.10.7"
+dabih = "1.10.20"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

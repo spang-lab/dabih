@@ -3,20 +3,9 @@ use clap_complete::{generate, Shell};
 use std::io;
 
 use anyhow::{bail, Result};
-mod api;
-mod config;
-mod crypto;
-mod download;
-mod hash;
-mod init;
-mod member;
-mod recovery;
-mod upload;
 
-use config::Context;
-
-#[cfg(feature = "sftp")]
-pub mod sftp;
+use dabih::config::Context;
+use dabih::{api, crypto, download, hash, init, member, recovery, upload};
 
 /// Dabih Command line Interface
 #[derive(Parser)]
@@ -49,9 +38,6 @@ enum Commands {
     AddMember(AddMemberArgs),
     /// Generate shell completions
     Completion(CompletionArgs),
-    #[cfg(feature = "sftp")]
-    /// Use SFTP to scan for files to upload.
-    Sftp(SftpArgs),
 }
 
 #[derive(Args)]
@@ -164,7 +150,8 @@ async fn main() -> Result<()> {
             init::init(key_file).await?;
         }
         Commands::Config => {
-            let ctx = Context::read()?;
+            let path = Context::default_path()?;
+            let ctx = Context::read(path)?;
             api::check_key(&ctx).await?;
         }
         Commands::Upload(args) => {
@@ -179,7 +166,8 @@ async fn main() -> Result<()> {
             if files.is_empty() {
                 bail!("Did not find any files to upload.");
             }
-            let ctx = Context::read_without_key()?;
+            let path = Context::default_path()?;
+            let ctx = Context::read_without_key(path)?;
             for file in files {
                 upload::upload(&ctx, file, name.clone()).await?;
             }
@@ -190,7 +178,8 @@ async fn main() -> Result<()> {
                 output,
                 force,
             } = args;
-            let ctx = Context::read()?;
+            let path = Context::default_path()?;
+            let ctx = Context::read(path)?;
             download::download_all(&ctx, mnemonics, output, *force).await?;
         }
         Commands::Keygen(args) => {
@@ -216,7 +205,8 @@ async fn main() -> Result<()> {
                 Some(q) => q.clone(),
                 None => "".to_owned(),
             };
-            let ctx = Context::read()?;
+            let path = Context::default_path()?;
+            let ctx = Context::read(path)?;
             let datasets = api::search_datasets(&ctx, q, *uploader).await?;
             if *id {
                 for dataset in datasets {
@@ -238,7 +228,8 @@ async fn main() -> Result<()> {
                 sub,
                 write,
             } = args;
-            let ctx = Context::read()?;
+            let path = Context::default_path()?;
+            let ctx = Context::read(path)?;
             member::add_member(&ctx, mnemonic, sub, *write).await?;
         }
         Commands::Completion(args) => {
@@ -249,11 +240,6 @@ async fn main() -> Result<()> {
                 "dabih",
                 &mut io::stdout(),
             );
-        }
-        #[cfg(feature = "sftp")]
-        Commands::Sftp(args) => {
-            let ctx = config::read_context()?;
-            sftp::scan(&ctx)?;
         }
     };
     Ok(())
