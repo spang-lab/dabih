@@ -5,7 +5,7 @@ use std::io;
 use anyhow::{bail, Result};
 
 use dabih::config::Context;
-use dabih::{api, crypto, download, hash, init, member, recovery, upload};
+use dabih::{api, crypto, download, hash, init, member, progress, recovery, upload};
 
 /// Dabih Command line Interface
 #[derive(Parser)]
@@ -168,8 +168,9 @@ async fn main() -> Result<()> {
             }
             let path = Context::default_path()?;
             let ctx = Context::read_without_key(path)?;
+            let mut pb = progress::ProgressBar::new(0);
             for file in files {
-                upload::upload(&ctx, file, name.clone()).await?;
+                upload::upload(&ctx, file, name.clone(), &mut pb).await?;
             }
         }
         Commands::Download(args) => {

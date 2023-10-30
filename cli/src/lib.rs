@@ -5,6 +5,7 @@ pub mod download;
 pub mod hash;
 pub mod init;
 pub mod member;
+pub mod progress;
 pub mod recovery;
 pub mod upload;
 

@@ -1,7 +1,5 @@
 use anyhow::{bail, Result};
 use glob::glob;
-use pbr::{ProgressBar, Units};
-use sha2::digest::typenum::True;
 use std::fs::File;
 use std::io::{self, Read, Seek};
 use std::path::PathBuf;
@@ -9,9 +7,9 @@ use zip::write::FileOptions;
 
 use zip::ZipWriter;
 
-use crate::api;
 use crate::config::Context;
 use crate::crypto::{decode_base64, sha256};
+use crate::{api, progress};
 
 fn expand_dir(path: PathBuf) -> Result<Vec<PathBuf>> {
     let mut files = Vec::new();
@@ -108,7 +106,7 @@ pub async fn upload_start(
 ) -> Result<Option<String>> {
     let file_name = path.file_name().unwrap();
     let fname = file_name.to_str().unwrap().to_owned();
-    let path_str = path.to_string_lossy().to_string();
+    let path_str = path.canonicalize()?.to_string_lossy().to_string();
     let mut file = File::open(&path)?;
     let file_size = file.metadata()?.len();
     let chunk_size = 2 * 1024 * 1024; // 2 MiB
@@ -146,7 +144,12 @@ pub async fn upload_start(
     return Ok(Some(mnemonic));
 }
 
-pub async fn upload(ctx: &Context, path: PathBuf, cname: Option<String>) -> Result<()> {
+pub async fn upload(
+    ctx: &Context,
+    path: PathBuf,
+    cname: Option<String>,
+    pb: &mut dyn progress::Progress,
+) -> Result<()> {
     println!("Uploading \"{}\"...", path.display());
     let fpath = gzip_dir(path, ctx.get_tmp_dir()?)?;
 
@@ -164,11 +167,14 @@ pub async fn upload(ctx: &Context, path: PathBuf, cname: Option<String>) -> Resu
     };
     let mut file = File::open(&fpath)?;
     let file_size = file.metadata()?.len();
+    if file_size == 0 {
+        println!("Skipping empty file {}", fpath.display());
+        return Ok(());
+    }
 
     let mut chunk_hashes = Vec::new();
 
-    let mut pb = ProgressBar::new(file_size);
-    pb.set_units(Units::Bytes);
+    pb.set_total(file_size);
     let message = format!("as {} ", &mnemonic);
     pb.message(&message);
     let chunk_size = 2 * 1024 * 1024; // 2 MiB
