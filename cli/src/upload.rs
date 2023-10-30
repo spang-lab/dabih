@@ -1,6 +1,7 @@
 use anyhow::{bail, Result};
 use glob::glob;
 use pbr::{ProgressBar, Units};
+use sha2::digest::typenum::True;
 use std::fs::File;
 use std::io::{self, Read, Seek};
 use std::path::PathBuf;
@@ -24,17 +25,25 @@ fn expand_dir(path: PathBuf) -> Result<Vec<PathBuf>> {
     Ok(files)
 }
 
-fn gzip_dir(path: PathBuf) -> Result<PathBuf> {
-    let mut file_path = PathBuf::from(&path);
-    file_path.set_extension("zip");
-
-    if file_path.exists() {
-        bail!(
-            "Could not create {}, file already exists",
-            file_path.display()
-        );
+fn gzip_dir(path: PathBuf, target: PathBuf) -> Result<PathBuf> {
+    if path.is_file() {
+        return Ok(path);
     }
-    let zip_file = File::create(&file_path)?;
+    if !path.is_dir() {
+        bail!("Cannot gzip {}, not a directory", path.display());
+    }
+    let cpath = path.canonicalize()?;
+    let dirname = match cpath.file_name() {
+        Some(n) => n,
+        None => bail!("Could not get dirname for {}", path.display()),
+    };
+    if !target.is_dir() {
+        bail!("Target path {} is not a directory", target.display());
+    }
+    let mut target_file = target.join(dirname);
+    target_file.set_extension("zip");
+
+    let zip_file = File::create(&target_file)?;
     let mut archive = ZipWriter::new(zip_file);
     let glob_string = path.join("**/*");
     for entry in glob(&glob_string.to_string_lossy())? {
@@ -52,7 +61,7 @@ fn gzip_dir(path: PathBuf) -> Result<PathBuf> {
         io::copy(&mut fd, &mut archive)?;
     }
     archive.finish()?;
-    Ok(file_path)
+    Ok(target_file)
 }
 
 pub fn resolve(paths: Vec<String>, recursive: bool, zip: bool, limit: i64) -> Result<Vec<PathBuf>> {
@@ -69,8 +78,7 @@ pub fn resolve(paths: Vec<String>, recursive: bool, zip: bool, limit: i64) -> Re
                 let mut files = expand_dir(path)?;
                 entries.append(&mut files);
             } else if path.is_dir() && zip {
-                let zip_path = gzip_dir(path)?;
-                entries.push(zip_path);
+                entries.push(path);
             } else {
                 bail!("Could not handle path {}, set either the --recursive or --zip flag for folders", path.display());
             }
@@ -139,21 +147,22 @@ pub async fn upload_start(
 }
 
 pub async fn upload(ctx: &Context, path: PathBuf, cname: Option<String>) -> Result<()> {
-    println!("Uploading file \"{}\"...", path.display());
+    println!("Uploading \"{}\"...", path.display());
+    let fpath = gzip_dir(path, ctx.get_tmp_dir()?)?;
 
     let name = match cname {
         Some(n) => Some(n),
         None => ctx.name.clone(),
     };
 
-    let mnemonic = match upload_start(ctx, path.clone(), name).await? {
+    let mnemonic = match upload_start(ctx, fpath.clone(), name).await? {
         Some(m) => m,
         None => {
             println!("File already uploaded. Skipping.");
             return Ok(());
         }
     };
-    let mut file = File::open(&path)?;
+    let mut file = File::open(&fpath)?;
     let file_size = file.metadata()?.len();
 
     let mut chunk_hashes = Vec::new();

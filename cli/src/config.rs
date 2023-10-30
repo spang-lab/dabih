@@ -1,4 +1,5 @@
 use anyhow::{bail, Result};
+use rand::{distributions::Alphanumeric, Rng};
 use reqwest::{header, Client};
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -22,6 +23,7 @@ pub struct Context {
     pub key: Option<Key>,
     pub client: Client,
     pub path: PathBuf,
+    pub tmp_path: PathBuf,
     pub name: Option<String>,
 }
 
@@ -39,6 +41,20 @@ impl Context {
         let path = config_folder.join(filename);
         Ok(path)
     }
+    pub fn default_tmp_path() -> Result<PathBuf> {
+        Ok(std::env::temp_dir())
+    }
+    pub fn get_tmp_dir(&self) -> Result<PathBuf> {
+        let dirname: String = rand::thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(16)
+            .map(char::from)
+            .collect();
+        let path = self.tmp_path.join(dirname);
+        fs::create_dir_all(&path)?;
+        Ok(path)
+    }
+
     pub fn from(
         path: PathBuf,
         url: String,
@@ -52,6 +68,7 @@ impl Context {
             header::HeaderValue::from_str(&authorization)?,
         );
         let client = Client::builder().default_headers(headers).build()?;
+        let tmp_path = Self::default_tmp_path()?;
 
         Ok(Context {
             url: Url::parse(&url)?,
@@ -59,6 +76,7 @@ impl Context {
             key: None,
             client,
             path,
+            tmp_path,
             name,
         })
     }
@@ -82,6 +100,9 @@ impl Context {
         let key = Key::find_in(folder)?;
         ctx.key = key;
         return Ok(ctx);
+    }
+    pub fn set_tmp_path(&mut self, tmp_path: PathBuf) {
+        self.tmp_path = tmp_path;
     }
     pub fn build(
         path: PathBuf,
