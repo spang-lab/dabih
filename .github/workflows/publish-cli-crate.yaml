@@ -25,6 +25,7 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
+        target: ${{matrix.os.target}}
 
     - name: Build CLI for ${{ matrix.os.target }}
       run: cargo build --manifest-path cli/Cargo.toml --release --target ${{ matrix.os.target }}
