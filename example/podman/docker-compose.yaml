@@ -4,7 +4,7 @@ services:
   dabih-api:
     container_name: dabih-api
     #update this image version tag to deploy new versions
-    image: thespanglab/dabih-api:v1.11.0
+    image: thespanglab/dabih-api:v1.11.1
     environment:
       - CONFIG=/etc/config.yaml
     restart: always
@@ -24,7 +24,7 @@ services:
   dabih-client:
     container_name: dabih-client
     # update this image version tag to deploy new versions
-    image: thespanglab/dabih-client:v1.11.0
+    image: thespanglab/dabih-client:v1.11.1
     ports:
       - 3000:3000
     environment:
