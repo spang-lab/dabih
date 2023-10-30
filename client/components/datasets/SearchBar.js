@@ -5,6 +5,7 @@ import { Switch } from '@headlessui/react';
 import { useUser } from '../hooks';
 import { useDatasets } from './Context';
 import SortBy from './SortBy';
+import Pagination from './Pagination';
 
 function AdminOptions() {
   const { searchParams, setSearchParams } = useDatasets();
@@ -68,46 +69,6 @@ function AdminOptions() {
   );
 }
 
-function PageButton({ value, active }) {
-  const { searchParams, setSearchParams } = useDatasets();
-  const setPage = () => setSearchParams({
-    ...searchParams,
-    page: value,
-  });
-
-  if (active) {
-    return (
-      <div className="text-white bg-blue border rounded mx-1 border-blue px-2 py-1">
-        {value}
-      </div>
-    );
-  }
-  return (
-    <button
-      type="button"
-      onClick={setPage}
-      className="text-blue border rounded mx-1 border-blue px-2 py-1"
-    >
-      {value}
-    </button>
-  );
-}
-
-function Pagination() {
-  const { datasetCount, searchParams } = useDatasets();
-  const { page, limit } = searchParams;
-  const numPages = Math.ceil(datasetCount / limit);
-  const pages = [...Array(numPages)].map((_, i) => i + 1);
-
-  return (
-    <div className="px-4 flex items-center">
-      <span className="text-lg font-semibold">
-        Page:
-      </span>
-      {pages.map((p) => <PageButton key={p} value={p} active={p === page} />)}
-    </div>
-  );
-}
 
 export default function SearchBar() {
   const { searchParams, setSearchParams } = useDatasets();
@@ -158,7 +119,6 @@ export default function SearchBar() {
         </Switch>
         <div className="font-semibold">Show only my datasets</div>
       </div>
-      <Pagination />
       <div className="grow" />
       <SortBy />
       <AdminOptions />

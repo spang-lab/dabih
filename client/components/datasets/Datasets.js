@@ -5,6 +5,7 @@ import React from 'react';
 import Link from 'next/link';
 import Dataset from './Dataset';
 import SearchBar from './SearchBar';
+import Pagination from './Pagination';
 
 import { DatasetsWrapper, useDatasets } from './Context';
 import Orphans from './Orphans';
@@ -43,7 +44,9 @@ export default function Datasets() {
   return (
     <DatasetsWrapper>
       <SearchBar />
+      <Pagination />
       <DatasetList />
+      <Pagination />
     </DatasetsWrapper>
   );
 }
