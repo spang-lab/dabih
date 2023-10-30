@@ -5,7 +5,6 @@ import { Switch } from '@headlessui/react';
 import { useUser } from '../hooks';
 import { useDatasets } from './Context';
 import SortBy from './SortBy';
-import Pagination from './Pagination';
 
 function AdminOptions() {
   const { searchParams, setSearchParams } = useDatasets();
@@ -68,7 +67,6 @@ function AdminOptions() {
     </div>
   );
 }
-
 
 export default function SearchBar() {
   const { searchParams, setSearchParams } = useDatasets();
