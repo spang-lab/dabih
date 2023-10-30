@@ -28,7 +28,7 @@ jobs:
         target: ${{matrix.os.target}}
 
     - name: Setup MSYS2 on Windows
-      if: matrix.runner == 'windows-latest'
+      if: matrix.os.runner == 'windows-latest'
       uses: msys2/setup-msys2@v2
       with:
         update: true
