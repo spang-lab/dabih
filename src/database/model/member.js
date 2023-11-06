@@ -42,6 +42,11 @@ export default async function init(sequelize) {
   }, {
     paranoid: true,
     tableName: 'member',
+    indexes: [
+      {
+        fields: ['sub'],
+      },
+    ],
   });
   Member.permissionIndex = permissionIndex;
   Member.permission = permission;

@@ -40,6 +40,20 @@ export default async function init(sequelize) {
   }, {
     paranoid: true,
     tableName: 'dataset',
+    indexes: [
+      {
+        fields: ['name'],
+      },
+      {
+        fields: ['fileName'],
+      },
+      {
+        fields: ['createdBy'],
+      },
+      {
+        fields: ['hash'],
+      },
+    ],
   });
   return Dataset;
 }

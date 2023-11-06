@@ -1,7 +1,7 @@
 import {
   Op, col, fn, where,
 } from 'sequelize';
-import {getModel, getDialect} from './util.js';
+import { getModel, getDialect } from './util.js';
 
 function getWhere(query) {
   if (!query) {
@@ -52,7 +52,7 @@ async function search(ctx, sub, options) {
   const paranoid = !deleted;
   const order = getOrder(column, direction, dialect);
 
-  const mWhere = all ? {} : {sub};
+  const mWhere = all ? {} : { sub };
   let offset = null;
   if (limit) {
     offset = (page - 1) * limit;
