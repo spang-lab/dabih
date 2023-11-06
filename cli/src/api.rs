@@ -12,6 +12,7 @@ struct User {
     pub name: String,
     pub email: String,
     pub sub: String,
+    pub scopes: Vec<String>,
 }
 #[derive(Debug, Deserialize)]
 struct KeyStatus {
@@ -86,9 +87,11 @@ pub async fn get_user(ctx: &Context) -> Result<()> {
             bail!(text);
         }
     };
+    let scopes = user.scopes.join(", ");
+
     println!(
-        "Successfully authenticated as {}<{}> (id:{})",
-        user.name, user.email, user.sub
+        "Successfully authenticated as {}<{}> (id: {}, scopes: {}) ",
+        user.name, user.email, user.sub, scopes,
     );
     Ok(())
 }
@@ -271,6 +274,29 @@ pub async fn set_member_access(
         Err(_) => {
             let text = res.text().await?;
             bail!(text);
+        }
+    }
+}
+
+pub async fn remove_dataset(ctx: &Context, mnemonic: &String) -> Result<()> {
+    let path = format!("/api/v1/dataset/{}/remove", mnemonic);
+    let url = ctx.url.join(&path)?;
+    let res = ctx.client.post(url).send().await?;
+    match res.error_for_status_ref() {
+        Ok(_) => Ok(()),
+        Err(_) => {
+            bail!(res.text().await?)
+        }
+    }
+}
+pub async fn destroy_dataset(ctx: &Context, mnemonic: &String) -> Result<()> {
+    let path = format!("/api/v1/dataset/{}/destroy", mnemonic);
+    let url = ctx.url.join(&path)?;
+    let res = ctx.client.post(url).send().await?;
+    match res.error_for_status_ref() {
+        Ok(_) => Ok(()),
+        Err(_) => {
+            bail!(res.text().await?)
         }
     }
 }

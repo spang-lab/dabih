@@ -61,11 +61,7 @@ export function DatasetsWrapper({ children }) {
 
   const removeDataset = useCallback(
     async (mnemonic) => {
-      if (api.isAdmin()) {
-        await api.admin.removeDataset(mnemonic);
-      } else {
-        await api.removeDataset(mnemonic);
-      }
+      await api.removeDataset(mnemonic);
       await fetchDatasets();
       await fetchOrphans();
     },
@@ -73,7 +69,7 @@ export function DatasetsWrapper({ children }) {
   );
   const destroyDataset = useCallback(
     async (mnemonic) => {
-      await api.admin.destroyDataset(mnemonic);
+      await api.destroyDataset(mnemonic);
       await fetchDatasets();
       await fetchOrphans();
     },
@@ -81,7 +77,7 @@ export function DatasetsWrapper({ children }) {
   );
   const recoverDataset = useCallback(
     async (mnemonic) => {
-      await api.admin.recoverDataset(mnemonic);
+      await api.recoverDataset(mnemonic);
       await fetchDatasets();
       await fetchOrphans();
     },

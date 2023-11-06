@@ -164,7 +164,11 @@ async function getMemberAccess(ctx, mnemonic, sub) {
       datasetId: id,
       sub,
     },
+    paranoid: false,
   });
+  if (!entry) {
+    return 'none';
+  }
   return entry.permission;
 }
 async function setMemberAccess(ctx, mnemonic, sub, permission) {

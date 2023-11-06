@@ -25,21 +25,6 @@ const getAdminRouter = () => {
   router.get('/key/list', admin.listKeys);
   router.post('KEY_CONFIRM', '/key/confirm', admin.confirmKey);
   router.get('/dataset/orphan', admin.listOrphans);
-  router.post(
-    'DATASET_REMOVE',
-    '/dataset/:mnemonic/remove',
-    admin.removeDataset,
-  );
-  router.post(
-    'DATASET_RECOVER',
-    '/dataset/:mnemonic/recover',
-    admin.recoverDataset,
-  );
-  router.post(
-    'DATASET_DESTROY',
-    '/dataset/:mnemonic/destroy',
-    admin.destroyDataset,
-  );
 
   router.get('/events', admin.listEventDates);
   router.get('/events/:date', admin.listEvents);
@@ -68,6 +53,8 @@ const getDatasetRouter = () => {
   router.get('/:mnemonic', dataset.mnemonic);
   router.get('/:mnemonic/chunk/:chunkHash', dataset.chunk);
   router.post('DATASET_REMOVE', '/:mnemonic/remove', dataset.remove);
+  router.post('DATASET_RECOVER', '/:mnemonic/recover', dataset.recover);
+  router.post('DATASET_DESTROY', '/:mnemonic/destroy', dataset.destroy);
   router.post(
     'DATASET_MEMBER_ADD',
     '/:mnemonic/member/add',

@@ -5,7 +5,7 @@ use std::io;
 use anyhow::{bail, Result};
 
 use dabih::config::Context;
-use dabih::{api, crypto, download, hash, init, member, recovery, resolve, upload};
+use dabih::{api, crypto, download, hash, init, member, recovery, remove, resolve, upload};
 
 /// Dabih Command line Interface
 #[derive(Parser)]
@@ -32,6 +32,8 @@ enum Commands {
     Keygen(KeygenArgs),
     /// Search dabih
     Search(SearchArgs),
+    /// Remove a dataset
+    Remove(RemoveArgs),
     /// Hash files
     Hash(HashArgs),
     /// Add a member to a dataset
@@ -88,6 +90,16 @@ struct AddMemberArgs {
     /// give the new member write permission
     #[arg(short, long, default_value_t = false)]
     write: bool,
+}
+#[derive(Args)]
+struct RemoveArgs {
+    /// the mnemonic of the dataset you want to edit
+    mnemonic: String,
+    /// give the new member write permission
+    #[arg(short, long, default_value_t = false)]
+    yes: bool,
+    #[arg(short, long, default_value_t = false)]
+    destroy: bool,
 }
 
 #[derive(Args)]
@@ -221,6 +233,16 @@ async fn main() -> Result<()> {
                 let json = serde_json::to_string_pretty(&datasets)?;
                 println!("{}", json);
             }
+        }
+        Commands::Remove(args) => {
+            let RemoveArgs {
+                mnemonic,
+                yes,
+                destroy,
+            } = args;
+            let path = Context::default_path()?;
+            let ctx = Context::read(path)?;
+            remove::remove(&ctx, mnemonic, *yes, *destroy).await?;
         }
         Commands::Hash(args) => {
             let HashArgs { paths } = args;

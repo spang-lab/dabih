@@ -6,6 +6,7 @@ pub mod hash;
 pub mod init;
 pub mod member;
 pub mod recovery;
+pub mod remove;
 pub mod resolve;
 pub mod upload;
 pub use config::Context;
