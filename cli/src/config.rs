@@ -17,6 +17,7 @@ pub struct Config {
     pub name: Option<String>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Context {
     pub url: Url,
     pub token: String,
@@ -124,6 +125,9 @@ impl Context {
             Some(k) => Ok(k),
             None => bail!("Private Key is required but not in config folder"),
         }
+    }
+    pub fn set_name(&mut self, name: Option<String>) {
+        self.name = name;
     }
 
     pub fn write(&self) -> Result<()> {

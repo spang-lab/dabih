@@ -5,7 +5,7 @@ use std::io;
 use anyhow::{bail, Result};
 
 use dabih::config::Context;
-use dabih::{api, crypto, download, hash, init, member, progress, recovery, upload};
+use dabih::{api, crypto, download, hash, init, member, recovery, resolve, upload};
 
 /// Dabih Command line Interface
 #[derive(Parser)]
@@ -98,6 +98,9 @@ struct UploadArgs {
     #[arg(short, long)]
     recursive: bool,
 
+    #[arg(short, long)]
+    allow_duplicate: bool,
+
     /// Set the name for the dataset
     #[arg(short, long)]
     name: Option<String>,
@@ -158,19 +161,20 @@ async fn main() -> Result<()> {
             let UploadArgs {
                 paths,
                 recursive,
+                allow_duplicate,
                 name,
                 zip,
                 limit,
             } = args;
-            let files = upload::resolve(paths.clone(), *recursive, *zip, *limit)?;
+            let files = resolve::resolve(paths.clone(), *recursive, *zip, *limit)?;
             if files.is_empty() {
                 bail!("Did not find any files to upload.");
             }
             let path = Context::default_path()?;
-            let ctx = Context::read_without_key(path)?;
-            let mut pb = progress::ProgressBar::new(0);
+            let mut ctx = Context::read_without_key(path)?;
+            ctx.set_name(name.clone());
             for file in files {
-                upload::upload(&ctx, file, name.clone(), &mut pb).await?;
+                upload::upload(&ctx, &file, *allow_duplicate).await?;
             }
         }
         Commands::Download(args) => {
@@ -220,7 +224,7 @@ async fn main() -> Result<()> {
         }
         Commands::Hash(args) => {
             let HashArgs { paths } = args;
-            let files = upload::resolve(paths.clone(), true, false, -1)?;
+            let files = resolve::resolve(paths.clone(), true, false, -1)?;
             hash::hash_files(&files)?;
         }
         Commands::AddMember(args) => {

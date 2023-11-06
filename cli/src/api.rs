@@ -158,7 +158,7 @@ pub async fn upload_chunk(
     start: u64,
     end: u64,
     total_size: u64,
-    hash: String,
+    hash: &String,
     data: &Vec<u8>,
 ) -> Result<()> {
     let mut headers = HeaderMap::new();

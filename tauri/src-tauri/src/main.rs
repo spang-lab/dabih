@@ -4,9 +4,11 @@
 mod error;
 use error::{Error, Result};
 
-mod upload;
-use dabih::{api, Context};
-use std::path::PathBuf;
+mod progress;
+
+use dabih::{api, upload, Context};
+use std::{path::PathBuf, sync::Arc};
+use tokio::sync::Mutex;
 
 #[tauri::command]
 async fn scan(app_handle: tauri::AppHandle, files: Vec<&str>, zip: bool) -> Result<Vec<PathBuf>> {
@@ -18,38 +20,37 @@ async fn scan(app_handle: tauri::AppHandle, files: Vec<&str>, zip: bool) -> Resu
     let ctx = Context::read_without_key(config_file)?;
     api::get_user(&ctx).await?;
 
-    let files = upload::resolve(files, zip)?;
-    let paths = files.clone();
-    Ok(paths)
+    let paths: Vec<String> = files.into_iter().map(|f| f.to_owned()).collect();
+
+    let files = upload::resolve(paths, !zip, zip, 0)?;
+    Ok(files)
 }
 
 #[tauri::command]
-async fn upload(app_handle: tauri::AppHandle, file: &str) -> Result<Option<String>> {
+async fn upload(app_handle: tauri::AppHandle, file: &str) -> Result<()> {
     let config_path = match app_handle.path_resolver().app_config_dir() {
+        Some(p) => p,
+        None => return Err(Error::ConfigDirError()),
+    };
+    let tmp_path = match app_handle.path_resolver().app_cache_dir() {
         Some(p) => p,
         None => return Err(Error::ConfigDirError()),
     };
     let config_file = config_path.join("config/app.yaml");
     let ctx = Context::read_without_key(config_file)?;
+    ctx.set_tmp_path(tmp_path);
+
     let path = PathBuf::from(file);
 
-    let label = ctx.name.clone();
-
-    let mnemonic = match dabih::upload::upload_start(&ctx, path.clone(), label).await? {
-        Some(m) => m,
-        None => {
-            return Ok(None);
-        }
-    };
-
-    let result = mnemonic.clone();
     tauri::async_runtime::spawn(async move {
-        match upload::upload_chunks(&app_handle, &ctx, path, result).await {
+        let pb = progress::ProgressListener::new(&app_handle);
+        match dabih::upload::upload(&ctx, path, None, Some(&pb)).await {
             Ok(_) => {}
             Err(_) => {}
         };
     });
-    Ok(Some(mnemonic))
+
+    Ok(())
 }
 
 fn main() {

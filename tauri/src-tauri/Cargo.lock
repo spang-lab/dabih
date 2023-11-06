@@ -675,7 +675,7 @@ dependencies = [
 
 [[package]]
 name = "dabih"
-version = "1.11.0"
+version = "1.11.5"
 dependencies = [
  "anyhow",
  "base64 0.21.3",
@@ -687,6 +687,7 @@ dependencies = [
  "inquire",
  "openssl",
  "pbr",
+ "rand 0.8.5",
  "reqwest",
  "serde",
  "serde_json",
@@ -699,7 +700,7 @@ dependencies = [
 
 [[package]]
 name = "dabih-uploader"
-version = "1.11.0"
+version = "1.11.5"
 dependencies = [
  "anyhow",
  "base64 0.21.3",
