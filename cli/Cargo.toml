@@ -2,7 +2,7 @@
 name = "dabih"
 description = "Command Line Interface for dabih"
 authors = ["Michael Huttner<michael@mhuttner.com>"]
-version = "1.12.1"
+version = "1.12.2"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
