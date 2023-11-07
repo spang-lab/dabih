@@ -68,7 +68,7 @@ pub enum UploadState {
     Complete,
 }
 
-struct Upload {
+pub struct Upload {
     state: UploadState,
     ctx: Context,
     path: PathBuf,
@@ -78,7 +78,7 @@ struct Upload {
     allow_duplicate: bool,
     file_size: Option<u64>,
     name: Option<String>,
-    files: Option<Vec<PathBuf>>,
+    files: Option<Vec<(PathBuf, PathBuf)>>,
     hashes: Option<Vec<String>>,
     zip: Option<ZipWriter<File>>,
     file: Option<File>,
@@ -111,7 +111,7 @@ impl Upload {
             mnemonic: None,
         })
     }
-    fn filename(&self) -> String {
+    pub fn filename(&self) -> String {
         self.filename.clone()
     }
     pub fn set_allow_duplicate(&mut self, allow_duplicate: bool) {
@@ -142,7 +142,8 @@ impl Upload {
         for entry in glob(&glob_string.to_string_lossy())? {
             let path = entry?;
             if path.is_file() {
-                files.push(path)
+                let local_path = path.strip_prefix(&self.path)?.to_owned();
+                files.push((local_path, path))
             }
         }
         let total = files.len() as u64;
@@ -156,15 +157,15 @@ impl Upload {
     fn add_to_archive(&mut self, idx: u64, total: u64) -> Result<UploadState> {
         let files = self.files.as_ref().unwrap();
         let mut archive = self.zip.as_mut().unwrap();
-        let path = &files[idx as usize];
-        let options = FileOptions::default();
+        let (file_path, path) = &files[idx as usize];
+        let options = FileOptions::default().compression_method(zip::CompressionMethod::Stored);
 
         let mut fd = File::open(&path)?;
-        let file_path = match path.to_str() {
+        let file_name = match file_path.to_str() {
             Some(s) => s,
             None => bail!("Invalid path {}", path.display()),
         };
-        archive.start_file(file_path, options)?;
+        archive.start_file(file_name, options)?;
         io::copy(&mut fd, &mut archive)?;
         let next_idx = idx + 1;
         if next_idx == total {

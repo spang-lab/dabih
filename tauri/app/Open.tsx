@@ -15,16 +15,18 @@ export default function Open() {
     const listenProgress = async () => {
       const { listen } = await import('@tauri-apps/api/event');
       const unlisten = await listen<any>('upload_progress', ({ payload }) => {
-        const { mnemonic, current, total } = payload;
+        const {
+          id, state, mnemonic, current, total,
+        } = payload;
         setFiles(((oldFiles) => oldFiles.map((f) => {
-          if (f.mnemonic !== mnemonic) {
+          if (f.id !== id) {
             return f;
           }
-          const state = (current < total) ? 'uploading' : 'complete';
           return {
             ...f,
             current,
             total,
+            mnemonic,
             state,
           };
         })));
@@ -41,7 +43,8 @@ export default function Open() {
   useEffect(() => {
     const checkFiles = async () => {
       const { invoke } = await import('@tauri-apps/api');
-      const active = files.find((f) => f.state === 'uploading');
+      const activeStates = ['gzip', 'uploading'];
+      const active = files.find((f) => activeStates.includes(f.state));
       if (active) {
         return;
       }
@@ -51,27 +54,10 @@ export default function Open() {
         return;
       }
       const { path, id } = newUpload;
-      const mnemonic = await invoke('upload', {
+      await invoke('upload', {
         file: path,
-        name: 'hello',
+        id,
       });
-      const newFiles = files.map((f) => {
-        if (f.id !== id) {
-          return f;
-        }
-        if (!mnemonic) {
-          return {
-            ...f,
-            state: 'skipped',
-          };
-        }
-        return {
-          ...f,
-          mnemonic,
-          state: 'uploading',
-        };
-      });
-      setFiles(newFiles);
     };
     checkFiles();
   }, [files]);
@@ -96,8 +82,8 @@ export default function Open() {
       });
 
       const data = paths.map((p) => {
-        const rand = Math.floor(Math.random() * 16 ** 5).toString(16);
-        const id = `${p}-${rand}`;
+        const rand = Math.floor(Math.random() * 16 ** 8).toString(16);
+        const id = `${rand}`;
         return {
           id,
           path: p,
