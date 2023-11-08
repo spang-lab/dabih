@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         os:
-          - { runner: windows-latest, name: windows, target: x86_64-pc-windows-gnu }
+          - { runner: windows-latest, name: windows, target: x86_64-pc-windows-msvc }
 
     runs-on: ${{ matrix.os.runner }}
 
@@ -20,7 +20,6 @@ jobs:
       with:
         toolchain: stable
         target: ${{matrix.os.target}}
-
             
     - name: Use strawberry perl
       if: matrix.os.runner == 'windows-latest'
