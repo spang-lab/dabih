@@ -1,0 +1,138 @@
+name: Dabih Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  create-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-20.04
+    outputs:
+      release_id: ${{ steps.create-release.outputs.result }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: get version
+        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+      - name: create release
+        id: create-release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `app-v${process.env.PACKAGE_VERSION}`,
+              name: `Dabih v${process.env.PACKAGE_VERSION}`,
+              body: 'Download dabih binaries here.',
+              draft: true,
+              prerelease: false
+            })
+            return data.id
+
+  build-tauri:
+    needs: create-release
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-20.04, windows-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: install frontend dependencies
+        run: |
+          cd tauri
+          npm install # change this to npm or pnpm depending on which one you use
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: tauri
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+
+  build-cli:
+    needs: create-release
+    strategy:
+      matrix:
+        os:
+          - { runner: ubuntu-latest, name: linux, target: x86_64-unknown-linux-gnu }
+          - { runner: macos-latest, name: macos, target: x86_64-apple-darwin }
+          - { runner: macos-latest, name: arm_macos, target: aarch64-apple-darwin }
+          - { runner: windows-latest, name: windows, target: x86_64-pc-windows-gnu }
+
+    runs-on: ${{ matrix.os.runner }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{matrix.os.target}}
+
+    - name: Setup Perl on Windows
+      if: matrix.os.runner == 'windows-latest'
+      run: choco install strawberryperl nasm
+
+    - name: Build CLI for ${{ matrix.os.target }}
+      run: cargo build --manifest-path cli/Cargo.toml --release --target ${{ matrix.os.target }}
+
+    - name: Archive Artifact
+      run: |
+        cd cli
+        if [[ "${{ matrix.os.name }}" == "windows" ]]; then
+          7z a -tzip dabih_${{ matrix.os.name }}.zip target/${{ matrix.os.target }}/release/dabih.exe
+        else
+          tar czf dabih_${{ matrix.os }}.tar.gz -C target/${{ matrix.os.target }}/release .
+        fi
+        cd -
+    - name: Upload to Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run:
+        gh release upload  ${{ needs.create-release.outputs.release_id }} cli/dabih_${{ matrix.os.name }}.zip
+
+  publish-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-20.04
+    needs: [create-release, build-tauri, build-cli]
+
+    steps:
+      - name: publish release
+        id: publish-release
+        uses: actions/github-script@v6
+        env:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+        with:
+          script: |
+            github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: process.env.release_id,
+              draft: false,
+              prerelease: false
+            })
