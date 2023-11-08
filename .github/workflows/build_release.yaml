@@ -106,6 +106,7 @@ jobs:
     - name: Archive and upload Artifact
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash
       run: |
         cd cli
         if [[ "${{ matrix.os.name }}" == "windows" ]]; then
