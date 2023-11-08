@@ -101,20 +101,19 @@ jobs:
     - name: Build CLI for ${{ matrix.os.target }}
       run: cargo build --manifest-path cli/Cargo.toml --release --target ${{ matrix.os.target }}
 
-    - name: Archive Artifact
+    - name: Archive and upload Artifact
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd cli
         if [[ "${{ matrix.os.name }}" == "windows" ]]; then
           7z a -tzip dabih_${{ matrix.os.name }}.zip target/${{ matrix.os.target }}/release/dabih.exe
+          gh release upload  ${{ needs.create-release.outputs.release_id }} cli/dabih_${{ matrix.os.name }}.zip
         else
           tar czf dabih_${{ matrix.os.name }}.tar.gz -C target/${{ matrix.os.target }}/release .
+          gh release upload  ${{ needs.create-release.outputs.release_id }} cli/dabih_${{ matrix.os.name }}.tar.gz
         fi
         cd -
-    - name: Upload to Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run:
-        gh release upload  ${{ needs.create-release.outputs.release_id }} cli/dabih_${{ matrix.os.name }}.zip
 
   publish-release:
     permissions:
