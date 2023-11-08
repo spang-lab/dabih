@@ -108,10 +108,10 @@ jobs:
         cd cli
         if [[ "${{ matrix.os.name }}" == "windows" ]]; then
           7z a -tzip dabih_${{ matrix.os.name }}.zip target/${{ matrix.os.target }}/release/dabih.exe
-          gh release upload  ${{ needs.create-release.outputs.release_id }} cli/dabih_${{ matrix.os.name }}.zip
+          gh release upload  ${{ needs.create-release.outputs.release_id }} dabih_${{ matrix.os.name }}.zip
         else
           tar czf dabih_${{ matrix.os.name }}.tar.gz -C target/${{ matrix.os.target }}/release .
-          gh release upload  ${{ needs.create-release.outputs.release_id }} cli/dabih_${{ matrix.os.name }}.tar.gz
+          gh release upload  ${{ needs.create-release.outputs.release_id }} dabih_${{ matrix.os.name }}.tar.gz
         fi
         cd -
 
