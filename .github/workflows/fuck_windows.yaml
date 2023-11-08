@@ -1,0 +1,31 @@
+name: Fuck Windows
+
+on: push
+
+jobs:
+  build-cli:
+    strategy:
+      matrix:
+        os:
+          - { runner: windows-latest, name: windows, target: x86_64-pc-windows-gnu }
+
+    runs-on: ${{ matrix.os.runner }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{matrix.os.target}}
+
+            
+    - name: Use strawberry perl
+      if: matrix.os.runner == 'windows-latest'
+      run: echo OPENSSL_SRC_PERL=C:/Strawberry/perl/bin/perl >> $GITHUB_ENV
+
+    - name: Build CLI for ${{ matrix.os.target }}
+      run: cargo build --manifest-path cli/Cargo.toml --release --target ${{ matrix.os.target }}
+
