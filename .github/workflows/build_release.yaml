@@ -93,12 +93,11 @@ jobs:
         toolchain: stable
         target: ${{matrix.os.target}}
 
-    - name: Prepend Strawberry Perl to PATH
+    - uses: shogo82148/actions-setup-perl@v1
       if: matrix.os.runner == 'windows-latest'
-      run: |
-        $env:Path = "C:\Strawberry\perl\bin;$env:Path"
-        echo "::set-env name=PATH::$env:Path"
-      shell: pwsh
+      with:
+        perl-version: '5.32'
+        distribution: strawberry
 
     - name: Build CLI for ${{ matrix.os.target }}
       run: cargo build --manifest-path cli/Cargo.toml --release --target ${{ matrix.os.target }}
