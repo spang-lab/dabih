@@ -108,7 +108,7 @@ jobs:
         if [[ "${{ matrix.os.name }}" == "windows" ]]; then
           7z a -tzip dabih_${{ matrix.os.name }}.zip target/${{ matrix.os.target }}/release/dabih.exe
         else
-          tar czf dabih_${{ matrix.os }}.tar.gz -C target/${{ matrix.os.target }}/release .
+          tar czf dabih_${{ matrix.os.name }}.tar.gz -C target/${{ matrix.os.target }}/release .
         fi
         cd -
     - name: Upload to Release
