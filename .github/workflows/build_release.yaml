@@ -32,7 +32,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: `${process.env.TAG}`,
-              name: `Dabih v${process.env.TAG}`,
+              name: `Dabih v${process.env.PACKAGE_VERSION}`,
               body: 'Download dabih binaries here.',
               draft: true,
               prerelease: false
@@ -110,11 +110,11 @@ jobs:
       run: |
         cd cli
         if [[ "${{ matrix.os.name }}" == "windows" ]]; then
-          7z a -tzip dabih_${{ matrix.os.name }}.zip target/${{ matrix.os.target }}/release/dabih.exe
-          gh release upload  ${{ github.ref }} dabih_${{ matrix.os.name }}.zip
+          7z a -tzip dabih_cli_${{ matrix.os.name }}.zip target/${{ matrix.os.target }}/release/dabih.exe
+          gh release upload  ${{ github.ref }} dabih_cli_${{ matrix.os.name }}.zip
         else
-          tar czf dabih_${{ matrix.os.name }}.tar.gz -C target/${{ matrix.os.target }}/release .
-          gh release upload  ${{ github.ref }} dabih_${{ matrix.os.name }}.tar.gz
+          tar czf dabih_cli_${{ matrix.os.name }}.tar.gz -C target/${{ matrix.os.target }}/release .
+          gh release upload  ${{ github.ref }} dabih_cli_${{ matrix.os.name }}.tar.gz
         fi
         cd -
 
