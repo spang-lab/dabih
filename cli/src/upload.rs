@@ -93,6 +93,7 @@ impl Upload {
         };
         let path_str = apath.to_string_lossy().to_string();
         let two_mebibyte = 2 * 1024 * 1024;
+        let name = ctx.name.clone();
 
         Ok(Upload {
             state: UploadState::Init,
@@ -103,7 +104,7 @@ impl Upload {
             chunk_size: two_mebibyte,
             filename,
             file_size: None,
-            name: None,
+            name,
             files: None,
             hashes: None,
             zip: None,
