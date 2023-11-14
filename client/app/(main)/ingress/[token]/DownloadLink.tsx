@@ -2,7 +2,7 @@ import info from '@/package.json';
 
 function DownloadLink({ ending, children }) {
   const { version } = info;
-  const url = `https://github.com/spang-lab/dabih/releases/download/dabih-v${version}/dabih_${version}_${ending}`;
+  const url = `https://github.com/spang-lab/dabih/releases/download/v${version}/dabih_${version}_${ending}`;
   return (
     <a
       className="text-white whitespace-nowrap bg-blue text-lg font-bold px-2 py-1 rounded-md shadow-lg"
