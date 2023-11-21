@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "dabih",
-    "version": "1.12.16"
+    "version": "1.12.17"
   },
   "tauri": {
     "allowlist": {
