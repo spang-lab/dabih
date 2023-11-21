@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize';
 import { getSql } from '../database/index.js';
 
 export default async (ctx, next) => {
@@ -11,5 +12,7 @@ export default async (ctx, next) => {
   }
   await sql.transaction(async () => {
     await next();
+  }, {
+    type: Transaction.TYPES.IMMEDIATE,
   });
 };
