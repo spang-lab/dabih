@@ -60,7 +60,7 @@ export async function getServerSideProps(context) {
   const { req, res } = context;
   const session = await getServerSession(req, res, authOptions);
 
-  if (session) {
+  if (session && session.user) {
     return { redirect: { destination: '/key' } };
   }
 

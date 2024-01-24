@@ -1,10 +1,18 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 
 export default function ErrorMessage() {
+  const { data: session } = useSession();
   const params = useSearchParams();
-  const error = params.get('error');
+  let error = null;
+  if (session && session.error) {
+    error = session.error;
+  } else {
+    error = params.get('error');
+  }
+
   if (!error) {
     return null;
   }
@@ -17,6 +25,10 @@ export default function ErrorMessage() {
       <span className="text-sm">
         Please check your credentials.
       </span>
+      <p className="text-xs text-gray-500">
+        {error}
+      </p>
+
     </div>
   );
 }

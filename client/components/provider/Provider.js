@@ -3,14 +3,18 @@
 import Image from 'next/image';
 import { signIn } from 'next-auth/react';
 import URProvider from './UrProvider';
+import DemoProvider from './DemoProvider';
 
 export default function Provider({ provider }) {
   const { id } = provider;
+  if (id === 'demo') {
+    return <DemoProvider provider={provider} />;
+  }
   if (id === 'ur') {
     return <URProvider provider={provider} />;
   }
-  const logoSrc = `/images/providers/${id}.png`;
 
+  const logoSrc = `/images/providers/${id}.png`;
   return (
     <div className="flex p-2">
       <button

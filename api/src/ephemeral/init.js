@@ -18,8 +18,7 @@ export const initEphemeral = async () => {
     return;
   }
   if (adapter === 'memory') {
-    log.warn('Ephemeral memory adapter selected!');
-    log.warn('You will need the memcached adapter if you use multiple replicas');
+    log('Memory adapter selected. You will need another adapter if you use multiple replicas.');
     client = await initMemory();
     return;
   }

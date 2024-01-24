@@ -5,6 +5,7 @@ import { Provider } from 'next-auth/providers';
 import GitHubProvider from 'next-auth/providers/github';
 import UniRegensburgProvider from './ur';
 import SpangLabProvider from './spang-lab';
+import DemoProvider from './demo';
 
 const apiUser = async (provider: any, accessToken: String) => {
   const url = `${process.env.NEXTAUTH_URL}/api/v1/token`;
@@ -71,6 +72,9 @@ const authOptions = {
     GitHubProvider({
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
+    }),
+    DemoProvider({
+      enabled: true,
     }),
   ].filter(isConfigured),
   callbacks: {

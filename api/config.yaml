@@ -1,4 +1,6 @@
 server:
+  # delete this key to disable demo mode
+  demo: YTgyZTEzZTI5YjNiZmUK 
   port: 8088
 
 admins:
@@ -21,3 +23,4 @@ database:
 storage:
   backend: local
   path: ./data
+
