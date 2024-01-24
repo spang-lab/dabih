@@ -83,9 +83,20 @@ const route = async (ctx) => {
   await dataset.destroyKeys(ctx, mnemonic);
   await dataset.addKeys(ctx, mnemonic, newKey);
 
+  const keys = await dataset.listRecoveryKeys(ctx, mnemonic);
+  const dset = await dataset.fromMnemonic(ctx, mnemonic);
+  const recovery = {
+    dataset: {
+      ...dset,
+      chunks,
+    },
+    keys,
+  };
+
   const storage = getStorage();
   await storage.destroyDataset(mnemonic);
   await storage.move(newMnemonic, mnemonic);
+  await storage.writeRecovery(mnemonic, recovery);
 
   ctx.body = 'ok';
 };
