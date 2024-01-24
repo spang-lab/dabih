@@ -5,9 +5,7 @@
   "main": "app.js",
   "repository": "",
   "scripts": {
-    "start": "npm run api & npm run client",
-    "api": "CONFIG=dev/config.yaml node --watch app.js",
-    "client": "(cd client && npm start)",
+    "start": "node --watch app.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "rootKey": "node ./src/scripts/rootKey.js",
     "prod": "NODE_ENV=production node app.js"

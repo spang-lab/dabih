@@ -14,8 +14,11 @@ else
     SED_COMMAND="sed"
 fi
 
+pushd api
+  VERSION="$(npm version --no-git-tag-version "$1")"
+  npm install  # update lockfile
+popd
 
-VERSION="$(npm version --no-git-tag-version "$1")"
 pushd client
   npm run build
   npm version --no-commit-hooks "$VERSION"
@@ -35,7 +38,6 @@ pushd example
 popd
 
 
-npm install  # update lockfile
 git add -A
 git commit --message "$VERSION"
 git tag -a -m "New version: $VERSION" "$VERSION"
