@@ -26,9 +26,9 @@ WORKDIR /app/next
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-COPY --from=builder /app/next/public ./public
-COPY --from=builder /app/next/.next/standalone ./
-COPY --from=builder /app/next/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 WORKDIR /app/api
 COPY api .
