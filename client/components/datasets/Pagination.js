@@ -76,6 +76,7 @@ export default function Pagination() {
         <div className="flex w-32">
           <button
             type="button"
+            aria-label="First Page"
             disabled={page === 1}
             onClick={() => setPage(1)}
             className="text-blue border text-sm rounded m-1 border-blue px-2 disabled:text-gray-400 disabled:border-gray-400 "
@@ -84,6 +85,7 @@ export default function Pagination() {
           </button>
           <button
             type="button"
+            aria-label="Previous Page"
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
             className="text-blue border text-sm rounded m-1 border-blue px-2 disabled:text-gray-400 disabled:border-gray-400 "
@@ -99,6 +101,7 @@ export default function Pagination() {
         <div className="flex w-32">
           <button
             type="button"
+            aria-label="Next Page"
             disabled={page === numPages}
             onClick={() => setPage(page + 1)}
             className="text-blue border text-sm rounded m-1 border-blue px-2 disabled:text-gray-400 disabled:border-gray-400 "
@@ -107,6 +110,7 @@ export default function Pagination() {
           </button>
           <button
             type="button"
+            aria-label="Last Page"
             disabled={page === numPages}
             onClick={() => setPage(numPages)}
             className="text-blue border text-sm rounded m-1 border-blue px-2 disabled:text-gray-400 disabled:border-gray-400 "

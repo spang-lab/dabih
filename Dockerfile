@@ -1,7 +1,9 @@
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
+RUN npm install pm2 -g
+
 WORKDIR /app
 
 COPY client/package.json client/package-lock.json ./ 
@@ -14,8 +16,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY client .
 
 ENV NEXT_TELEMETRY_DISABLED 1
-
 RUN npm run build
+
 
 # Production image, copy all the files and run next
 FROM base AS runner

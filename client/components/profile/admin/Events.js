@@ -44,7 +44,7 @@ export default function Events() {
           <span className="px-2 my-2">Date:</span>
         </div>
         <DateSelect />
-        <button type="button" className="mx-2" onClick={() => fetchEvents()}>
+        <button aria-label="refresh" type="button" className="mx-2" onClick={() => fetchEvents()}>
           <RefreshCcw size={18} />
         </button>
       </div>
