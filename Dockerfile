@@ -13,15 +13,13 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 WORKDIR /app/api
-COPY api/package.json api/package-lock.json ./ 
-RUN npm ci
 COPY api .
+RUN npm ci
 
 
 WORKDIR /app/client
-COPY client/package.json client/package-lock.json ./ 
-RUN npm ci
 COPY client .
+RUN npm ci
 RUN npm run build
 
 WORKDIR /app/nextjs
