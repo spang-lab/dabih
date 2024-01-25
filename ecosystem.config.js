@@ -5,7 +5,7 @@ module.exports = [
   },
   {
     name: 'nextjs',
-    script: '/app/nextjs/server.js',
+    script: '/app/next/server.js',
   }
 ]
 
