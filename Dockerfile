@@ -25,9 +25,9 @@ COPY client /app/client
 RUN npm run build
 
 WORKDIR /app/nextjs
-COPY /app/client/public ./public
-COPY /app/client/.next/standalone ./
-COPY /app/client/.next/static ./.next/static
+RUN cp -r /app/client/public ./public
+RUN cp -r /app/client/.next/standalone ./
+RUN cp -r /app/client/.next/static ./.next/static
 
 
 WORKDIR /app
