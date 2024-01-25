@@ -1,40 +1,40 @@
-FROM node:20-alpine
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV NODE_ENV production
+FROM node:18-alpine AS base
 
+FROM base AS deps
 RUN apk add --no-cache libc6-compat
-RUN npm install pm2 -g
+WORKDIR /app
 
-RUN mkdir -p /app/api
-RUN mkdir -p /app/client
-RUN mkdir -p /app/nextjs
+COPY client/package.json client/package-lock.json ./ 
+RUN npm ci
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY client .
+
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN npm run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-WORKDIR /app/api
-COPY api .
-RUN npm ci
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-
-WORKDIR /app/client
-COPY client .
-RUN npm ci
-RUN npm run build
-
-WORKDIR /app/nextjs
-RUN cp -r /app/client/public ./public
-RUN cp -r /app/client/.next/standalone ./
-RUN cp -r /app/client/.next/static ./.next/static
-
-
-WORKDIR /app
-COPY ecosystem.config.js ecosystem.config.js
+USER nextjs
 
 EXPOSE 3000
+
 ENV PORT 3000
 
-CMD ["pm2-runtime", "ecosystem.config.js"]
-
-
-
+CMD ["node", "server.js"]
