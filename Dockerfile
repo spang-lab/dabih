@@ -35,12 +35,12 @@ COPY api .
 RUN npm ci
 
 WORKDIR /app
-COPY ecosystem.config.js ecosystem.config.js
+COPY pm2-prod.yaml pm2-prod.yaml
 
 EXPOSE 3000
 ENV PORT 3000
 
-CMD ["pm2-runtime", "ecosystem.config.js"]
+CMD ["pm2-runtime", "pm2-prod.yaml"]
 
 
 

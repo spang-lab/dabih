@@ -1,0 +1,13 @@
+apps:
+  - name: 'api'
+    cwd: './api'
+    script: 'npm start'
+
+  - name: 'next'
+    cwd: './client'
+    script: 'npm start'
+    env:
+      NEXTAUTH_URL: "http://localhost:3000"
+      NEXTAUTH_SECRET: "01baf2b4445115af2e6e02e86557362400398798965c3d1686ea4bc798a2a340ecde73d85f8819ea3c45328ceff176c5c9a492b6d8aac26bda92272628b2b711"
+
+

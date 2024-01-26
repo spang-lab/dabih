@@ -1,0 +1,12 @@
+apps:
+  - name: 'api'
+    cwd: '/app/api'
+    script: '/app/api/app.js'
+    env: 
+      NODE_ENV: production
+
+  - name: 'next'
+    cwd: '/app/next'
+    script: '/app/next/server.js'
+    env: 
+      NODE_ENV: production
