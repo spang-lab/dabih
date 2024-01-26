@@ -2,7 +2,6 @@ FROM node:20-alpine AS base
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
-RUN npm install pm2 -g
 
 WORKDIR /app
 
@@ -21,6 +20,7 @@ RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
+RUN npm install pm2 -g
 
 WORKDIR /app/next
 ENV NODE_ENV production
