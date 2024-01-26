@@ -38,6 +38,7 @@ WORKDIR /app
 COPY pm2-prod.yaml pm2-prod.yaml
 
 EXPOSE 3000
+ENV HOSTNAME localhost
 ENV PORT 3000
 
 CMD ["pm2-runtime", "pm2-prod.yaml"]
