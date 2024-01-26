@@ -1,4 +1,4 @@
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign, no-console */
 import axios from 'axios';
 
 import { Provider } from 'next-auth/providers';
@@ -8,7 +8,7 @@ import SpangLabProvider from './spang-lab';
 import DemoProvider from './demo';
 
 const apiUser = async (provider: any, accessToken: String) => {
-  const url = `${process.env.NEXTAUTH_URL}/api/v1/token`;
+  const url = `${process.env.NEXTAUTH_URL_INTERNAL}/api/v1/token`;
   const result = await axios.post(url, {}, {
     headers: {
       Authorization: `Bearer ${provider}_${accessToken}`,
@@ -27,6 +27,7 @@ const jwt = async ({ token, account, user }) => {
     try {
       token.user = await apiUser(token.provider, token.accessToken);
     } catch (err: any) {
+      console.error(err);
       const message = err?.response?.data || err?.message;
       token.error = message;
     }

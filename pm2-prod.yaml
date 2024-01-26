@@ -10,3 +10,4 @@ apps:
     script: '/app/next/server.js'
     env: 
       NODE_ENV: production
+      NEXTAUTH_URL_INTERNAL: http://host.docker.internal:3000
