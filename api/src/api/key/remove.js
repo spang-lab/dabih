@@ -17,14 +17,24 @@ const route = async (ctx) => {
     return;
   }
 
-  const datasets = await dataset.listAccessible(ctx, key.sub);
-  const promises = datasets.map(async (dset) => {
-    const { mnemonic } = dset;
-    await dataset.setMemberAccess(ctx, mnemonic, key.sub, 'none');
-    await dataset.dropKeys(ctx, mnemonic);
-  });
-  await Promise.all(promises);
-  await publicKey.remove(ctx, keyId);
+  if (key.isRootKey) {
+    await publicKey.remove(ctx, keyId);
+    const datasets = await dataset.listAll(ctx);
+    const promises = datasets.map(async (dset) => {
+      const { mnemonic } = dset;
+      await dataset.dropKeys(ctx, mnemonic);
+    });
+    await Promise.all(promises);
+  } else {
+    const datasets = await dataset.listAccessible(ctx, key.sub);
+    const promises = datasets.map(async (dset) => {
+      const { mnemonic } = dset;
+      await dataset.setMemberAccess(ctx, mnemonic, key.sub, 'none');
+      await dataset.dropKeys(ctx, mnemonic);
+    });
+    await Promise.all(promises);
+    await publicKey.remove(ctx, keyId);
+  }
 
   ctx.body = 'ok';
 };

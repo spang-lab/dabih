@@ -13,7 +13,7 @@ export default function AdminInterface() {
 
   return (
     <div>
-      <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
+      <h1 className="text-3xl pt-3 font-extrabold tracking-tight sm:text-4xl md:text-5xl">
         <span className="text-blue"> Admin </span>
         Controls
       </h1>

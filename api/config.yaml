@@ -19,6 +19,9 @@ database:
   dialect: sqlite
   logging: false
   storage: ./data/dabih.sqlite
+  retry:
+    max: 10
+  
 
 storage:
   backend: local

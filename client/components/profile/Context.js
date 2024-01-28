@@ -46,10 +46,10 @@ export function ProfileWrapper({ children }) {
   }, [api]);
 
   const fetchKeys = useCallback(async () => {
-    if (!api.isAdmin()) {
+    if (!api.isReady()) {
       return;
     }
-    const data = await api.admin.listKeys();
+    const data = await api.listKeys();
     if (data.error) {
       return;
     }
@@ -59,6 +59,14 @@ export function ProfileWrapper({ children }) {
   const confirmKey = useCallback(
     async (keyId, confirmed) => {
       await api.admin.confirmKey(keyId, confirmed);
+      await fetchKeys();
+    },
+    [api, fetchKeys],
+  );
+
+  const addRootKey = useCallback(
+    async (publicKey) => {
+      await api.addPublicKey(publicKey, true);
       await fetchKeys();
     },
     [api, fetchKeys],
@@ -119,6 +127,7 @@ export function ProfileWrapper({ children }) {
       token,
       tokens,
       confirmKey,
+      addRootKey,
       deleteKey,
       publicKeys,
       events,
@@ -133,6 +142,7 @@ export function ProfileWrapper({ children }) {
     [
       generateToken,
       confirmKey,
+      addRootKey,
       deleteKey,
       publicKeys,
       selectedDate,

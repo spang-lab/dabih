@@ -9,6 +9,7 @@ const route = async (ctx) => {
   const { sub, name, email } = user;
   const { body } = ctx.request;
   const pubKey = body.publicKey;
+  const isRootKey = !!body.rootKey;
   if (!pubKey) {
     sendError(ctx, 'No public key in body');
     return;
@@ -26,6 +27,7 @@ const route = async (ctx) => {
   if (isAdmin) {
     keyData.confirmedBy = sub;
     keyData.confirmed = literal('CURRENT_TIMESTAMP');
+    keyData.isRootKey = isRootKey;
   }
 
   await publicKey.add(ctx, keyData);

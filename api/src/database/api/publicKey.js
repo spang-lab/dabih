@@ -8,26 +8,6 @@ async function list(ctx, where = {}) {
   });
 }
 
-async function listAllUsers(ctx) {
-  const PublicKey = getModel(ctx, 'PublicKey');
-
-  const keys = await PublicKey.findAll({
-    where: {
-      isRootKey: false,
-    },
-  });
-
-  const users = keys.map((key) => {
-    const {
-      name, sub, email, confirmed,
-    } = key;
-    return {
-      name, sub, email, confirmed: !!confirmed,
-    };
-  });
-  return users;
-}
-
 async function add(ctx, properties) {
   const PublicKey = getModel(ctx, 'PublicKey');
   await PublicKey.create(properties);
@@ -46,7 +26,6 @@ async function find(ctx, where) {
 }
 
 export default {
-  listAllUsers,
   list,
   add,
   update,

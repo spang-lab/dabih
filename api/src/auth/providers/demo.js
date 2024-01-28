@@ -1,6 +1,6 @@
 import { getConfig } from '../../util/index.js';
 
-export default async function dabihProvider(ctx, accessToken) {
+export default async function dabihProvider(_ctx, accessToken) {
   const { server } = getConfig();
   if (!server || !server.demo) {
     throw new Error('Demo Provider disabled');
@@ -12,7 +12,7 @@ export default async function dabihProvider(ctx, accessToken) {
   return {
     sub: 'root',
     name: 'Demo User',
-    email: '',
+    email: 'anonymous@example.com',
     scopes: ['api', 'admin'],
   };
 }

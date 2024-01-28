@@ -36,7 +36,7 @@ export default function Events() {
 
   return (
     <div>
-      <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+      <h3 className="text-lg font-extrabold tracking-tight sm:text-xl md:text-2xl">
         Events
       </h3>
       <div className="flex flex-row">
@@ -48,7 +48,7 @@ export default function Events() {
           <RefreshCcw size={18} />
         </button>
       </div>
-      <div className="mx-4 my-2 border border-gray-400 rounded-lg">
+      <div className="mx-4 my-2 border border-gray-400 rounded-lg max-h-80 overflow-auto">
         {events.map((e) => (
           <Event key={e.id} data={e} />
         ))}

@@ -15,7 +15,7 @@ export default function CreateKey({ onChange }) {
       dialog.error(publicKey.error);
       return;
     }
-    await api.addPublicKey(publicKey);
+    await api.addPublicKey(publicKey, false);
     onChange();
   };
 

@@ -80,7 +80,7 @@ export function ApiWrapper({ children }) {
         }
         return session.user.scopes.includes('admin');
       },
-      listKeyUsers: () => api.get('/key/list/user'),
+      listKeys: () => api.get('/key/list'),
       getUser: async () => api.post('/token'),
       generateToken: async (type) => api.post(`/token/generate/${type}`),
       removeToken: async (tokenId) => api.post('/token/remove', { tokenId }),
@@ -107,7 +107,7 @@ export function ApiWrapper({ children }) {
       },
       uploadFinish: async (mnemonic) => api.post(`/upload/finish/${mnemonic}`),
       uploadCancel: async (mnemonic) => api.post(`/upload/cancel/${mnemonic}`),
-      addPublicKey: async (publicKey) => api.post('/key/add', { publicKey }),
+      addPublicKey: async (publicKey, rootKey) => api.post('/key/add', { publicKey, rootKey }),
       checkPublicKey: async (keyHash) => api.post('/key/check', { keyHash }),
       removePublicKey: async (keyId) => api.post('/key/remove', { keyId }),
       searchDatasets: async (data) => api.post('/dataset/search', data),

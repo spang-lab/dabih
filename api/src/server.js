@@ -43,5 +43,5 @@ export default async () => {
   app.use(apiRoutes);
 
   app.listen(port);
-  log(`HTTP Server listening on port ${port}`);
+  log(`API server listening on port ${port}`);
 };

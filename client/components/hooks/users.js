@@ -11,7 +11,8 @@ export default function useUsers() {
     if (!api.isReady()) {
       return;
     }
-    const userList = await api.listKeyUsers();
+    const keyList = await api.listKeys();
+    const userList = keyList.filter((k) => !k.isRootKey);
     if (userList.error) {
       return;
     }

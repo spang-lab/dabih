@@ -22,7 +22,6 @@ export default async (ctx, next) => {
     await next();
   } catch (err) {
     const stack = getMainStackMessage(err);
-
     const message = `${err.message} ${stack}`;
     sendError(ctx, message);
   }

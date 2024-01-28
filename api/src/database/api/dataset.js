@@ -1,10 +1,9 @@
 /* eslint-disable no-await-in-loop */
-import { col, fn, Op } from 'sequelize';
+import { Op } from 'sequelize';
 import { getModel } from './util.js';
 import { log, generateMnemonic } from '../../util/index.js';
 import { base64ToBase64Url, rsa } from '../../crypto/index.js';
 import search from './datasetSearch.js';
-import { permissionIndex } from '../model/member.js';
 
 async function listIncomplete(ctx) {
   const dataset = getModel(ctx, 'Dataset');

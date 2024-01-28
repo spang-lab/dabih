@@ -22,7 +22,6 @@ const getAdminRouter = () => {
   const router = new Router();
   router.use(requireScopes('admin'));
 
-  router.get('/key/list', admin.listKeys);
   router.post('KEY_CONFIRM', '/key/confirm', admin.confirmKey);
   router.get('/dataset/orphan', admin.listOrphans);
 
@@ -72,7 +71,7 @@ const getDatasetRouter = () => {
 const getKeyRouter = () => {
   const router = new Router();
   router.use(requireScopes('api'));
-  router.get('/list/user', key.listUsers);
+  router.get('/list', key.list);
   router.post('KEY_ADD', '/add', key.add);
   router.post('/check', key.check);
   router.post('KEY_REMOVE', '/remove', key.remove);
@@ -121,8 +120,8 @@ const getApiRouter = () => {
 
 const getRouter = () => {
   const router = new Router();
-  router.use(koaBody());
   router.use(catchError);
+  router.use(koaBody());
 
   router.get('/healthy', healthy);
   router.get('/api/v1/healthy', healthy);
