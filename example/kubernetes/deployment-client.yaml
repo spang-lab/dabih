@@ -18,7 +18,7 @@ spec:
         app: dabih-client
     spec:
       containers:
-      - image: thespanglab/dabih-client:v1.13.4
+      - image: thespanglab/dabih-client:v1.14.0
         name: dabih-client
         imagePullPolicy: IfNotPresent
         livenessProbe:
