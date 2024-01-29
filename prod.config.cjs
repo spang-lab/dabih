@@ -8,8 +8,9 @@ const nextauthSecret = randomToken(32);
 
 const apps = [
   {
-    cwd: './api',
-    script: 'npm start',
+    name: 'api',
+    cwd: '/app/api',
+    script: '/app/api/app.js',
     env: {
       NODE_ENV: 'production',
       DB_URL: getEnv('DB_URL', 'sqlite:./data/dabih.sqlite'),
@@ -22,8 +23,9 @@ const apps = [
     }
   },
   {
-    cwd: './client',
-    script: 'npm start',
+    name: 'next',
+    cwd: '/app/next',
+    script: '/app/next/server.js',
     env: {
       NODE_ENV: 'production',
       PORT: getEnv('PORT', '3000'),
