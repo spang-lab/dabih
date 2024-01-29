@@ -3,8 +3,7 @@ import Koa from 'koa';
 
 import {
   log,
-  initConfig,
-  getConfig,
+  getEnv,
 } from './util/index.js';
 
 import { initDb } from './database/index.js';
@@ -14,15 +13,15 @@ import initSchedule from './schedule/index.js';
 import apiRouter from './api/router.js';
 
 export default async () => {
-  await initConfig();
   await initDb();
   await initEphemeral();
   await initStorage();
   await initSchedule();
 
   const app = new Koa();
-  const { server } = getConfig();
-  const { port, demo } = server;
+
+  const demo = getEnv('DEMO', false);
+  const port = getEnv('API_PORT', 3001);
 
   if (demo) {
     log.warn('+----------- DEMO MODE ------------+');

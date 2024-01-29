@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import { getConfig, getEnv, log } from '../util/index.js';
+import { requireEnv, log } from '../util/index.js';
 
 import {
   aes,
@@ -8,14 +8,9 @@ import {
 } from '../crypto/index.js';
 
 const init = async () => {
-  const { ephemeral } = getConfig();
-  const { url } = ephemeral;
+  const url = requireEnv('EPHEMERAL_URL');
   log(`Redis connect to ${url}`);
-
-  const ephemeralSecret = getEnv('EPHEMERAL_SECRET', null);
-  if (!ephemeralSecret) {
-    throw new Error('No EPHEMERAL_SECRET for redis encryption, please set env.EPHEMERAL_SECRET');
-  }
+  const ephemeralSecret = requireEnv('EPHEMERAL_SECRET');
   const client = createClient({ url });
   try {
     await client.connect();

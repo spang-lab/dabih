@@ -8,22 +8,7 @@ admins:
   groups:
     - dabih
 
-crypto:
-  rootKeys: []
-
 # Configure where to store temporary data
 ephemeral:
   adapter: memory
-
-database:
-  dialect: sqlite
-  logging: false
-  storage: ./data/dabih.sqlite
-  retry:
-    max: 10
-  
-
-storage:
-  backend: local
-  path: ./data
 

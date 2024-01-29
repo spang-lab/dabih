@@ -1,4 +1,13 @@
+import { getEnv } from '../util/config.js';
 import providers from './providers/index.js';
+
+const getAdmins = () => {
+  const admins = getEnv('ADMINS', '');
+  const adminList = admins.split(',')
+    .map((sub) => sub.trim())
+    .filter((sub) => !!sub);
+  return adminList;
+};
 
 const splitToken = (accessToken) => {
   const [provider, ...rest] = accessToken.split('_');
@@ -20,6 +29,14 @@ export default async function fetchUser(ctx, accessToken) {
     throw new Error(`Unknown Provider "${provider}" in accessToken`);
   }
   const user = await providerFunc(ctx, token);
+
+  const admins = getAdmins();
+
+  const { sub, email } = user;
+  if (admins.includes(sub) || admins.includes(email)) {
+    user.scopes.push('admin');
+  }
+
   user.provider = provider;
   return user;
 }

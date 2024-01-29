@@ -35,12 +35,13 @@ COPY api .
 RUN npm ci
 
 WORKDIR /app
-COPY pm2-prod.yaml pm2-prod.yaml
+COPY helpers.cjs helpers.cjs
+COPY prod.config.cjs prod.config.cjs
 
 EXPOSE 3000
 ENV PORT 3000
 
-CMD ["pm2-runtime", "pm2-prod.yaml"]
+CMD ["pm2-runtime", "prod.config.cjs"]
 
 
 

@@ -1,11 +1,8 @@
-import { getConfig } from '../../util/index.js';
+import { requireEnv } from '../../util/index.js';
 
-export default async function dabihProvider(_ctx, accessToken) {
-  const { server } = getConfig();
-  if (!server || !server.demo) {
-    throw new Error('Demo Provider disabled');
-  }
-  if (accessToken !== server.demo) {
+export default async function demoProvider(_ctx, accessToken) {
+  const token = requireEnv('DEMO');
+  if (accessToken !== token) {
     throw new Error('Invalid access token.');
   }
 
@@ -13,6 +10,6 @@ export default async function dabihProvider(_ctx, accessToken) {
     sub: 'root',
     name: 'Demo User',
     email: 'anonymous@example.com',
-    scopes: ['api', 'admin'],
+    scopes: ['api'],
   };
 }

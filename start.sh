@@ -1,3 +1,3 @@
 #!/usr/bin/env zsh
 
-pm2-runtime pm2-dev.yaml
+pm2-runtime pm2-dev.cjs

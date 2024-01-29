@@ -1,7 +1,9 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 import { Sequelize } from 'sequelize';
 import { createNamespace } from 'cls-hooked';
-import { log, getConfig, getEnv } from '../util/index.js';
+import {
+  log, getEnv, requireEnv,
+} from '../util/index.js';
 
 import {
   initChunk,
@@ -50,34 +52,22 @@ const waitForDatabase = async () => {
 };
 
 const connect = async () => {
-  const { database } = getConfig();
-
-  const { dialect, logging } = database;
+  const url = requireEnv('DB_URL');
+  const debug = getEnv('DB_DEBUG', 'false');
 
   const config = {
-    ...database,
     supportBigNumbers: true,
     bigNumberStrings: true,
+    logging: false,
+    retry: {
+      max: 10,
+    },
   };
-  if (logging) {
+  if (debug) {
     config.logging = (msg) => log.verbose(msg);
   }
-
-  switch (dialect.toLowerCase()) {
-    case 'sqlite':
-      sequelize = new Sequelize(config);
-      break;
-    case 'postgres':
-      sequelize = new Sequelize({
-        ...config,
-        password: getEnv('DATABASE_SECRET', ''),
-      });
-      break;
-    default:
-      throw new Error(
-        `Unknown database dialect ${dialect}, [sqlite, postgres] are supported`,
-      );
-  }
+  sequelize = new Sequelize(url, config);
+  log.log(`Connecting to: ${url}`);
 
   const isOk = await waitForDatabase();
   if (!isOk) {

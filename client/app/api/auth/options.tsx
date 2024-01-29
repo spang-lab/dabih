@@ -75,7 +75,7 @@ const authOptions = {
       clientSecret: process.env.GITHUB_SECRET as string,
     }),
     DemoProvider({
-      enabled: true,
+      enabled: process.env.DEMO,
     }),
   ].filter(isConfigured),
   callbacks: {

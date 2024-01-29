@@ -1,5 +1,4 @@
 import ldap from 'ldapjs';
-import { getConfig } from '../../util/index.js';
 
 function urClient() {
   const url = 'ldaps://ldapclient.uni-regensburg.de:636';
@@ -100,23 +99,16 @@ const parseToken = (token) => {
 };
 
 export default async function urProvider(ctx, accessToken) {
-  const { admins } = getConfig();
-  const { subs } = admins;
   const { dn, password } = parseToken(accessToken);
   const client = urClient();
   await bind(client, dn, password);
   const { attributes } = await userinfo(client, dn);
   const { cn, fullName, mail } = attributesToObj(attributes);
 
-  const scopes = ['api'];
-  if (subs.includes(cn)) {
-    scopes.push('admin');
-  }
-
   return {
     sub: cn,
     name: fullName,
     email: mail,
-    scopes,
+    scopes: ['api'],
   };
 }

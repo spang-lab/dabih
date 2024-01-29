@@ -1,7 +1,7 @@
 import Memcached from 'memcached';
 import { promisify } from 'node:util';
 
-import { getConfig, getEnv, log } from '../util/index.js';
+import { requireEnv, parseUrl, log } from '../util/index.js';
 
 import {
   aes,
@@ -33,19 +33,13 @@ const init = async () => {
     failures: 2,
   };
 
-  const { ephemeral } = getConfig();
-  const { url } = ephemeral;
-  if (!url) {
-    throw new Error('No memcached url, please config.ephemeral.url');
-  }
-  log(`Memcached connect to ${url}`);
-  await connect(url);
-  const memcached = new Memcached(url, opts);
+  const emphemeralUrl = requireEnv('EPHEMERAL_URL');
+  const { path } = parseUrl(emphemeralUrl);
+  log(`Memcached connect to ${path}`);
+  await connect(path);
+  const memcached = new Memcached(path, opts);
 
-  const ephemeralSecret = getEnv('EPHEMERAL_SECRET', null);
-  if (!ephemeralSecret) {
-    throw new Error('No EPHEMERAL_SECRET for memcached encryption, please set env.EPHEMERAL_SECRET');
-  }
+  const ephemeralSecret = requireEnv('EPHEMERAL_SECRET');
   const aesKey = await aes.deriveKey(ephemeralSecret);
   const mGet = promisify(memcached.get).bind(memcached);
   const mSet = promisify(memcached.set).bind(memcached);

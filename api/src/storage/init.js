@@ -1,11 +1,11 @@
-import { getConfig } from '../util/index.js';
+import { requireEnv, parseUrl } from '../util/index.js';
 import { initLocal } from './backends/index.js';
 
 let storageProvider = null;
 
 export const initStorage = async () => {
-  const { storage } = getConfig();
-  const { backend } = storage;
+  const storageUrl = requireEnv('STORAGE_URL');
+  const { backend, path } = parseUrl(storageUrl);
   if (backend === 'local') {
     storageProvider = await initLocal();
     return;

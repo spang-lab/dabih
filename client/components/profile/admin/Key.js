@@ -31,14 +31,13 @@ export default function KeyElem({ data }) {
   const getSwitch = () => {
     if (isRootKey) {
       return (
-        <div className="px-5 text-lg text-gray-500 mx-2 italic">
+        <div className="text-lg text-gray-500 mx-2 italic">
           Root key
-
         </div>
       );
     }
     return (
-      <div className="flex flex-row items-center border-x px-3 mx-2">
+      <div className="flex flex-row items-center border-x px-1 mx-1">
         <Switch
           checked={enabled}
           onChange={toggle}
@@ -59,14 +58,14 @@ export default function KeyElem({ data }) {
   const getModal = () => (
     <button
       type="button"
-      className="py-1 px-2 bg-red text-white rounded-md inline-flex items-center"
+      className="py-1 px-1 bg-red text-white rounded-md inline-flex items-center"
       onClick={() => openDialog('delete', {
         type: 'Public Key',
         name,
         onSubmit: () => deleteKey(id),
       })}
     >
-      <Trash2 size={24} className="pr-2" />
+      <Trash2 size={24} className="pr-1" />
       <div className="text-xs font-bold">
         Delete
       </div>
@@ -88,10 +87,10 @@ export default function KeyElem({ data }) {
       <div className="">
         <div className="font-medium text-black">
           {name}
-          <a className="text-blue px-2 font-bold" href={`mailto:${email}`}>
+          <a className="text-blue pl-1 font-bold" href={`mailto:${email}`}>
             {email}
           </a>
-          <span className="text-gray-500 px-3">
+          <span className="text-gray-500 pl-1">
             (id:
             {' '}
             {sub}
@@ -99,15 +98,15 @@ export default function KeyElem({ data }) {
           </span>
         </div>
       </div>
-      <div className="px-3 text-gray-500 font-light">
+      <div className="px-1 text-gray-500 font-light">
         <LocalDate value={createdAt} />
       </div>
       <div className="text-gray-400 text-xs">{hash}</div>
       <div className="grow" />
-      <div className="justify-self-end flex flex-row items-center">
+      <div className="flex flex-row items-center">
         {getSwitch()}
       </div>
-      <div className="justify-self-end">{getModal()}</div>
+      <div className="">{getModal()}</div>
     </div>
   );
 }

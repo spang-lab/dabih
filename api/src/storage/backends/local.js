@@ -16,7 +16,7 @@ import {
   base64ToBase64Url,
 } from '../../crypto/index.js';
 
-import { getConfig, log } from '../../util/index.js';
+import { log, requireEnv } from '../../util/index.js';
 
 const exists = async (path) => {
   try {
@@ -42,8 +42,8 @@ const mkdirNx = async (folderPath) => {
 };
 
 const getBasePath = async () => {
-  const { storage } = getConfig();
-  const { path } = storage;
+  const storageUrl = requireEnv('STORAGE_URL');
+  const [, path] = storageUrl.split(':', 2);
   if (!path) {
     throw new Error('local storage provider needs config.storage.path');
   }
@@ -59,6 +59,7 @@ const getBasePath = async () => {
 
 const init = async () => {
   const basePath = await getBasePath();
+  log.log(`Writing data to ${basePath}`);
   const resolveId = (mnemonic, chunkHash) => {
     const folder = join(basePath, mnemonic);
     const fileName = base64ToBase64Url(chunkHash);

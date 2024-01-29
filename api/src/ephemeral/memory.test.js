@@ -1,12 +1,10 @@
 /* eslint-env jest */
 
-import { mockConfig } from '../util/index.js';
 import initMemory from './memory.js';
 
 let client = null;
 
 beforeAll(async () => {
-  mockConfig({});
   client = await initMemory();
 });
 
