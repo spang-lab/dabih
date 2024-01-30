@@ -2,14 +2,23 @@
 
 - A secure way to upload and share data
 - You decide who gets access to your data
-- End to end encrypted, rendundant data storage
+- End-to-end encrypted, redundant data storage
 - Simple to use
+
+## Quickstart
+
+Start a demo version of dabih:
+
+```
+    docker run -p 3000:3000 thespanglab/dabih:latest
+```
 
 ## Installation
 
 The simplest way to install dabih is to use the prebuilt containers on Docker
 Hub
 
+- [thespanglab/dabih](https://hub.docker.com/repository/docker/thespanglab/dabih/general)
 - [thespanglab/dabih-client](https://hub.docker.com/repository/docker/thespanglab/dabih-client/general)
 - [thespanglab/dabih-api](https://hub.docker.com/repository/docker/thespanglab/dabih-api/general)
 
@@ -18,13 +27,10 @@ Hub
 The `example` folder contains a full example for docker-compose with caddy as a
 reverse proxy
 
-
 ### Kubernetes
-  
+
 The `example/kubernetes` folder contains a full example for kubernetes with a
 redis store and postgres database.
-
-
 
 ## How dabih works
 
@@ -110,4 +116,3 @@ dataset deletes all its data and is irrevokable.
 ### Reencryption
 
 ![Reencryption](./client/public/images/docs/reencrypt.svg)
-

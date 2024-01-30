@@ -16,7 +16,7 @@ const route = async (ctx) => {
     return;
   }
   const result = await token.generate(ctx, {
-    lifetime: 3 * oneDay,
+    lifetime: 30 * oneDay,
     scopes: [type],
     refresh: true,
   });
