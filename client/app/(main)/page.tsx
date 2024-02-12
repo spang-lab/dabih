@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Institute } from '@/components';
+import { Department, Organization } from '@/components';
 import BrowserSupport from './BrowserSupport';
 
 export default function Home() {
@@ -15,8 +15,11 @@ export default function Home() {
             <br />
             <span className="text-blue"> Dabih data storage platform </span>
           </h1>
-          <div className="flex pt-2">
-            <Institute />
+          <div className="flex items-center pt-2">
+            <div className="px-4">
+              <Department />
+            </div>
+            <Organization />
           </div>
           <div className="text-base text-gray-400 sm:text-lg md:text-xl">
             <ul className="px-4 list-disc">
@@ -26,12 +29,18 @@ export default function Home() {
               <li> Simple to use </li>
             </ul>
           </div>
-          <div className="py-5">
+          <div className="py-5 flex flex-row items-center">
             <Link
               className="text-2xl text-white bg-blue rounded-md px-4 py-3"
               href="/account"
             >
               Get Started
+            </Link>
+            <Link
+              className="text-xl  text-blue hover:underline mx-5 px-4 py-3"
+              href="/docs"
+            >
+              Documentation
             </Link>
           </div>
         </div>
@@ -239,6 +248,7 @@ export default function Home() {
         <h3 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
           <span className="text-blue"> Reencryption </span>
         </h3>
+        In case of key loss your data can be re-encrypted with a different key.
         <div className="relative w-full mx-auto lg:w-3/4 xl:w-2/3">
           <Image
             src="/images/docs/reencrypt.svg"

@@ -31,6 +31,7 @@
     "react-feather": "^2.0.10",
     "react-to-print": "^2.14.15",
     "rehype-highlight": "^7.0.0",
+    "remark-frontmatter": "^5.0.0",
     "sharp": "^0.33.2"
   },
   "devDependencies": {

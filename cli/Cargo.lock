@@ -387,7 +387,7 @@ dependencies = [
 
 [[package]]
 name = "dabih"
-version = "1.12.17"
+version = "1.14.1"
 dependencies = [
  "anyhow",
  "base64",

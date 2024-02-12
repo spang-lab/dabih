@@ -1,26 +1,22 @@
-
 # Command Line Interface
 
 Dabih is also available as a Command Line Tool on
 [crates.io](https://crates.io/crates/dabih)
 
-## Dabih CLI Binary
+## Install
+
+### Dabih CLI Binary
 
 We offer precomiled binaries for Windows and Linux on our Releases Page
-[Github Releases](https://github.com/spang-lab/dabih/releases)
 
-On linux you can run:
-```sh
-wget -qO- https://github.com/spang-lab/dabih/releases/download/v1.7.5/dabih-x86_64-unknown-linux-gnu.tar.gz | tar xvz
-```
+- Go to the [Github Releases](https://github.com/spang-lab/dabih/releases/latest) page
+- Download the dabih-cli binary for your OS. e.g. dabih-cli-linux.tar.gz
+- Unpack the binary into a folder that's in your $PATH.
 
-## Prerequesites
+### Compile from source
 
 You will need the cargo package manager that is shipped with rust.
-
 [Rust install](https://doc.rust-lang.org/cargo/getting-started/installation.html)
-
-## Install
 
 Use cargo to install dabih
 
@@ -42,7 +38,9 @@ Then run
 - Enter the url of your dabih server.
 - Generate an Api Token on your [profile page](/profile).
 
-![Api Token](/images/docs/token.png)
+![API Token](/images/docs/token.png)
+
+> Image: dabih settings page
 
 - Copy this token and enter it into the dabih cli.
 
@@ -54,7 +52,9 @@ Use
 
 to check if the cli was set up correctly.
 
-## Uploading
+## Usage
+
+### Uploading
 
 ```txt
 Upload files to dabih
@@ -80,23 +80,19 @@ dabih upload my_secret_file.txt
 
 to upload a file to dabih.
 
-### Folders
-
-There a two ways to upload folders:
+There are two ways to upload folders:
 
 - `-r` **recursive**, all files in a folder are uploaded seperately.
   Make sure to also set the `-l` **limit** if you intend to upload more than 10 files.
 - `-z` **zipped** the folder is zipped and uploaded as a single file.
   The dabih cli will handle the zipping for you.
 
-### Mnemonics
-
 Each uploaded file will give you a `mnemonic`, a unique name for the upload.
 
 Mnemonics are always of the form `<random adjective>_<random name>`.
 e.g. `electrothermal_amenata`
 
-## Download
+### Downloading
 
 ```txt
 Download a dataset from dabih

@@ -80,6 +80,7 @@ export function ApiWrapper({ children }) {
         }
         return session.user.scopes.includes('admin');
       },
+      info: () => api.get('/info'),
       listKeys: () => api.get('/key/list'),
       getUser: async () => api.post('/token'),
       generateToken: async (type) => api.post(`/token/generate/${type}`),

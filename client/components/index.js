@@ -1,5 +1,3 @@
-export { default as Contact } from './Contact';
-export { default as Privacy } from './Privacy';
 export { default as DataPolicy } from './DataPolicy';
 export { default as Upload } from './upload';
 export { default as Key } from './key/Key';

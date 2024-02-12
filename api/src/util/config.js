@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import yaml from 'js-yaml';
 import log from './logger.js';
 
 export const parseUrl = (url) => {
@@ -35,4 +37,11 @@ export const requireEnv = (key) => {
     return value;
   }
   throw new Error(`ENV var "${key}" is required, but was not found.`);
+};
+
+export const readConfig = async () => {
+  const path = requireEnv('CONFIG');
+  const content = await readFile(path, 'utf8');
+  const config = yaml.load(content);
+  return config;
 };

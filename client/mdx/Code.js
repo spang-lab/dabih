@@ -2,7 +2,7 @@ import React from 'react';
 
 export function Pre({ children, className }) {
   return (
-    <div className="mx-3 my-2 rounded-lg shadow-lg border border-gray-400">
+    <div className="mx-3 my-2 rounded-lg shadow-lg  border border-gray-400 max-w-3xl overflow-scroll">
       <pre className={className}>
         {children}
       </pre>

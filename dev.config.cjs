@@ -19,6 +19,7 @@ const apps = [
       EPHEMERAL_SECRET: getEnv('EPHEMERAL_SECRET', emphemeralSecret),
       ADMINS: getEnv('ADMINS', 'root'),
       DEMO: getEnv('DEMO', demoToken),
+      CONFIG: getEnv('CONFIG', './config.yaml'),
     }
   },
   {

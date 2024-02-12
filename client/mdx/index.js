@@ -20,7 +20,7 @@ function Text(props) {
 function ResponsiveImage(props) {
   const { alt, src } = props;
   return (
-    <span className="relative h-80 p-2 m-2 block">
+    <span className="relative h-80 p-2 m-5 block border rounded-xl">
       <Image
         className="object-contain object-left"
         alt={alt}
@@ -32,6 +32,15 @@ function ResponsiveImage(props) {
   );
 }
 
+function BlockQuote(props) {
+  const { children } = props;
+  return (
+    <p className="ml-8 text-gray-500">
+      {children}
+    </p>
+  );
+}
+
 const components = {
   img: ResponsiveImage,
   p: Text,
@@ -40,6 +49,7 @@ const components = {
   h3: H3,
   a: Link,
   code: Code,
+  blockquote: BlockQuote,
   pre: Pre,
   ul: UnorderedList,
   ol: OrderedList,

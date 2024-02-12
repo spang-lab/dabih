@@ -1,0 +1,358 @@
+# API Reference
+
+## API Access
+
+Most API routes require an **access token** as part of the _Authorization_ request header.
+
+```http
+Authorization: Bearer <access_token>
+```
+
+Valid access token depend on the configured providers. For command line use
+generate an API token on the `Settings` page.
+
+Access tokens have different scopes, the required scopes are documented for each API call.
+API calls that do not require scopes are available without an Authorization header.
+
+**Scopes:**
+
+- `upload`: these tokens are only valid for data upload, they are used for the ingress feature.
+- `api`: these tokens are valid for all API calls that do not require admin permission.
+- `admin`: these tokens are valid for all API calls.
+- `download`: tokens with this scope are generated on demand an only valid for downloading a single dataset.
+
+## GET `api/v1/healthy`
+
+**Required Scopes:** _none_
+
+Used for the API server health check. Always returns
+
+```json
+{ "ok": true }
+```
+
+## POST `/admin/key/confirm`
+
+**Required Scopes:** _admin_
+
+**Request Body**:
+
+```json
+  "keyId": "<number | the numeric id of the key>"
+  "confirmed": "<boolean | the new state of the key>"
+```
+
+**Description:**
+Set the status of a public key. If the `confirmed` state is false the key cannot be used.
+Only _admins_ can confirm keys
+
+**Response:** `ok`
+
+## GET `/admin/dataset/orphan`
+
+**Required Scopes:** _admin_
+
+**Response:**
+List of orphaned datasets, datasets with no valid non-root keys.
+
+```json
+{
+    "id": "<number | numeric data set id>",
+    "mnemonic": "<string | dataset mnemonic id>",
+    "name": "<string | dataset tag>",
+    "fileName": "<string | the file name of the dataset>",
+    "path": "<string/null | the origial path of the file",
+    "hash": "<string | the hash of the dataset>",
+    "size": "<number | the size of the dataset, in bytes>",
+    "keyHash": "<string | the fingerprint of the AES key>",
+    "createdBy": "<the id of the user who uploaded the dataset>",
+    "validated": "<string | timestamp of last validation>",
+    "createdAt": "<string | creation timestamp>",
+    "updatedAt": "<string | timestamp of last change",
+    "deletedAt": "<string/null | if not null the timestamp when the dataset was removed",
+    "members": [{
+        "permission": "<string | permission level>",
+        "sub": "<string | user id>"
+    },...]
+},
+
+```
+
+## GET `/admin/events`
+
+**Required Scopes:** _admin_
+
+**Description:**
+List all days on which events occured.
+
+**Response:**
+
+```json
+["<YYYY-MM-DD>", ...]
+```
+
+## GET `/admin/events/:date`
+
+**Required Scopes:** _admin_
+
+**Parameters:**
+
+- date: the day for which to list events
+
+**Description:**
+List all documented events in the event history.
+
+**Response:**
+
+```json
+{
+    "id": "<number | unique event id>",
+    "sub": "<string | the user ID that generated the event>",
+    "mnemonic": "<string/null | the id of the dataset the event applies to>",
+    "event": "<string | event name>",
+    "message": "<string | event message>",
+    "day": "<string | the day the event occured>",
+    "createdAt": "<string | the full event timestamp>",
+}, ...
+```
+
+## GET `/upload/check`
+
+**Required Scopes**: _upload_
+
+**Description:**
+Check if an incomplete upload exists.
+
+**Response:**
+`null` if no incomplete upload exists. Else return the incomplete dataset:
+
+```json
+{
+    "id": "<number | numeric data set id>",
+    "mnemonic": "<string | dataset mnemonic id>",
+    "name": "<string | dataset tag>",
+    "fileName": "<string | the file name of the dataset>",
+    "path": "<string/null | the origial path of the file",
+    "hash": "<string | the hash of the dataset>",
+    "size": "<number | the size of the dataset, in bytes>",
+    "keyHash": "<string | the fingerprint of the AES key>",
+    "createdBy": "<the id of the user who uploaded the dataset>",
+    "validated": "<string | timestamp of last validation>",
+    "createdAt": "<string | creation timestamp>",
+    "updatedAt": "<string | timestamp of last change",
+    "deletedAt": "<string/null | if not null the timestamp when the dataset was removed",
+    "chunks": [{
+      "id": "<number | numeric chunk id>",
+      "hash": "SHA-256 hash of the chunk",
+      "iv": "<AES initialization vector>",
+      "start": "<number | byte positon of the start of the chunk>",
+      "end": "<number | byte positon of the end of the chunk>",
+      "size": "<number | total size of the dataset>",
+    },...]
+}
+```
+
+## POST `/upload/start`
+
+**Required Scopes**: _upload_
+
+**Description:** Start a new upload.
+
+**Request Body:**
+
+```json
+  {
+    "name":"<string, optional | the name tag for the upload>"
+    "fileName":"<string | the name of the file to upload>"
+    "path":"<string, optional | the origial path of the file>"
+    "size":"<number, optional | the full size of the file >"
+    "chunkHash":"<string, optional | the base64 hash of the first chunk of the file>"
+  }
+```
+
+**Response:**
+Returns the newly created dataset, with a new mnemonic.
+
+```json
+{
+  "id": "<number | numeric data set id>",
+  "mnemonic": "<string | dataset mnemonic id>",
+  "name": "<string | dataset tag>",
+  "fileName": "<string | the file name of the dataset>",
+  "path": "<string/null | the origial path of the file",
+  "hash": "<string | the hash of the dataset>",
+  "size": "<number | the size of the dataset, in bytes>",
+  "keyHash": "<string | the fingerprint of the AES key>",
+  "createdBy": "<the id of the user who uploaded the dataset>",
+  "validated": "<string | timestamp of last validation>",
+  "createdAt": "<string | creation timestamp>",
+  "updatedAt": "<string | timestamp of last change",
+  "deletedAt": "<string/null | if not null the timestamp when the dataset was removed",
+  "duplicate": "<string/null | if the dataset is a duplicate the full hash of the existing dataset>"
+}
+```
+
+## PUT `/upload/:mnemonic`
+
+**Required Scopes**: _upload_
+
+**Description:**
+
+## POST `/upload/finish/:mnemonic`
+
+**Required Scopes**: _upload_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+**Description:**
+
+## POST `/upload/cancel/:mnemonic`
+
+**Required Scopes**: _upload_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+**Description:**
+Cancel the upload for the mnemonic.
+
+## GET `/:mnemonic/download`
+
+Required Scopes: _download_
+
+## POST `/dataset/search`
+
+**Required Scopes**: _api_
+
+## GET `/dataset/:mnemonic`
+
+**Required Scopes**: _api_
+
+## GET `/dataset/:mnemonic/chunk/:chunkHash`
+
+**Required Scopes**: _api_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+- chunkHash: the base64url encoded SHA-256 hash of the chunk
+
+## POST `/dataset/:mnemonic/remove`
+
+**Required Scopes**: _api_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+**Description:**
+Remove a dataset, this is a soft deletion and is reversible.
+
+## POST `/dataset/:mnemonic/recover`
+
+**Required Scopes**: _api_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+**Description:**
+Recover a removed dataset, this will undo removal.
+
+## POST `/dataset/:mnemonic/destroy`
+
+**Required Scopes**: _api_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+**Description:**
+Permanently remove the dataset, it cannot be recovered.
+
+## POST `/dataset/:mnemonic/member/add`
+
+**Required Scopes**: _api_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+**Description:**
+Add a new member to the dataset, this will trigger re-encryption of the AES key.
+
+## POST `/dataset/:mnemonic/member/set`
+
+**Required Scopes**: _api_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+**Description:**
+Set the permission for a member of the dataset.
+
+## POST `/dataset/:mnemonic/reencrypt`
+
+**Required Scopes**: _api_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+**Description:**
+Re-encrypt the dataset, this will replace the symmetric AES key.
+
+## POST `/dataset/:mnemonic/rename`
+
+**Required Scopes**: _api_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+**Description:**
+Set the name tag for the dataset.
+
+## POST `/dataset/:mnemonic/download`
+
+**Required Scopes**: _api_
+
+**Parameters:**
+
+- mnemonic: the ID of the dataset
+
+## GET `/key/list`
+
+**Required Scopes**: _api_
+
+## POST `/key/add`
+
+**Required Scopes**: _api_
+
+## POST `/key/check`
+
+**Required Scopes**: _api_
+
+## POST `/key/remove`
+
+**Required Scopes**: _api_
+
+## POST `/token`
+
+**Required Scopes**: _api_
+
+## POST `/token/generate/:type`
+
+**Required Scopes**: _api_
+
+## GET `/token/list`
+
+**Required Scopes**: _api_
+
+## POST `/token/remove`
+
+**Required Scopes**: _api_

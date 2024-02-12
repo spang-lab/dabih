@@ -11,6 +11,7 @@ import {
 } from '../middleware/index.js';
 
 import healthy from './healthy.js';
+import info from './info.js';
 
 import dataset from './dataset/index.js';
 import upload from './upload/index.js';
@@ -125,6 +126,7 @@ const getRouter = () => {
 
   router.get('/healthy', healthy);
   router.get('/api/v1/healthy', healthy);
+  router.get('/api/v1/info', info);
   const apiRouter = getApiRouter();
 
   router.use('/api/v1', apiRouter.routes(), apiRouter.allowedMethods());

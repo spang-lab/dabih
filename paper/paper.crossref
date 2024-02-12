@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doi_batch xmlns="http://www.crossref.org/schema/5.3.1"
+           xmlns:ai="http://www.crossref.org/AccessIndicators.xsd"
+           xmlns:rel="http://www.crossref.org/relations.xsd"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           version="5.3.1"
+           xsi:schemaLocation="http://www.crossref.org/schema/5.3.1 http://www.crossref.org/schemas/crossref5.3.1.xsd">
+  <head>
+    <doi_batch_id>20240211T163115-3cecdbd8590655f5c9b7801cef333996cc755f6e</doi_batch_id>
+    <timestamp>20240211163115</timestamp>
+    <depositor>
+      <depositor_name>JOSS Admin</depositor_name>
+      <email_address>admin@theoj.org</email_address>
+    </depositor>
+    <registrant>The Open Journal</registrant>
+  </head>
+  <body>
+    <journal>
+      <journal_metadata>
+        <full_title>Journal of Open Source Software</full_title>
+        <abbrev_title>JOSS</abbrev_title>
+        <issn media_type="electronic">2475-9066</issn>
+        <doi_data>
+          <doi>10.21105/joss</doi>
+          <resource>https://joss.theoj.org</resource>
+        </doi_data>
+      </journal_metadata>
+      <journal_issue>
+        <publication_date media_type="online">
+          <month>01</month>
+          <year>1970</year>
+        </publication_date>
+        <journal_volume>
+          <volume>¿VOL?</volume>
+        </journal_volume>
+        <issue>¿ISSUE?</issue>
+      </journal_issue>
+      <journal_article publication_type="full_text">
+        <titles>
+          <title>dabih - encrypted data storage and sharing
+platform</title>
+        </titles>
+        <contributors>
+          <person_name sequence="first" contributor_role="author">
+            <given_name>Michael</given_name>
+            <surname>Huttner</surname>
+            <ORCID>https://orcid.org/0000-0002-3766-5909</ORCID>
+          </person_name>
+          <person_name sequence="additional"
+                       contributor_role="author">
+            <given_name>Jakob</given_name>
+            <surname>Simeth</surname>
+            <ORCID>https://orcid.org/0000-0002-7832-2582</ORCID>
+          </person_name>
+          <person_name sequence="additional"
+                       contributor_role="author">
+            <given_name>Renato</given_name>
+            <surname>Liguori</surname>
+            <ORCID>https://orcid.org/0000-0002-5704-9409</ORCID>
+          </person_name>
+          <person_name sequence="additional"
+                       contributor_role="author">
+            <given_name>Fulvia</given_name>
+            <surname>Ferrazzi</surname>
+            <ORCID>https://orcid.org/0000-0003-4011-4638</ORCID>
+          </person_name>
+          <person_name sequence="additional"
+                       contributor_role="author">
+            <given_name>Rainer</given_name>
+            <surname>Spang</surname>
+            <ORCID>https://orcid.org/0000-0002-1326-4297</ORCID>
+          </person_name>
+        </contributors>
+        <publication_date>
+          <month>01</month>
+          <day>01</day>
+          <year>1970</year>
+        </publication_date>
+        <pages>
+          <first_page>¿PAGE?</first_page>
+        </pages>
+        <publisher_item>
+          <identifier id_type="doi">N/A</identifier>
+        </publisher_item>
+        <ai:program name="AccessIndicators">
+          <ai:license_ref applies_to="vor">http://creativecommons.org/licenses/by/4.0/</ai:license_ref>
+          <ai:license_ref applies_to="am">http://creativecommons.org/licenses/by/4.0/</ai:license_ref>
+          <ai:license_ref applies_to="tdm">http://creativecommons.org/licenses/by/4.0/</ai:license_ref>
+        </ai:program>
+        <rel:program>
+          <rel:related_item>
+            <rel:description>Software archive</rel:description>
+            <rel:inter_work_relation relationship-type="references" identifier-type="doi">10.5281</rel:inter_work_relation>
+          </rel:related_item>
+          <rel:related_item>
+            <rel:description>GitHub review issue</rel:description>
+            <rel:inter_work_relation relationship-type="hasReview" identifier-type="uri">https://github.com/openjournals</rel:inter_work_relation>
+          </rel:related_item>
+        </rel:program>
+        <doi_data>
+          <doi>N/A</doi>
+          <resource>https://joss.theoj.org/papers/N/A</resource>
+          <collection property="text-mining">
+            <item>
+              <resource mime_type="application/pdf">https://joss.theoj.org/papers/N/A.pdf</resource>
+            </item>
+          </collection>
+        </doi_data>
+        <citation_list>
+          <citation key="web-crypto">
+            <article_title>Web cryptography API</article_title>
+            <author>W3C</author>
+            <cYear>2023</cYear>
+            <unstructured_citation>W3C. (2023). Web cryptography API.
+https://www.w3.org/TR/WebCryptoAPI/</unstructured_citation>
+          </citation>
+          <citation key="bsi-crypto">
+            <article_title>Cryptographic mechanisms: Recommendations and
+key lengths</article_title>
+            <author>Information Security</author>
+            <cYear>2023</cYear>
+            <unstructured_citation>Information Security, F. O. for.
+(2023). Cryptographic mechanisms: Recommendations and key lengths (BSI
+TR-02102-1). Federal Office for Information
+Security.</unstructured_citation>
+          </citation>
+          <citation key="rfc3447">
+            <article_title>Public-key cryptography standards (PKCS) #1:
+RSA cryptography specifications version 2.1</article_title>
+            <author>RSA Laboratories</author>
+            <cYear>2003</cYear>
+            <unstructured_citation>RSA Laboratories. (2003). Public-key
+cryptography standards (PKCS) #1: RSA cryptography specifications
+version 2.1. RSA Laboratories.
+https://datatracker.ietf.org/doc/html/rfc3447</unstructured_citation>
+          </citation>
+          <citation key="nistsp800-38a">
+            <article_title>Recommendation for block cipher modes of
+operation: Methods and techniques</article_title>
+            <author>National Institute of Standards and
+Technology</author>
+            <cYear>2001</cYear>
+            <unstructured_citation>National Institute of Standards and
+Technology. (2001). Recommendation for block cipher modes of operation:
+Methods and techniques (No. 800-38A). National Institute of Standards
+and Technology.</unstructured_citation>
+          </citation>
+          <citation key="polp">
+            <article_title>The protection of information in computer
+systems</article_title>
+            <author>Saltzer</author>
+            <journal_title>Proceedings of the IEEE</journal_title>
+            <issue>9</issue>
+            <volume>63</volume>
+            <doi>10.1109/PROC.1975.9939</doi>
+            <cYear>1975</cYear>
+            <unstructured_citation>Saltzer, J. H., &amp; Schroeder, M.
+D. (1975). The protection of information in computer systems.
+Proceedings of the IEEE, 63(9), 1278–1308.
+https://doi.org/10.1109/PROC.1975.9939</unstructured_citation>
+          </citation>
+          <citation key="rfc4880">
+            <article_title>OpenPGP Message Format</article_title>
+            <author>Finney</author>
+            <doi>10.17487/RFC4880</doi>
+            <cYear>2007</cYear>
+            <unstructured_citation>Finney, H., Donnerhacke, L., Callas,
+J., Thayer, R. L., &amp; Shaw, D. (2007). OpenPGP Message Format. RFC
+4880. https://doi.org/10.17487/RFC4880</unstructured_citation>
+          </citation>
+        </citation_list>
+      </journal_article>
+    </journal>
+  </body>
+</doi_batch>

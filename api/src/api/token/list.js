@@ -10,7 +10,7 @@ const route = async (ctx) => {
     const n = t.token.length;
     const start = t.token.substring(0, 5);
     const end = t.token.substring(n - 5);
-    const mid = '*'.repeat(n - 10);
+    const mid = '...';
     return {
       ...t,
       token: `${start}${mid}${end}`,
