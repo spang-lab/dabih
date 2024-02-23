@@ -96,9 +96,10 @@ struct AddMemberArgs {
 struct RemoveArgs {
     /// the mnemonic of the dataset you want to edit
     mnemonic: String,
-    /// give the new member write permission
+    /// do not ask for confirmation
     #[arg(short, long, default_value_t = false)]
     yes: bool,
+    /// irrevokeably delete the data
     #[arg(short, long, default_value_t = false)]
     destroy: bool,
 }

@@ -1,7 +1,9 @@
 use anyhow::Result;
+use pbr::{ProgressBar, Units};
 use sha2::{Digest, Sha256};
 use std::fs::File;
 use std::io::Read;
+use std::os::unix::fs::MetadataExt;
 use std::path::PathBuf;
 
 use crate::crypto::encode_base64;
@@ -42,11 +44,18 @@ pub fn hash_file(path: &PathBuf) -> Result<String> {
     let chunk_size = 2 * 1024 * 1024; // 2 MiB
     let mut chunk_buf = vec![0u8; chunk_size];
     let mut file = File::open(&path)?;
+
+    let size = file.metadata()?.size();
+
+    let mut pb = ProgressBar::new(size);
+    pb.set_units(Units::Bytes);
+    pb.message("Hashing ");
     loop {
         match file.read(&mut chunk_buf) {
             Ok(0) => break,
             Ok(bytes) => {
                 let data = chunk_buf[0..bytes].to_vec();
+                pb.add(bytes as u64);
                 let hash = hash_chunk(&data);
                 hasher.update(&hash);
             }
@@ -55,6 +64,7 @@ pub fn hash_file(path: &PathBuf) -> Result<String> {
             }
         };
     }
+    pb.finish();
     let result = hasher.finalize().to_vec();
     let hash = encode_base64(&result);
     Ok(hash)
