@@ -1,7 +1,7 @@
 use anyhow::Result;
 use pbr::{ProgressBar, Units};
 use sha2::{Digest, Sha256};
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::Read;
 use std::os::unix::fs::MetadataExt;
 use std::path::PathBuf;
@@ -41,11 +41,12 @@ fn hash_chunk(bytes: &Vec<u8>) -> Vec<u8> {
 
 pub fn hash_file(path: &PathBuf) -> Result<String> {
     let mut hasher = Sha256::new();
+    let meta = fs::metadata(&path)?;
     let chunk_size = 2 * 1024 * 1024; // 2 MiB
     let mut chunk_buf = vec![0u8; chunk_size];
     let mut file = File::open(&path)?;
 
-    let size = file.metadata()?.size();
+    let size = meta.len();
 
     let mut pb = ProgressBar::new(size);
     pb.set_units(Units::Bytes);
