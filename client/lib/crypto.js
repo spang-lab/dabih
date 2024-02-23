@@ -273,7 +273,6 @@ export const uncompressJwk = async (compressedKey) => {
     dq,
     qi: qq,
   };
-
   return jwkData;
 };
 

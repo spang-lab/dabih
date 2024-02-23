@@ -7,6 +7,7 @@ use std::path::PathBuf;
 use crate::api::{self, Dataset};
 use crate::config::Context;
 use crate::crypto;
+use crate::hash::hash_file;
 
 pub async fn resolve_mnemonics(ctx: &Context, mnemonics: &Vec<String>) -> Result<Vec<Dataset>> {
     let mut datasets = Vec::new();
@@ -26,6 +27,7 @@ pub async fn download_dataset(
     dataset: &Dataset,
     output_path: &PathBuf,
     force: bool,
+    validate: bool,
 ) -> Result<()> {
     let path = if output_path.is_dir() {
         output_path.join(&dataset.file_name)
@@ -46,7 +48,7 @@ pub async fn download_dataset(
     let private_key = ctx.key()?;
     let key = private_key.decrypt_key(&encrypted_key)?;
 
-    let mut file = File::create(path)?;
+    let mut file = File::create(&path)?;
 
     let chunks = match &dataset.chunks {
         Some(c) => c,
@@ -70,7 +72,21 @@ pub async fn download_dataset(
         file.write(&decrypted)?;
     }
     pb.finish();
-
+    if !validate {
+        return Ok(());
+    }
+    let hash = hash_file(&path)?;
+    let server_hash = match &dataset.hash {
+        Some(h) => h,
+        None => bail!("Cannot validate, server dataset has no hash"),
+    };
+    if server_hash.ne(&hash) {
+        bail!(
+            "Download did not complete successfully! Hash mismatch {} != {}",
+            hash,
+            server_hash
+        );
+    }
     Ok(())
 }
 
@@ -79,6 +95,7 @@ pub async fn download_all(
     mnemonics: &Vec<String>,
     output: &Option<String>,
     force: bool,
+    validate: bool,
 ) -> Result<()> {
     if mnemonics.is_empty() {
         bail!("Please specify mnemonics to download as arguments")
@@ -94,7 +111,7 @@ pub async fn download_all(
 
     let datasets = resolve_mnemonics(ctx, mnemonics).await?;
     for dataset in datasets {
-        download_dataset(ctx, &dataset, &output_path, force).await?;
+        download_dataset(ctx, &dataset, &output_path, force, validate).await?;
     }
 
     Ok(())

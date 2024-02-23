@@ -18,6 +18,22 @@ async function listIncomplete(ctx) {
   });
 }
 
+async function find(ctx, options) {
+  const Dataset = getModel(ctx, 'Dataset');
+  const Member = getModel(ctx, 'Member');
+
+  return Dataset.findAll({
+    include: {
+      model: Member,
+      as: 'members',
+      attributes: ['permission', 'sub'],
+      paranoid: false,
+    },
+    where: options,
+    paranoid: false,
+  });
+}
+
 async function findUpload(ctx, sub) {
   const Dataset = getModel(ctx, 'Dataset');
   const incomplete = await Dataset.findOne({
@@ -532,6 +548,7 @@ export default {
   listAll,
   listIncomplete,
   listOrphans,
+  find,
   findUpload,
   listAccessible,
   create,

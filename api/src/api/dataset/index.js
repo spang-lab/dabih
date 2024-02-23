@@ -11,8 +11,10 @@ import download from './download.js';
 import destroy from './destroy.js';
 import recover from './recover.js';
 import storeKey from './storeKey.js';
+import find from './find.js';
 
 export default {
+  find,
   search,
   chunk,
   mnemonic,

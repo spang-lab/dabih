@@ -73,14 +73,14 @@ impl Key {
         if keys.len() == 0 {
             return Ok(None);
         }
-        let key = keys.pop().unwrap();
         if keys.len() > 1 {
-            bail!(
+            println!(
                 "Multiple possible keys found in {}. Using {}",
                 path.display(),
-                key.path.display()
+                keys.last().unwrap().path.display()
             )
         }
+        let key = keys.pop().unwrap();
         Ok(Some(key))
     }
 

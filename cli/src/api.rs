@@ -54,7 +54,7 @@ pub struct Dataset {
     pub hash: Option<String>,
     #[serde(rename = "fileName")]
     pub file_name: String,
-    pub size: Option<String>,
+    pub size: Option<u64>,
     #[serde(rename = "createdBy")]
     pub created_by: String,
     pub chunks: Option<Vec<Chunk>>,
@@ -229,6 +229,21 @@ pub async fn search_datasets(ctx: &Context, query: String, uploader: bool) -> Re
     match res.error_for_status() {
         Ok(res) => {
             let SearchResult { count: _, datasets } = res.json().await?;
+            return Ok(datasets);
+        }
+        Err(e) => {
+            bail!("Failed to search: {}", e);
+        }
+    }
+}
+pub async fn find_hash(ctx: &Context, hash: &String) -> Result<Vec<Dataset>> {
+    let url = ctx.url.join("/api/v1/dataset/find")?;
+    let mut data = HashMap::new();
+    data.insert("hash", hash);
+    let res = ctx.client.post(url).json(&data).send().await?;
+    match res.error_for_status() {
+        Ok(res) => {
+            let datasets = res.json().await?;
             return Ok(datasets);
         }
         Err(e) => {

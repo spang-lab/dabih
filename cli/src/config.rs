@@ -100,7 +100,7 @@ impl Context {
         };
         let key = Key::find_in(folder)?;
         ctx.key = key;
-        return Ok(ctx);
+        Ok(ctx)
     }
     pub fn set_tmp_path(&mut self, tmp_path: PathBuf) {
         self.tmp_path = tmp_path;

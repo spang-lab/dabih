@@ -81,6 +81,7 @@ struct SearchArgs {
     #[arg(short, long, default_value_t = false)]
     id: bool,
 }
+
 #[derive(Args)]
 struct AddMemberArgs {
     /// the mnemonic of the dataset you want to edit
@@ -129,17 +130,21 @@ struct UploadArgs {
 struct HashArgs {
     /// The files that should be hashed , this can also be a glob pattern
     paths: Vec<String>,
+    /// Check if the hash exists on the server
+    #[arg(short, long, default_value_t = true)]
+    compare: bool,
 }
 
 #[derive(Args)]
 struct DownloadArgs {
-    /// The files that should be uploaded to dabih, this can also be a glob pattern
+    /// The datasets that should be downloaded from dabih
     mnemonics: Vec<String>,
-    /// If set, all files in a folder will be uploaded seperately
     #[arg(short, long)]
     output: Option<String>,
     #[arg(short, long)]
     force: bool,
+    #[arg(short, long, default_value_t = true)]
+    validate: bool,
 }
 
 #[derive(Args)]
@@ -194,10 +199,11 @@ async fn main() -> Result<()> {
                 mnemonics,
                 output,
                 force,
+                validate,
             } = args;
             let path = Context::default_path()?;
             let ctx = Context::read(path)?;
-            download::download_all(&ctx, mnemonics, output, *force).await?;
+            download::download_all(&ctx, mnemonics, output, *force, *validate).await?;
         }
         Commands::Keygen(args) => {
             let KeygenArgs { key_file } = args;
@@ -245,9 +251,15 @@ async fn main() -> Result<()> {
             remove::remove(&ctx, mnemonic, *yes, *destroy).await?;
         }
         Commands::Hash(args) => {
-            let HashArgs { paths } = args;
+            let HashArgs { paths, compare } = args;
             let files = resolve::resolve(paths.clone(), true, false, -1)?;
-            hash::hash_files(&files)?;
+            if *compare {
+                let path = Context::default_path()?;
+                let ctx = Context::read(path)?;
+                hash::hash_and_find(&ctx, &files).await?;
+            } else {
+                hash::hash_files(&files)?;
+            }
         }
         Commands::AddMember(args) => {
             let AddMemberArgs {
