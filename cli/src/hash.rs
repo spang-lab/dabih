@@ -3,7 +3,6 @@ use pbr::{ProgressBar, Units};
 use sha2::{Digest, Sha256};
 use std::fs::{self, File};
 use std::io::Read;
-use std::os::unix::fs::MetadataExt;
 use std::path::PathBuf;
 
 use crate::crypto::encode_base64;
