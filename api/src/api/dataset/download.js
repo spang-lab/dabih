@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-import { PassThrough } from 'node:stream';
 import MultiStream from 'multistream';
 import { aesKey } from '../../ephemeral/index.js';
 import {
