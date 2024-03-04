@@ -21,7 +21,7 @@ export default async () => {
   const app = new Koa();
 
   const demo = getEnv('DEMO', false);
-  const port = getEnv('API_PORT', 3001);
+  const port = getEnv('PORT', 3001);
 
   if (demo) {
     log.warn('+----------- DEMO MODE ------------+');

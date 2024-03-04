@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign, no-console */
-import axios from 'axios';
 
 import { Provider } from 'next-auth/providers';
 import GitHubProvider from 'next-auth/providers/github';
@@ -7,42 +6,17 @@ import UniRegensburgProvider from './ur';
 import SpangLabProvider from './spang-lab';
 import DemoProvider from './demo';
 
-const apiUser = async (provider: any, accessToken: String) => {
-  const url = `${process.env.NEXTAUTH_URL_INTERNAL}/api/v1/token`;
-  const result = await axios.post(url, {}, {
-    headers: {
-      Authorization: `Bearer ${provider}_${accessToken}`,
-    },
-  });
-  return result.data;
-};
-
-const jwt = async ({ token, account, user }) => {
-  if (account) {
-    token.provider = account.provider;
-    token.accessToken = account.access_token;
-    if (user && !token.accessToken) {
-      token.accessToken = user.access_token;
-    }
-    try {
-      token.user = await apiUser(token.provider, token.accessToken);
-    } catch (err: any) {
-      console.error(err);
-      const message = err?.response?.data || err?.message;
-      token.error = message;
-    }
-  }
-
-  return token;
-};
-const sessionCb = async ({ session, token }) => {
-  if (token.error) {
-    return { error: token.error };
-  }
-  session.accessToken = token.accessToken;
-  session.provider = token.provider;
-  session.user = token.user;
+const sessionCb = ({ session, token }) => {
+  session.user.scopes = token.scopes;
+  session.user.sub = token.sub;
   return session;
+};
+
+const jwt = ({ token, _account, user }) => {
+  if (user) {
+    token.scopes = user.scopes;
+  }
+  return token;
 };
 
 const isConfigured = (provider: Provider) => {
@@ -59,7 +33,7 @@ const isConfigured = (provider: Provider) => {
 
 const authOptions = {
   session: {
-    maxAge: 60 * 60,
+    maxAge: 3 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -79,8 +53,8 @@ const authOptions = {
     }),
   ].filter(isConfigured),
   callbacks: {
-    jwt,
     session: sessionCb,
+    jwt,
   },
   pages: {
     signIn: '/account',

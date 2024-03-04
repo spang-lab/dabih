@@ -1,3 +1,4 @@
+import { requireEnv } from '@/lib/config';
 import { Provider } from 'next-auth/providers';
 
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -14,12 +15,20 @@ export default function DemoProvider({ enabled }): Provider {
         return null;
       }
       const { token } = credentials;
+      const realToken = requireEnv('DEMO');
+
       if (!token || !token.length) {
+        return null;
+      }
+      if (token !== realToken) {
         return null;
       }
       return {
         id: 'root',
-        access_token: token,
+        sub: 'root',
+        name: 'Root',
+        email: 'root@dabih.com',
+        scopes: ['api', 'admin'],
       };
     },
   });
