@@ -15,6 +15,7 @@ pub struct UploadProgress {
     id: String,
     state: String,
     mnemonic: Option<String>,
+    message: Option<String>,
     current: u64,
     total: u64,
 }
@@ -25,6 +26,7 @@ impl UploadProgress {
             id,
             state: "init".to_owned(),
             mnemonic: None,
+            message: None,
             current: 0,
             total: 0,
         }
@@ -37,6 +39,10 @@ impl UploadProgress {
         self.current = current;
         self.total = total;
     }
+    pub fn set_message(&mut self, message: String) {
+        self.message = Some(message);
+    }
+
     pub fn set_state(&mut self, state: String) {
         self.state = state;
     }
@@ -82,7 +88,16 @@ async fn upload(app_handle: tauri::AppHandle, file: &str, id: &str) -> Result<()
         let mut upload = Upload::new(&ctx, &path).unwrap();
         let mut progress = UploadProgress::new(id_str);
         loop {
-            let state = upload.next().await.unwrap();
+            let state_result = upload.next().await;
+            let state = match state_result {
+                Ok(s) => s,
+                Err(e) => {
+                    progress.set_state("error".to_owned());
+                    progress.set_message(e.to_string());
+                    progress.send(&app_handle).unwrap();
+                    return;
+                }
+            };
             match state {
                 UploadState::Init => {}
                 UploadState::Gzip { current, total } => {
