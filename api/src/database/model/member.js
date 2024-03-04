@@ -18,7 +18,7 @@ export function permission(idx) {
   return permissions[idx];
 }
 
-export default async function init(sequelize) {
+export default function init(sequelize) {
   const Member = sequelize.define('Member', {
     id: {
       type: DataTypes.BIGINT,

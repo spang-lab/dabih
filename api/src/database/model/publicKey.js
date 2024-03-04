@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 
-export default async function init(sequelize) {
+export default function init(sequelize) {
   const PublicKey = sequelize.define('PublicKey', {
     id: {
       type: DataTypes.BIGINT,

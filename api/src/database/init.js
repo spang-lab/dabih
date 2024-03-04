@@ -1,19 +1,12 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 import { Sequelize } from 'sequelize';
+import { Umzug, SequelizeStorage } from 'umzug';
 import { createNamespace } from 'cls-hooked';
 import {
   log, getEnv, requireEnv,
 } from '../util/index.js';
 
-import {
-  initChunk,
-  initDataset,
-  initEvent,
-  initKey,
-  initMember,
-  initPublicKey,
-  initToken,
-} from './model/index.js';
+import initModels from './model/index.js';
 
 let sequelize = null;
 
@@ -76,25 +69,39 @@ const connect = async () => {
   }
 };
 
+const migrate = async () => {
+  const umzug = new Umzug({
+    migrations: {
+      glob: ['./migrations/*.js', { cwd: import.meta.dirname }],
+    },
+    context: sequelize,
+    storage: new SequelizeStorage({
+      sequelize,
+    }),
+    logger: null,
+    logging: false,
+  });
+  umzug.on('migrating', (e) => log(`Applying database migration ${e.name}`));
+  umzug.on('migrated', (e) => log(`Migration ${e.name} complete.`));
+
+  // Reset the database
+  await umzug.down({ to: 0 });
+
+  const migrations = await umzug.pending();
+  if (migrations.length) {
+    log.warn('Database schema needs to be updated.');
+  }
+  const executed = await umzug.up();
+  if (executed.length) {
+    log.warn(`Completed ${executed.length} migrations.`);
+  }
+};
+
 export const initDb = async () => {
   await connect();
-  const PublicKey = await initPublicKey(sequelize);
-  await initToken(sequelize);
+  await migrate();
 
-  const Dataset = await initDataset(sequelize);
-  const Chunk = await initChunk(sequelize);
-  Dataset.hasMany(Chunk, { as: 'chunks', foreignKey: 'datasetId' });
-
-  const Member = await initMember(sequelize);
-  Dataset.hasMany(Member, { as: 'members', foreignKey: 'datasetId' });
-
-  const Key = await initKey(sequelize);
-  Dataset.hasMany(Key, { as: 'keys', foreignKey: 'datasetId' });
-  PublicKey.hasMany(Key, { as: 'keys', foreignKey: 'publicKeyId' });
-
-  await initEvent(sequelize);
-
-  await sequelize.sync({ force: false, alter: false });
+  initModels(sequelize);
 };
 
 export const getSql = () => sequelize;

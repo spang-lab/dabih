@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 
-export default async function init(sequelize) {
+export default function init(sequelize) {
   const Chunk = sequelize.define('Chunk', {
     id: {
       type: DataTypes.BIGINT,

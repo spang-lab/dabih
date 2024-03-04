@@ -21,6 +21,7 @@ const logColor = (text, color) => {
 const log = (...arr) => logColor(arr.join(' '), COLOR.RESET);
 log.raw = (v) => process.stdout.write(`\n${v}`);
 log.log = log;
+log.info = log;
 log.blue = (...arr) => logColor(`${arr.join(' ')}`, COLOR.BLUE);
 log.warn = (...arr) => logColor(`Warning: ${arr.join(' ')}`, COLOR.YELLOW);
 log.error = (...arr) => logColor(`Error: ${arr.join(' ')}`, COLOR.RED);

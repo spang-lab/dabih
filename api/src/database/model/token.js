@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 
-export default async function init(sequelize) {
+export default function init(sequelize) {
   const Token = sequelize.define(
     'Token',
     {
@@ -9,22 +9,16 @@ export default async function init(sequelize) {
         primaryKey: true,
         autoIncrement: true,
       },
-      token: {
+      value: {
         type: DataTypes.STRING,
+        unique: true,
         allowNull: false,
       },
       sub: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      name: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.TEXT,
-      },
-      scopes: {
+      scope: {
         type: DataTypes.TEXT,
         allowNull: false,
         get() {
@@ -35,17 +29,6 @@ export default async function init(sequelize) {
           const str = value.join(' ');
           this.setDataValue('scopes', str);
         },
-      },
-      lifetime: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      timestamp: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
-      refresh: {
-        type: DataTypes.BOOLEAN,
       },
     },
     {

@@ -2,7 +2,7 @@ import {
   DataTypes, NOW,
 } from 'sequelize';
 
-export default async function init(sequelize) {
+export default function init(sequelize) {
   const Event = sequelize.define('Event', {
     id: {
       type: DataTypes.BIGINT,

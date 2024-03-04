@@ -1,11 +1,10 @@
 {
   "root": true,
-  "extends": [
-    "airbnb"
-  ],
-  "plugins": [
-    "github"
-  ],
+  "extends": ["airbnb"],
+  "plugins": ["github"],
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
   "rules": {
     "github/no-then": "error",
     "import/extensions": "off"

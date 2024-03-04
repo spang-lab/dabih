@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 
-export default async function init(sequelize) {
+export default function init(sequelize) {
   const Dataset = sequelize.define('Dataset', {
     id: {
       type: DataTypes.BIGINT,
@@ -34,26 +34,12 @@ export default async function init(sequelize) {
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    validated: {
+    validatedAt: {
       type: DataTypes.DATE,
     },
   }, {
     paranoid: true,
     tableName: 'dataset',
-    indexes: [
-      {
-        fields: ['name'],
-      },
-      {
-        fields: ['fileName'],
-      },
-      {
-        fields: ['createdBy'],
-      },
-      {
-        fields: ['hash'],
-      },
-    ],
   });
   return Dataset;
 }
