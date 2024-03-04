@@ -1,7 +1,7 @@
 import {
   dataset,
 } from '../../database/index.js';
-import { getSub, sendError } from '../../util/index.js';
+import { getSub } from '../../util/index.js';
 import { aes, sha256 } from '../../crypto/index.js';
 import { aesKey } from '../../ephemeral/index.js';
 
@@ -16,7 +16,7 @@ const route = async (ctx) => {
     chunkHash,
   } = body;
   if (!fileName) {
-    sendError(ctx, 'body.fileName is undefined', 400);
+    ctx.error('body.fileName is undefined', 400);
     return;
   }
 

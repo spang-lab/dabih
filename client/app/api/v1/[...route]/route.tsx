@@ -5,15 +5,20 @@ import { requireEnv } from '@/lib/config';
 import jwt from 'jsonwebtoken';
 import authOptions from '../../auth/options';
 
-const createJWT = async (session: any) => {
-  const { sub, scopes } = session;
+const createJWT = async (user: any) => {
+  const { sub, scopes } = user;
   const secret = requireEnv('TOKEN_SECRET');
+  const apiUrl = requireEnv('API_URL');
+
+  const oneMinute = 60;
+  const now = Math.floor(Date.now() / 1000);
 
   const token = jwt.sign({
     sub,
     scopes,
     iss: 'dabih',
-    aud: 'dabih',
+    aud: apiUrl,
+    exp: now + oneMinute,
   }, secret);
   return token;
 };
@@ -27,7 +32,8 @@ const handler = async (request: NextRequest, { params }) => {
   const { headers, method, body } = request;
 
   if (session) {
-    const token = await createJWT(session);
+    const { user } = session;
+    const token = await createJWT(user);
     headers.append('Authorization', `Bearer ${token}`);
   }
   const result = await fetch(url, {

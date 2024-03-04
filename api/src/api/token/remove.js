@@ -1,4 +1,4 @@
-import { getSub, sendError } from '../../util/index.js';
+import { getSub } from '../../util/index.js';
 import { token } from '../../database/index.js';
 
 const route = async (ctx) => {
@@ -8,7 +8,7 @@ const route = async (ctx) => {
   const sub = getSub(ctx);
 
   if (!tokenId) {
-    sendError(ctx, 'No token in request body', 400);
+    ctx.error('No token in request body', 400);
     return;
   }
   await token.destroy(ctx, { id: tokenId, sub });

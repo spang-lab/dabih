@@ -1,5 +1,5 @@
 import { dataset } from '../../database/index.js';
-import { getSub, sendError, userHasScope } from '../../util/index.js';
+import { getSub, userHasScope } from '../../util/index.js';
 
 const isAllowed = async (ctx, mnemonic) => {
   if (userHasScope(ctx, 'admin')) {
@@ -14,11 +14,11 @@ const route = async (ctx) => {
   const { mnemonic } = ctx.params;
 
   if (!mnemonic) {
-    sendError(ctx, 'No mnemonic', 400);
+    ctx.error('No mnemonic', 400);
     return;
   }
   if (!await isAllowed(ctx, mnemonic)) {
-    sendError(ctx, 'You do not have permission to remove the dataset', 400);
+    ctx.error('You do not have permission to remove the dataset', 400);
     return;
   }
 

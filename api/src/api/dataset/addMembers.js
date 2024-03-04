@@ -1,19 +1,19 @@
 import { base64ToUint8, sha256 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
-import { getSub, sendError } from '../../util/index.js';
+import { getSub } from '../../util/index.js';
 
 const route = async (ctx) => {
   const sub = getSub(ctx);
 
   const { mnemonic } = ctx.params;
   if (!mnemonic) {
-    sendError(ctx, 'No mnemonic', 400);
+    ctx.error('No mnemonic', 400);
     return;
   }
   const info = await dataset.fromMnemonic(ctx, mnemonic);
   const permission = await dataset.getMemberAccess(ctx, mnemonic, sub);
   if (permission !== 'write') {
-    sendError(ctx, 'You do not have permission to add members', 400);
+    ctx.error('You do not have permission to add members', 400);
     return;
   }
   const { member, members, key } = ctx.request.body;
@@ -25,7 +25,7 @@ const route = async (ctx) => {
   const aesKey = base64ToUint8(key);
   const keyHash = sha256.hash(aesKey);
   if (info.keyHash !== keyHash) {
-    sendError(ctx, 'Invalid AES Key', 400);
+    ctx.error('Invalid AES Key', 400);
     return;
   }
   const promises = memberList.map(async (user) => {

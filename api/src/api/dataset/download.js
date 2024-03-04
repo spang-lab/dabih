@@ -6,19 +6,18 @@ import {
 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 import { getStorage } from '../../storage/index.js';
-import { sendError } from '../../util/index.js';
 
 const route = async (ctx) => {
   const storage = getStorage();
   const { mnemonic } = ctx.params;
   if (!mnemonic) {
-    sendError(ctx, 'No mnemonic', 400);
+    ctx.error('No mnemonic', 400);
     return;
   }
 
   const key = await aesKey.get(mnemonic, 0);
   if (!key) {
-    sendError(ctx, 'Failed to load aes key from emphermal storage', 500);
+    ctx.error('Failed to load aes key from emphermal storage', 500);
     return;
   }
 

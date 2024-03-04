@@ -1,5 +1,5 @@
 import { dataset } from '../../database/index.js';
-import { sendError, getSub, userHasScope } from '../../util/index.js';
+import { getSub, userHasScope } from '../../util/index.js';
 import { getStorage } from '../../storage/index.js';
 
 const timeSince = (date) => {
@@ -54,16 +54,16 @@ const checkDeleted = async (ctx, mnemonic) => {
 const route = async (ctx) => {
   const { mnemonic } = ctx.params;
   if (!mnemonic) {
-    sendError(ctx, 'No mnemonic', 400);
+    ctx.error('No mnemonic', 400);
     return;
   }
   if (!await isAllowed(ctx, mnemonic)) {
-    sendError(ctx, 'You do not have permission to destroy the dataset', 400);
+    ctx.error('You do not have permission to destroy the dataset', 400);
     return;
   }
   const error = await checkDeleted(ctx, mnemonic);
   if (error) {
-    sendError(ctx, `Cannot destroy dataset. ${error}`, 400);
+    ctx.error(`Cannot destroy dataset. ${error}`, 400);
     return;
   }
 

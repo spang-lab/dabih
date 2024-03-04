@@ -1,5 +1,5 @@
 import { literal } from 'sequelize';
-import { sendError, getUser, userHasScope } from '../../util/index.js';
+import { getUser, userHasScope } from '../../util/index.js';
 import { rsa } from '../../crypto/index.js';
 import { publicKey } from '../../database/index.js';
 
@@ -11,7 +11,7 @@ const route = async (ctx) => {
   const pubKey = body.publicKey;
   const isRootKey = !!body.rootKey;
   if (!pubKey) {
-    sendError(ctx, 'No public key in body');
+    ctx.error('No public key in body');
     return;
   }
   const hash = rsa.hashKey(pubKey);

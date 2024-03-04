@@ -1,17 +1,17 @@
 import { dataset } from '../../database/index.js';
-import { getSub, sendError } from '../../util/index.js';
+import { getSub } from '../../util/index.js';
 
 const route = async (ctx) => {
   const sub = getSub(ctx);
 
   const { mnemonic } = ctx.params;
   if (!mnemonic) {
-    sendError(ctx, 'No mnemonic', 400);
+    ctx.error('No mnemonic', 400);
     return;
   }
   const access = await dataset.getMemberAccess(ctx, mnemonic, sub);
   if (access !== 'write') {
-    sendError(ctx, 'You do not have permission add members', 400);
+    ctx.error('You do not have permission add members', 400);
     return;
   }
   const { user, permission } = ctx.request.body;
@@ -22,7 +22,7 @@ const route = async (ctx) => {
     const writers = members.map((m) => m.permission === 'write');
 
     if (writers.length <= 1) {
-      sendError(ctx, `${user} is the last user with write access, refusing to remove`, 400);
+      ctx.error(`${user} is the last user with write access, refusing to remove`, 400);
       return;
     }
   }

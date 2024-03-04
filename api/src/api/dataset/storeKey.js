@@ -1,12 +1,11 @@
 import { dataset, token } from '../../database/index.js';
-import { sendError } from '../../util/index.js';
 import { sha256, base64ToUint8 } from '../../crypto/index.js';
 import { aesKey } from '../../ephemeral/index.js';
 
 const route = async (ctx) => {
   const { mnemonic } = ctx.params;
   if (!mnemonic) {
-    sendError(ctx, 'No mnemonic', 400);
+    ctx.error('No mnemonic', 400);
     return;
   }
   const { key } = ctx.request.body;
@@ -15,7 +14,7 @@ const route = async (ctx) => {
   const decoded = base64ToUint8(key);
   const keyHash = sha256.hash(decoded);
   if (info.keyHash !== keyHash) {
-    sendError(ctx, 'Invalid AES Key', 400);
+    ctx.error('Invalid AES Key', 400);
     return;
   }
   const tenSeconds = 10;

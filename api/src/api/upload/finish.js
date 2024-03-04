@@ -1,6 +1,5 @@
 import { sha256 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
-import { sendError } from '../../util/index.js';
 import { getStorage } from '../../storage/init.js';
 
 const areChunksComplete = (chunks) => {
@@ -27,7 +26,7 @@ const route = async (ctx) => {
   const keys = await dataset.listRecoveryKeys(ctx, mnemonic);
 
   if (!areChunksComplete(chunks)) {
-    sendError(ctx, 'Uploaded chunks are incomplete');
+    ctx.error('Uploaded chunks are incomplete');
     return;
   }
 

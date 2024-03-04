@@ -1,4 +1,3 @@
-import { sendError } from '../../util/index.js';
 import { token } from '../../database/index.js';
 
 const route = async (ctx) => {
@@ -8,8 +7,7 @@ const route = async (ctx) => {
 
   const vTypes = ['api', 'upload'];
   if (!vTypes.includes(type)) {
-    sendError(
-      ctx,
+    ctx.error(
       `Invalid token scope ${type}, must be one of [${vTypes.join(', ')}]`,
       400,
     );

@@ -1,11 +1,11 @@
-import { sendError, getSub } from '../../util/index.js';
+import { getSub } from '../../util/index.js';
 import { publicKey } from '../../database/index.js';
 
 const route = async (ctx) => {
   const sub = getSub(ctx);
   const { keyHash } = ctx.request.body;
   if (!keyHash) {
-    sendError(ctx, 'No key hash in body');
+    ctx.error('No key hash in body');
     return;
   }
   const key = await publicKey.find(ctx, {

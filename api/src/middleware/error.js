@@ -1,4 +1,4 @@
-import { log, sendError } from '../util/index.js';
+import { log } from '../util/index.js';
 
 const getMainStackMessage = (error) => {
   const { stack } = error;

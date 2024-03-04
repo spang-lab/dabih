@@ -1,4 +1,3 @@
-import { sendError } from '../../util/index.js';
 import { getStorage } from '../../storage/index.js';
 
 import { base64UrlToBase64 } from '../../crypto/index.js';
@@ -6,7 +5,7 @@ import { base64UrlToBase64 } from '../../crypto/index.js';
 const route = async (ctx) => {
   const { mnemonic, chunkHash } = ctx.params;
   if (!mnemonic || !chunkHash) {
-    sendError(ctx, 'No mnemonic or no chunkHash', 400);
+    ctx.error('No mnemonic or no chunkHash', 400);
     return;
   }
   const hash = base64UrlToBase64(chunkHash);

@@ -4,7 +4,7 @@ import {
 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 import { getStorage } from '../../storage/index.js';
-import { getSub, sendError } from '../../util/index.js';
+import { getSub } from '../../util/index.js';
 
 const reencryptChunk = async (chunk, mnemonic, newMnemonic, oldKey, newKey) => {
   const storage = getStorage();
@@ -45,14 +45,14 @@ const route = async (ctx) => {
 
   const { mnemonic } = ctx.params;
   if (!mnemonic) {
-    sendError(ctx, 'No mnemonic', 400);
+    ctx.error('No mnemonic', 400);
     return;
   }
   const info = await dataset.fromMnemonic(ctx, mnemonic);
 
   const permission = await dataset.getMemberAccess(ctx, mnemonic, sub);
   if (permission !== 'write') {
-    sendError(ctx, 'You do not have permission to reencrypt', 400);
+    ctx.error('You do not have permission to reencrypt', 400);
     return;
   }
   const { key } = ctx.request.body;
@@ -60,7 +60,7 @@ const route = async (ctx) => {
   const aesKey = base64ToUint8(key);
   const keyHash = sha256.hash(aesKey);
   if (info.keyHash !== keyHash) {
-    sendError(ctx, 'Invalid AES Key', 400);
+    ctx.error('Invalid AES Key', 400);
     return;
   }
   const chunks = await dataset.listChunks(ctx, mnemonic);

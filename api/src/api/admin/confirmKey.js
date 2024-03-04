@@ -1,11 +1,11 @@
 import { literal } from 'sequelize';
 import { publicKey } from '../../database/index.js';
-import { getSub, sendError } from '../../util/index.js';
+import { getSub } from '../../util/index.js';
 
 const route = async (ctx) => {
   const { keyId, confirmed } = ctx.request.body;
   if (!keyId) {
-    sendError(ctx, 'No key id', 400);
+    ctx.error('No key id', 400);
     return;
   }
   const sub = getSub(ctx);

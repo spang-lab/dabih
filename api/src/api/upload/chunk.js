@@ -2,7 +2,6 @@ import Busboy from '@fastify/busboy';
 import {
   aes, uint8ToBase64, crc, sha256,
 } from '../../crypto/index.js';
-import { sendError } from '../../util/index.js';
 import { dataset } from '../../database/index.js';
 import { aesKey } from '../../ephemeral/index.js';
 import { getStorage } from '../../storage/index.js';
@@ -57,7 +56,7 @@ const route = async (ctx) => {
 
   const key = await aesKey.get(mnemonic);
   if (!key) {
-    sendError(ctx, 'Encryption key not found in ephemeral store');
+    ctx.error('Encryption key not found in ephemeral store');
     return;
   }
   const iv = await aes.randomIv();
@@ -75,7 +74,7 @@ const route = async (ctx) => {
       iv: uint8ToBase64(iv),
     };
   } catch (err) {
-    sendError(ctx, err.message);
+    ctx.error(err.message);
     return;
   }
   if (await storage.exists(mnemonic, chunk.hash)) {
@@ -97,7 +96,7 @@ const route = async (ctx) => {
   await storage.close(targetFile);
 
   if (hash !== chunk.hash) {
-    sendError(ctx, `Invalid chunk, hash mismatch ${chunk.hash} != ${hash}`);
+    ctx.error(`Invalid chunk, hash mismatch ${chunk.hash} != ${hash}`);
     return;
   }
   chunk.crc = crc32;

@@ -1,11 +1,11 @@
 import { publicKey, dataset } from '../../database/index.js';
-import { getUser, sendError, userHasScope } from '../../util/index.js';
+import { getUser, userHasScope } from '../../util/index.js';
 
 const route = async (ctx) => {
   const { sub } = getUser(ctx);
   const { keyId } = ctx.request.body;
   if (!keyId) {
-    sendError(ctx, 'No key id', 400);
+    ctx.error('No key id', 400);
     return;
   }
   const key = await publicKey.find(ctx, {
@@ -13,7 +13,7 @@ const route = async (ctx) => {
   });
 
   if (sub !== key.sub && !userHasScope(ctx, 'admin')) {
-    sendError(ctx, 'Not your key');
+    ctx.error('Not your key');
     return;
   }
 
