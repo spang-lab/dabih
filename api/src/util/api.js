@@ -2,16 +2,6 @@ import log from './logger.js';
 
 const hasOverlap = (l1 = [], l2 = []) => l1.find((elem) => l2.includes(elem)) !== undefined;
 
-export const sendData = (ctx, data) => {
-  ctx.body = { data };
-};
-
-export const sendError = (ctx, error, code = 500) => {
-  log.error(error);
-  ctx.status = code;
-  ctx.body = error;
-};
-
 export const getUser = (ctx) => {
   if (!ctx.state) {
     throw new Error('Cannot get user. No ctx.state');

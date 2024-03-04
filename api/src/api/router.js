@@ -4,7 +4,7 @@ import { koaBody } from 'koa-body';
 import {
   auth,
   logRequests,
-  catchError,
+  error,
   requireScopes,
   transaction,
   logEvents,
@@ -122,7 +122,7 @@ const getApiRouter = () => {
 
 const getRouter = () => {
   const router = new Router();
-  router.use(catchError);
+  router.use(error);
   router.use(koaBody());
 
   router.get('/healthy', healthy);

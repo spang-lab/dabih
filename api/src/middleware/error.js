@@ -1,4 +1,4 @@
-import { sendError } from '../util/index.js';
+import { log, sendError } from '../util/index.js';
 
 const getMainStackMessage = (error) => {
   const { stack } = error;
@@ -19,10 +19,15 @@ const getMainStackMessage = (error) => {
 
 export default async (ctx, next) => {
   try {
+    ctx.error = (message, code = 500) => {
+      log.error(message);
+      ctx.status = code;
+      ctx.body = message;
+    };
     await next();
   } catch (err) {
     const stack = getMainStackMessage(err);
     const message = `${err.message} ${stack}`;
-    sendError(ctx, message);
+    ctx.error(message, 500);
   }
 };
