@@ -4,7 +4,6 @@ import {
 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 import { getStorage } from '../../storage/index.js';
-import { getSub } from '../../util/index.js';
 
 const reencryptChunk = async (chunk, mnemonic, newMnemonic, oldKey, newKey) => {
   const storage = getStorage();
@@ -41,7 +40,7 @@ const reencryptChunk = async (chunk, mnemonic, newMnemonic, oldKey, newKey) => {
 };
 
 const route = async (ctx) => {
-  const sub = getSub(ctx);
+  const { sub } = ctx.data;
 
   const { mnemonic } = ctx.params;
   if (!mnemonic) {

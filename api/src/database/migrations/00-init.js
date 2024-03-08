@@ -43,7 +43,7 @@ export async function up({ context: sequelize }) {
       allowNull: false,
     },
     enabled: DataTypes.DATE,
-    enabledBy: DataTypes.TEXT,
+    enabledBy: DataTypes.STRING,
   });
 
   db.createTable('dataset', {

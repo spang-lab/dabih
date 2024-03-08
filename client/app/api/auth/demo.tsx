@@ -28,7 +28,7 @@ export default function DemoProvider({ enabled }): Provider {
         sub: 'root',
         name: 'Root',
         email: 'root@dabih.com',
-        scopes: ['api', 'admin'],
+        scopes: ['upload', 'dataset', 'key', 'token', 'admin'],
       };
     },
   });

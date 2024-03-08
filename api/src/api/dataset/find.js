@@ -1,9 +1,7 @@
 import { dataset } from '../../database/index.js';
-import { getSub, userHasScope } from '../../util/index.js';
 
 const route = async (ctx) => {
-  const sub = getSub(ctx);
-  const isAdmin = userHasScope(ctx, 'admin');
+  const { sub, isAdmin } = ctx.data;
 
   const addPermission = (d) => {
     const dset = d.get({ plain: true });

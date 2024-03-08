@@ -1,5 +1,4 @@
 import { dataset } from '../../database/index.js';
-import { getSub, userHasScope } from '../../util/index.js';
 import { getStorage } from '../../storage/index.js';
 
 const timeSince = (date) => {
@@ -27,16 +26,17 @@ const timeSince = (date) => {
 };
 
 const isAllowed = async (ctx, mnemonic) => {
-  if (userHasScope(ctx, 'admin')) {
+  const { sub, isAdmin } = ctx;
+  if (isAdmin) {
     return true;
   }
-  const sub = getSub(ctx);
   const permission = await dataset.getMemberAccess(ctx, mnemonic, sub);
   return permission === 'write';
 };
 
 const checkDeleted = async (ctx, mnemonic) => {
-  if (userHasScope(ctx, 'admin')) {
+  const { isAdmin } = ctx.data;
+  if (isAdmin) {
     return null;
   }
   const { deletedAt } = await dataset.fromMnemonic(ctx, mnemonic);

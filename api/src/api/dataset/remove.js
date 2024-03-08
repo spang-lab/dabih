@@ -1,11 +1,10 @@
 import { dataset } from '../../database/index.js';
-import { getSub, userHasScope } from '../../util/index.js';
 
 const isAllowed = async (ctx, mnemonic) => {
-  if (userHasScope(ctx, 'admin')) {
+  const { sub, isAdmin } = ctx.data;
+  if (isAdmin) {
     return true;
   }
-  const sub = getSub(ctx);
   const permission = await dataset.getMemberAccess(ctx, mnemonic, sub);
   return permission === 'write';
 };

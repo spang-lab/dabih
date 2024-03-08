@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import { getSub } from '../util/index.js';
 import { events } from '../database/index.js';
 
 const getMessage = (ctx, eventName) => {
@@ -48,7 +47,7 @@ export default async (ctx, next) => {
     return;
   }
 
-  const sub = getSub(ctx);
+  const { sub } = ctx.data;
   const { mnemonic } = ctx.params;
 
   const ev = {

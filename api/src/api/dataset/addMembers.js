@@ -1,9 +1,8 @@
 import { base64ToUint8, sha256 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
-import { getSub } from '../../util/index.js';
 
 const route = async (ctx) => {
-  const sub = getSub(ctx);
+  const { sub } = ctx.data;
 
   const { mnemonic } = ctx.params;
   if (!mnemonic) {

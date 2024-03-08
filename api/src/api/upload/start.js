@@ -1,12 +1,11 @@
 import {
   dataset,
 } from '../../database/index.js';
-import { getSub } from '../../util/index.js';
 import { aes, sha256 } from '../../crypto/index.js';
-import { aesKey } from '../../ephemeral/index.js';
+import { storeKey } from '../../ephemeral/index.js';
 
 const route = async (ctx) => {
-  const sub = getSub(ctx);
+  const { sub } = ctx.data;
   const { body } = ctx.request;
   const {
     name,
@@ -35,7 +34,7 @@ const route = async (ctx) => {
   });
   const { mnemonic } = dbDataset;
   await dataset.addMember(ctx, mnemonic, sub, 'write');
-  await aesKey.store(mnemonic, key);
+  await storeKey(mnemonic, key);
   await dataset.addKeys(ctx, mnemonic, key);
 
   if (duplicate) {

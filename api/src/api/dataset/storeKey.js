@@ -1,6 +1,6 @@
 import { dataset, token } from '../../database/index.js';
 import { sha256, base64ToUint8 } from '../../crypto/index.js';
-import { aesKey } from '../../ephemeral/index.js';
+import { storeKey } from '../../ephemeral/index.js';
 
 const route = async (ctx) => {
   const { mnemonic } = ctx.params;
@@ -19,7 +19,7 @@ const route = async (ctx) => {
   }
   const tenSeconds = 10;
   const secondstoMs = 1000;
-  aesKey.store(mnemonic, decoded, tenSeconds);
+  storeKey(mnemonic, decoded);
 
   const type = 'download';
 

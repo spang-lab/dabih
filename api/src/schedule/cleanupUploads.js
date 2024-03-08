@@ -1,6 +1,6 @@
 import { dataset, getSql } from '../database/index.js';
 import { getStorage } from '../storage/index.js';
-import { aesKey } from '../ephemeral/index.js';
+import { isExpired, deleteKey } from '../ephemeral/index.js';
 
 const cleanup = async (ctx) => {
   const storage = getStorage();
@@ -8,10 +8,10 @@ const cleanup = async (ctx) => {
 
   const promises = incompleteUploads.map(async (dset) => {
     const { mnemonic } = dset;
-    const key = await aesKey.get(mnemonic, null);
-    if (key) {
+    if (!await isExpired(mnemonic)) {
       return;
     }
+    await deleteKey(mnemonic);
     await dataset.destroy(ctx, mnemonic);
     await storage.destroyDataset(mnemonic);
   });

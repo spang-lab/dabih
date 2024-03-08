@@ -29,10 +29,10 @@ export default function init(sequelize) {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    confirmedBy: {
-      type: DataTypes.TEXT,
+    enabledBy: {
+      type: DataTypes.STRING,
     },
-    confirmed: {
+    enabled: {
       type: DataTypes.DATE,
     },
   }, {

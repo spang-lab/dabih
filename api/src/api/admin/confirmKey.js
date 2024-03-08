@@ -1,26 +1,25 @@
 import { literal } from 'sequelize';
 import { publicKey } from '../../database/index.js';
-import { getSub } from '../../util/index.js';
 
 const route = async (ctx) => {
-  const { keyId, confirmed } = ctx.request.body;
+  const { keyId, enabled } = ctx.request.body;
   if (!keyId) {
     ctx.error('No key id', 400);
     return;
   }
-  const sub = getSub(ctx);
+  const { sub } = ctx.data;
 
-  if (confirmed) {
+  if (enabled) {
     await publicKey.update(ctx, keyId, {
-      confirmedBy: sub,
-      confirmed: literal('CURRENT_TIMESTAMP'),
+      enabledBy: sub,
+      enabled: literal('CURRENT_TIMESTAMP'),
     });
     ctx.body = 'ok';
     return;
   }
   await publicKey.update(ctx, keyId, {
-    confirmedBy: null,
-    confirmed: null,
+    enabledBy: null,
+    enabled: null,
   });
   ctx.body = 'ok';
 };

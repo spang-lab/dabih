@@ -1,9 +1,8 @@
 import { dataset } from '../../database/index.js';
-import { aesKey } from '../../ephemeral/index.js';
-import { getUser } from '../../util/api.js';
+import { readKey } from '../../ephemeral/index.js';
 
 const route = async (ctx) => {
-  const { sub } = getUser(ctx);
+  const { sub } = ctx.data;
 
   const info = await dataset.findUpload(ctx, sub);
   if (!info) {
@@ -11,7 +10,7 @@ const route = async (ctx) => {
     return;
   }
   const { mnemonic } = info;
-  const key = await aesKey.get(mnemonic);
+  const key = await readKey(mnemonic);
   if (!key) {
     ctx.body = null;
     return;

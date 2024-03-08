@@ -30,6 +30,9 @@ export default function init(sequelize) {
           this.setDataValue('scopes', str);
         },
       },
+      exp: {
+        type: DataTypes.DATE,
+      },
     },
     {
       paranoid: false,

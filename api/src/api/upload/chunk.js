@@ -3,7 +3,7 @@ import {
   aes, uint8ToBase64, crc, sha256,
 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
-import { aesKey } from '../../ephemeral/index.js';
+import { readKey } from '../../ephemeral/index.js';
 import { getStorage } from '../../storage/index.js';
 
 const readHeaders = (ctx) => {
@@ -54,7 +54,7 @@ const route = async (ctx) => {
   const { mnemonic } = ctx.params;
   const storage = getStorage();
 
-  const key = await aesKey.get(mnemonic);
+  const key = await readKey(mnemonic);
   if (!key) {
     ctx.error('Encryption key not found in ephemeral store');
     return;

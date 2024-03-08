@@ -1,8 +1,7 @@
-import { getSub } from '../../util/index.js';
 import { token } from '../../database/index.js';
 
 const route = async (ctx) => {
-  const sub = getSub(ctx);
+  const { sub } = ctx.data;
   const results = await token.list(ctx, {
     sub,
   });

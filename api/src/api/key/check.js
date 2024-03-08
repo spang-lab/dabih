@@ -1,8 +1,7 @@
-import { getSub } from '../../util/index.js';
 import { publicKey } from '../../database/index.js';
 
 const route = async (ctx) => {
-  const sub = getSub(ctx);
+  const { sub } = ctx.data;
   const { keyHash } = ctx.request.body;
   if (!keyHash) {
     ctx.error('No key hash in body');

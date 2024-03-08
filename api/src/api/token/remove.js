@@ -1,11 +1,10 @@
-import { getSub } from '../../util/index.js';
 import { token } from '../../database/index.js';
 
 const route = async (ctx) => {
   const { body } = ctx.request;
   const { tokenId } = body;
 
-  const sub = getSub(ctx);
+  const { sub } = ctx.data;
 
   if (!tokenId) {
     ctx.error('No token in request body', 400);

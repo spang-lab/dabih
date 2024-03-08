@@ -5,7 +5,7 @@ import {
   auth,
   logRequests,
   error,
-  requireScopes,
+  requireScope,
   transaction,
   logEvents,
 } from '../middleware/index.js';
@@ -21,7 +21,7 @@ import token from './token/index.js';
 
 const getAdminRouter = () => {
   const router = new Router();
-  router.use(requireScopes('admin'));
+  router.use(requireScope('admin'));
 
   router.post('KEY_CONFIRM', '/key/confirm', admin.confirmKey);
   router.get('/dataset/orphan', admin.listOrphans);
@@ -34,7 +34,7 @@ const getAdminRouter = () => {
 
 const getUploadRouter = () => {
   const router = new Router();
-  router.use(requireScopes(['upload', 'api']));
+  router.use(requireScope('upload'));
 
   router.get('/check', upload.check);
   router.post('UPLOAD_START', '/start', upload.start);
@@ -46,8 +46,8 @@ const getUploadRouter = () => {
 
 const getDatasetRouter = () => {
   const router = new Router();
-  router.get('DATASET_DOWNLOAD', '/:mnemonic/download', requireScopes('download'), dataset.download);
-  router.use(requireScopes('api'));
+  router.get('DATASET_DOWNLOAD', '/:mnemonic/download', requireScope('download'), dataset.download);
+  router.use(requireScope('dataset'));
 
   router.post('/search', dataset.search);
   router.post('/find', dataset.find);
@@ -72,7 +72,7 @@ const getDatasetRouter = () => {
 
 const getKeyRouter = () => {
   const router = new Router();
-  router.use(requireScopes('api'));
+  router.use(requireScope('key'));
   router.get('/list', key.list);
   router.post('KEY_ADD', '/add', key.add);
   router.post('/check', key.check);
@@ -84,9 +84,10 @@ const getKeyRouter = () => {
 const getTokenRouter = () => {
   const router = new Router();
   router.post('/', token.user);
-  router.post('/generate/:type', requireScopes('api'), token.generate);
-  router.get('/list', requireScopes('api'), token.list);
-  router.post('/remove', requireScopes('api'), token.remove);
+  router.use(requireScope('token'));
+  router.post('/generate/:type', token.generate);
+  router.get('/list', token.list);
+  router.post('/remove', token.remove);
 
   return router;
 };

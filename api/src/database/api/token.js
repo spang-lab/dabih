@@ -1,8 +1,8 @@
-import { literal } from 'sequelize';
 import { randomToken } from '../../crypto/util.js';
-import { getUser } from '../../util/api.js';
 import log from '../../util/logger.js';
 import { getModel } from './util.js';
+
+const TOKEN_PREFIX = 'dabih_at_';
 
 async function list(ctx, where = {}) {
   const model = getModel(ctx, 'Token');
@@ -15,42 +15,49 @@ async function list(ctx, where = {}) {
   const now = new Date();
 
   return tokens.map((token) => {
-    const { timestamp, lifetime } = token;
-    const ts = +new Date(timestamp); // + converts to ms
-    const exp = new Date(ts + lifetime);
+    const { exp } = token;
+    if (!exp) {
+      return {
+        ...token,
+        isExpired: false,
+      };
+    }
     return {
       ...token,
-      isExpired: exp < now,
+      isExpired: now > exp,
     };
   });
 }
 
-async function generate(ctx, options) {
+async function generate(ctx, rScopes, lifetimeSeconds) {
   const Token = getModel(ctx, 'Token');
-  const { sub, name, email } = getUser(ctx);
-  const tokenString = await randomToken(32);
+
+  const { sub, scopes } = ctx.data;
+
+  rScopes.forEach((scope) => {
+    if (!scopes.includes(scope)) {
+      throw new Error(`Scope ${scope} cannot be requested because you do not have it`);
+    }
+  });
+
+  const token = await randomToken(32);
+  const value = `${TOKEN_PREFIX}${token}`;
+
+  let exp = null;
+  if (lifetimeSeconds) {
+    const nowMs = +new Date();
+    const expMs = nowMs + lifetimeSeconds * 1000;
+    exp = new Date(expMs);
+  }
+
   const tokenData = {
-    token: tokenString,
-    timestamp: literal('CURRENT_TIMESTAMP'),
+    value,
     sub,
-    name,
-    email,
-    scopes: options.scopes,
-    lifetime: options.lifetime,
-    refresh: options.refresh,
+    scope: rScopes,
+    exp,
   };
   await Token.create(tokenData);
-
   return tokenData;
-}
-
-async function refresh(ctx, sub) {
-  const Token = getModel(ctx, 'Token');
-  await Token.update({
-    timestamp: literal('CURRENT_TIMESTAMP'),
-  }, {
-    where: { sub, refresh: true },
-  });
 }
 
 async function cleanup(ctx) {
@@ -58,7 +65,7 @@ async function cleanup(ctx) {
   const tokens = await list(ctx);
 
   const expiredIds = tokens
-    .filter((t) => !t.refresh && t.isExpired)
+    .filter((t) => t.isExpired)
     .map((t) => t.id);
   const count = await Token.destroy({
     where: {
@@ -83,7 +90,6 @@ export default {
   generate,
   cleanup,
   list,
-  refresh,
   destroy,
   find,
 };

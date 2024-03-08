@@ -1,6 +1,5 @@
 import { readFile } from 'node:fs/promises';
 import yaml from 'js-yaml';
-import log from './logger.js';
 
 export const parseUrl = (url) => {
   if (!url.includes(':')) {

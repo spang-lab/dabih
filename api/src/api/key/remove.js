@@ -1,8 +1,7 @@
 import { publicKey, dataset } from '../../database/index.js';
-import { getUser, userHasScope } from '../../util/index.js';
 
 const route = async (ctx) => {
-  const { sub } = getUser(ctx);
+  const { sub, isAdmin } = ctx.data;
   const { keyId } = ctx.request.body;
   if (!keyId) {
     ctx.error('No key id', 400);
@@ -12,7 +11,7 @@ const route = async (ctx) => {
     id: keyId,
   });
 
-  if (sub !== key.sub && !userHasScope(ctx, 'admin')) {
+  if (sub !== key.sub && !isAdmin) {
     ctx.error('Not your key');
     return;
   }

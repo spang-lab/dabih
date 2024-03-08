@@ -85,7 +85,16 @@ const migrate = async () => {
   umzug.on('migrated', (e) => log(`Migration ${e.name} complete.`));
 
   // Reset the database
-  await umzug.down({ to: 0 });
+  const updateConf = getEnv('DB_UPDATE', 'true');
+
+  if (typeof updateConf === 'string' && updateConf.toLowerCase() === 'reset') {
+    log.warn('DATABASE RESET: ALL DATA WILL BE DELETED!');
+    await umzug.down({ to: 0 });
+  }
+  if (updateConf === false) {
+    log.warn('DB_UPDATE is false, skipping migrations.');
+    return;
+  }
 
   const migrations = await umzug.pending();
   if (migrations.length) {
@@ -94,6 +103,8 @@ const migrate = async () => {
   const executed = await umzug.up();
   if (executed.length) {
     log.warn(`Completed ${executed.length} migrations.`);
+  } else {
+    log('Database schema is up to date.');
   }
 };
 

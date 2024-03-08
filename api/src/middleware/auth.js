@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { log, requireEnv, setUser } from '../util/index.js';
-import { resolveUser } from '../auth/index.js';
+import { requireEnv } from '../util/index.js';
 
 const parseHeader = (request) => {
   const authHeader = request.get('Authorization');
@@ -36,10 +35,12 @@ const getMiddleware = () => async (ctx, next) => {
   try {
     const { request } = ctx;
     const { sub, scopes } = await verifyToken(request);
+    const isAdmin = scopes.includes('admin');
     ctx.data = {
       ...ctx.data,
       sub,
       scopes,
+      isAdmin,
     };
   } catch (err) {
     ctx.error(`Auth failed: ${err.toString()}`, 401);

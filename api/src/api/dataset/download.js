@@ -1,11 +1,11 @@
 /* eslint-disable no-await-in-loop */
 import MultiStream from 'multistream';
-import { aesKey } from '../../ephemeral/index.js';
 import {
   base64ToUint8, aes,
 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 import { getStorage } from '../../storage/index.js';
+import { readKey } from '../../ephemeral/index.js';
 
 const route = async (ctx) => {
   const storage = getStorage();
@@ -15,7 +15,7 @@ const route = async (ctx) => {
     return;
   }
 
-  const key = await aesKey.get(mnemonic, 0);
+  const key = await readKey(mnemonic);
   if (!key) {
     ctx.error('Failed to load aes key from emphermal storage', 500);
     return;

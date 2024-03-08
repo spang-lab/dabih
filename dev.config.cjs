@@ -17,6 +17,7 @@ const apps = [
       TOKEN_SECRET: getEnv('TOKEN_SECRET', tokenSecret),
       DB_URL: getEnv('DB_URL', 'sqlite:./data/dabih.sqlite'),
       DB_DEBUG: getEnv('DB_DEBUG', 'false'),
+      DB_UPDATE: getEnv('DB_UPDATE', 'true'),
       STORAGE_URL: getEnv('STORAGE_URL', 'local:./data'),
       EPHEMERAL_URL: getEnv('EPHEMERAL_URL', 'memory'),
       EPHEMERAL_SECRET: getEnv('EPHEMERAL_SECRET', emphemeralSecret),
