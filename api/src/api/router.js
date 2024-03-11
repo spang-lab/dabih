@@ -7,7 +7,6 @@ import {
   error,
   requireScope,
   transaction,
-  logEvents,
 } from '../middleware/index.js';
 
 import healthy from './healthy.js';
@@ -16,21 +15,7 @@ import info from './info.js';
 import dataset from './dataset/index.js';
 import upload from './upload/index.js';
 import key from './key/index.js';
-import admin from './admin/index.js';
 import token from './token/index.js';
-
-const getAdminRouter = () => {
-  const router = new Router();
-  router.use(requireScope('admin'));
-
-  router.post('KEY_CONFIRM', '/key/confirm', admin.confirmKey);
-  router.get('/dataset/orphan', admin.listOrphans);
-
-  router.get('/events', admin.listEventDates);
-  router.get('/events/:date', admin.listEvents);
-
-  return router;
-};
 
 const getUploadRouter = () => {
   const router = new Router();
@@ -38,9 +23,9 @@ const getUploadRouter = () => {
 
   router.get('/check', upload.check);
   router.post('UPLOAD_START', '/start', upload.start);
-  router.put('/:mnemonic', upload.chunk);
-  router.post('UPLOAD_FINISH', '/finish/:mnemonic', upload.finish);
-  router.post('UPLOAD_CANCEL', '/cancel/:mnemonic', upload.cancel);
+  router.put('/:mnemonic/chunk', upload.chunk);
+  router.post('UPLOAD_FINISH', '/:mnemonic/finish', upload.finish);
+  router.post('UPLOAD_CANCEL', '/:mnemonic/cancel', upload.cancel);
   return router;
 };
 
@@ -65,7 +50,8 @@ const getDatasetRouter = () => {
   router.post('DATASET_REENCRYPT', '/:mnemonic/reencrypt', dataset.reencrypt);
   router.post('DATASET_RENAME', '/:mnemonic/rename', dataset.rename);
   router.post('DATASET_STORE_KEY', '/:mnemonic/download', dataset.storeKey);
-  router.post('DATASET_KEY_FETCH', '/:mnemonic/key', dataset.key);
+  router.get('DATASET_KEY_FETCH', '/:mnemonic/key', dataset.key);
+  router.get('/orphan/list', dataset.listOrphans);
 
   return router;
 };
@@ -75,6 +61,7 @@ const getKeyRouter = () => {
   router.use(requireScope('key'));
   router.get('/list', key.list);
   router.post('KEY_ADD', '/add', key.add);
+  router.post('/enable', key.enable);
   router.post('/check', key.check);
   router.post('KEY_REMOVE', '/remove', key.remove);
 
@@ -97,10 +84,6 @@ const getApiRouter = () => {
   router.use(logRequests);
   router.use(transaction);
   router.use(auth());
-  router.use(logEvents);
-
-  const adminRouter = getAdminRouter();
-  router.use('/admin', adminRouter.routes(), adminRouter.allowedMethods());
 
   const uploadRouter = getUploadRouter();
   router.use('/upload', uploadRouter.routes(), uploadRouter.allowedMethods());

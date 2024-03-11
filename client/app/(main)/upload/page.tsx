@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Upload as Uploader } from '../components';
+import { Upload } from '@/components';
 
-export default function Upload() {
+export default function UploadPage() {
   return (
     <div>
       <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
@@ -10,7 +10,7 @@ export default function Upload() {
         {' '}
         <span className="text-blue">your data</span>
       </h1>
-      <Uploader />
+      <Upload disabled={false} />
     </div>
   );
 }

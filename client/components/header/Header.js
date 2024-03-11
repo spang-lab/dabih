@@ -15,9 +15,9 @@ import {
 } from 'react-feather';
 import Image from 'next/image';
 import { signOut, signIn } from 'next-auth/react';
+import storage from '@/lib/storage';
 import { useApi } from '../api';
 import { useUser } from '../hooks';
-import { storage } from '../../lib';
 
 import NavItem from './NavItem';
 import NavLine from './NavLine';
@@ -57,7 +57,7 @@ export default function Header() {
 
     const state = {
       start: 'complete',
-      account: user ? 'complete' : 'enabled',
+      signin: user ? 'complete' : 'enabled',
       key: getKeyState(),
       upload: user && key ? 'enabled' : 'disabled',
       manage: user && key ? 'enabled' : 'disabled',
@@ -67,10 +67,10 @@ export default function Header() {
 
     const current = state[path];
     if (current === 'disabled') {
-      router.push('/account');
+      router.push('/signin');
     }
     if (current === 'complete') {
-      if (path === 'account') {
+      if (path === 'signin') {
         router.push('/key');
       }
       if (path === 'key') {
@@ -138,8 +138,8 @@ export default function Header() {
         <NavItem href="/" state={items.start} label="Home">
           <Home size={24} />
         </NavItem>
-        <NavLine state={items.account} />
-        <NavItem href="/account" state={items.account} label="Account">
+        <NavLine state={items.signin} />
+        <NavItem href="/signin" state={items.signin} label="Account">
           <UserPlus size={24} />
         </NavItem>
         <NavLine state={items.key} />

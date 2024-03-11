@@ -57,7 +57,7 @@ const authOptions = {
     jwt,
   },
   pages: {
-    signIn: '/account',
+    signIn: '/signin',
     error: '/auth/error',
   },
 };

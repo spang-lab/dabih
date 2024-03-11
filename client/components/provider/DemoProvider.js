@@ -7,28 +7,43 @@ import { Codesandbox } from 'react-feather';
 import SignInError from './SignInError';
 
 export default function URProvider({ provider }) {
-  const [token, setToken] = useState('');
+  const [name, setName] = useState('');
 
   const onSubmit = (e) => {
     e.preventDefault();
-    signIn(provider.id, { token });
+    signIn(provider.id, { name });
   };
   return (
     <div className="flex">
       <div className="pb-4 mb-4 ">
         <SignInError />
+        <div className="text-red p-2">
+          <p className="font-extrabold text-xl text-center pb-2">
+            Warning
+          </p>
+          {' '}
+          No authentication configured.
+          This Demo Provider is for
+          {' '}
+          <span className="font-bold">testing only</span>
+          ,
+          {' '}
+          it will accept any username without authentication.
+
+        </div>
         <form method="post" onSubmit={onSubmit}>
           <div className="w-full">
-            <label htmlFor="token">
+            <label htmlFor="name">
               <p className="font-extrabold m-1 text-xl">
-                Access Token
+                User Name
               </p>
               <input
                 className="border w-full rounded-md px-4 py-1 my-1"
-                name="token"
-                type="password"
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
+                name="name"
+                maxLength={20}
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </label>
           </div>

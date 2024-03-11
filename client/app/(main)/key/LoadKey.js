@@ -5,10 +5,11 @@ import React, { useEffect } from 'react';
 import { Camera } from 'react-feather';
 import Image from 'next/image';
 import useDialog from '@/components/dialog';
-import { storage, importPrivateKey, uncompressJwk } from '@/lib/';
+import storage from '@/lib/storage';
+import { importPrivateKey, uncompressJwk } from '@/lib/crypto';
 import { useRouter } from 'next/navigation';
+import { useApi } from '@/components';
 import DropPrivateKey from './DropPrivateKey';
-import { useApi } from '../api';
 
 export default function LoadKey() {
   const dialog = useDialog();

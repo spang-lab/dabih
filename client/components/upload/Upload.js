@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { Transition } from '@headlessui/react';
 
-import { hashBlob, hashHashes } from '../../lib';
+import { hashBlob, hashHashes } from '@/lib/crypto';
 
 import Dropzone from './DropZone';
 import Progess from './Progress';

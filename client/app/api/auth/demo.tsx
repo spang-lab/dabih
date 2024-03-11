@@ -8,26 +8,29 @@ export default function DemoProvider({ enabled }): Provider {
     name: 'Demo Provider',
     id: 'demo',
     credentials: {
-      token: { label: 'Token', type: 'password' },
+      name: { label: 'Username', type: 'text', placeholder: 'Demo User' },
     },
     async authorize(credentials, _req) {
       if (!credentials) {
         return null;
       }
-      const { token } = credentials;
-      const realToken = requireEnv('DEMO');
+      const { name } = credentials;
+      if (!name) {
+        return null;
+      }
+      const maxLength = 20;
+      const short = name.substring(0, maxLength);
 
-      if (!token || !token.length) {
-        return null;
-      }
-      if (token !== realToken) {
-        return null;
-      }
+      const id = short.trim()
+        .replace(/\s+/, '_')
+        .replace(/[^a-zA-Z0-9_]/g, '')
+        .toLowerCase();
+
       return {
-        id: 'root',
-        sub: 'root',
-        name: 'Root',
-        email: 'root@dabih.com',
+        id,
+        sub: id,
+        name: short,
+        email: `${id}@dabih.com`,
         scopes: ['upload', 'dataset', 'key', 'token', 'admin'],
       };
     },

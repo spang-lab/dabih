@@ -3,7 +3,6 @@
 import React from 'react';
 import { RefreshCw, Trash2, User } from 'react-feather';
 import { Switch } from '@headlessui/react';
-import { DeleteButton } from '../util';
 import { useDatasets } from './Context';
 
 export default function Member({ data, dataset }) {
@@ -77,9 +76,14 @@ export default function Member({ data, dataset }) {
     }
     return (
       <div>
-        <DeleteButton onClick={onDelete}>
+        <button
+          type="button"
+          label="Delete Member"
+          className="bg-red px-2 py-1 rounded-lg"
+          onClick={onDelete}
+        >
           <Trash2 size={18} />
-        </DeleteButton>
+        </button>
       </div>
     );
   };

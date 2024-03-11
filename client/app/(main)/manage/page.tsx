@@ -1,4 +1,4 @@
-import { Datasets } from '../components';
+import { Datasets } from '@/components';
 
 export default function Manage() {
   return (

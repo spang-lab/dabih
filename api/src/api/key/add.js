@@ -8,7 +8,7 @@ const route = async (ctx) => {
   const pubKey = body.publicKey;
   const { name, email } = body;
 
-  const isRootKey = !!body.rootKey;
+  const isRootKey = !!body.isRootKey;
   if (!pubKey) {
     ctx.error('No public key in body');
     return;

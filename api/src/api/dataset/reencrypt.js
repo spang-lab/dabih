@@ -20,7 +20,7 @@ const reencryptChunk = async (chunk, mnemonic, newMnemonic, oldKey, newKey) => {
 
   return new Promise((resolve, reject) => {
     writeStream.on('finish', () => {
-      const newHash = hashStream.digest('base64');
+      const newHash = hashStream.digest();
       if (newHash !== hash) {
         reject(new Error(`Hash mismatch in chunk ${newHash} != ${hash}`));
         return;

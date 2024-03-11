@@ -3,8 +3,9 @@
 'use client';
 
 import {
-  decryptKey, decryptChunk, encodeHash, storage,
-} from '@/lib';
+  decryptKey, decryptChunk, encodeHash,
+} from '@/lib/crypto';
+import storage from '@/lib/storage';
 import React, { useCallback, useState } from 'react';
 import { Download } from 'react-feather';
 import { useApi } from '../api';

@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { Clock } from 'react-feather';
+import {
+  Spinner, useUsers, useUser, AdminContact,
+} from '@/components';
 import LoadKey from './LoadKey';
 import CreateKey from './CreateKey';
-import { Spinner } from '../util';
-import { useUsers, useUser } from '../hooks';
-import { AdminContact } from '../branding';
 
 export default function Key() {
   const { users, fetchUsers } = useUsers();

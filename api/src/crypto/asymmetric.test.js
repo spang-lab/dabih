@@ -1,7 +1,13 @@
 /* eslint-env jest */
 import crypto from 'node:crypto';
 import asymmetric from './asymmetric.js';
-import { pkcs8ToPem } from './util.js';
+
+const pkcs8ToPem = (pkcs8Key) => {
+  const array = new Uint8Array(pkcs8Key);
+  const base64 = Buffer.from(array).toString('base64');
+  const content = base64.replace(/.{64}/g, '$&\n');
+  return `-----BEGIN PRIVATE KEY-----\n${content}\n-----END PRIVATE KEY-----`;
+};
 
 const generateClientKey = async () => {
   const params = {

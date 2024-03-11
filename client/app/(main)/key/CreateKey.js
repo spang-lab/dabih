@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { Cpu } from 'react-feather';
-import useDialog from '../dialog';
-import { useApi } from '../api';
+import { useApi, useDialog } from '@/components';
 import DropPublicKey from './DropPublicKey';
 
 export default function CreateKey({ onChange }) {

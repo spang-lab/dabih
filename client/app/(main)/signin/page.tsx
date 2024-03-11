@@ -4,8 +4,15 @@ import { getProviders } from 'next-auth/react';
 import { getServerSession } from 'next-auth/next';
 import authOptions from '@/app/api/auth/options';
 import { Provider } from '@/components';
+import { redirect } from 'next/navigation';
 
-export default function Account({ providers }) {
+export default async function SignIn() {
+  const session = await getServerSession(authOptions);
+  if (session && session.user) {
+    redirect('/key');
+  }
+  const providers = await getProviders() ?? [];
+
   return (
     <div>
       <h1 className="text-4xl pb-4 font-extrabold tracking-tight sm:text-5xl md:text-6xl">
@@ -54,21 +61,4 @@ export default function Account({ providers }) {
       </div>
     </div>
   );
-}
-
-export async function getServerSideProps(context) {
-  const { req, res } = context;
-  const session = await getServerSession(req, res, authOptions);
-
-  if (session && session.user) {
-    return { redirect: { destination: '/key' } };
-  }
-
-  const providers = await getProviders() ?? [];
-
-  return {
-    props: {
-      providers,
-    },
-  };
 }

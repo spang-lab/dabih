@@ -43,7 +43,7 @@ const hashKey = (key) => {
     type: 'spki',
     format: 'der',
   });
-  return sha256.hash(data, 'base64');
+  return sha256.hash(data);
 };
 
 const encrypt = (key, buffer) => {
@@ -56,12 +56,15 @@ const encrypt = (key, buffer) => {
     oaepHash: 'sha256',
     padding: constants.RSA_PKCS1_OAEP_PADDING,
   }, buffer);
-  return result.toString('base64');
+  return result.toString('base64url');
 };
 
 const decrypt = (key, base64) => {
-  const buffer = Buffer.from(base64, 'base64');
-  const privateKey = createPrivateKey(key);
+  const buffer = Buffer.from(base64, 'base64url');
+  const privateKey = createPrivateKey({
+    key,
+    format: 'pem',
+  });
   const result = privateDecrypt({
     oaepHash: 'sha256',
     key: privateKey,

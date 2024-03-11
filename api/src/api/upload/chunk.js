@@ -41,7 +41,7 @@ const readFile = async (req, encrypt, stream) => new Promise((resolve, reject) =
   busboy.on('file', (_field, file) => {
     stream.on('finish', () => resolve({
       crc32: crcStream.digest('hex'),
-      hash: hashStream.digest('base64'),
+      hash: hashStream.digest(),
     }));
     file.pipe(hashStream).pipe(encrypt).pipe(crcStream).pipe(stream);
   });

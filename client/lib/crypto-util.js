@@ -1,9 +1,5 @@
 /* global BigInt */
 /* eslint-disable no-bitwise */
-export const PEM = {
-  pkcs8Header: '-----BEGIN PRIVATE KEY-----',
-  pkcs8Footer: '-----END PRIVATE KEY-----',
-};
 
 export const CONST = {
   rsa: {
@@ -38,11 +34,6 @@ export const base64ToUint8 = (base64) => {
 export const base64Tobase64Url = (base64) => base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 
 export const base64UrlToBase64 = (base64url) => base64url.replace(/-/g, '+').replace(/_/g, '/');
-
-export const privateKeyToBase64 = async (privateKey) => {
-  const pkcs8 = await crypto.subtle.exportKey('pkcs8', privateKey);
-  return uint8ToBase64(pkcs8);
-};
 
 export const pkcs8ToPem = (pkcs8) => {
   const base64 = uint8ToBase64(pkcs8);

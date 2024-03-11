@@ -7,7 +7,12 @@ const route = async (ctx) => {
     ctx.error('No key id', 400);
     return;
   }
-  const { sub } = ctx.data;
+  const { sub, isAdmin } = ctx.data;
+
+  if (!isAdmin) {
+    ctx.error('Only Admins can enable keys', 401);
+    return;
+  }
 
   if (enabled) {
     await publicKey.update(ctx, keyId, {

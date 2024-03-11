@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 import React, { createContext, useContext, useMemo } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { useSession } from 'next-auth/react';
 
@@ -12,36 +12,17 @@ const ApiContext = createContext();
 
 export function ApiWrapper({ children }) {
   const router = useRouter();
-  const params = useParams();
   const { data: session } = useSession();
 
   const api = axios.create();
-  const getHeaders = (headers) => {
-    if (params && params.token) {
-      const { token } = params;
-      return {
-        ...headers,
-        Authorization: `Bearer dabih_${token}`,
-      };
-    }
-    if (session && session.accessToken) {
-      const { provider, accessToken } = session;
-      return {
-        ...headers,
-        Authorization: `Bearer ${provider}_${accessToken}`,
-      };
-    }
-    return headers;
-  };
 
   const onRequest = (config) => {
     const baseUrl = config.baseUrl || '/api/v1';
-    const { url, headers } = config;
+    const { url } = config;
     const newUrl = `${baseUrl}${url}`;
 
     return {
       ...config,
-      headers: getHeaders(headers),
       url: newUrl,
     };
   };
@@ -50,7 +31,7 @@ export function ApiWrapper({ children }) {
     (r) => r.data,
     (error) => {
       if (error.response?.status === 401) {
-        router.push('/logout');
+        router.push('/signout');
         return { error: 'Unauthorized' };
       }
       const message = error.response?.data || error.message;
@@ -61,7 +42,6 @@ export function ApiWrapper({ children }) {
 
   const admin = useMemo(
     () => ({
-      listKeys: () => api.get('/admin/key/list'),
       confirmKey: (keyId, confirmed) => api.post('/admin/key/confirm', { keyId, confirmed }),
       listOrphans: () => api.get('/admin/dataset/orphan'),
       listEventDates: () => api.get('/admin/events'),

@@ -23,15 +23,6 @@ const storeKey = async (privateKey) => {
   window.dispatchEvent(new Event('storage'));
 };
 
-const hasKey = () => {
-  const storage = window.localStorage;
-  const data = storage.getItem(storageKey);
-  if (!data) {
-    return false;
-  }
-  return true;
-};
-
 const readKey = async () => {
   const storage = window.localStorage;
   const base64 = storage.getItem(storageKey);
@@ -66,7 +57,6 @@ const useKey = () => {
 export default {
   isAvailable,
   storeKey,
-  hasKey,
   useKey,
   readKey,
   deleteKey,

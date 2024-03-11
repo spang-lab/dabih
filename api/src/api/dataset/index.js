@@ -12,6 +12,7 @@ import destroy from './destroy.js';
 import recover from './recover.js';
 import storeKey from './storeKey.js';
 import find from './find.js';
+import listOrphans from './listOrphans.js';
 
 export default {
   find,
@@ -28,4 +29,5 @@ export default {
   recover,
   storeKey,
   download,
+  listOrphans,
 };

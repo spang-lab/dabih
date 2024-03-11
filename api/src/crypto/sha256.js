@@ -19,23 +19,23 @@ class SHA256Stream extends Transform {
     callback();
   }
 
-  digest(encoding = 'base64') {
+  digest(encoding = 'base64url') {
     return this.hash.digest(encoding);
   }
 }
 
-const hash = (buffer, encoding = 'base64') => {
+const hash = (buffer, encoding = 'base64url') => {
   const hasher = createHash('sha256');
   hasher.update(buffer);
   return hasher.digest(encoding);
 };
 
-const hashChunks = (chunks, encoding = 'base64') => {
+const hashChunks = (chunks) => {
   const hasher = createHash('sha256');
   chunks.forEach((chunk) => {
-    hasher.update(chunk.hash, 'base64');
+    hasher.update(chunk.hash, 'base64url');
   });
-  return hasher.digest(encoding);
+  return hasher.digest('base64url');
 };
 
 export default {

@@ -11,8 +11,9 @@ import React, {
 import pLimit from 'p-limit';
 import { useParams } from 'next/navigation';
 import {
-  storage, decryptKey, encodeHash, decryptChunk,
-} from '../../lib';
+  decryptKey, encodeHash, decryptChunk,
+} from '@/lib/crypto';
+import storage from '@/lib/storage';
 import { useApi } from '../api';
 import useDialog from '../dialog';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { Key, Delete } from 'react-feather';
-import { storage } from '../../lib';
+import storage from '@/lib/storage';
 
 export default function CryptoKey() {
   const key = storage.useKey();

@@ -32,7 +32,7 @@ export default function Home() {
           <div className="py-5 flex flex-row items-center">
             <Link
               className="text-2xl text-white bg-blue rounded-md px-4 py-3"
-              href="/account"
+              href="/signin"
             >
               Get Started
             </Link>

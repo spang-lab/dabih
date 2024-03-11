@@ -4,7 +4,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import Image from 'next/image';
 import QRCode from 'qrcode';
-import { uint8ToBase64 } from '@/lib/crypto-util';
 
 const createDataUrl = async (keys) => {
   if (!keys) {

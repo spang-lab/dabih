@@ -12,9 +12,6 @@ import {
   join,
 } from 'node:path';
 import yaml from 'js-yaml';
-import {
-  base64ToBase64Url,
-} from '../../crypto/index.js';
 
 import { log, requireEnv } from '../../util/index.js';
 
@@ -62,11 +59,10 @@ const init = async () => {
   log.log(`Writing data to ${basePath}`);
   const resolveId = (mnemonic, chunkHash) => {
     const folder = join(basePath, mnemonic);
-    const fileName = base64ToBase64Url(chunkHash);
-    const path = join(folder, fileName);
+    const path = join(folder, chunkHash);
     return {
       folder,
-      fileName,
+      fileName: chunkHash,
       path,
     };
   };

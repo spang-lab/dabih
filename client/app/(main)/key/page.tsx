@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { Key } from '../components';
+import Key from './Key';
 
 export default function ManageKey() {
   return (
     <div>
-      <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+      <h1 className="text-4xl font-extrabold pb-4 tracking-tight sm:text-5xl md:text-6xl">
         Load your
         <span className="text-blue"> encryption key </span>
       </h1>

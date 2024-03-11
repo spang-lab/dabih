@@ -42,11 +42,11 @@ function Sidebar() {
         <Item href="/docs/configuration">Configuration Options</Item>
         <Item href="/docs/crypto">Cryptography</Item>
         <Item href="/docs/privacy">Privacy Policy</Item>
+        <Item href="/docs/data">Data Policy</Item>
         <Item href="/docs/contact">Contact</Item>
         <Header>Developers</Header>
         <Item href="/docs/api">API Reference</Item>
         <Item href="/docs/cli">Command Line Interface</Item>
-        <Item href="/docs/paper">Paper</Item>
       </div>
     </div>
   );

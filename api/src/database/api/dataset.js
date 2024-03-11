@@ -2,7 +2,7 @@
 import { Op } from 'sequelize';
 import { getModel } from './util.js';
 import { log, generateMnemonic } from '../../util/index.js';
-import { base64ToBase64Url, rsa } from '../../crypto/index.js';
+import { rsa } from '../../crypto/index.js';
 import search from './datasetSearch.js';
 
 async function listIncomplete(ctx) {
@@ -291,7 +291,6 @@ async function listChunks(ctx, mnemonic) {
     start: parseInt(c.start, 10),
     end: parseInt(c.end, 10),
     size: parseInt(c.size, 10),
-    urlHash: base64ToBase64Url(c.hash),
   })).sort((c1, c2) => c1.start - c2.start);
 }
 async function updateChunk(ctx, chunkId, properties) {

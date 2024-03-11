@@ -6,7 +6,7 @@ import React, {
 import { useReactToPrint } from 'react-to-print';
 import { Download, Printer } from 'react-feather';
 
-import { generateKey, exportPrivateKey } from '@/lib';
+import { generateKey, exportPrivateKey } from '@/lib/crypto';
 import { Dialog } from '@headlessui/react';
 import { Spinner } from '@/components/util';
 

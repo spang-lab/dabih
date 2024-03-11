@@ -10,14 +10,14 @@ import React, {
 } from 'react';
 import pLimit from 'p-limit';
 import { useRouter } from 'next/navigation';
-import useDialog from '../dialog';
 import {
-  storage,
   decryptKey,
   encodeHash,
   decryptChunk,
   exportAesKey,
-} from '../../lib';
+} from '@/lib/crypto';
+import storage from '@/lib/storage';
+import useDialog from '../dialog';
 import { useApi } from '../api';
 
 const DatasetContext = createContext();
