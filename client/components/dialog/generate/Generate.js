@@ -6,7 +6,7 @@ import React, {
 import { useReactToPrint } from 'react-to-print';
 import { Download, Printer } from 'react-feather';
 
-import { generateKey, exportPrivateKey } from '@/lib/crypto';
+import crypto from '@/lib/crypto';
 import { Dialog } from '@headlessui/react';
 import { Spinner } from '@/components/util';
 
@@ -28,10 +28,15 @@ export default function GenerateKey({ ctx, closeDialog }) {
 
   const generate = useCallback(async () => {
     try {
-      const keypair = await generateKey();
-      setKeys(keypair);
-      const file = await exportPrivateKey(keypair.privateKey);
-      setKeyfile(file);
+      const privateKey = await crypto.privateKey.generate();
+      const publicKey = await crypto.privateKey.toPublicKey(privateKey);
+
+      setKeys({
+        privateKey,
+        publicKey,
+      });
+      const pem = await crypto.privateKey.toPEM(privateKey);
+      setKeyfile(pem);
     } catch (err) {
       onSubmit({ error: err });
       closeDialog();

@@ -4,7 +4,7 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { Lock, File, FilePlus } from 'react-feather';
-import { exportJwk, importPublicKey } from '@/lib/crypto';
+import crypto, { exportJwk, importPublicKey } from '@/lib/crypto';
 import { useApi, useDialog } from '@/components';
 
 export default function DropPublicKey({ onKey }) {

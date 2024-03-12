@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { Transition } from '@headlessui/react';
 
-import { hashBlob, hashHashes } from '@/lib/crypto';
+import crypto from '@/lib/crypto';
 
 import Dropzone from './DropZone';
 import Progess from './Progress';
@@ -17,16 +17,29 @@ import useDialog from '../dialog';
 const oneMiB = 1024 * 1024;
 const chunkSize = 2 * oneMiB;
 
+const hashBlob = async (blob) => {
+  const buffer = await blob.arrayBuffer();
+  const hash = await crypto.hash(buffer);
+  return hash;
+};
+
+const hashHashes = async (hashes) => {
+  const buffers = hashes.map((base64) => crypto.base64url.toUint8(base64));
+  const merged = new Blob(...buffers).arrayBuffer();
+  return crypto.hash(merged);
+};
+
 const hashFile = async (file) => {
   const { size } = file;
 
   const hashes = [];
   for (let b = 0; b < size; b += chunkSize) {
     const blob = file.slice(b, b + chunkSize);
-    const hash = await hashBlob(blob);
-    hashes.push(hash);
+    const buffer = blob.arrayBuffer();
+    hashes.push(await crypto.hash(buffer));
   }
-  return hashHashes(hashes);
+  const merged = new Blob(...hashes).arrayBuffer();
+  return crypto.hash(merged);
 };
 
 export default function Upload({ disabled }) {

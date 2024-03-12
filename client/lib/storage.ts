@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { exportBase64, importPrivateKey } from './crypto';
+import crypto from './crypto';
 
 const isAvailable = () => {
   try {
@@ -16,9 +16,9 @@ const isAvailable = () => {
 
 const storageKey = 'dabihPrivateKey';
 
-const storeKey = async (privateKey) => {
+const storeKey = async (key: CryptoKey) => {
   const storage = window.localStorage;
-  const base64 = await exportBase64(privateKey);
+  const base64 = await crypto.privateKey.toBase64(key);
   storage.setItem(storageKey, base64);
   window.dispatchEvent(new Event('storage'));
 };
@@ -29,8 +29,8 @@ const readKey = async () => {
   if (!base64) {
     return null;
   }
-  const keys = await importPrivateKey(base64, 'base64');
-  return keys;
+  const key = await crypto.privateKey.fromBase64(base64);
+  return key;
 };
 
 const deleteKey = async () => {
@@ -40,7 +40,7 @@ const deleteKey = async () => {
 };
 
 const useKey = () => {
-  const [key, setKey] = useState(undefined);
+  const [key, setKey] = useState<CryptoKey | null>(null);
   useEffect(() => {
     const listener = async () => {
       setKey(await readKey());

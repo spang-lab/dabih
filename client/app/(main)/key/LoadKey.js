@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { Camera } from 'react-feather';
 import Image from 'next/image';
 import useDialog from '@/components/dialog';
+import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
-import { importPrivateKey, uncompressJwk } from '@/lib/crypto';
 import { useRouter } from 'next/navigation';
 import { useApi } from '@/components';
 import DropPrivateKey from './DropPrivateKey';
@@ -17,16 +17,14 @@ export default function LoadKey() {
   const api = useApi();
 
   const onKey = async (data) => {
-    const compressed = JSON.parse(data);
-    const jwkData = await uncompressJwk(compressed);
-
     try {
-      const keys = await importPrivateKey(jwkData, 'jwk');
-      const { valid, error } = await api.checkPublicKey(keys.hash);
+      const key = await crypto.privateKey.fromJSON(data);
+      const hash = await crypto.privateKey.toHash(key);
+      const { valid, error } = await api.checkPublicKey(hash);
       if (!valid) {
         dialog.error(error);
       }
-      await storage.storeKey(keys.privateKey);
+      await storage.storeKey(key);
       router.push('/manage');
     } catch (err) {
       dialog.error(err.toString());

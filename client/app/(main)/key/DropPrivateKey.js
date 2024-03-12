@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone';
 
 import { Key, File, FilePlus } from 'react-feather';
 import { useRouter } from 'next/navigation';
-import { importPrivateKey } from '@/lib/crypto';
+import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import { useApi, useDialog } from '@/components';
 
@@ -29,13 +29,15 @@ export default function Dropzone() {
     }
     const text = await file.text();
     try {
-      const keys = await importPrivateKey(text, 'pem');
-      const { valid, error } = await checkPublicKey(keys.hash);
+      const key = await crypto.privateKey.fromPEM(text);
+      const hash = await crypto.privateKey.toHash(key);
+
+      const { valid, error } = await checkPublicKey(hash);
       if (!valid) {
         dialog.error(error);
         return;
       }
-      await storage.storeKey(keys.privateKey);
+      await storage.storeKey(key);
       router.push('/manage');
     } catch (err) {
       dialog.error('File is not a valid public key');
