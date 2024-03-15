@@ -71,7 +71,7 @@ const key = {
 
 const token = {
   get: () => get('/token'),
-  generate: (scopes: Array<string>) => post('/token/generate', { scopes }),
+  add: (scopes: Array<string>, lifetime: number) => post('/token/add', { scopes, lifetime }),
   list: () => get('/token/list'),
   remove: (tokenId: number) => post('/token/remove', { tokenId }),
 };

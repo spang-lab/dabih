@@ -24,12 +24,16 @@ interface DialogContextType {
   dialog: string | null,
   ctx: any,
   closeDialog: () => void,
+  openDialog: (dialog: string, ctx: any) => void
+  error: (error: string) => void
 }
 
 const DialogContext = createContext<DialogContextType>({
   dialog: null,
   ctx: null,
   closeDialog: () => {},
+  openDialog: () => {},
+  error: () => {},
 });
 export const useDialog = () => useContext(DialogContext);
 

@@ -133,9 +133,9 @@ export default function Orphan({ data }) {
         <div className="px-3 py-1 text-center border-gray-400 border-r-2">
           <p className="font-semibold">Size</p>
           <span className="text-sm">
-            <Bytes value={size} />
+            <Bytes binary value={size} />
             (
-            <Bytes10 value={size} />
+            <Bytes value={size} />
             )
           </span>
         </div>

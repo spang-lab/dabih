@@ -72,7 +72,7 @@ const getTokenRouter = () => {
   const router = new Router();
   router.post('/', token.user);
   router.use(requireScope('token'));
-  router.post('/generate/:type', token.generate);
+  router.post('/add', token.add);
   router.get('/list', token.list);
   router.post('/remove', token.remove);
 

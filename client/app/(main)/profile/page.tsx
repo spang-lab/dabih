@@ -2,7 +2,6 @@
 
 import { ProfileWrapper } from './Context';
 import Tokens from './Tokens';
-import Key from './Key';
 import User from './User';
 import RootKeys from './RootKeys';
 import Admin from './admin/Admin';

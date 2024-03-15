@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export const formatBytes = (bytes, decimals = 2, binary = true) => {
+export const formatBytes = (bytes: number, decimals = 2, binary = true) => {
   if (!bytes || bytes === 0) return '0 B';
   const dm = decimals < 0 ? 0 : decimals;
   const sizesBinary = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
@@ -15,20 +15,15 @@ export const formatBytes = (bytes, decimals = 2, binary = true) => {
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 };
 
-export function Bytes({ value }) {
+export default function Bytes({ value, decimals = 2, binary = false }: {
+  value: number
+  decimals: number
+  binary: boolean
+}) {
   return (
     <span>
       {' '}
-      {formatBytes(value)}
-      {' '}
-    </span>
-  );
-}
-export function Bytes10({ value }) {
-  return (
-    <span>
-      {' '}
-      {formatBytes(value, 2, false)}
+      {formatBytes(value, decimals, binary)}
       {' '}
     </span>
   );

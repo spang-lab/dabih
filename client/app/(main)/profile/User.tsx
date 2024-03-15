@@ -3,7 +3,7 @@
 import { signOut } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import {
-  LogOut, User, Key, Delete, XCircle,
+  LogOut, User, Key, XCircle,
 } from 'react-feather';
 import { useKey, useUser } from '@/lib/hooks';
 import storage from '@/lib/storage';
@@ -13,7 +13,7 @@ import Link from 'next/link';
 
 function CryptoKey() {
   const key = useKey();
-  const [hash, setHash] = useState(null);
+  const [hash, setHash] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -113,7 +113,14 @@ export default function Account() {
         </div>
         <div>
           Scopes:
-          {scopes.map((s) => <span className="border text-sm font-mono rounded-full px-2 py-1 mx-1">{s}</span>)}
+          {scopes.map((s) => (
+            <span
+              key={s}
+              className="border text-sm font-mono rounded-full px-2 py-1 mx-1"
+            >
+              {s}
+            </span>
+          ))}
         </div>
       </div>
       <div className="border rounded-xl border-gray-400 m-2 p-2 flex flex-row items-center">

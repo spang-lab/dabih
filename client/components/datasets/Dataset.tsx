@@ -116,9 +116,9 @@ export default function Dataset({ data }) {
         <div className="px-3 py-2 text-center border-gray-400 border-r-2">
           <p className="font-semibold">Size</p>
           <span className="text-sm">
-            <Bytes value={size} />
+            <Bytes binary value={size} />
             (
-            <Bytes10 value={size} />
+            <Bytes value={size} />
             )
           </span>
         </div>

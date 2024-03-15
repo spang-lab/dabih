@@ -3,7 +3,7 @@
 import React from 'react';
 import { formatBytes } from '../util';
 
-export default function UploadProgress(props) {
+export default function UploadProgress(props: any) {
   const {
     current, total, fileName, running,
   } = props;

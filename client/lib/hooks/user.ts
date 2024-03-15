@@ -6,6 +6,7 @@ export default function useUser() {
   const { data: session, status } = useSession();
   if (status !== 'authenticated') {
     return {
+      scopes: [],
       status,
     };
   }
