@@ -3,7 +3,7 @@
 import React from 'react';
 import { Disclosure } from '@headlessui/react';
 import { Users, ChevronRight } from 'react-feather';
-import { useUsers } from '../hooks';
+import { useUsers } from '@/lib/hooks';
 import AddMember from './AddMember';
 import Member from './Member';
 
@@ -51,7 +51,7 @@ const resolveMembers = (users, mems) => {
 };
 
 export default function Members({ data }) {
-  const { users } = useUsers();
+  const users = useUsers();
   if (!data.members) {
     return null;
   }

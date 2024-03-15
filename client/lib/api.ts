@@ -54,11 +54,19 @@ const put = async (url: string, data: any, headers: any) => {
   }
 };
 
+type KeyData = {
+  key: any,
+  isRootKey: boolean,
+  name: string,
+  email: string,
+}
+
 const key = {
   list: () => get('/key/list'),
-  add: (publicKey: any, isRootKey: boolean) => post('/key/add', { publicKey, isRootKey }),
+  add: (keyData: KeyData) => post('/key/add', keyData),
   check: (keyHash: string) => post('/key/check', { keyHash }),
   remove: (keyId: number) => post('/key/remove', { keyId }),
+  enable: (keyId: number, enabled: boolean) => post('/key/enable', { keyId, enabled }),
 };
 
 const token = {

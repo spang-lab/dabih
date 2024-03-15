@@ -1,6 +1,6 @@
 import React from 'react';
 import { Cpu } from 'react-feather';
-import useDialog from '../../dialog';
+import { useDialog } from '@/components';
 import { useProfile } from '../Context';
 
 export default function RootKey() {

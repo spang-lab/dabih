@@ -15,7 +15,7 @@ import {
   DownloadCloud,
 } from 'react-feather';
 import { useRouter } from 'next/navigation';
-import { useUser } from '../hooks';
+import { useUser } from '@/lib/hooks';
 import { useDatasets } from './Context';
 import useDialog from '../dialog';
 

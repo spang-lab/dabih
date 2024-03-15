@@ -1,8 +1,8 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import {
   UserPlus,
   Key,
@@ -15,86 +15,50 @@ import {
 } from 'react-feather';
 import Image from 'next/image';
 import { signOut, signIn } from 'next-auth/react';
-import storage from '@/lib/storage';
-import { useApi } from '../api';
-import { useUser } from '../hooks';
+import { useUser, useKey } from '@/lib/hooks';
 
 import NavItem from './NavItem';
 import NavLine from './NavLine';
 
-export default function Header() {
-  const router = useRouter();
+const usePage = () => {
   const pathname = usePathname();
+  const page = pathname?.split('/')[1] || 'start';
+  return page;
+};
+
+export default function Header() {
   const user = useUser();
-  const api = useApi();
-  const key = storage.useKey();
-  const [items, setItems] = useState({});
+  const key = useKey();
+  const page = usePage();
 
-  const checkKey = useCallback(async () => {
-    if (!api.isReady()) {
-      return;
-    }
-    const path = pathname?.split('/')[1] || 'start';
-    if (!user || !key || !key.hash || path === 'ingress') {
-      return;
-    }
-    const { valid } = await api.checkPublicKey(key.hash);
-    if (valid === false) {
-      await storage.deleteKey();
-      router.push('/key');
-    }
-  }, [api, key, user, router, pathname]);
+  const getState = () => {
+    const isAuthenticated = user.status === 'authenticated';
 
-  const checkState = useCallback(async () => {
-    if (user === undefined || key === undefined) {
-      return;
-    }
     const getKeyState = () => {
-      if (key && user) return 'complete';
-      if (user) return 'enabled';
+      if (key && isAuthenticated) return 'complete';
+      if (isAuthenticated) return 'enabled';
       return 'disabled';
     };
 
     const state = {
       start: 'complete',
-      signin: user ? 'complete' : 'enabled',
+      signin: isAuthenticated ? 'complete' : 'enabled',
       key: getKeyState(),
-      upload: user && key ? 'enabled' : 'disabled',
-      manage: user && key ? 'enabled' : 'disabled',
-      profile: user ? 'enabled' : 'disabled',
+      upload: isAuthenticated && key ? 'enabled' : 'disabled',
+      manage: isAuthenticated && key ? 'enabled' : 'disabled',
+      profile: isAuthenticated ? 'enabled' : 'disabled',
     };
-    const path = pathname?.split('/')[1] || 'start';
+    state[page] = 'active';
+    return state;
+  };
 
-    const current = state[path];
-    if (current === 'disabled') {
-      router.push('/signin');
-    }
-    if (current === 'complete') {
-      if (path === 'signin') {
-        router.push('/key');
-      }
-      if (path === 'key') {
-        router.push('/manage');
-      }
-    }
-
-    state[path] = 'active';
-    setItems(state);
-  }, [router, key, user, pathname]);
-
-  useEffect(() => {
-    checkState();
-  }, [checkState]);
-
-  useEffect(() => {
-    checkKey();
-  }, [checkKey]);
+  const state = getState();
 
   const getSignIn = () => {
-    if (user) {
+    if (user.status === 'authenticated') {
       return (
         <>
-          <NavLine state={items.profile} />
+          <NavLine state={state.profile} />
           <button onClick={() => signOut()} type="button">
             <NavItem href="" state="enabled" label="Sign Out">
               <LogOut size={24} />
@@ -105,7 +69,7 @@ export default function Header() {
     }
     return (
       <>
-        <NavLine state={items.profile} />
+        <NavLine state={state.profile} />
         <button onClick={() => signIn()} type="button">
           <NavItem href="" state="enabled" label="Sign In">
             <User size={24} />
@@ -135,27 +99,27 @@ export default function Header() {
           </div>
         </Link>
         <NavLine />
-        <NavItem href="/" state={items.start} label="Home">
+        <NavItem href="/" state={state.start} label="Home">
           <Home size={24} />
         </NavItem>
-        <NavLine state={items.signin} />
-        <NavItem href="/signin" state={items.signin} label="Account">
+        <NavLine state={state.signin} />
+        <NavItem href="/signin" state={state.signin} label="Account">
           <UserPlus size={24} />
         </NavItem>
-        <NavLine state={items.key} />
-        <NavItem href="/key" state={items.key} label="Key">
+        <NavLine state={state.key} />
+        <NavItem href="/key" state={state.key} label="Key">
           <Key size={24} />
         </NavItem>
-        <NavLine state={items.upload} />
-        <NavItem href="/upload" state={items.upload} label="Upload">
+        <NavLine state={state.upload} />
+        <NavItem href="/upload" state={state.upload} label="Upload">
           <UploadCloud size={24} />
         </NavItem>
-        <NavLine state={items.manage} />
-        <NavItem href="/manage" state={items.manage} label="Manage">
+        <NavLine state={state.manage} />
+        <NavItem href="/manage" state={state.manage} label="Manage">
           <Share2 size={24} />
         </NavItem>
-        <NavLine state={items.profile} />
-        <NavItem href="/profile" state={items.profile} label="Settings">
+        <NavLine state={state.profile} />
+        <NavItem href="/profile" state={state.profile} label="Settings">
           <Settings size={24} />
         </NavItem>
         {getSignIn()}

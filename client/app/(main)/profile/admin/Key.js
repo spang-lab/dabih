@@ -3,26 +3,25 @@
 import React from 'react';
 import { Trash2, Key } from 'react-feather';
 import { Switch } from '@headlessui/react';
-import { LocalDate } from '../../util';
+import { useDialog, LocalDate } from '@/components';
 import { useProfile } from '../Context';
-import useDialog from '../../dialog';
 
 export default function KeyElem({ data }) {
   const {
-    id, name, sub, email, hash, confirmed, createdAt, isRootKey,
+    id, name, sub, email, hash, enabled, createdAt, isRootKey,
   } = data;
-  const { confirmKey, deleteKey } = useProfile();
+  const { enableKey, deleteKey } = useProfile();
   const { openDialog } = useDialog();
-  const enabled = !!confirmed || isRootKey;
+  const isEnabled = !!enabled || isRootKey;
   const toggle = async () => {
     if (isRootKey) {
       return;
     }
-    await confirmKey(id, !confirmed);
+    await enableKey(id, !isEnabled);
   };
 
   const getState = () => {
-    if (enabled) {
+    if (isEnabled) {
       return <div className="px-2 font-bold text-green">Active</div>;
     }
     return <div className="px-2 font-bold text-gray-500">disabled</div>;
@@ -39,14 +38,14 @@ export default function KeyElem({ data }) {
     return (
       <div className="flex flex-row items-center border-x px-1 mx-1">
         <Switch
-          checked={enabled}
+          checked={isEnabled}
           onChange={toggle}
-          className={`${enabled ? 'bg-blue' : 'bg-gray-400'}
+          className={`${isEnabled ? 'bg-blue' : 'bg-gray-400'}
           relative inline-flex h-[28px] w-[52px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
         >
           <span
             aria-hidden="true"
-            className={`${enabled ? 'translate-x-6' : 'translate-x-0'}
+            className={`${isEnabled ? 'translate-x-6' : 'translate-x-0'}
             pointer-events-none inline-block h-[24px] w-[24px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
           />
         </Switch>

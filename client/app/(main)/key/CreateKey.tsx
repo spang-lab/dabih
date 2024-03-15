@@ -2,21 +2,35 @@
 
 import React from 'react';
 import { Cpu } from 'react-feather';
-import { useApi, useDialog } from '@/components';
+import { useDialog } from '@/components';
+import api from '@/lib/api';
+import { useUser } from '@/lib/hooks';
 import DropPublicKey from './DropPublicKey';
 
 export default function CreateKey({ onChange }) {
   const { openDialog, dialog } = useDialog();
-  const api = useApi();
+  const user = useUser();
 
-  const onGenerate = async (publicKey) => {
-    if (publicKey.error) {
-      dialog.error(publicKey.error);
+  const onGenerate = async (publicKey: string, error?: string) => {
+    if (user.status !== 'authenticated') {
       return;
     }
-    await api.addPublicKey(publicKey, false);
+    const { name, email } = user;
+    if (error) {
+      dialog.error(error);
+      return;
+    }
+    await api.key.add({
+      isRootKey: false,
+      key: publicKey,
+      name,
+      email,
+    });
     onChange();
   };
+  if (user.status !== 'authenticated') {
+    return null;
+  }
 
   return (
     <div className="w-full">

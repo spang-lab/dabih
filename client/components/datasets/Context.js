@@ -10,12 +10,7 @@ import React, {
 } from 'react';
 import pLimit from 'p-limit';
 import { useRouter } from 'next/navigation';
-import {
-  decryptKey,
-  encodeHash,
-  decryptChunk,
-  exportAesKey,
-} from '@/lib/crypto';
+import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import useDialog from '../dialog';
 import { useApi } from '../api';
@@ -38,6 +33,17 @@ export function DatasetsWrapper({ children }) {
     page: 1,
     limit: 25,
   });
+
+  const getAesKey = useCallback(async (mnemonic) => {
+    const privateKey = await storage.readKey();
+    const keyHash = await crypto.privateKey.toHash(privateKey);
+    const encryptedKey = await api.fetchKey(mnemonic, keyHash);
+    if (!encryptedKey || encryptedKey.error) {
+      dialog.error(encryptedKey.error);
+      return null;
+    }
+    return crypto.privateKey.decryptAesKey(privateKey, encryptedKey);
+  }, [dialog, api]);
 
   const fetchDatasets = useCallback(async () => {
     if (!api.isReady()) {
@@ -86,27 +92,21 @@ export function DatasetsWrapper({ children }) {
 
   const addMembers = useCallback(
     async (mnemonic, members) => {
-      const keys = await storage.readKey();
-      const key = await api.fetchKey(mnemonic, keys.hash);
-      const aesKey = await decryptKey(keys.privateKey, key);
-      const base64 = await exportAesKey(aesKey);
-
+      const aesKey = await getAesKey();
+      const base64 = await crypto.aesKey.toBase64(aesKey);
       await api.addDatasetMembers(mnemonic, members, base64);
       await fetchDatasets();
     },
-    [api, fetchDatasets],
+    [api, getAesKey, fetchDatasets],
   );
 
   const reencryptDataset = useCallback(
     async (mnemonic) => {
-      const keys = await storage.readKey();
-      const key = await api.fetchKey(mnemonic, keys.hash);
-      const aesKey = await decryptKey(keys.privateKey, key);
-      const base64 = await exportAesKey(aesKey);
-
+      const aesKey = await getAesKey();
+      const base64 = await crypto.aesKey.toBase64(aesKey);
       await api.reencryptDataset(mnemonic, base64);
     },
-    [api],
+    [api, getAesKey],
   );
 
   const renameDataset = useCallback(
@@ -129,14 +129,14 @@ export function DatasetsWrapper({ children }) {
     async (mnemonic, chunks, aesKey, parallel = 1) => {
       const plimit = pLimit(parallel);
       const handleChunk = async (chunk) => {
-        const { iv, data } = chunk;
+        const { iv, data, hash } = chunk;
         if (data) return chunk;
-        const hash = encodeHash(chunk.hash);
         const encrypted = await api.fetchChunk(mnemonic, hash);
         if (encrypted.error) {
           return chunk;
         }
-        const decrypted = await decryptChunk(aesKey, iv, encrypted);
+        const buffer = await data.arrayBuffer();
+        const decrypted = await crypto.aesKey.decrypt(aesKey, iv, buffer);
         return {
           ...chunk,
           data: new Blob([decrypted]),
@@ -169,14 +169,8 @@ export function DatasetsWrapper({ children }) {
 
   const downloadDataset = useCallback(
     async (mnemonic) => {
-      const keys = await storage.readKey();
-      const key = await api.fetchKey(mnemonic, keys.hash);
-      if (!key || key.error) {
-        dialog.error(key.error);
-        return null;
-      }
+      const aesKey = await getAesKey();
       const { fileName, chunks } = await api.fetchDataset(mnemonic);
-      const aesKey = await decryptKey(keys.privateKey, key);
 
       let dataChunks = await downloadChunks(mnemonic, chunks, aesKey, 5);
       // Retry any failed downloads
@@ -191,26 +185,20 @@ export function DatasetsWrapper({ children }) {
         name: fileName,
       };
     },
-    [api, downloadChunks, dialog],
+    [api, getAesKey, downloadChunks],
   );
 
   const downloadDecryptedDataset = useCallback(
     async (mnemonic) => {
-      const keys = await storage.readKey();
-      const key = await api.fetchKey(mnemonic, keys.hash);
-      if (!key || key.error) {
-        dialog.error(key.error);
-        return;
-      }
-      const aesKey = await decryptKey(keys.privateKey, key);
-      const encoded = await exportAesKey(aesKey);
-      const { token, error } = await api.storeKey(mnemonic, encoded);
+      const aesKey = await getAesKey();
+      const base64 = await crypto.aesKey.toBase64(aesKey);
+      const { token, error } = await api.storeKey(mnemonic, base64);
       if (!error) {
         const url = `/api/v1/dataset/${mnemonic}/download/?token=${token}`;
         router.push(url);
       }
     },
-    [api, dialog, router],
+    [api, getAesKey, router],
   );
 
   useEffect(() => {

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useInfo } from '../hooks';
+import { useInfo } from '@/lib/hooks';
 
 export default function Contact() {
   const { info } = useInfo();

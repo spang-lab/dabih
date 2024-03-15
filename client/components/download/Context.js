@@ -10,9 +10,7 @@ import React, {
 } from 'react';
 import pLimit from 'p-limit';
 import { useParams } from 'next/navigation';
-import {
-  decryptKey, encodeHash, decryptChunk,
-} from '@/lib/crypto';
+import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import { useApi } from '../api';
 import useDialog from '../dialog';
@@ -31,23 +29,23 @@ export function DownloadWrapper({ children }) {
     if (!api.isReady() || !mnemonic) {
       return;
     }
-    const keys = await storage.readKey();
+    const privateKey = await storage.readKey();
+    const keyHash = await crypto.privateKey.toHash(privateKey);
     const info = await api.fetchDataset(mnemonic);
     setDataset(info);
-    const key = await api.fetchKey(mnemonic, keys.hash);
-
-    const aesKey = await decryptKey(keys.privateKey, key);
+    const encryptedKey = await api.fetchKey(mnemonic, keyHash);
+    const aesKey = await crypto.privateKey.decryptAesKey(privateKey, encryptedKey);
 
     let limit = pLimit(5);
     const handleChunk = async (chunk) => {
       const { iv, data, hash } = chunk;
       if (data) return chunk;
-      const hashurl = encodeHash(hash);
-      const encrypted = await api.fetchChunk(mnemonic, hashurl);
+      const encrypted = await api.fetchChunk(mnemonic, hash);
       if (encrypted.error) {
         return chunk;
       }
-      const decrypted = await decryptChunk(aesKey, iv, encrypted);
+      const buffer = await data.arrayBuffer();
+      const decrypted = await crypto.aesKey.decrypt(aesKey, iv, buffer);
       setChunkCount({
         total: info.chunks.length,
         current: info.chunks.length - limit.pendingCount,

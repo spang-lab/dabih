@@ -1,7 +1,6 @@
 /* global BigInt */
 import base64url from './base64url';
 import bigInt from './bigInt';
-import publicKey from './publicKey';
 
 const pkcs8Header = '-----BEGIN PRIVATE KEY-----';
 const pkcs8Footer = '-----END PRIVATE KEY-----';
@@ -128,14 +127,22 @@ const toPublicKey = async (privateKey: CryptoKey) => {
   const {
     n, alg, e, kty,
   } = await toJWK(privateKey);
-  const jwk = {
-    key_ops: ['encrypt'],
-    n,
-    alg,
-    e,
-    kty,
-  };
-  return publicKey.fromJWK(jwk);
+  return crypto.subtle.importKey(
+    'jwk',
+    {
+      key_ops: ['encrypt'],
+      n,
+      alg,
+      e,
+      kty,
+    },
+    {
+      name: 'RSA-OAEP',
+      hash: 'SHA-256',
+    },
+    true,
+    ['encrypt'],
+  );
 };
 
 const decrypt = async (
@@ -145,9 +152,26 @@ const decrypt = async (
   name: 'RSA-OAEP',
 }, privateKey, data);
 
+const decryptAesKey = async (
+  privateKey: CryptoKey,
+  encrypted: string,
+) => {
+  const buffer = base64url.toUint8(encrypted);
+  return decrypt(privateKey, buffer);
+};
+
 const toHash = async (privateKey: CryptoKey) => {
   const pKey = await toPublicKey(privateKey);
-  return publicKey.toHash(pKey);
+  const spki = await crypto.subtle.exportKey('spki', pKey);
+  const buffer = await crypto.subtle.digest('SHA-256', spki);
+  return base64url.fromUint8(buffer);
+};
+
+const toHex = async (privateKey: CryptoKey) => {
+  const pkcs8 = await toUint8(privateKey);
+  const hexData = [...new Uint8Array(pkcs8)]
+    .map((v) => v.toString(16).toUpperCase().padStart(2, '0'));
+  return hexData;
 };
 
 export default {
@@ -158,8 +182,10 @@ export default {
   toJSON,
   fromJSON,
   decrypt,
+  decryptAesKey,
   toHash,
   toBase64,
+  toHex,
   fromBase64,
   toPEM,
   fromPEM,

@@ -4,7 +4,7 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { Lock, File, FilePlus } from 'react-feather';
-import crypto, { exportJwk, importPublicKey } from '@/lib/crypto';
+import crypto from '@/lib/crypto';
 import { useApi, useDialog } from '@/components';
 
 export default function DropPublicKey({ onKey }) {
@@ -27,8 +27,8 @@ export default function DropPublicKey({ onKey }) {
     }
     const text = await file.text();
     try {
-      const publicKey = await importPublicKey(text);
-      const jwk = await exportJwk(publicKey);
+      const publicKey = await crypto.publicKey.fromFile(text);
+      const jwk = await crypto.publicKey.toJWK(publicKey);
       const { error } = await addPublicKey(jwk);
       if (error) {
         dialog.error(error);

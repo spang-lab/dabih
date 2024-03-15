@@ -42,6 +42,7 @@
     "@testing-library/react": "^14.2.1",
     "@types/jest": "^29.5.12",
     "@types/ldapjs": "^3.0.6",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "18.2.58",
     "autoprefixer": "^10.4.17",
     "eslint": "^8.56.0",

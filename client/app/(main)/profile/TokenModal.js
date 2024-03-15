@@ -3,7 +3,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Copy } from 'react-feather';
-import { MutedButton } from '../util';
 import { useProfile } from './Context';
 
 export default function TokenModal() {
@@ -117,9 +116,12 @@ export default function TokenModal() {
                     />
                   </div>
                   <div className="pl-1">
-                    <MutedButton onClick={copyToken}>
+                    <button
+                      type="button"
+                      onClick={copyToken}
+                    >
                       <Copy size={24} />
-                    </MutedButton>
+                    </button>
                   </div>
                 </div>
                 <p>
@@ -132,7 +134,13 @@ export default function TokenModal() {
                   later, copy it now.
                 </p>
                 <div className="mt-4 text-right">
-                  <MutedButton onClick={clearToken}>Done</MutedButton>
+                  <button
+                    type="button"
+                    onClick={clearToken}
+                  >
+                    Done
+
+                  </button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

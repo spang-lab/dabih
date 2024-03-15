@@ -4,7 +4,7 @@ import React from 'react';
 import {
   Trash2, Terminal, Upload, Download,
 } from 'react-feather';
-import { LocalDate } from '../util';
+import { LocalDate } from '@/components';
 import { useProfile } from './Context';
 
 export default function Token({ data }) {

@@ -7,6 +7,7 @@ import SpangLabProvider from './spang-lab';
 import DemoProvider from './demo';
 
 const sessionCb = ({ session, token }) => {
+  console.log('Session');
   session.user.scopes = token.scopes;
   session.user.sub = token.sub;
   return session;

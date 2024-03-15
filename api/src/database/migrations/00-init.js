@@ -163,6 +163,7 @@ export async function up({ context: sequelize }) {
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    exp: DataTypes.DATE,
   });
 }
 export async function down({ context: sequelize }) {

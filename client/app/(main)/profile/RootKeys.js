@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Key } from 'react-feather';
+import { LocalDate } from '@/components';
 import { useProfile } from './Context';
-import { LocalDate } from '../util';
 
 function RootKey({ data }) {
   const {

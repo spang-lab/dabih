@@ -2,7 +2,7 @@
 
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Switch } from '@headlessui/react';
-import { useUser } from '../hooks';
+import { useUser } from '@/lib/hooks';
 import { useDatasets } from './Context';
 import SortBy from './SortBy';
 

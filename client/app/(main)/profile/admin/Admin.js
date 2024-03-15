@@ -1,8 +1,7 @@
 'use client';
 
-import { useUser } from '../../hooks';
+import { useUser } from '@/lib/hooks';
 import PublicKeys from './PublicKeys';
-import Events from './Events';
 
 export default function AdminInterface() {
   const user = useUser();
@@ -18,7 +17,6 @@ export default function AdminInterface() {
         Controls
       </h1>
       <PublicKeys />
-      <Events />
 
     </div>
   );

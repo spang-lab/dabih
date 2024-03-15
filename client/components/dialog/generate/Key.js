@@ -2,38 +2,31 @@
 
 /* eslint-disable react/no-array-index-key, no-loop-func */
 import React, { Fragment, useEffect, useState } from 'react';
+import crypto from '@/lib/crypto';
 import Image from 'next/image';
 import QRCode from 'qrcode';
 
-const createDataUrl = async (keys) => {
-  if (!keys) {
-    return '';
-  }
-  const options = {
-    errorCorrectionLevel: 'M',
-    width: 600,
-    height: 600,
-  };
-  const { compressedKey } = keys;
-
-  const text = JSON.stringify(compressedKey);
-  return QRCode.toDataURL(text, options);
-};
-
-function Key({ data }, ref) {
+function Key({ privateKey }, ref) {
   const [dataUrl, setDataUrl] = useState(null);
+  const [hexData, setHexData] = useState(null);
   useEffect(() => {
-    const setUrl = async () => {
-      const url = await createDataUrl(data);
+    (async () => {
+      if (!privateKey) {
+        return;
+      }
+      const json = await crypto.privateKey.toJSON(privateKey);
+      const url = await QRCode.toDataURL(json, {
+        errorCorrectionLevel: 'M',
+        width: 600,
+      });
       setDataUrl(url);
-    };
-    setUrl();
-  }, [data]);
-  if (!data || !dataUrl) {
+      const hex = await crypto.privateKey.toHex(privateKey);
+      setHexData(hex);
+    })();
+  }, [privateKey]);
+  if (!hexData || !dataUrl) {
     return null;
   }
-  const hexData = [...new Uint8Array(data.privateKey)]
-    .map((v) => v.toString(16).toUpperCase().padStart(2, '0'));
   const longRow = 48;
   const shortRow = 22;
   const longRows = 10;

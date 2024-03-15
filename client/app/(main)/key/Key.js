@@ -1,33 +1,50 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Clock } from 'react-feather';
 import {
-  Spinner, useUsers, useUser, AdminContact,
+  Spinner, AdminContact,
 } from '@/components';
+import { useKey, useUser } from '@/lib/hooks';
+import api from '@/lib/api';
+import { useRouter } from 'next/navigation';
 import LoadKey from './LoadKey';
 import CreateKey from './CreateKey';
 
 export default function Key() {
-  const { users, fetchUsers } = useUsers();
   const user = useUser();
+  const key = useKey();
+  const router = useRouter();
   const [state, setState] = useState('loading');
 
-  useEffect(() => {
-    if (!user || !users) {
+  const setKeyState = useCallback(async () => {
+    if (user.status !== 'authenticated') {
+      setState('loading');
       return;
     }
-    const match = users.find((u) => u.sub === user.sub);
+    if (key) {
+      router.push('/manage');
+      return;
+    }
+
+    const keys = await api.key.list();
+    const match = keys
+      .filter((k) => !k.isRootKey)
+      .find((u) => u.sub === user.sub);
     if (!match) {
       setState('no_key');
       return;
     }
-    if (match.confirmed) {
+    if (match.enabled) {
       setState('has_key');
       return;
     }
     setState('unconfirmed_key');
-  }, [user, users]);
+  }, [user, key, router]);
+
+  useEffect(() => {
+    setKeyState();
+  }, [user, setKeyState]);
 
   if (state === 'unconfirmed_key') {
     return (
@@ -51,13 +68,13 @@ export default function Key() {
   }
   if (state === 'has_key') {
     return (
-      <LoadKey onChange={fetchUsers} />
+      <LoadKey onChange={setKeyState} />
     );
   }
 
   if (state === 'no_key') {
     return (
-      <CreateKey onChange={fetchUsers} />
+      <CreateKey onChange={setKeyState} />
     );
   }
   // loading

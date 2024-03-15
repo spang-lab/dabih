@@ -5,11 +5,10 @@ import { publicKey } from '../../database/index.js';
 const route = async (ctx) => {
   const { sub, isAdmin } = ctx.data;
   const { body } = ctx.request;
-  const pubKey = body.publicKey;
-  const { name, email } = body;
+  const { name, email, key } = body;
 
   const isRootKey = !!body.isRootKey;
-  if (!pubKey) {
+  if (!key) {
     ctx.error('No public key in body');
     return;
   }
@@ -17,14 +16,14 @@ const route = async (ctx) => {
     ctx.error('No name or email in body');
     return;
   }
-  const hash = rsa.hashKey(pubKey);
+  const hash = rsa.hashKey(key);
 
   const keyData = {
     hash,
     name,
     sub,
     email,
-    data: pubKey,
+    data: key,
     isRootKey: false,
   };
   if (isAdmin) {

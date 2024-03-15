@@ -4,7 +4,7 @@ import React from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useInfo } from '../hooks';
+import { useInfo } from '@/lib/hooks';
 
 function Department() {
   const { info } = useInfo();

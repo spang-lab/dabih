@@ -2,9 +2,7 @@
 
 'use client';
 
-import {
-  decryptKey, decryptChunk, encodeHash,
-} from '@/lib/crypto';
+import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import React, { useCallback, useState } from 'react';
 import { Download } from 'react-feather';
@@ -35,9 +33,10 @@ export default function FilesystemDownload({ mnemonic }) {
       return;
     }
     const dataset = await api.fetchDataset(mnemonic);
-    const keys = await storage.readKey();
-    const key = await api.fetchKey(mnemonic, keys.hash);
-    const aesKey = await decryptKey(keys.privateKey, key);
+    const privateKey = await storage.readKey();
+    const keyHash = await crypto.privateKey.toHash(privateKey);
+    const encryptedKey = await api.fetchKey(mnemonic, keyHash);
+    const aesKey = await crypto.privateKey.decryptAesKey(privateKey, encryptedKey);
     const { fileName, chunks } = dataset;
     setSize(dataset.size);
 
@@ -50,9 +49,9 @@ export default function FilesystemDownload({ mnemonic }) {
     for (let i = 0; i < chunks.length; i += 1) {
       const chunk = chunks[i];
       const { iv, hash, end } = chunk;
-      const hashurl = encodeHash(hash);
-      const encrypted = await api.fetchChunk(mnemonic, hashurl);
-      const decrypted = await decryptChunk(aesKey, iv, encrypted);
+      const encrypted = await api.fetchChunk(mnemonic, hash);
+      const buffer = await encrypted.arrayBuffer();
+      const decrypted = await crypto.aesKey.decrypt(aesKey, iv, buffer);
       await stream.write(decrypted);
       setCurrent(end);
     }

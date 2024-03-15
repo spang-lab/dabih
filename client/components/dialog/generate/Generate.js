@@ -15,7 +15,7 @@ import Key from './Key';
 
 export default function GenerateKey({ ctx, closeDialog }) {
   const { onSubmit } = ctx;
-  const [keys, setKeys] = useState(null);
+  const [privateKey, setPrivateKey] = useState(null);
   const [keyFile, setKeyfile] = useState(null);
   const [wasSaved, setSaved] = useState(false);
   const keyRef = useRef();
@@ -28,14 +28,9 @@ export default function GenerateKey({ ctx, closeDialog }) {
 
   const generate = useCallback(async () => {
     try {
-      const privateKey = await crypto.privateKey.generate();
-      const publicKey = await crypto.privateKey.toPublicKey(privateKey);
-
-      setKeys({
-        privateKey,
-        publicKey,
-      });
-      const pem = await crypto.privateKey.toPEM(privateKey);
+      const privKey = await crypto.privateKey.generate();
+      setPrivateKey(privKey);
+      const pem = await crypto.privateKey.toPEM(privKey);
       setKeyfile(pem);
     } catch (err) {
       onSubmit({ error: err });
@@ -43,8 +38,10 @@ export default function GenerateKey({ ctx, closeDialog }) {
     }
   }, [onSubmit, closeDialog]);
 
-  const uploadKey = () => {
-    onSubmit(keys.publicKey);
+  const uploadKey = async () => {
+    const publicKey = await crypto.privateKey.toPublicKey(privateKey);
+    const jwk = await crypto.publicKey.toJWK(publicKey);
+    onSubmit(jwk);
     closeDialog();
   };
 
@@ -53,7 +50,7 @@ export default function GenerateKey({ ctx, closeDialog }) {
   }, [generate]);
 
   const getLoader = () => {
-    if (!keys) {
+    if (!privateKey) {
       return (
         <div className="flex my-10 items-center justify-center h-32">
           <Spinner />
@@ -82,7 +79,7 @@ export default function GenerateKey({ ctx, closeDialog }) {
       </div>
       <div className="text-center">
         {getLoader()}
-        <Key data={keys} ref={keyRef} />
+        <Key privateKey={privateKey} ref={keyRef} />
         <p className="text-2xl">
           <span className="font-extrabold underline text-red"> Warning: </span>
           If you do not save this key you will
