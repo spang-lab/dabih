@@ -16,6 +16,8 @@ import Destroy from './Destroy';
 import Webcam from './Webcam';
 import Reencrypt from './Reencrypt';
 import Generate from './generate/Generate';
+import ApiToken from './ApiToken';
+import CreateToken from './CreateToken';
 
 const DialogContext = createContext();
 export const useDialog = () => useContext(DialogContext);
@@ -113,6 +115,8 @@ export function DialogWrapper({ children }) {
         return <Generate {...contextValue} />;
       case 'reencrypt':
         return <Reencrypt {...contextValue} />;
+      case 'create_token':
+        return <CreateToken {...contextValue} />;
       case null:
         return null;
 

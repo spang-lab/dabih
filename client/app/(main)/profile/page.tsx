@@ -14,37 +14,35 @@ function Profile() {
         <span className="text-blue">dabih </span>
         Settings
       </h1>
-      <p className="text-gray-600 text-lg">
+      <p className="text-gray-500">
         Configure dabih settings for your account, generate access token and find other users.
       </p>
       <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
         <span className="text-blue">Your </span>
         Account
       </h2>
+      <p className="text-gray-500">
+        This is the data dabih has about you.
+      </p>
       <User />
-
-      <div className="flex">
-        <div className="w-1/2">
-          <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
-            <span className="text-blue"> Access </span>
-            Tokens
-          </h1>
-          <Tokens />
-        </div>
-        <div className="w-1/2">
-          <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
-            <span className="text-blue"> User </span>
-            Info
-          </h1>
-          <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
-            <span className="text-blue"> Crypto </span>
-            Key
-          </h1>
-        </div>
-      </div>
-      <div>
-        <RootKeys />
-      </div>
+      <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+        <span className="text-blue">Access </span>
+        Tokens
+      </h2>
+      <p className="text-gray-500">
+        API Token enable other tools to work with
+        {' '}
+        <span className="text-blue font-bold">dabih</span>
+      </p>
+      <Tokens />
+      <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+        <span className="text-blue">Root </span>
+        Keys
+      </h2>
+      <p className="text-gray-500">
+        The owners of these keys are able to recover data.
+      </p>
+      <RootKeys />
     </div>
   );
 }

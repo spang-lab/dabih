@@ -5,11 +5,13 @@ import { useDropzone } from 'react-dropzone';
 
 import { Lock, File, FilePlus } from 'react-feather';
 import crypto from '@/lib/crypto';
-import { useApi, useDialog } from '@/components';
+import { useDialog } from '@/components';
+import api from '@/lib/api';
+import { useUser } from '@/lib/hooks';
 
 export default function DropPublicKey({ onKey }) {
   const dialog = useDialog();
-  const { addPublicKey } = useApi();
+  const user = useUser();
 
   const onDrop = async (files) => {
     if (!files || !files.length) {
@@ -27,9 +29,15 @@ export default function DropPublicKey({ onKey }) {
     }
     const text = await file.text();
     try {
+      const { name, email } = user;
       const publicKey = await crypto.publicKey.fromFile(text);
       const jwk = await crypto.publicKey.toJWK(publicKey);
-      const { error } = await addPublicKey(jwk);
+      const { error } = await api.key.add({
+        isRootKey: false,
+        key: jwk,
+        name,
+        email,
+      });
       if (error) {
         dialog.error(error);
         return;

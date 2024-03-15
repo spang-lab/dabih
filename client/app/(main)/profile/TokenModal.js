@@ -118,6 +118,7 @@ export default function TokenModal() {
                   <div className="pl-1">
                     <button
                       type="button"
+                      aria-label="Copy Token"
                       onClick={copyToken}
                     >
                       <Copy size={24} />

@@ -19,7 +19,7 @@ const route = async (ctx) => {
     };
     return;
   }
-  if (!key.confirmed) {
+  if (!key.enabled) {
     ctx.body = {
       valid: false,
       error: `Key with hash ${keyHash} has not been confirmed by an admin yet.`,

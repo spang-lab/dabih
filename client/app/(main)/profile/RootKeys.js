@@ -50,12 +50,6 @@ export default function Tokens() {
 
   return (
     <div>
-      <h3 className="text-lg font-extrabold tracking-tight sm:text-xl md:text-2xl">
-        Root Keys
-      </h3>
-      <p className="text-gray-500">
-        The owners of these keys are able to recover data.
-      </p>
       {rootKeys.map((t) => (
         <RootKey data={t} key={t.id} />
       ))}

@@ -9,9 +9,10 @@ export default function useUser() {
       status,
     };
   }
-  const { user } = session;
+  const { user, expires } = session;
   return {
     ...user,
+    expires,
     isAdmin: user?.scopes.includes('admin'),
     status,
   };

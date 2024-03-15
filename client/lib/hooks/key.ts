@@ -33,6 +33,6 @@ export default function useKey() {
     return () => {
       window.removeEventListener('storage', listener);
     };
-  }, [user]);
+  }, [user.status]);
   return key;
 }
