@@ -109,7 +109,7 @@ const encrypt = async (
   name: 'RSA-OAEP',
 }, publicKey, data);
 
-export default {
+const publicKey = {
   fromJWK,
   fromOpenSSH,
   fromFile,
@@ -119,3 +119,4 @@ export default {
   toHash,
   encrypt,
 };
+export default publicKey;

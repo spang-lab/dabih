@@ -82,7 +82,7 @@ const toString = (base64url: string): string => {
   return decodeURIComponent(buffer);
 };
 
-export default {
+const base64url = {
   toBase64,
   fromBase64,
   fromUint8,
@@ -93,3 +93,4 @@ export default {
   fromString,
   toString,
 };
+export default base64url;

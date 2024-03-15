@@ -3,7 +3,7 @@ import { Switch } from '@headlessui/react';
 type ChangeHandler = (checked: boolean) => void;
 
 export default function ToggleSwitch({ enabled, onChange }:
-  { enabled: boolean, onChange: ChangeHandler }) {
+{ enabled: boolean, onChange: ChangeHandler }) {
   return (
     <Switch
       checked={enabled}

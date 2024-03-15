@@ -29,8 +29,9 @@ const fromUint8 = async (data: ArrayBuffer) => crypto.subtle.importKey(
   ['decrypt'],
 );
 
-export default {
+const aesKey = {
   decrypt,
   toBase64,
   fromUint8,
 };
+export default aesKey;

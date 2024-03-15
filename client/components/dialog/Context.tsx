@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading  */
+
 'use client';
 
 import React, {
@@ -16,10 +18,19 @@ import Destroy from './Destroy';
 import Webcam from './Webcam';
 import Reencrypt from './Reencrypt';
 import Generate from './generate/Generate';
-import ApiToken from './ApiToken';
 import CreateToken from './CreateToken';
 
-const DialogContext = createContext();
+interface DialogContextType {
+  dialog: string | null,
+  ctx: any,
+  closeDialog: () => void,
+}
+
+const DialogContext = createContext<DialogContextType>({
+  dialog: null,
+  ctx: null,
+  closeDialog: () => {},
+});
 export const useDialog = () => useContext(DialogContext);
 
 function DialogHelper({ children }) {
@@ -73,15 +84,20 @@ function DialogHelper({ children }) {
   );
 }
 
+interface DialogState {
+  dialog: string | null,
+  ctx: any,
+}
+
 export function DialogWrapper({ children }) {
-  const [data, setData] = useState({
+  const [data, setData] = useState<DialogState>({
     dialog: null,
     ctx: null,
   });
 
   const contextValue = useMemo(
     () => ({
-      openDialog: (dialog, ctx = {}) => setData({
+      openDialog: (dialog: string, ctx = {}) => setData({
         dialog,
         ctx,
       }),
@@ -90,7 +106,7 @@ export function DialogWrapper({ children }) {
         ctx: null,
       }),
       ...data,
-      error: (error) => setData({
+      error: (error: string) => setData({
         dialog: 'error',
         ctx: { error },
       }),

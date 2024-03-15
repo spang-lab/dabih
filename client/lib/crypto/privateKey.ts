@@ -174,7 +174,7 @@ const toHex = async (privateKey: CryptoKey) => {
   return hexData;
 };
 
-export default {
+const privateKey = {
   generate,
   toPublicKey,
   toJWK,
@@ -190,3 +190,4 @@ export default {
   toPEM,
   fromPEM,
 };
+export default privateKey;

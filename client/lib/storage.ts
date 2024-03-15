@@ -54,10 +54,11 @@ const useKey = () => {
   return key;
 };
 
-export default {
+const storage = {
   isAvailable,
   storeKey,
   useKey,
   readKey,
   deleteKey,
 };
+export default storage;

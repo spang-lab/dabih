@@ -10,7 +10,7 @@ const hash = async (data: ArrayBuffer) => {
 
 const isAvailable = () => !!crypto && !!crypto.subtle;
 
-export default {
+const cryptoLib = {
   aesKey,
   privateKey,
   publicKey,
@@ -18,3 +18,4 @@ export default {
   hash,
   isAvailable,
 };
+export default cryptoLib;

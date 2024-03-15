@@ -59,7 +59,7 @@ type KeyData = {
   isRootKey: boolean,
   name: string,
   email: string,
-}
+};
 
 const key = {
   list: () => get('/key/list'),
@@ -82,7 +82,7 @@ type UploadInfo = {
   path: string | null,
   size: number,
   chunkHash: string | null,
-}
+};
 
 type ChunkInfo = {
   mnemonic: string,
@@ -91,7 +91,7 @@ type ChunkInfo = {
   size: number,
   hash: string,
   data: Blob,
-}
+};
 
 const upload = {
   check: () => get('/upload/check'),
@@ -120,7 +120,7 @@ type SearchRequest = {
   page: number,
   limit: number,
   direction: string,
-}
+};
 type FindRequest = {
   id: number | undefined,
   mnemonic: string | undefined,
@@ -129,7 +129,7 @@ type FindRequest = {
   path: string | undefined,
   hash: string | undefined,
   size: number | undefined,
-}
+};
 
 const dataset = {
   search: (search: SearchRequest) => post('/dataset/search', search),
@@ -150,10 +150,11 @@ const dataset = {
 
 const info = () => get('/info');
 
-export default {
+const api = {
   upload,
   dataset,
   key,
   token,
   info,
 };
+export default api;

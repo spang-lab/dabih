@@ -1,19 +1,21 @@
+/* eslint-disable react/jsx-props-no-spreading  */
+
 'use client';
 
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import { Key, File, FilePlus } from 'react-feather';
-import { useRouter } from 'next/navigation';
+import { Lock, File, FilePlus } from 'react-feather';
 import crypto from '@/lib/crypto';
-import storage from '@/lib/storage';
-import { useApi, useDialog } from '@/components';
+import { useDialog } from '@/components';
+import api from '@/lib/api';
+import { useUser } from '@/lib/hooks';
 
-export default function Dropzone() {
-  const router = useRouter();
+export default function DropPublicKey({ onKey }) {
   const dialog = useDialog();
-  const { checkPublicKey } = useApi();
-  const onDrop = async (files) => {
+  const user = useUser();
+
+  const onDrop = async (files: File[]) => {
     if (!files || !files.length) {
       return;
     }
@@ -29,16 +31,22 @@ export default function Dropzone() {
     }
     const text = await file.text();
     try {
-      const key = await crypto.privateKey.fromPEM(text);
-      const hash = await crypto.privateKey.toHash(key);
-
-      const { valid, error } = await checkPublicKey(hash);
-      if (!valid) {
+      const { name, email } = user;
+      const publicKey = await crypto.publicKey.fromFile(text);
+      const jwk = await crypto.publicKey.toJWK(publicKey);
+      const { error } = await api.key.add({
+        isRootKey: false,
+        key: jwk,
+        name,
+        email,
+      });
+      if (error) {
         dialog.error(error);
         return;
       }
-      await storage.storeKey(key);
-      router.push('/manage');
+      if (onKey) {
+        onKey();
+      }
     } catch (err) {
       dialog.error('File is not a valid public key');
     }
@@ -46,12 +54,7 @@ export default function Dropzone() {
 
   const {
     getRootProps, getInputProps, isDragActive, isDragReject,
-  } = useDropzone({
-    onDrop,
-    accept: {
-      'text/plain': ['.pem'],
-    },
-  });
+  } = useDropzone({ onDrop });
 
   const getCenter = () => {
     if (isDragReject) {
@@ -69,39 +72,39 @@ export default function Dropzone() {
         <div className="py-3">
           <div className="relative mx-auto w-14 h-14">
             <File className="" size={56} />
-            <Key className="absolute inset-0 m-4 mt-6" size={20} />
+            <Lock className="absolute inset-0 m-4 mt-6" size={20} />
           </div>
         </div>
         <button
           type="button"
-          className="
-            px-4 py-3 text-2xl rounded-xl text-gray-100 bg-blue
+          className={`
+            px-8 py-4 text-2xl rounded-xl text-gray-100 bg-blue
             enabled:hover:bg-blue enabled:hover:text-white
             focus:outline-none focus:ring-2 focus:ring-offset-2
-            focus:ring-offset-gray-800 focus:ring-white disabled:opacity-50"
+            focus:ring-offset-gray-800 focus:ring-white disabled:opacity-50`}
         >
           <span className="whitespace-nowrap">
             <File className="inline-block mx-3 mb-1" />
-            Open key file...
+            Open public key file...
           </span>
         </button>
         <p className="pt-3 text-gray-400">
-          Drop your dabih key file here
+          Add your own public key
           <br />
-          or click to select the key file.
-          <br />
-          This file will
-          <span className="font-semibold text-blue"> not </span>
-          be uploaded.
         </p>
       </div>
     );
   };
 
   return (
-    <div {...getRootProps()} className="w-full p-5 grid place-content-center">
-      <input {...getInputProps()} />
-      {getCenter()}
+    <div className="w-full">
+      <div className="px-3 pt-2 italic font-semibold text-left text-gray-400 text-md">
+        Advanced users
+      </div>
+      <div {...getRootProps()} className="w-full grid place-content-center">
+        <input {...getInputProps()} />
+        {getCenter()}
+      </div>
     </div>
   );
 }

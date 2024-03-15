@@ -11,7 +11,7 @@ function GCD(a: bigint, b: bigint) {
 }
 
 const invert = (a: bigint, m: bigint) => {
-  const [x, _y, gcd] = GCD(a, m);
+  const [x, , gcd] = GCD(a, m);
   if (gcd !== BigInt(1)) {
     throw new Error('Inverse does not exist');
   }
@@ -21,6 +21,7 @@ const invert = (a: bigint, m: bigint) => {
   return x;
 };
 
-export default {
+const bigInt = {
   invert,
 };
+export default bigInt;
