@@ -22,12 +22,12 @@ export default function init(sequelize) {
         type: DataTypes.TEXT,
         allowNull: false,
         get() {
-          const str = this.getDataValue('scopes') || '';
+          const str = this.getDataValue('scope') || '';
           return str.split(' ');
         },
         set(value) {
           const str = value.join(' ');
-          this.setDataValue('scopes', str);
+          this.setDataValue('scope', str);
         },
       },
       exp: {

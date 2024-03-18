@@ -19,6 +19,7 @@ import Webcam from './Webcam';
 import Reencrypt from './Reencrypt';
 import Generate from './generate/Generate';
 import CreateToken from './CreateToken';
+import ShowToken from './ShowToken';
 
 interface DialogContextType {
   dialog: string | null,
@@ -137,6 +138,8 @@ export function DialogWrapper({ children }) {
         return <Reencrypt {...contextValue} />;
       case 'create_token':
         return <CreateToken {...contextValue} />;
+      case 'show_token':
+        return <ShowToken {...contextValue} />;
       case null:
         return null;
 

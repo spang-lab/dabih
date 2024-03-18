@@ -86,7 +86,7 @@ export async function findUser(client: Client, uid: string): Promise<any[]> {
         emitter.on('error', (err: any) => {
           reject(err);
         });
-        emitter.on('searchEntry', (entry: {pojo: string}) => {
+        emitter.on('searchEntry', (entry: { pojo: string }) => {
           results.push(entry.pojo);
         });
         emitter.on('end', () => resolve(results));
@@ -103,7 +103,7 @@ export default function UniRegensburgProvider({ enabled }): Provider {
       uid: { label: 'RZ Account', type: 'text', placeholder: '' },
       password: { label: 'Password', type: 'password' },
     },
-    async authorize(credentials, _req) {
+    async authorize(credentials) {
       if (!credentials) {
         return null;
       }

@@ -1,26 +1,60 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Plus } from 'react-feather';
 import { useDialog } from '@/components';
+import { useSession } from 'next-auth/react';
+import api from '@/lib/api';
 import TokenModal from './TokenModal';
 import Token from './Token';
-import { useProfile } from './Context';
 
 export default function Tokens() {
-  const { tokens } = useProfile();
-  const { openDialog } = useDialog();
+  const [tokens, setTokens] = useState<any>([]);
+  const dialog = useDialog();
+  const { status } = useSession();
+
+  const fetchTokens = useCallback(async () => {
+    const result = await api.token.list();
+    if (result.error) {
+      return;
+    }
+    setTokens(result);
+  }, []);
 
   const createToken = async () => {
-    openDialog('create_token', {
-      onSubmit: () => {},
+    dialog.openDialog('create_token', {
+      onSubmit: async (scopes: string[], lifetime: number | null) => {
+        const token = await api.token.add(scopes, lifetime);
+        if (token.error) {
+          dialog.error(token.error);
+          return;
+        }
+        dialog.openDialog('show_token', {
+          shake: true,
+          token,
+          onSubmit: () => {
+            fetchTokens();
+          },
+        });
+      },
     });
   };
+  const removeToken = async (tokenId: number) => {
+    await api.token.remove(tokenId);
+    await fetchTokens();
+  };
+
+  useEffect(() => {
+    if (status !== 'authenticated') {
+      return;
+    }
+    fetchTokens();
+  }, [status, fetchTokens]);
 
   return (
     <div>
       {tokens.map((t) => (
-        <Token data={t} key={t.token} />
+        <Token data={t} key={t.value} onRemove={() => removeToken(t.id)} />
       ))}
       <div hidden={tokens.length > 0} className="p-2 m-2 border italic text-gray-500 rounded-lg text-center">
         You have no access tokens.

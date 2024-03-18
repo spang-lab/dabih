@@ -1,4 +1,3 @@
-import { requireEnv } from '@/lib/config';
 import { Provider } from 'next-auth/providers';
 
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -10,7 +9,7 @@ export default function DemoProvider({ enabled }): Provider {
     credentials: {
       name: { label: 'Username', type: 'text', placeholder: 'Demo User' },
     },
-    async authorize(credentials, _req) {
+    async authorize(credentials) {
       if (!credentials) {
         return null;
       }

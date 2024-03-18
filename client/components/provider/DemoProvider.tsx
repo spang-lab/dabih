@@ -1,15 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn, getSession } from 'next-auth/react';
-import Image from 'next/image';
+import { signIn } from 'next-auth/react';
 import { Codesandbox } from 'react-feather';
 import SignInError from './SignInError';
 
 export default function URProvider({ provider }) {
   const [name, setName] = useState('');
 
-  const onSubmit = (e) => {
+  const onSubmit = (e: any) => {
     e.preventDefault();
     signIn(provider.id, { name });
   };

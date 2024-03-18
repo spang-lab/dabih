@@ -15,15 +15,17 @@ async function list(ctx, where = {}) {
   const now = new Date();
 
   return tokens.map((token) => {
-    const { exp } = token;
+    const { exp, scope } = token;
     if (!exp) {
       return {
         ...token,
+        scopes: scope.split(' '),
         isExpired: false,
       };
     }
     return {
       ...token,
+      scopes: scope.split(' '),
       isExpired: now > exp,
     };
   });
@@ -49,7 +51,6 @@ async function generate(ctx, rScopes, lifetimeSeconds) {
     const expMs = nowMs + lifetimeSeconds * 1000;
     exp = new Date(expMs);
   }
-
   const tokenData = {
     value,
     sub,

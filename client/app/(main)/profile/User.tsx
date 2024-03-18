@@ -27,7 +27,7 @@ function CryptoKey() {
 
   if (!key) {
     return (
-      <div className="flex grow flex-row items-center">
+      <div className="flex grow flex-row flex-wrap items-center">
         <div className="bg-gray-700 text-white font-extrabold rounded-full px-2 py-1 mx-3">
           not loaded
         </div>
@@ -46,7 +46,7 @@ function CryptoKey() {
     );
   }
   return (
-    <div className="flex grow flex-row justify-between items-center">
+    <div className="flex grow flex-row flex-wrap justify-between items-center">
       <div className="bg-green text-white font-extrabold rounded-full px-2 py-1 mx-3">
         loaded
       </div>
@@ -61,7 +61,7 @@ function CryptoKey() {
       <div>
         <button
           type="button"
-          className="bg-red text-white py-1 px-2 rounded-md inline-flex items-center"
+          className="bg-blue text-white py-1 px-2 rounded-md inline-flex items-center"
           onClick={() => storage.deleteKey()}
         >
           <XCircle className="mr-2" />
@@ -83,7 +83,7 @@ export default function Account() {
 
   return (
     <div>
-      <div className="border rounded-xl border-gray-400 m-2 p-2 flex flex-row items-center justify-between">
+      <div className="border rounded-xl border-gray-400 m-2 p-2 flex flex-row flex-wrap items-center justify-between">
         <div className="inline-flex items-center text-blue font-extrabold text-xl">
           <User className="text-blue mx-3" size={34} />
           Account
@@ -122,51 +122,24 @@ export default function Account() {
             </span>
           ))}
         </div>
+        <div className="grow flex justify-end">
+          <button
+            type="button"
+            className="bg-blue text-white py-1 px-2 rounded-md inline-flex items-center"
+            onClick={() => signOut()}
+          >
+            <LogOut className="mr-2" />
+            Sign Out
+          </button>
+        </div>
       </div>
-      <div className="border rounded-xl border-gray-400 m-2 p-2 flex flex-row items-center">
+
+      <div className="border rounded-xl border-gray-400 m-2 p-2 flex flex-row flex-wrap items-center">
         <div className="inline-flex items-center text-blue font-extrabold text-xl">
           <Key className="text-blue mx-3" size={34} />
           RSA Private Key
         </div>
         <CryptoKey />
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="w-full p-1 m-1 border border-gray-400 rounded-lg flex items-center">
-      <UserIcon className="text-blue mx-3" size={34} />
-      <div className="border-l pl-3 grow">
-        <p className="font-mono">
-          <span className="font-bold mr-3">ID:</span>
-          {sub}
-        </p>
-        <p>
-          <span className="font-bold mr-3">Name:</span>
-          {name}
-        </p>
-        <p>
-          <span className="font-bold mr-3">Email:</span>
-          {email}
-        </p>
-        <p>
-          <span className="font-bold mr-3">Scopes:</span>
-          {scopes.join(', ')}
-        </p>
-        <p>
-          <span className="font-bold mr-3">Role:</span>
-          {(isAdmin) ? 'Admin' : 'User'}
-        </p>
-      </div>
-      <div className="justify-self-end">
-        <button
-          type="button"
-          className="flex flex-col bg-gray-600 text-sm items-center text-white px-2 py-1 rounded-md"
-          onClick={() => signOut()}
-        >
-          <LogOut size={18} className="mb-1" />
-          Sign Out
-        </button>
       </div>
     </div>
   );

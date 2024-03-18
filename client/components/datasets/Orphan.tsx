@@ -5,7 +5,7 @@ import {
   File, FileText, Trash2, X, AlertTriangle,
 } from 'react-feather';
 import {
-  Bytes, LocalDate, TimeSince, Bytes10,
+  Bytes, LocalDate, TimeSince,
 } from '../util';
 import { useDatasets } from './Context';
 

@@ -8,5 +8,9 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json"
+  },
+  "rules": {
+    "import/prefer-default-export": "off",
+    "react/require-default-props": "off"
   }
 }

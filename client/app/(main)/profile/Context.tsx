@@ -11,7 +11,10 @@ import React, {
 import api from '@/lib/api';
 import { useUser } from '@/lib/hooks';
 
-const ProfileContext = createContext();
+interface ProfileContextType {
+}
+
+const ProfileContext = createContext<ProfileContextType | null>(null);
 
 export function ProfileWrapper({ children }) {
   const [publicKeys, setPublicKeys] = useState([]);
@@ -57,7 +60,7 @@ export function ProfileWrapper({ children }) {
     [user, fetchKeys],
   );
 
-  const deleteKey = useCallback(
+  const removeKey = useCallback(
     async (keyId) => {
       await api.key.remove(keyId);
       await fetchKeys();
@@ -66,8 +69,8 @@ export function ProfileWrapper({ children }) {
   );
 
   const generateToken = useCallback(
-    async (scopes) => {
-      const result = await api.token.generate(scopes);
+    async (scopes, lt) => {
+      const result = await api.token.add(scopes, lt);
       if (result.error) {
         return;
       }
@@ -84,7 +87,6 @@ export function ProfileWrapper({ children }) {
     },
     [fetchTokens],
   );
-  const clearToken = useCallback(() => setToken(null), [setToken]);
 
   useEffect(() => {
     if (user.status !== 'authenticated') {
@@ -100,22 +102,32 @@ export function ProfileWrapper({ children }) {
       tokens,
       enableKey,
       addRootKey,
-      deleteKey,
+      removeKey,
       publicKeys,
-      generateToken,
-      removeToken,
-      clearToken,
+      addToken: async (scopes: string[], lifetime: number | null) => {
+        const result = await api.token.add(scopes, lifetime);
+        if (result.error) {
+          return;
+        }
+        setToken(result);
+        fetchTokens();
+      },
+      removeToken: async (tokenId) => {
+        await api.token.remove(tokenId);
+        await fetchTokens();
+      },
+      clearToken: () => setToken(null),
     }),
     [
       generateToken,
       enableKey,
       addRootKey,
-      deleteKey,
+      removeKey,
       publicKeys,
       token,
-      removeToken,
       tokens,
-      clearToken,
+      fetchTokens,
+      fetchKeys,
     ],
   );
 

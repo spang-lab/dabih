@@ -1,14 +1,15 @@
+/* eslint-disable react/no-array-index-key, @typescript-eslint/no-loop-func */
+
 'use client';
 
-/* eslint-disable react/no-array-index-key, no-loop-func */
 import React, { Fragment, useEffect, useState } from 'react';
 import crypto from '@/lib/crypto';
 import Image from 'next/image';
 import QRCode from 'qrcode';
 
-function Key({ privateKey }, ref) {
-  const [dataUrl, setDataUrl] = useState(null);
-  const [hexData, setHexData] = useState(null);
+function Key({ privateKey }, ref: any) {
+  const [dataUrl, setDataUrl] = useState<string | null>(null);
+  const [hexData, setHexData] = useState<string[]>([]);
   useEffect(() => {
     (async () => {
       if (!privateKey) {
@@ -35,10 +36,10 @@ function Key({ privateKey }, ref) {
   const shortEnd = shortStart + shortRows * shortRow;
   const qrIndex = shortStart + shortRow / 2;
 
-  const rows = [];
+  const rows: any[] = [];
   let idx = 0;
   while (idx < hexData.length) {
-    let rdata;
+    let rdata: any[];
     if (idx < shortStart || idx >= shortEnd) {
       rdata = hexData
         .slice(idx, idx + longRow)
@@ -53,7 +54,7 @@ function Key({ privateKey }, ref) {
     rows.push({ data: rdata, key: `row-${idx}` });
   }
 
-  const getColor = (v) => {
+  const getColor = (v: string) => {
     const num = parseInt(v, 16);
     if (num < 75) {
       return 'text-gray-500';

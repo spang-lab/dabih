@@ -2,9 +2,7 @@
 
 import { Disclosure } from '@headlessui/react';
 
-import { useState, useCallback, useEffect } from 'react';
 import { ChevronRight } from 'react-feather';
-import { useApi } from '../api';
 import { useDatasets } from './Context';
 import Orphan from './Orphan';
 

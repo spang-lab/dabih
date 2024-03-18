@@ -5,7 +5,7 @@ import {
   File, FileText, Lock, X,
 } from 'react-feather';
 import {
-  Bytes, LocalDate, TimeSince, Bytes10,
+  Bytes, LocalDate, TimeSince,
 } from '../util';
 import Download from './Download';
 import Members from './Members';

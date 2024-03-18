@@ -15,11 +15,13 @@ export const formatBytes = (bytes: number, decimals = 2, binary = true) => {
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 };
 
-export default function Bytes({ value, decimals = 2, binary = false }: {
-  value: number
-  decimals: number
-  binary: boolean
-}) {
+type BytesProps = {
+  value: number,
+  decimals?: number,
+  binary?: boolean,
+};
+
+export default function Bytes({ value, decimals = 2, binary = false }: BytesProps) {
   return (
     <span>
       {' '}

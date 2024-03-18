@@ -6,13 +6,16 @@ const route = async (ctx) => {
     sub,
   });
   const censored = results.map((t) => {
-    const n = t.token.length;
-    const start = t.token.substring(0, 5);
-    const end = t.token.substring(n - 5);
-    const mid = '...';
+    const n = t.value.length;
+    const value = [...t.value].map((c, i) => {
+      if (i < 14 || i > n - 4) {
+        return c;
+      }
+      return '■';
+    });
     return {
       ...t,
-      token: `${start}${mid}${end}`,
+      value,
     };
   });
 

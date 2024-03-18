@@ -3,6 +3,7 @@
 import { useUser } from '@/lib/hooks';
 import { Dialog, Listbox } from '@headlessui/react';
 import { useState } from 'react';
+import { ChevronDown } from 'react-feather';
 import { Switch } from '../util';
 
 const timeToSeconds = (timeString: string) => {
@@ -35,38 +36,45 @@ function Scope({ scope, value, onChange }) {
     </div>
   );
 }
+const lifetimeOptions = [
+  { label: 'never', value: null },
+  { label: 'one hour', value: timeToSeconds('1h') },
+  { label: 'one day', value: timeToSeconds('1d') },
+  { label: 'one week', value: timeToSeconds('1w') },
+  { label: 'one month', value: timeToSeconds('1m') },
+  { label: 'six months', value: timeToSeconds('6m') },
+  { label: 'one year', value: timeToSeconds('1y') },
+];
 
 export default function CreateToken({ ctx, closeDialog }) {
   const { onSubmit } = ctx;
   const user = useUser();
-  const lifetimeOptions = [
-    { label: 'never', value: null },
-    { label: 'one hour', value: timeToSeconds('1h') },
-    { label: 'one day', value: timeToSeconds('1d') },
-    { label: 'one week', value: timeToSeconds('1w') },
-    { label: 'one month', value: timeToSeconds('1m') },
-    { label: 'six months', value: timeToSeconds('6m') },
-    { label: 'one year', value: timeToSeconds('1y') },
-  ];
-
-  const submit = () => {
-    if (onSubmit) {
-      onSubmit();
-    }
-    closeDialog();
-  };
-
   const [scopes, setScopes] = useState<any>(user.scopes.reduce((acc, scope) => {
     acc[scope] = true;
     return acc;
   }, {}));
   const [lifetime, setLifetime] = useState<any>(lifetimeOptions[0]);
 
+  const submit = () => {
+    if (onSubmit) {
+      const scopeList = Object.keys(scopes).filter((s) => scopes[s]);
+      onSubmit(scopeList, lifetime.value);
+    }
+    closeDialog();
+  };
+
   const setScope = (scope: string, value: boolean) => {
     const newScopes = {
       ...scopes,
     };
     newScopes[scope] = value;
+    setScopes(newScopes);
+  };
+  const setUpload = () => {
+    const newScopes = Object.keys(scopes).reduce((acc, scope) => {
+      acc[scope] = scope === 'upload';
+      return acc;
+    }, {});
     setScopes(newScopes);
   };
 
@@ -98,21 +106,59 @@ export default function CreateToken({ ctx, closeDialog }) {
           key={scope}
         />
       ))}
-      <h3 className="text-xl font-extrabold">Expiry</h3>
-      <Listbox value={lifetime} onChange={setLifetime}>
-        <Listbox.Button>{lifetime.label}</Listbox.Button>
-        <Listbox.Options>
-          {lifetimeOptions.map((lt) => (
-            <Listbox.Option
-              key={lt.label}
-              value={lt}
-            >
-              {lt.label}
-            </Listbox.Option>
-          ))}
-        </Listbox.Options>
+      <h3 className="text-xl py-2 font-extrabold">Token Expiry</h3>
+      <div className="h-72">
+        <Listbox value={lifetime} onChange={setLifetime}>
+          <div className="relative mt-1">
+            <Listbox.Button className="relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 text-left border  focus:outline-none sm:text-sm">
+              <span className="block truncate">{lifetime.label}</span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                <ChevronDown />
+              </span>
+            </Listbox.Button>
+            <Listbox.Options className="mt-1 w-full overflow-auto rounded-md bg-white py-1 text-base border sm:text-sm">
+              {lifetimeOptions.map((lt) => (
+                <Listbox.Option
+                  key={lt.value}
+                  value={lt}
+                  className={({ active }) => `relative cursor-default select-none py-2 pl-10 ${active ? 'bg-blue text-white' : 'text-gray-800'}`}
+                >
+                  <span
+                    className="block truncate"
 
-      </Listbox>
+                  >
+                    {lt.label}
+                  </span>
+                </Listbox.Option>
+              ))}
+            </Listbox.Options>
+          </div>
+        </Listbox>
+        <h3 className="text-xl py-2 font-extrabold">Help</h3>
+        <p>
+          Scopes are permissions for the dabih API.
+        </p>
+        <p className="pb-4">
+          See the
+          <a target="_blank" className="text-blue hover:underline font-semibold mx-1" href="/docs/api">API Documentation</a>
+          for help on scopes.
+        </p>
+        <p>
+          If you only active the
+          {' '}
+          <span className="font-mono">upload</span>
+          {' '}
+          scope the token may be shared with others, and they can upload data into your account.
+        </p>
+
+        <button
+          type="button"
+          className="px-2 py-1 text-sm text-gray-100 bg-blue hover:text-white rounded-md"
+          onClick={setUpload}
+        >
+          Set upload scope
+        </button>
+      </div>
 
       <div className="text-right">
         <button
