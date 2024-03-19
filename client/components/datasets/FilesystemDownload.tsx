@@ -6,16 +6,18 @@ import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import React, { useCallback, useState } from 'react';
 import { Download } from 'react-feather';
-import { useApi } from '../api';
+import { useSession } from 'next-auth/react';
+import api from '@/lib/api';
+import { useKey } from '@/lib/hooks';
 import useDialog from '../dialog';
 import Progress from './Progress';
 
 export default function FilesystemDownload({ mnemonic }) {
-  const api = useApi();
   const dialog = useDialog();
-
   const [size, setSize] = useState(null);
   const [current, setCurrent] = useState(0);
+  const { status } = useSession();
+  const key = useKey();
 
   const onClick = useCallback(async () => {
     const getHandle = async (fileName) => {
@@ -24,19 +26,19 @@ export default function FilesystemDownload({ mnemonic }) {
           suggestedName: fileName,
         });
         return result;
-      } catch (err) {
-        dialog.error(err);
+      } catch (err: any) {
+        dialog.error(err.toString());
         return null;
       }
     };
-    if (!api.isReady() || !mnemonic) {
+    if (status !== 'authenticated' || !key || !mnemonic) {
       return;
     }
-    const dataset = await api.fetchDataset(mnemonic);
-    const privateKey = await storage.readKey();
-    const keyHash = await crypto.privateKey.toHash(privateKey);
-    const encryptedKey = await api.fetchKey(mnemonic, keyHash);
-    const aesKey = await crypto.privateKey.decryptAesKey(privateKey, encryptedKey);
+    const keyHash = await crypto.privateKey.toHash(key);
+    const result = await api.dataset.key(mnemonic, keyHash);
+    const aesBuffer = await crypto.privateKey.decryptAesKey(key, result.key);
+    const aesKey = await crypto.aesKey.fromUint8(aesBuffer);
+    const dataset = await api.dataset.get(mnemonic);
     const { fileName, chunks } = dataset;
     setSize(dataset.size);
 
@@ -49,7 +51,7 @@ export default function FilesystemDownload({ mnemonic }) {
     for (let i = 0; i < chunks.length; i += 1) {
       const chunk = chunks[i];
       const { iv, hash, end } = chunk;
-      const encrypted = await api.fetchChunk(mnemonic, hash);
+      const encrypted = await api.dataset.chunk(mnemonic, hash);
       const buffer = await encrypted.arrayBuffer();
       const decrypted = await crypto.aesKey.decrypt(aesKey, iv, buffer);
       await stream.write(decrypted);

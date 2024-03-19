@@ -9,64 +9,63 @@ import { Transition } from '@headlessui/react';
 
 import crypto from '@/lib/crypto';
 
+import { useSession } from 'next-auth/react';
+import api from '@/lib/api';
 import Dropzone from './DropZone';
 import Progess from './Progress';
-import { useApi } from '../api';
 import useDialog from '../dialog';
 
 const oneMiB = 1024 * 1024;
 const chunkSize = 2 * oneMiB;
 
-const hashBlob = async (blob) => {
+const hashBlob = async (blob: Blob) => {
   const buffer = await blob.arrayBuffer();
   const hash = await crypto.hash(buffer);
   return hash;
 };
 
-const hashHashes = async (hashes) => {
+const hashHashes = async (hashes: string[]) => {
   const buffers = hashes.map((base64) => crypto.base64url.toUint8(base64));
-  const merged = new Blob(...buffers).arrayBuffer();
+  const merged = await new Blob([...buffers]).arrayBuffer();
   return crypto.hash(merged);
 };
 
-const hashFile = async (file) => {
+const hashFile = async (file: File) => {
   const { size } = file;
 
-  const hashes = [];
+  const hashes: string[] = [];
   for (let b = 0; b < size; b += chunkSize) {
     const blob = file.slice(b, b + chunkSize);
-    const buffer = blob.arrayBuffer();
+    const buffer = await blob.arrayBuffer();
     hashes.push(await crypto.hash(buffer));
   }
-  const merged = new Blob(...hashes).arrayBuffer();
-  return crypto.hash(merged);
+  return hashHashes(hashes);
 };
 
 export default function Upload({ disabled }) {
-  const api = useApi();
   const dialog = useDialog();
-  const [uploadSuccess, setSuccess] = useState(null);
+  const { status } = useSession();
+  const [uploadMessage, setMessage] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
-  const [upload, setUpload] = useState(null);
+  const [upload, setUpload] = useState<any>(null);
   const lastChunk = upload?.chunks.at(-1);
   const bytes = lastChunk?.end || 0;
 
   useEffect(() => {
-    if (!api.isReady()) {
+    if (status !== 'authenticated') {
       return;
     }
-    const checkExisting = async () => {
-      const existing = await api.uploadCheck();
-      if (existing) {
+    (async () => {
+      const { dataset } = await api.upload.check();
+      if (dataset) {
         setUpload({
-          ...existing,
+          ...dataset,
           file: null,
         });
       }
-    };
-    checkExisting();
-  }, [api]);
+    })();
+  }, [status]);
 
   useEffect(() => {
     const uploadChunk = async () => {
@@ -74,14 +73,15 @@ export default function Upload({ disabled }) {
         return;
       }
       if (upload.hash) {
-        const result = await api.uploadFinish(upload.mnemonic);
+        const result = await api.upload.finish(upload.mnemonic);
         if (result.hash !== upload.hash) {
           dialog.error(
             `Upload hash mismatch server:${result.hash} client:${upload.hash}`,
           );
         }
-        const message = `File "${upload.fileName}" uploaded successfully`;
-        setSuccess(message);
+        setMessage(
+          `File "${upload.fileName}" uploaded successfully`,
+        );
         setUpload(null);
         return;
       }
@@ -89,7 +89,7 @@ export default function Upload({ disabled }) {
       const { size } = file;
       const b = chunks.at(-1)?.end || 0;
       if (b === size) {
-        const hashes = chunks.map((c) => c.hash);
+        const hashes = chunks.map((c: any) => c.hash);
         const hash = await hashHashes(hashes);
         setUpload({
           ...upload,
@@ -102,28 +102,29 @@ export default function Upload({ disabled }) {
       }
       const blob = file.slice(b, b + chunkSize);
       const hash = await hashBlob(blob);
-      const chunk = {
+      const chunk = await api.upload.chunk({
+        mnemonic,
         start: b,
         end: b + blob.size,
-        totalSize: size,
+        size,
         data: blob,
         hash,
-      };
-      const newChunk = await api.uploadChunk(chunk, mnemonic);
 
-      if (newChunk.error) {
+      });
+
+      if (chunk.error) {
         return;
       }
 
       setUpload({
         ...upload,
-        chunks: [...chunks, newChunk],
+        chunks: [...chunks, chunk],
       });
     };
     uploadChunk();
-  }, [upload, api, dialog]);
+  }, [upload, dialog]);
 
-  const getFile = (files) => {
+  const getFile = (files: File[]) => {
     if (!files.length) {
       return null;
     }
@@ -137,11 +138,11 @@ export default function Upload({ disabled }) {
 
   const cancelUpload = async () => {
     const { mnemonic } = upload;
-    await api.uploadCancel(mnemonic);
+    await api.upload.cancel(mnemonic);
     setUpload(null);
   };
 
-  const onFileChange = async (files) => {
+  const onFileChange = async (files: File[]) => {
     const file = getFile(files);
     if (!file) return;
     const { size } = file;
@@ -158,8 +159,14 @@ export default function Upload({ disabled }) {
     const firstChunk = file.slice(0, chunkSize);
     const chunkHash = await hashBlob(firstChunk);
     const name = searchParams.get('name');
+    const dataset = await api.upload.start({
+      name,
+      fileName,
+      path: null,
+      size,
+      chunkHash,
+    });
 
-    const dataset = await api.uploadStart(fileName, size, chunkHash, name);
     if (dataset.error || !dataset.mnemonic) {
       dialog.error(dataset.error);
       return;
@@ -170,9 +177,8 @@ export default function Upload({ disabled }) {
       const hash = await hashFile(file);
       if (hash === dataset.duplicate) {
         setUpload(null);
-        await api.uploadCancel(dataset.mnemonic);
-        const message = `File ${dataset.fileName} skipped, you already uploaded it`;
-        setSuccess(message);
+        await api.upload.cancel(dataset.mnemonic);
+        setMessage(`File ${dataset.fileName} skipped, you already uploaded it`);
         return;
       }
     }
@@ -184,14 +190,14 @@ export default function Upload({ disabled }) {
     });
   };
 
-  const getSuccessMessage = () => {
-    if (!uploadSuccess) {
+  const getMessage = () => {
+    if (!uploadMessage) {
       return null;
     }
     return (
       <div className="p-3 m-3 text-base text-center text-green bg-green/20 rounded-lg">
         <p className="font-extrabold">
-          {uploadSuccess}
+          {uploadMessage}
         </p>
         <Link className="text-blue hover:underline" href="/manage">
           Manage your data here
@@ -202,7 +208,7 @@ export default function Upload({ disabled }) {
 
   return (
     <div>
-      {getSuccessMessage()}
+      {getMessage()}
       <Transition
         appear
         enter="transition-opacity duration-300"

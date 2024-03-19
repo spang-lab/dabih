@@ -6,32 +6,45 @@ import {
 
 import { promisify } from 'node:util';
 
-import { getRandomBytes } from './util.js';
-
-const randomIv = async () => getRandomBytes(16);
-const randomKey = async () => getRandomBytes(32);
+import random from './random.js';
+import base64url from './base64url.js';
 
 const deriveKey = async (secret) => {
   const salt = 'dabih';
   const keyBytes = 32;
   const derive = promisify(scrypt);
   const key = await derive(secret, salt, keyBytes);
-  return key;
+  return base64url.fromUint8(key);
+};
+
+const generateKey = async () => {
+  const bytes = await random.getBytes(32);
+  return base64url.fromUint8(bytes);
+};
+const generateIv = async () => {
+  const bytes = await random.getBytes(16);
+  return base64url.fromUint8(bytes);
 };
 
 const encryptStream = (key, iv) => {
+  const rawKey = base64url.toUint8(key);
+  const rawIv = base64url.toUint8(iv);
   const algorithm = 'aes-256-cbc';
-  return createCipheriv(algorithm, key, iv);
+  return createCipheriv(algorithm, rawKey, rawIv);
 };
 
 const decryptStream = (key, iv) => {
+  const rawKey = base64url.toUint8(key);
+  const rawIv = base64url.toUint8(iv);
   const algorithm = 'aes-256-cbc';
-  return createDecipheriv(algorithm, key, iv);
+  return createDecipheriv(algorithm, rawKey, rawIv);
 };
 
 const encryptString = async (key, iv, string) => new Promise((resolve, reject) => {
+  const rawKey = base64url.toUint8(key);
+  const rawIv = base64url.toUint8(iv);
   const algorithm = 'aes-256-cbc';
-  const cipher = createCipheriv(algorithm, key, iv);
+  const cipher = createCipheriv(algorithm, rawKey, rawIv);
   let encrypted = '';
   cipher.setEncoding('hex');
   cipher.on('data', (chunk) => { encrypted += chunk; });
@@ -42,8 +55,10 @@ const encryptString = async (key, iv, string) => new Promise((resolve, reject) =
 });
 
 const decryptString = async (key, iv, data) => new Promise((resolve, reject) => {
+  const rawKey = base64url.toUint8(key);
+  const rawIv = base64url.toUint8(iv);
   const algorithm = 'aes-256-cbc';
-  const decipher = createDecipheriv(algorithm, key, iv);
+  const decipher = createDecipheriv(algorithm, rawKey, rawIv);
   let decrypted = '';
   decipher.on('readable', () => {
     let chunk = decipher.read();
@@ -65,7 +80,7 @@ export default {
   decryptString,
   encryptStream,
   decryptStream,
-  randomIv,
-  randomKey,
+  generateKey,
+  generateIv,
   deriveKey,
 };

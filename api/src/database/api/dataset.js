@@ -2,7 +2,7 @@
 import { Op } from 'sequelize';
 import { getModel } from './util.js';
 import { log, generateMnemonic } from '../../util/index.js';
-import { rsa } from '../../crypto/index.js';
+import { rsa, base64url } from '../../crypto/index.js';
 import search from './datasetSearch.js';
 
 async function listIncomplete(ctx) {
@@ -130,6 +130,7 @@ async function listOrphans(ctx) {
       },
     },
     order: [['createdAt', 'DESC']],
+    paranoid: false,
   });
   const orphans = results.filter((dset) => {
     const readers = dset.members.filter(
@@ -384,7 +385,8 @@ async function addKeys(ctx, mnemonic, aesKey) {
     if (typeof (key) === 'string') {
       key = JSON.parse(publicKey.data);
     }
-    const encrypted = rsa.encrypt(key, aesKey);
+    const buffer = base64url.toUint8(aesKey);
+    const encrypted = rsa.encrypt(key, buffer);
     await Key.create({
       key: encrypted,
       datasetId: dataset.id,

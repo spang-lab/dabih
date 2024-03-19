@@ -26,7 +26,7 @@ const timeSince = (date) => {
 };
 
 const isAllowed = async (ctx, mnemonic) => {
-  const { sub, isAdmin } = ctx;
+  const { sub, isAdmin } = ctx.data;
   if (isAdmin) {
     return true;
   }

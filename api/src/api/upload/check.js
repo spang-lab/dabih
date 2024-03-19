@@ -6,21 +6,23 @@ const route = async (ctx) => {
 
   const info = await dataset.findUpload(ctx, sub);
   if (!info) {
-    ctx.body = null;
+    ctx.body = { dataset: null };
     return;
   }
   const { mnemonic } = info;
   const key = await readKey(mnemonic);
   if (!key) {
-    ctx.body = null;
+    ctx.body = { dataset: null };
     return;
   }
 
   const chunks = await dataset.listChunks(ctx, mnemonic);
 
   ctx.body = {
-    ...info,
-    chunks,
+    dataset: {
+      ...info,
+      chunks,
+    },
   };
 };
 export default route;

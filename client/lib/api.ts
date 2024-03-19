@@ -105,7 +105,7 @@ const upload = {
     return put(`/upload/${mnemonic}/chunk`, body, {
       Digest: `sha-256=${hash}`,
       'Content-Range': `bytes ${start}-${end}/${size}`,
-      'Content-Type': 'multipart/form-data',
+      // 'Content-Type': 'multipart/form-data',
     });
   },
   finish: (mnemonic: string) => post(`/upload/${mnemonic}/finish`),
@@ -113,13 +113,13 @@ const upload = {
 };
 
 type SearchRequest = {
-  query: string | undefined,
-  uploader: boolean | undefined,
-  deleted: boolean | undefined,
-  all: boolean | undefined,
+  query?: string,
+  uploader?: boolean,
+  deleted?: boolean,
+  all?: boolean,
   page: number,
   limit: number,
-  direction: string,
+  direction?: string,
 };
 type FindRequest = {
   id: number | undefined,
@@ -135,13 +135,13 @@ const dataset = {
   search: (search: SearchRequest) => post('/dataset/search', search),
   find: (search: FindRequest) => post('/dataset/find', search),
   get: (mnemonic: string) => get(`/dataset/${mnemonic}`),
-  key: (mnemonic: string) => get(`/dataset/${mnemonic}/key`),
+  key: (mnemonic: string, keyHash: string) => post(`/dataset/${mnemonic}/key`, { keyHash }),
   chunk: (mnemonic: string, hash: string) => get(`/dataset/${mnemonic}/chunk/${hash}}`),
   remove: (mnemonic: string) => post(`/dataset/${mnemonic}/remove`),
   recover: (mnemonic: string) => post(`/dataset/${mnemonic}/recover`),
   destroy: (mnemonic: string) => post(`/dataset/${mnemonic}/destroy`),
-  rename: (mnemonic: string) => post(`/dataset/${mnemonic}/rename`),
-  reencrypt: (mnemonic: string) => post(`/dataset/${mnemonic}/reencrypt`),
+  rename: (mnemonic: string, name: string) => post(`/dataset/${mnemonic}/rename`, { name }),
+  reencrypt: (mnemonic: string, aesKey: string) => post(`/dataset/${mnemonic}/reencrypt`, { key: aesKey }),
   addMember: (mnemonic: string, member: string, aesKey: string) => post(`/dataset/${mnemonic}/member/add`, { member, key: aesKey }),
   setAccess: (mnemonic: string, member: string, permission: string) => post(`/dataset/${mnemonic}/member/set`, { member, permission }),
   storeKey: (mnemonic: string) => post(`/dataset/${mnemonic}/download`),

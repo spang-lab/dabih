@@ -50,7 +50,7 @@ const getDatasetRouter = () => {
   router.post('DATASET_REENCRYPT', '/:mnemonic/reencrypt', dataset.reencrypt);
   router.post('DATASET_RENAME', '/:mnemonic/rename', dataset.rename);
   router.post('DATASET_STORE_KEY', '/:mnemonic/download', dataset.storeKey);
-  router.get('DATASET_KEY_FETCH', '/:mnemonic/key', dataset.key);
+  router.post('DATASET_KEY_FETCH', '/:mnemonic/key', dataset.key);
   router.get('/orphan/list', dataset.listOrphans);
 
   return router;

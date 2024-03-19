@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import MultiStream from 'multistream';
 import {
-  base64ToUint8, aes,
+  aes,
 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 import { getStorage } from '../../storage/index.js';
@@ -27,10 +27,9 @@ const route = async (ctx) => {
 
   const promises = chunks.map(async (chunk) => {
     const { hash, iv } = chunk;
-    const rawIv = base64ToUint8(iv);
     const file = await storage.open(mnemonic, hash);
     const readStream = file.createReadStream();
-    const decrypt = aes.decryptStream(key, rawIv);
+    const decrypt = aes.decryptStream(key, iv);
     return readStream.pipe(decrypt);
   });
   const streams = await Promise.all(promises);

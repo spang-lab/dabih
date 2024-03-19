@@ -21,8 +21,8 @@ const route = async (ctx) => {
 
   const duplicate = await dataset.findDuplicate(ctx, sub, fileName, size, chunkHash);
 
-  const key = await aes.randomKey();
-  const keyHash = sha256.hash(key);
+  const key = await aes.generateKey();
+  const keyHash = sha256.hashKey(key);
 
   const dbDataset = await dataset.create(ctx, {
     keyHash,

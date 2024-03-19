@@ -45,8 +45,7 @@ function RootKey({ data }) {
 }
 
 export default function Tokens() {
-  const { publicKeys } = useProfile();
-  const rootKeys = publicKeys.filter((k) => !!k.isRootKey);
+  const rootKeys = [];
 
   return (
     <div>

@@ -1,25 +1,28 @@
 import React from 'react';
 import { Cpu } from 'react-feather';
 import { useDialog } from '@/components';
-import { useProfile } from '../Context';
+import { useUser } from '@/lib/hooks';
 
 export default function RootKey() {
-  const { openDialog, dialog } = useDialog();
-  const { addRootKey } = useProfile();
+  const dialog = useDialog();
+  const user = useUser();
   const onGenerate = async (publicKey) => {
     if (publicKey.error) {
       dialog.error(publicKey.error);
-      return;
     }
-    await addRootKey(publicKey);
+    // await addRootKey(publicKey);
   };
+
+  if (user.status !== 'authenticated' || !user.isAdmin) {
+    return null;
+  }
 
   return (
     <div className="m-2">
       <button
         className="px-2 py-1 bg-blue text-white rounded-lg"
         type="button"
-        onClick={() => openDialog('generate', {
+        onClick={() => dialog.openDialog('generate', {
           shake: true,
           onSubmit: onGenerate,
         })}

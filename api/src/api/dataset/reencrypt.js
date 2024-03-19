@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import {
-  base64ToUint8, sha256, aes, crc,
+  sha256, aes, crc,
 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 import { getStorage } from '../../storage/index.js';
@@ -8,13 +8,12 @@ import { getStorage } from '../../storage/index.js';
 const reencryptChunk = async (chunk, mnemonic, newMnemonic, oldKey, newKey) => {
   const storage = getStorage();
   const { hash, iv } = chunk;
-  const rawIv = base64ToUint8(iv);
   const file = await storage.open(mnemonic, hash);
   const target = await storage.create(newMnemonic, hash);
   const readStream = file.createReadStream();
   const writeStream = target.createWriteStream();
-  const decrypt = aes.decryptStream(oldKey, rawIv);
-  const encrypt = aes.encryptStream(newKey, rawIv);
+  const decrypt = aes.decryptStream(oldKey, iv);
+  const encrypt = aes.encryptStream(newKey, iv);
   const crcStream = crc.createStream();
   const hashStream = sha256.createStream();
 
@@ -56,21 +55,20 @@ const route = async (ctx) => {
   }
   const { key } = ctx.request.body;
 
-  const aesKey = base64ToUint8(key);
-  const keyHash = sha256.hash(aesKey);
+  const keyHash = sha256.hashKey(key);
   if (info.keyHash !== keyHash) {
     ctx.error('Invalid AES Key', 400);
     return;
   }
   const chunks = await dataset.listChunks(ctx, mnemonic);
   const newMnemonic = `${mnemonic}_reencrypt`;
-  const newKey = await aes.randomKey();
-  const newKeyHash = sha256.hash(newKey);
+  const newKey = await aes.generateKey();
+  const newKeyHash = sha256.hashKey(newKey);
 
   const newChunks = [];
   for (let i = 0; i < chunks.length; i += 1) {
     const chunk = chunks[i];
-    const newChunk = await reencryptChunk(chunk, mnemonic, newMnemonic, aesKey, newKey);
+    const newChunk = await reencryptChunk(chunk, mnemonic, newMnemonic, key, newKey);
     newChunks.push(newChunk);
   }
 

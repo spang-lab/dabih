@@ -7,13 +7,8 @@ import {
 import {
   Bytes, LocalDate, TimeSince,
 } from '../util';
-import { useDatasets } from './Context';
 
-export default function Orphan({ data }) {
-  const {
-    removeDataset,
-    destroyDataset,
-  } = useDatasets();
+export default function Orphan({ data, onRemove, onDestroy }) {
   const {
     mnemonic,
     name,
@@ -76,7 +71,7 @@ export default function Orphan({ data }) {
           <button
             type="button"
             className="bg-red inline-flex items-center text-white px-2 py-1 rounded-md"
-            onClick={() => destroyDataset(mnemonic)}
+            onClick={onDestroy}
           >
             <div className="relative w-6 h-6 mx-1">
               <Trash2 size={24} />
@@ -95,10 +90,10 @@ export default function Orphan({ data }) {
         <button
           type="button"
           className="bg-red text-white px-2 py-1 rounded-md inline-flex items-center"
-          onClick={() => removeDataset(mnemonic)}
+          onClick={onRemove}
         >
           <Trash2 />
-          Delete
+          Remove
         </button>
       </div>
     );

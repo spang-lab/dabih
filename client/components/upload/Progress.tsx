@@ -51,21 +51,23 @@ export default function UploadProgress(props: any) {
           stroke="currentColor"
           strokeWidth={width}
           fill="transparent"
-          className="text-gray-400"
+          className="text-gray-300 origin-center"
         />
 
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
-          stroke="currentColor"
-          strokeWidth={width}
-          fill="transparent"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          className="text-blue -rotate-90 origin-center"
-        />
+        <g transform={`rotate(-90, ${center}, ${center})`}>
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            stroke="currentColor"
+            strokeWidth={width}
+            fill="transparent"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            className="text-blue"
+          />
+        </g>
         <text
           x={center}
           dx={-50}

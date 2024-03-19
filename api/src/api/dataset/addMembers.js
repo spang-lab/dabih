@@ -1,4 +1,4 @@
-import { base64ToUint8, sha256 } from '../../crypto/index.js';
+import { sha256 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 
 const route = async (ctx) => {
@@ -20,9 +20,7 @@ const route = async (ctx) => {
   if (member) {
     memberList.push(member);
   }
-
-  const aesKey = base64ToUint8(key);
-  const keyHash = sha256.hash(aesKey);
+  const keyHash = sha256.hashKey(key);
   if (info.keyHash !== keyHash) {
     ctx.error('Invalid AES Key', 400);
     return;
@@ -31,7 +29,7 @@ const route = async (ctx) => {
     await dataset.addMember(ctx, mnemonic, user, 'read');
   });
   await Promise.all(promises);
-  await dataset.addKeys(ctx, mnemonic, aesKey);
+  await dataset.addKeys(ctx, mnemonic, key);
   ctx.body = 'ok';
 };
 export default route;

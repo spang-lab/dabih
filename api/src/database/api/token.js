@@ -1,4 +1,4 @@
-import { randomToken } from '../../crypto/util.js';
+import { random } from '../../crypto/index.js';
 import log from '../../util/logger.js';
 import { getModel } from './util.js';
 
@@ -42,7 +42,7 @@ async function generate(ctx, rScopes, lifetimeSeconds) {
     }
   });
 
-  const token = await randomToken(32);
+  const token = await random.getToken(32);
   const value = `${TOKEN_PREFIX}${token}`;
 
   let exp = null;

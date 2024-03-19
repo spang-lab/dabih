@@ -2,12 +2,36 @@
 
 import { Disclosure } from '@headlessui/react';
 
+import { useCallback, useState, useEffect } from 'react';
 import { ChevronRight } from 'react-feather';
-import { useDatasets } from './Context';
+import { useUser } from '@/lib/hooks';
+import api from '@/lib/api';
 import Orphan from './Orphan';
 
 export default function Orphans() {
-  const { orphans } = useDatasets();
+  const user = useUser();
+  const [orphans, setOrphans] = useState<any[]>([]);
+
+  const fetchOrphans = useCallback(async () => {
+    const data = await api.dataset.listOrphans();
+    setOrphans(data);
+  }, []);
+
+  const removeOrphan = async (mnemonic) => {
+    await api.dataset.remove(mnemonic);
+    await fetchOrphans();
+  };
+  const destroyOrphan = async (mnemonic) => {
+    await api.dataset.destroy(mnemonic);
+    await fetchOrphans();
+  };
+
+  useEffect(() => {
+    if (!user.isAdmin) {
+      return;
+    }
+    fetchOrphans();
+  }, [user.status, user.isAdmin, fetchOrphans]);
 
   const count = orphans.length;
   if (count === 0) {
@@ -35,7 +59,14 @@ export default function Orphans() {
             </div>
           </Disclosure.Button>
           <Disclosure.Panel className="text-gray-500">
-            {orphans.map((o) => <Orphan data={o} key={o.mnemonic} />)}
+            {orphans.map((o) => (
+              <Orphan
+                data={o}
+                key={o.mnemonic}
+                onRemove={() => removeOrphan(o.mnemonic)}
+                onDestroy={() => destroyOrphan(o.mnemonic)}
+              />
+            ))}
           </Disclosure.Panel>
         </>
       )}

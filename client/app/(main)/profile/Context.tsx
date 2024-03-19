@@ -18,8 +18,6 @@ const ProfileContext = createContext<ProfileContextType | null>(null);
 
 export function ProfileWrapper({ children }) {
   const [publicKeys, setPublicKeys] = useState([]);
-  const [tokens, setTokens] = useState([]);
-  const [token, setToken] = useState(null);
   const user = useUser();
 
   const fetchKeys = useCallback(async () => {
@@ -28,14 +26,6 @@ export function ProfileWrapper({ children }) {
       return;
     }
     setPublicKeys(data);
-  }, []);
-
-  const fetchTokens = useCallback(async () => {
-    const result = await api.token.list();
-    if (result.error) {
-      return;
-    }
-    setTokens(result);
   }, []);
 
   const enableKey = useCallback(
@@ -68,65 +58,25 @@ export function ProfileWrapper({ children }) {
     [fetchKeys],
   );
 
-  const generateToken = useCallback(
-    async (scopes, lt) => {
-      const result = await api.token.add(scopes, lt);
-      if (result.error) {
-        return;
-      }
-      setToken(result);
-      fetchTokens();
-    },
-    [setToken, fetchTokens],
-  );
-
-  const removeToken = useCallback(
-    async (t) => {
-      await api.token.remove(t);
-      await fetchTokens();
-    },
-    [fetchTokens],
-  );
-
   useEffect(() => {
     if (user.status !== 'authenticated') {
       return;
     }
-    fetchTokens();
     fetchKeys();
-  }, [user.status, fetchTokens, fetchKeys]);
+  }, [user.status, fetchKeys]);
 
   const contextValue = useMemo(
     () => ({
-      token,
-      tokens,
       enableKey,
       addRootKey,
       removeKey,
       publicKeys,
-      addToken: async (scopes: string[], lifetime: number | null) => {
-        const result = await api.token.add(scopes, lifetime);
-        if (result.error) {
-          return;
-        }
-        setToken(result);
-        fetchTokens();
-      },
-      removeToken: async (tokenId) => {
-        await api.token.remove(tokenId);
-        await fetchTokens();
-      },
-      clearToken: () => setToken(null),
     }),
     [
-      generateToken,
       enableKey,
       addRootKey,
       removeKey,
       publicKeys,
-      token,
-      tokens,
-      fetchTokens,
       fetchKeys,
     ],
   );

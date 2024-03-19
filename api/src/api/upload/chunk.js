@@ -1,6 +1,6 @@
 import Busboy from '@fastify/busboy';
 import {
-  aes, uint8ToBase64, crc, sha256,
+  aes, crc, sha256,
 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 import { readKey } from '../../ephemeral/index.js';
@@ -9,7 +9,7 @@ import { getStorage } from '../../storage/index.js';
 const readHeaders = (ctx) => {
   const digest = ctx.get('Digest');
 
-  const digestRegex = /^sha-256=[a-zA-Z0-9+/]+={0,2}$/;
+  const digestRegex = /^sha-256=[a-zA-Z0-9-_]+={0,2}$/;
   if (!digestRegex.test(digest)) {
     throw new Error(`Invalid digest header ${digest}`);
   }
@@ -59,7 +59,8 @@ const route = async (ctx) => {
     ctx.error('Encryption key not found in ephemeral store');
     return;
   }
-  const iv = await aes.randomIv();
+
+  const iv = await aes.generateIv();
 
   let chunk;
   try {
@@ -71,7 +72,7 @@ const route = async (ctx) => {
       start,
       end,
       size,
-      iv: uint8ToBase64(iv),
+      iv,
     };
   } catch (err) {
     ctx.error(err.message);

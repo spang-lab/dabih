@@ -34,9 +34,9 @@ export default function Dropzone() {
       const key = await crypto.privateKey.fromPEM(text);
       const hash = await crypto.privateKey.toHash(key);
 
-      const { valid, error } = await api.key.check(hash);
+      const { isValid, error } = await api.key.check(hash);
 
-      if (!valid) {
+      if (!isValid) {
         dialog.error(error);
         return;
       }

@@ -7,6 +7,7 @@ export default function useUser() {
   if (status !== 'authenticated') {
     return {
       scopes: [],
+      isAdmin: false,
       status,
     };
   }

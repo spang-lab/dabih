@@ -20,7 +20,7 @@ export default function useKey() {
         return;
       }
       const hash = await crypto.privateKey.toHash(storedKey);
-      const isValid = await api.key.check(hash);
+      const { isValid } = await api.key.check(hash);
       if (!isValid) {
         await storage.deleteKey();
         setKey(null);

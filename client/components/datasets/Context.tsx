@@ -11,21 +11,22 @@ import React, {
 import pLimit from 'p-limit';
 import { useRouter } from 'next/navigation';
 import crypto from '@/lib/crypto';
-import storage from '@/lib/storage';
+import { useKey, useUser } from '@/lib/hooks';
+import api from '@/lib/api';
 import useDialog from '../dialog';
-import { useApi } from '../api';
 
-const DatasetContext = createContext();
+const DatasetContext = createContext(null);
 
 export function DatasetsWrapper({ children }) {
-  const api = useApi();
+  const key = useKey();
+  const user = useUser();
   const dialog = useDialog();
   const router = useRouter();
 
   const limit = 25;
 
-  const [datasets, setDatasets] = useState([]);
-  const [orphans, setOrphans] = useState([]);
+  const [datasets, setDatasets] = useState<any[]>([]);
+  const [orphans, setOrphans] = useState<any[]>([]);
   const [datasetCount, setDatasetCount] = useState(0);
   const [searchParams, setSearchParams] = useState({
     deleted: false,
@@ -34,87 +35,86 @@ export function DatasetsWrapper({ children }) {
     limit: 25,
   });
 
-  const getAesKey = useCallback(async (mnemonic) => {
-    const privateKey = await storage.readKey();
-    const keyHash = await crypto.privateKey.toHash(privateKey);
-    const encryptedKey = await api.fetchKey(mnemonic, keyHash);
-    if (!encryptedKey || encryptedKey.error) {
-      dialog.error(encryptedKey.error);
+  const getAesKey = useCallback(async (mnemonic: string) => {
+    if (!key) {
       return null;
     }
-    return crypto.privateKey.decryptAesKey(privateKey, encryptedKey);
-  }, [dialog, api]);
+    const keyHash = await crypto.privateKey.toHash(key);
+    const result = await api.dataset.key(mnemonic, keyHash);
+    if (result.error) {
+      dialog.error(result.error);
+      return null;
+    }
+    const aesBuffer = await crypto.privateKey.decryptAesKey(key, result.key);
+    return crypto.aesKey.fromUint8(aesBuffer);
+  }, [dialog, key]);
 
   const fetchDatasets = useCallback(async () => {
-    if (!api.isReady()) {
-      return;
-    }
-    const data = await api.searchDatasets(searchParams);
+    const data = await api.dataset.search(searchParams);
     if (data.error) {
       return;
     }
     setDatasets(data.datasets);
     setDatasetCount(data.count);
-  }, [api, searchParams]);
-
-  const fetchOrphans = useCallback(async () => {
-    if (!api.isAdmin()) {
-      return;
+    if (user.isAdmin) {
+      const orph = await api.dataset.listOrphans();
+      setOrphans(orph);
     }
-    const data = await api.admin.listOrphans();
-    setOrphans(data);
-  }, [api]);
+  }, [user.isAdmin, searchParams]);
 
   const removeDataset = useCallback(
-    async (mnemonic) => {
-      await api.removeDataset(mnemonic);
+    async (mnemonic: string) => {
+      await api.dataset.remove(mnemonic);
       await fetchDatasets();
-      await fetchOrphans();
     },
-    [api, fetchDatasets, fetchOrphans],
+    [fetchDatasets],
   );
   const destroyDataset = useCallback(
-    async (mnemonic) => {
-      await api.destroyDataset(mnemonic);
+    async (mnemonic: string) => {
+      await api.dataset.destroy(mnemonic);
       await fetchDatasets();
-      await fetchOrphans();
     },
-    [api, fetchDatasets, fetchOrphans],
+    [fetchDatasets],
   );
   const recoverDataset = useCallback(
     async (mnemonic) => {
-      await api.recoverDataset(mnemonic);
+      await api.dataset.recover(mnemonic);
       await fetchDatasets();
-      await fetchOrphans();
     },
-    [api, fetchDatasets, fetchOrphans],
+    [fetchDatasets],
   );
 
-  const addMembers = useCallback(
-    async (mnemonic, members) => {
-      const aesKey = await getAesKey();
-      const base64 = await crypto.aesKey.toBase64(aesKey);
-      await api.addDatasetMembers(mnemonic, members, base64);
+  const addMember = useCallback(
+    async (mnemonic: string, member: string) => {
+      const aesKey = await getAesKey(mnemonic);
+      if (!aesKey) {
+        return;
+      }
+      const base64 = await crypto.aesKey.toBase64(aesKey!);
+      await api.dataset.addMember(mnemonic, member, base64);
       await fetchDatasets();
     },
-    [api, getAesKey, fetchDatasets],
+    [getAesKey, fetchDatasets],
   );
 
   const reencryptDataset = useCallback(
-    async (mnemonic) => {
-      const aesKey = await getAesKey();
+    async (mnemonic: string) => {
+      const aesKey = await getAesKey(mnemonic);
+      if (!aesKey) {
+        return;
+      }
       const base64 = await crypto.aesKey.toBase64(aesKey);
-      await api.reencryptDataset(mnemonic, base64);
+      await api.dataset.reencrypt(mnemonic, base64);
     },
-    [api, getAesKey],
+    [getAesKey],
   );
 
   const renameDataset = useCallback(
-    async (mnemonic, name) => {
-      await api.renameDataset(mnemonic, name);
+    async (mnemonic: string, name: string) => {
+      await api.dataset.rename(mnemonic, name);
       await fetchDatasets();
     },
-    [api, fetchDatasets],
+    [fetchDatasets],
   );
 
   const setAccess = useCallback(

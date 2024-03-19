@@ -28,7 +28,7 @@ const route = async (ctx) => {
 
   try {
     const { key } = await dataset.findKey(ctx, mnemonic, pubKey.id);
-    ctx.body = key;
+    ctx.body = { key };
   } catch (err) {
     ctx.error(`Dataset ${mnemonic} key does not match pubKey ${keyHash}`);
   }
