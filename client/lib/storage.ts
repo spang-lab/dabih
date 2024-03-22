@@ -39,25 +39,9 @@ const deleteKey = async () => {
   window.dispatchEvent(new Event('storage'));
 };
 
-const useKey = () => {
-  const [key, setKey] = useState<CryptoKey | null>(null);
-  useEffect(() => {
-    const listener = async () => {
-      setKey(await readKey());
-    };
-    listener();
-    window.addEventListener('storage', listener);
-    return () => {
-      window.removeEventListener('storage', listener);
-    };
-  }, []);
-  return key;
-};
-
 const storage = {
   isAvailable,
   storeKey,
-  useKey,
   readKey,
   deleteKey,
 };

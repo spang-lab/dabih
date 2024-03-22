@@ -58,7 +58,7 @@ export default function Header() {
     if (user.status === 'authenticated') {
       return (
         <>
-          <NavLine state={state.profile} />
+          <NavLine />
           <button onClick={() => signOut()} type="button">
             <NavItem href="" state="enabled" label="Sign Out">
               <LogOut size={24} />
@@ -69,7 +69,7 @@ export default function Header() {
     }
     return (
       <>
-        <NavLine state={state.profile} />
+        <NavLine />
         <button onClick={() => signIn()} type="button">
           <NavItem href="" state="enabled" label="Sign In">
             <User size={24} />
@@ -102,23 +102,23 @@ export default function Header() {
         <NavItem href="/" state={state.start} label="Home">
           <Home size={24} />
         </NavItem>
-        <NavLine state={state.signin} />
+        <NavLine />
         <NavItem href="/signin" state={state.signin} label="Account">
           <UserPlus size={24} />
         </NavItem>
-        <NavLine state={state.key} />
+        <NavLine />
         <NavItem href="/key" state={state.key} label="Key">
           <Key size={24} />
         </NavItem>
-        <NavLine state={state.upload} />
+        <NavLine />
         <NavItem href="/upload" state={state.upload} label="Upload">
           <UploadCloud size={24} />
         </NavItem>
-        <NavLine state={state.manage} />
+        <NavLine />
         <NavItem href="/manage" state={state.manage} label="Manage">
           <Share2 size={24} />
         </NavItem>
-        <NavLine state={state.profile} />
+        <NavLine />
         <NavItem href="/profile" state={state.profile} label="Settings">
           <Settings size={24} />
         </NavItem>

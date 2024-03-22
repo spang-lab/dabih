@@ -65,7 +65,6 @@ export default function Actions({ data }) {
     renameDataset,
     destroyDataset,
     recoverDataset,
-    downloadDecryptedDataset,
   } = useDatasets();
   const isAdmin = user ? user.isAdmin : false;
   const canDownload = !deletedAt && permission !== 'none';
@@ -92,17 +91,17 @@ export default function Actions({ data }) {
             <div className="px-1 py-1 ">
               <Action
                 onClick={() => {
-                  router.push(`/download/${mnemonic}`);
+                  router.push(`/download/client/${mnemonic}`);
                 }}
-                className="text-blue"
                 enabled={canDownload}
               >
                 <Download className="mx-2" size={24} />
                 Download
               </Action>
               <Action
-                onClick={() => downloadDecryptedDataset(mnemonic)}
-                className="text-blue"
+                onClick={() => {
+                  router.push(`/download/server/${mnemonic}`);
+                }}
                 enabled={canDownload}
               >
                 <DownloadCloud className="mx-2" size={24} />

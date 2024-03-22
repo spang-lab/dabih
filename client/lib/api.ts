@@ -1,4 +1,4 @@
-const get = async (url: string, isBlob?: boolean) => {
+const get = async (url: string) => {
   try {
     const response = await fetch(`/api/v1${url}`, {
       method: 'GET',
@@ -10,7 +10,8 @@ const get = async (url: string, isBlob?: boolean) => {
       const message = await response.text();
       return { error: message };
     }
-    if (isBlob) {
+    const contentType = response.headers.get('Content-Type');
+    if (contentType === 'application/octet-stream') {
       return await response.blob();
     }
     return await response.json();
@@ -64,7 +65,7 @@ type KeyData = {
 const key = {
   list: () => get('/key/list'),
   add: (keyData: KeyData) => post('/key/add', keyData),
-  check: (keyHash: string) => post('/key/check', { keyHash }),
+  check: (keyHash?: string) => post('/key/check', { keyHash }),
   remove: (keyId: number) => post('/key/remove', { keyId }),
   enable: (keyId: number, enabled: boolean) => post('/key/enable', { keyId, enabled }),
 };
@@ -136,7 +137,7 @@ const dataset = {
   find: (search: FindRequest) => post('/dataset/find', search),
   get: (mnemonic: string) => get(`/dataset/${mnemonic}`),
   key: (mnemonic: string, keyHash: string) => post(`/dataset/${mnemonic}/key`, { keyHash }),
-  chunk: (mnemonic: string, hash: string) => get(`/dataset/${mnemonic}/chunk/${hash}}`),
+  chunk: (mnemonic: string, hash: string) => get(`/dataset/${mnemonic}/chunk/${hash}`),
   remove: (mnemonic: string) => post(`/dataset/${mnemonic}/remove`),
   recover: (mnemonic: string) => post(`/dataset/${mnemonic}/recover`),
   destroy: (mnemonic: string) => post(`/dataset/${mnemonic}/destroy`),
@@ -144,7 +145,7 @@ const dataset = {
   reencrypt: (mnemonic: string, aesKey: string) => post(`/dataset/${mnemonic}/reencrypt`, { key: aesKey }),
   addMember: (mnemonic: string, member: string, aesKey: string) => post(`/dataset/${mnemonic}/member/add`, { member, key: aesKey }),
   setAccess: (mnemonic: string, member: string, permission: string) => post(`/dataset/${mnemonic}/member/set`, { member, permission }),
-  storeKey: (mnemonic: string) => post(`/dataset/${mnemonic}/download`),
+  storeKey: (mnemonic: string, aesKey: string) => post(`/dataset/${mnemonic}/download`, { key: aesKey }),
   listOrphans: () => get('/dataset/orphan/list'),
 };
 

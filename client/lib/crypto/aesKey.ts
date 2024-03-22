@@ -24,7 +24,7 @@ const toBase64 = async (key: CryptoKey) => {
 const fromUint8 = async (data: ArrayBuffer) => crypto.subtle.importKey(
   'raw',
   data,
-  { name: 'AES-CBC ' },
+  { name: 'AES-CBC' },
   true,
   ['decrypt'],
 );

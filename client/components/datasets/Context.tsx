@@ -8,7 +8,6 @@ import React, {
   createContext,
   useContext,
 } from 'react';
-import pLimit from 'p-limit';
 import { useRouter } from 'next/navigation';
 import crypto from '@/lib/crypto';
 import { useKey, useUser } from '@/lib/hooks';
@@ -22,8 +21,6 @@ export function DatasetsWrapper({ children }) {
   const user = useUser();
   const dialog = useDialog();
   const router = useRouter();
-
-  const limit = 25;
 
   const [datasets, setDatasets] = useState<any[]>([]);
   const [orphans, setOrphans] = useState<any[]>([]);
@@ -118,110 +115,30 @@ export function DatasetsWrapper({ children }) {
   );
 
   const setAccess = useCallback(
-    async (mnemonic, user, permission) => {
-      await api.setMemberAccess(mnemonic, user, permission);
+    async (mnemonic: string, member: string, permission: string) => {
+      await api.dataset.setAccess(mnemonic, member, permission);
       await fetchDatasets();
     },
-    [api, fetchDatasets],
-  );
-
-  const downloadChunks = useCallback(
-    async (mnemonic, chunks, aesKey, parallel = 1) => {
-      const plimit = pLimit(parallel);
-      const handleChunk = async (chunk) => {
-        const { iv, data, hash } = chunk;
-        if (data) return chunk;
-        const encrypted = await api.fetchChunk(mnemonic, hash);
-        if (encrypted.error) {
-          return chunk;
-        }
-        const buffer = await data.arrayBuffer();
-        const decrypted = await crypto.aesKey.decrypt(aesKey, iv, buffer);
-        return {
-          ...chunk,
-          data: new Blob([decrypted]),
-        };
-      };
-      const promises = chunks.map(async (chunk) => plimit(() => handleChunk(chunk)));
-      return Promise.all(promises);
-    },
-    [api],
-  );
-
-  const areChunksComplete = (chunks) => {
-    const n = chunks.length;
-    let prevEnd = 0;
-    for (let i = 0; i < n; i += 1) {
-      const chunk = chunks[i];
-      if (!chunk.data) {
-        return false;
-      }
-      if (chunk.start !== prevEnd) {
-        return false;
-      }
-      prevEnd = chunk.end;
-      if (i === n - 1) {
-        return chunk.end === chunk.size;
-      }
-    }
-    return false;
-  };
-
-  const downloadDataset = useCallback(
-    async (mnemonic) => {
-      const aesKey = await getAesKey();
-      const { fileName, chunks } = await api.fetchDataset(mnemonic);
-
-      let dataChunks = await downloadChunks(mnemonic, chunks, aesKey, 5);
-      // Retry any failed downloads
-      dataChunks = await downloadChunks(mnemonic, dataChunks, aesKey, 1);
-
-      if (!areChunksComplete(dataChunks)) {
-        return null;
-      }
-      const blobs = dataChunks.map((c) => c.data);
-      return {
-        file: new Blob(blobs),
-        name: fileName,
-      };
-    },
-    [api, getAesKey, downloadChunks],
-  );
-
-  const downloadDecryptedDataset = useCallback(
-    async (mnemonic) => {
-      const aesKey = await getAesKey();
-      const base64 = await crypto.aesKey.toBase64(aesKey);
-      const { token, error } = await api.storeKey(mnemonic, base64);
-      if (!error) {
-        const url = `/api/v1/dataset/${mnemonic}/download/?token=${token}`;
-        router.push(url);
-      }
-    },
-    [api, getAesKey, router],
+    [fetchDatasets],
   );
 
   useEffect(() => {
     fetchDatasets();
-    fetchOrphans();
-  }, [fetchDatasets, fetchOrphans]);
+  }, [fetchDatasets]);
 
   const contextValue = useMemo(
     () => ({
       datasets,
       orphans,
-      limit,
       datasetCount,
       searchParams,
       setSearchParams,
       removeDataset,
       destroyDataset,
       recoverDataset,
-      downloadDataset,
-      downloadDecryptedDataset,
       reencryptDataset,
       renameDataset,
-      addMembers,
+      addMember,
       setAccess,
     }),
     [
@@ -233,11 +150,9 @@ export function DatasetsWrapper({ children }) {
       removeDataset,
       recoverDataset,
       destroyDataset,
-      downloadDataset,
-      downloadDecryptedDataset,
       renameDataset,
       reencryptDataset,
-      addMembers,
+      addMember,
       setAccess,
     ],
   );

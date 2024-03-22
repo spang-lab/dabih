@@ -4,7 +4,21 @@ const route = async (ctx) => {
   const { sub } = ctx.data;
   const { keyHash } = ctx.request.body;
   if (!keyHash) {
-    ctx.error('No key hash in body');
+    const keys = await publicKey.list(ctx, {
+      sub,
+      isRootKey: false,
+    });
+    if (keys.length === 0) {
+      ctx.body = {
+        status: 'unregistered',
+        error: `User ${sub} has no registered keys`,
+      };
+      return;
+    }
+    ctx.body = {
+      status: 'unloaded',
+      error: `User ${sub} has a public key, but no keyHash was provided in the body.`,
+    };
     return;
   }
   const key = await publicKey.find(ctx, {
@@ -14,18 +28,20 @@ const route = async (ctx) => {
 
   if (!key) {
     ctx.body = {
-      isValid: false,
-      error: `Key with hash ${keyHash} is not registered for your account ${sub}`,
+      status: 'invalid',
+      error: `Key with hash ${keyHash} is not registered for the account ${sub}`,
     };
     return;
   }
   if (!key.enabled) {
     ctx.body = {
-      isValid: false,
-      error: `Key with hash ${keyHash} has not been confirmed by an admin yet.`,
+      status: 'disabled',
+      error: `Key with hash ${keyHash} has not been enabled by an admin yet.`,
     };
     return;
   }
-  ctx.body = { isValid: true };
+  ctx.body = {
+    status: 'active',
+  };
 };
 export default route;

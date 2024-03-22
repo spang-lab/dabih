@@ -17,11 +17,11 @@ export default function Orphans() {
     setOrphans(data);
   }, []);
 
-  const removeOrphan = async (mnemonic) => {
+  const removeOrphan = async (mnemonic: string) => {
     await api.dataset.remove(mnemonic);
     await fetchOrphans();
   };
-  const destroyOrphan = async (mnemonic) => {
+  const destroyOrphan = async (mnemonic: string) => {
     await api.dataset.destroy(mnemonic);
     await fetchOrphans();
   };

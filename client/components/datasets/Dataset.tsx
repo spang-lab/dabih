@@ -7,9 +7,9 @@ import {
 import {
   Bytes, LocalDate, TimeSince,
 } from '../util';
-import Download from './Download';
 import Members from './Members';
 import DatasetActions from './DatasetActions';
+import DownloadButton from './DownloadButton';
 
 export default function Dataset({ data }) {
   const {
@@ -131,7 +131,7 @@ export default function Dataset({ data }) {
             <Members data={data} />
           </div>
           <div className="px-3 py-2 flex flex-row">
-            <Download size={size} mnemonic={mnemonic} enabled={!deletedAt && permission !== 'none'} />
+            <DownloadButton mnemonic={mnemonic} enabled={!deletedAt && permission !== 'none'} />
             <DatasetActions data={data} />
           </div>
         </div>

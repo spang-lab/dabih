@@ -109,13 +109,10 @@ export default function Upload({ disabled }) {
         size,
         data: blob,
         hash,
-
       });
-
       if (chunk.error) {
         return;
       }
-
       setUpload({
         ...upload,
         chunks: [...chunks, chunk],

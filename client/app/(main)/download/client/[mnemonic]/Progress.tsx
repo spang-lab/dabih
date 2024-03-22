@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { formatBytes } from '../util';
+import { formatBytes } from '@/components';
 
 export default function DownloadProgress(props) {
   const { current, total, fileName } = props;
@@ -35,18 +35,20 @@ export default function DownloadProgress(props) {
           className="text-gray-400"
         />
 
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
-          stroke="currentColor"
-          strokeWidth={width}
-          fill="transparent"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          className="text-blue -rotate-90 origin-center"
-        />
+        <g transform={`rotate(-90, ${center}, ${center})`}>
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            stroke="currentColor"
+            strokeWidth={width}
+            fill="transparent"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            className="text-blue"
+          />
+        </g>
         <text
           x={center}
           dx={-50}

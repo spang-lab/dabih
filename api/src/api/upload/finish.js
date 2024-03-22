@@ -1,6 +1,7 @@
 import { sha256 } from '../../crypto/index.js';
 import { dataset } from '../../database/index.js';
 import { getStorage } from '../../storage/init.js';
+import { deleteKey } from '../../ephemeral/index.js';
 
 const areChunksComplete = (chunks) => {
   const n = chunks.length;
@@ -32,6 +33,8 @@ const route = async (ctx) => {
 
   const { size } = chunks[0];
   const fullHash = sha256.hashChunks(chunks);
+
+  await deleteKey(mnemonic);
 
   await dataset.update(ctx, mnemonic, {
     hash: fullHash,
