@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 import useDownload from '@/lib/hooks/download';
-import { useDialog } from '@/components';
+import useDialog from '@/app/dialog';
 import Progress from './Progress';
 
 export default function Download() {

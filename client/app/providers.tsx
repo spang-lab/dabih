@@ -1,19 +1,19 @@
 'use client';
 
-import { SessionProvider } from 'next-auth/react';
+import {
+  DialogWrapper,
+} from './dialog/Context';
 
 import {
-  DialogWrapper, ApiWrapper,
-} from '../components';
+  SessionWrapper,
+} from './session';
 
 export default function Providers({ children }) {
   return (
-    <SessionProvider>
+    <SessionWrapper>
       <DialogWrapper>
-        <ApiWrapper>
-          {children}
-        </ApiWrapper>
+        {children}
       </DialogWrapper>
-    </SessionProvider>
+    </SessionWrapper>
   );
 }

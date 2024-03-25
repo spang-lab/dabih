@@ -2,16 +2,17 @@
 
 import React from 'react';
 import { Trash2, Key } from 'react-feather';
-import { Switch, useDialog, LocalDate } from '@/components';
-import { useUser } from '@/lib/hooks';
+import { Switch, LocalDate } from '@/app/util';
+import useDialog from '@/app/dialog';
+import useSession from '@/app/session';
 
 export default function PublicKey({ data, onRemove, onEnable }) {
   const {
     name, sub, email, hash, enabled, createdAt, isRootKey,
   } = data;
   const { openDialog } = useDialog();
-  const user = useUser();
   const isEnabled = !!enabled || isRootKey;
+  const { isAdmin } = useSession();
 
   const getState = () => {
     if (isEnabled || isRootKey) {
@@ -21,7 +22,7 @@ export default function PublicKey({ data, onRemove, onEnable }) {
   };
 
   const getSwitch = () => {
-    if (isRootKey || user.status !== 'authenticated' || !user.isAdmin) {
+    if (isRootKey || !isAdmin) {
       return null;
     }
 

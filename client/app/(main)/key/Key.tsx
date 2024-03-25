@@ -1,52 +1,32 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Clock } from 'react-feather';
 import {
   Spinner, AdminContact,
-} from '@/components';
-import { useKey, useUser } from '@/lib/hooks';
-import api from '@/lib/api';
+} from '@/app/util';
 import { useRouter } from 'next/navigation';
+import useSession from '@/app/session';
 import LoadKey from './LoadKey';
 import CreateKey from './CreateKey';
 
 export default function Key() {
-  const user = useUser();
-  const key = useKey();
   const router = useRouter();
-  const [state, setState] = useState('loading');
+  const {
+    keyStatus,
+  } = useSession();
 
-  const setKeyState = useCallback(async () => {
-    if (user.status !== 'authenticated') {
-      setState('loading');
-      return;
-    }
-    if (key) {
+  useEffect(() => {
+    if (keyStatus === 'active') {
       router.push('/manage');
       return;
     }
-
-    const keys = await api.key.list();
-    const match = keys
-      .filter((k) => !k.isRootKey)
-      .find((u) => u.sub === user.sub);
-    if (!match) {
-      setState('no_key');
-      return;
+    if (keyStatus === 'unauthenticated') {
+      router.push('/signin');
     }
-    if (match.enabled) {
-      setState('has_key');
-      return;
-    }
-    setState('unconfirmed_key');
-  }, [user, key, router]);
+  }, [keyStatus, router]);
 
-  useEffect(() => {
-    setKeyState();
-  }, [user, setKeyState]);
-
-  if (state === 'unconfirmed_key') {
+  if (keyStatus === 'disabled') {
     return (
       <div className="py-10 text-center">
         <Clock className="inline-block m-2 text-blue" size={80} />
@@ -66,15 +46,15 @@ export default function Key() {
       </div>
     );
   }
-  if (state === 'has_key') {
+  if (keyStatus === 'unloaded') {
     return (
-      <LoadKey onChange={setKeyState} />
+      <LoadKey />
     );
   }
 
-  if (state === 'no_key') {
+  if (keyStatus === 'unregistered') {
     return (
-      <CreateKey onChange={setKeyState} />
+      <CreateKey />
     );
   }
   // loading

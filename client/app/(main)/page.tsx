@@ -1,7 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Department, Organization } from '@/components';
+import Department from './Department';
+import Organization from './Organization';
 import BrowserSupport from './BrowserSupport';
 
 export default function Home() {

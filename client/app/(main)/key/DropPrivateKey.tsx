@@ -9,7 +9,7 @@ import { Key, File, FilePlus } from 'react-feather';
 import { useRouter } from 'next/navigation';
 import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
-import { useDialog } from '@/components';
+import useDialog from '@/app/dialog';
 import api from '@/lib/api';
 
 export default function Dropzone() {

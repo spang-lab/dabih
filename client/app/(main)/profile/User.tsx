@@ -5,14 +5,14 @@ import React, { useEffect, useState } from 'react';
 import {
   LogOut, User, Key, XCircle,
 } from 'react-feather';
-import { useKey, useUser } from '@/lib/hooks';
 import storage from '@/lib/storage';
-import { LocalDate } from '@/components';
 import crypto from '@/lib/crypto';
 import Link from 'next/link';
+import { LocalDate } from '@/app/util';
+import useSession from '@/app/session';
 
 function CryptoKey() {
-  const key = useKey();
+  const { key } = useSession();
   const [hash, setHash] = useState<string | null>(null);
 
   useEffect(() => {

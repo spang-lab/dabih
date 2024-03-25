@@ -7,15 +7,18 @@ import { useDropzone } from 'react-dropzone';
 
 import { Lock, File, FilePlus } from 'react-feather';
 import crypto from '@/lib/crypto';
-import { useDialog } from '@/components';
 import api from '@/lib/api';
-import { useUser } from '@/lib/hooks';
+import useDialog from '@/app/dialog';
+import useSession from '@/app/session';
 
 export default function DropPublicKey({ onKey }) {
   const dialog = useDialog();
-  const user = useUser();
+  const { user, status } = useSession();
 
   const onDrop = async (files: File[]) => {
+    if (status !== 'authenticated' || !user) {
+      return;
+    }
     if (!files || !files.length) {
       return;
     }

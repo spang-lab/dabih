@@ -2,17 +2,19 @@
 
 import React from 'react';
 import { Cpu } from 'react-feather';
-import { useDialog } from '@/components';
 import api from '@/lib/api';
-import { useUser } from '@/lib/hooks';
+import useDialog from '@/app/dialog';
+import useSession from '@/app/session';
 import DropPublicKey from './DropPublicKey';
 
 export default function CreateKey({ onChange }) {
-  const { openDialog, dialog } = useDialog();
-  const user = useUser();
+  const dialog = useDialog();
+  const {
+    user, status,
+  } = useSession();
 
   const onGenerate = async (publicKey: string, error?: string) => {
-    if (user.status !== 'authenticated') {
+    if (status !== 'authenticated' || !user) {
       return;
     }
     const { name, email } = user;
@@ -28,7 +30,7 @@ export default function CreateKey({ onChange }) {
     });
     onChange();
   };
-  if (user.status !== 'authenticated') {
+  if (status !== 'authenticated') {
     return null;
   }
 
@@ -46,7 +48,7 @@ export default function CreateKey({ onChange }) {
               <button
                 className="px-8 py-4 text-2xl bg-blue text-white rounded-xl"
                 type="button"
-                onClick={() => openDialog('generate', {
+                onClick={() => dialog.openDialog('generate', {
                   shake: true,
                   onSubmit: onGenerate,
                 })}

@@ -1,6 +1,6 @@
 const get = async (url: string) => {
   try {
-    const response = await fetch(`/api/v1${url}`, {
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/v1${url}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ const get = async (url: string) => {
 
 const post = async (url: string, data?: object) => {
   try {
-    const response = await fetch(`/api/v1${url}`, {
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/v1${url}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ const post = async (url: string, data?: object) => {
 };
 const put = async (url: string, data: any, headers: any) => {
   try {
-    const response = await fetch(`/api/v1${url}`, {
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/v1${url}`, {
       method: 'PUT',
       headers,
       body: data,
@@ -120,6 +120,7 @@ type SearchRequest = {
   all?: boolean,
   page: number,
   limit: number,
+  column?: string,
   direction?: string,
 };
 type FindRequest = {

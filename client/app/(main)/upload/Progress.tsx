@@ -1,11 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Bytes } from '@/components';
+import { Bytes } from '@/app/util';
 
-export default function DownloadProgress(props) {
-  const { current, total, fileName } = props;
-  if (!fileName || !total) {
+export default function UploadProgress(props: any) {
+  const {
+    current, total, fileName, running,
+  } = props;
+  if (!current && current !== 0) {
+    return null;
+  }
+  if (!total && total !== 0) {
     return null;
   }
 
@@ -17,10 +22,24 @@ export default function DownloadProgress(props) {
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - percent / 100);
 
+  const getLoader = () => {
+    if (running) {
+      return (
+        <div className="animate-upload mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded m-4  box-border" />
+      );
+    }
+    return (
+      <div className="text-center p-2 text-gray-500">
+        <p className="font-bold text-red">Upload has been interrupted.</p>
+        Select the file again to continue uploading.
+      </div>
+    );
+  };
+
   return (
     <div className="w-1/2 pt-5 mx-auto">
       <p className="p-3 text-xl text-center text-gray-400">
-        Downloading file &quot;
+        Uploading file &quot;
         {fileName}
         &quot;
       </p>
@@ -32,7 +51,7 @@ export default function DownloadProgress(props) {
           stroke="currentColor"
           strokeWidth={width}
           fill="transparent"
-          className="text-gray-400"
+          className="text-gray-300 origin-center"
         />
 
         <g transform={`rotate(-90, ${center}, ${center})`}>
@@ -89,7 +108,7 @@ export default function DownloadProgress(props) {
         </text>
       </svg>
       <div>
-        <div className="animate-download mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded m-4  box-border" />
+        {getLoader()}
       </div>
     </div>
   );

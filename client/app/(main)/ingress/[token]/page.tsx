@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Copy } from 'react-feather';
-import { Upload as Uploader, useApi } from '@/components';
+import api from '@/lib/api';
 import {
   MacAppDownload, WindowsDownload, MacDmgDownload, LinuxAppDownload, LinuxDebDownload,
 } from './DownloadLink';
@@ -23,15 +23,13 @@ export default function Upload() {
     navigator.clipboard.writeText(url);
   };
 
-  const api = useApi();
-
   useEffect(() => {
     const fetchUser = async () => {
-      const u = await api.getUser();
+      const u = await api.token.get();
       setUser(u);
     };
     fetchUser();
-  }, [api]);
+  }, []);
 
   useEffect(() => {
     setUrl(window.location.href);
@@ -200,7 +198,7 @@ export default function Upload() {
         </span>
         {getName()}
       </p>
-      <Uploader disabled={!agreed} />
+      TODO
     </div>
   );
 }

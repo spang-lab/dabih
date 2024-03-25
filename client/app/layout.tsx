@@ -2,10 +2,10 @@ import { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import './globals.css';
 
-import {
-  Header, Footer,
-} from '../components';
 import Providers from './providers';
+import Header from './Header';
+import Footer from './Footer';
+
 
 export const metadata: Metadata = {
   title: 'Spang Lab Dabih',

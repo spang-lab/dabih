@@ -4,29 +4,28 @@ import React from 'react';
 
 import { Camera } from 'react-feather';
 import Image from 'next/image';
-import useDialog from '@/components/dialog';
 import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import { useRouter } from 'next/navigation';
-import { useApi } from '@/components';
+import api from '@/lib/api';
+import useDialog from '@/app/dialog';
 import DropPrivateKey from './DropPrivateKey';
 
 export default function LoadKey() {
   const dialog = useDialog();
   const router = useRouter();
-  const api = useApi();
 
-  const onKey = async (data) => {
+  const onKey = async (data: string) => {
     try {
       const key = await crypto.privateKey.fromJSON(data);
       const hash = await crypto.privateKey.toHash(key);
-      const { valid, error } = await api.checkPublicKey(hash);
-      if (!valid) {
+      const { status, error } = await api.key.check(hash);
+      if (status !== 'active') {
         dialog.error(error);
       }
       await storage.storeKey(key);
       router.push('/manage');
-    } catch (err) {
+    } catch (err: any) {
       dialog.error(err.toString());
     }
   };

@@ -15,11 +15,12 @@ type SearchParams = {
   all: boolean,
   page: number,
   limit: number,
+  column?: string,
   direction?: string,
 };
 
 export default function useDatasets() {
-  const [datasets, setDatasets] = useState<Dataset[]>();
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [datasetCount, setDatasetCount] = useState<number>(0);
   const [searchParams, setSearchParams] = useState<SearchParams>({
     deleted: false,
@@ -28,7 +29,7 @@ export default function useDatasets() {
     limit: 25,
   });
 
-  const key = useKey();
+  const { key } = useKey();
   const { status } = useSession();
 
   const getAesKey = async (mnemonic: string) => {
@@ -69,6 +70,27 @@ export default function useDatasets() {
     await fetchDatasets();
   };
 
+  const rename = async (mnemonic: string, name: string) => {
+    await api.dataset.rename(mnemonic, name);
+    await fetchDatasets();
+  };
+
+  const remove = async (mnemonic: string) => {
+    await api.dataset.remove(mnemonic);
+    await fetchDatasets();
+  };
+  const recover = async (mnemonic: string) => {
+    await api.dataset.recover(mnemonic);
+    await fetchDatasets();
+  };
+  const destroy = async (mnemonic: string) => {
+    await api.dataset.destroy(mnemonic);
+    await fetchDatasets();
+  };
+  const reencrypt = async (mnemonic: string) => {
+    throw new Error(`unimplemented reencrypt ${mnemonic}`);
+  };
+
   useEffect(() => {
     if (status !== 'authenticated') {
       return;
@@ -83,5 +105,10 @@ export default function useDatasets() {
     searchParams,
     addMember,
     setAccess,
+    rename,
+    remove,
+    recover,
+    reencrypt,
+    destroy,
   };
 }
