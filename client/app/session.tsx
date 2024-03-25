@@ -42,6 +42,7 @@ type Session = {
   isAdmin: boolean,
   key?: CryptoKey,
   expires?: string,
+  error?: string,
 };
 
 const SessionContext = createContext<Session>({

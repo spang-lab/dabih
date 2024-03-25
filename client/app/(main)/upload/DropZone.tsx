@@ -33,7 +33,7 @@ export default function Dropzone({ onChange, disabled }) {
           <button
             disabled={disabled}
             type="button"
-            className="px-3 py-2 text-xl bg-blue rounded-xl text-white"
+            className="px-5 py-3 text-3xl bg-blue rounded-xl text-white"
           >
             Upload
           </button>

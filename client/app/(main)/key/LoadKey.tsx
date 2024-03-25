@@ -7,6 +7,7 @@ import Image from 'next/image';
 import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import useDialog from '@/app/dialog';
+import api from '@/lib/api';
 import DropPrivateKey from './DropPrivateKey';
 
 export default function LoadKey() {
@@ -15,6 +16,12 @@ export default function LoadKey() {
   const onKey = async (data: string) => {
     try {
       const key = await crypto.privateKey.fromJSON(data);
+      const hash = await crypto.privateKey.toHash(key);
+      const result = await api.key.check(hash);
+      if (result.error) {
+        dialog.error(result.error);
+        return;
+      }
       await storage.storeKey(key);
     } catch (err: any) {
       dialog.error(err.toString());

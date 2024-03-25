@@ -156,6 +156,7 @@ const dataset = {
 };
 
 const info = () => get('/info');
+const healthy = () => get('/healthy');
 
 const api = {
   upload,
@@ -163,5 +164,6 @@ const api = {
   key,
   token,
   info,
+  healthy,
 };
 export default api;

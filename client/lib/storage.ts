@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import crypto from './crypto';
 
 const isAvailable = () => {

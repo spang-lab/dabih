@@ -9,6 +9,7 @@ import { Key, File, FilePlus } from 'react-feather';
 import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import useDialog from '@/app/dialog';
+import api from '@/lib/api';
 
 export default function Dropzone() {
   const dialog: any = useDialog();
@@ -23,15 +24,21 @@ export default function Dropzone() {
     const [file] = files;
     const maxSize = 10 * 1024; // 10KiB
     if (file.size > maxSize) {
-      dialog.error('File is too large to be a public key');
+      dialog.error('File is too large to be a private key');
       return;
     }
     const text = await file.text();
     try {
       const key = await crypto.privateKey.fromPEM(text);
+      const hash = await crypto.privateKey.toHash(key);
+      const result = await api.key.check(hash);
+      if (result.error) {
+        dialog.error(result.error);
+        return;
+      }
       await storage.storeKey(key);
-    } catch (err) {
-      dialog.error('File is not a valid public key');
+    } catch (err: any) {
+      dialog.error(err.toString());
     }
   };
 

@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import useDatasets from './Context';
+import useDatasets, { DatasetsWrapper } from './Context';
 import SearchBar from './SearchBar';
 import Pagination from './Pagination';
 import Dataset from './Dataset';
 
-export default function Manage() {
+function Manage() {
   const { datasets, datasetCount } = useDatasets();
 
   const getMessage = () => {
@@ -43,5 +43,12 @@ export default function Manage() {
         <Pagination />
       </div>
     </div>
+  );
+}
+export default function Page() {
+  return (
+    <DatasetsWrapper>
+      <Manage />
+    </DatasetsWrapper>
   );
 }
