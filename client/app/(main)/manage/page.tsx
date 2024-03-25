@@ -1,7 +1,7 @@
 'use client';
 
-import useDatasets from '@/lib/hooks/datasets';
 import Link from 'next/link';
+import useDatasets from './Context';
 import SearchBar from './SearchBar';
 import Pagination from './Pagination';
 import Dataset from './Dataset';

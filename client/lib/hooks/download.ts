@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import useKey from './key';
+import useSession from '@/app/session';
 import api from '../api';
 import crypto from '../crypto';
 
@@ -41,7 +41,7 @@ type DownloadStatus = {
 };
 
 export default function useDownload() {
-  const key = useKey();
+  const { key } = useSession();
   const [state, setState] = useState<DownloadState | null>(null);
   const [isStopped, setStopped] = useState<boolean>(false);
 

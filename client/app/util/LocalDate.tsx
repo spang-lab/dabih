@@ -1,13 +1,9 @@
-'use client';
-
-import React from 'react';
-
 export default function LocalDate({ value, showTime = true }) {
   if (!value) {
     return null;
   }
   const locale = process.env.LOCALE || 'de-DE';
-  let date;
+  let date: Date | null = null;
   if (typeof value === 'number') {
     date = new Date(value);
   }
@@ -15,6 +11,16 @@ export default function LocalDate({ value, showTime = true }) {
     const dateString = value.replace(/\s\+/, '+');
     date = new Date(dateString);
   }
+  if (!date) {
+    return (
+      <span>
+        Invalid date value
+        {' '}
+        {value}
+      </span>
+    );
+  }
+
   if (showTime) {
     return (
       <span>

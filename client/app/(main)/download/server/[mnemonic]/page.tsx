@@ -3,16 +3,16 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useKey } from '@/lib/hooks';
 import api from '@/lib/api';
 import crypto from '@/lib/crypto';
-import { useDialog } from '@/components';
+import useDialog from '@/app/dialog';
+import useSession from '@/app/session';
 
 export default function Download() {
   const { mnemonic } = useParams<{ mnemonic: string }>();
-  const key = useKey();
   const dialog = useDialog();
   const router = useRouter();
+  const { key } = useSession();
 
   useEffect(() => {
     (async () => {

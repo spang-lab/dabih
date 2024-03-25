@@ -3,10 +3,11 @@
 import React, { useEffect } from 'react';
 import { Clock } from 'react-feather';
 import {
-  Spinner, AdminContact,
+  Spinner,
 } from '@/app/util';
 import { useRouter } from 'next/navigation';
 import useSession from '@/app/session';
+import Link from 'next/link';
 import LoadKey from './LoadKey';
 import CreateKey from './CreateKey';
 
@@ -40,9 +41,9 @@ export default function Key() {
           <span className="text-blue"> unlocked </span>
           by a dabih admin.
           <br />
-          For now please contact the admin via email:
+          For now please contact the admin
         </div>
-        <AdminContact />
+        <Link className="text-blue text-lg font-bold hover:underline" href="/docs/contact">Contact</Link>
       </div>
     );
   }

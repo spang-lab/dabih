@@ -3,7 +3,7 @@
 import React, { Fragment, useState } from 'react';
 import { Combobox, Transition } from '@headlessui/react';
 import { ChevronsDown, UserPlus, User } from 'react-feather';
-import { useDatasets } from '@/lib/hooks';
+import useDatasets from './Context';
 
 function MemberOption({ option }) {
   const { name, email, sub } = option;

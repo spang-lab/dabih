@@ -1,9 +1,9 @@
 'use client';
 
-import { useUser } from '@/lib/hooks';
 import { Dialog, Listbox } from '@headlessui/react';
 import { useState } from 'react';
 import { ChevronDown } from 'react-feather';
+import useSession from '@/app/session';
 import { Switch } from '../util';
 
 const timeToSeconds = (timeString: string) => {
@@ -48,8 +48,10 @@ const lifetimeOptions = [
 
 export default function CreateToken({ ctx, closeDialog }) {
   const { onSubmit } = ctx;
-  const user = useUser();
-  const [scopes, setScopes] = useState<any>(user.scopes.reduce((acc, scope) => {
+  const { user, status } = useSession();
+
+  const uScopes = user?.scopes || [];
+  const [scopes, setScopes] = useState<any>(uScopes.reduce((acc, scope) => {
     acc[scope] = true;
     return acc;
   }, {}));
@@ -78,7 +80,7 @@ export default function CreateToken({ ctx, closeDialog }) {
     setScopes(newScopes);
   };
 
-  if (user.status !== 'authenticated') {
+  if (status !== 'authenticated') {
     return null;
   }
 

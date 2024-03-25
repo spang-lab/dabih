@@ -73,12 +73,15 @@ function CryptoKey() {
 }
 
 export default function Account() {
-  const user = useUser();
-  if (user.status !== 'authenticated') {
+  const {
+    user, status, isAdmin, expires,
+  } = useSession();
+
+  if (status !== 'authenticated' || !user) {
     return null;
   }
   const {
-    sub, name, email, scopes, isAdmin, expires,
+    sub, name, email, scopes,
   } = user;
 
   return (

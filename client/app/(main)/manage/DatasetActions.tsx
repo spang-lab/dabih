@@ -15,9 +15,9 @@ import {
   DownloadCloud,
 } from 'react-feather';
 import { useRouter } from 'next/navigation';
-import useDatasets from '@/lib/hooks/datasets';
 import useDialog from '@/app/dialog';
 import useSession from '@/app/session';
+import useDatasets from './Context';
 
 function Action({
   children, enabled, onClick, show = true,

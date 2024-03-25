@@ -67,7 +67,11 @@ function SessionProvider({ children }) {
       const storedKey = await storage.readKey();
       if (!storedKey) {
         const result = await api.key.check();
-        setKey({ status: result.status });
+        if (result.status === 'unregistered' || result.status === 'unloaded') {
+          setKey({ status: result.status });
+        } else {
+          throw new Error(`Got unexpected key state ${result.status}`);
+        }
         return;
       }
       const hash = await crypto.privateKey.toHash(storedKey);

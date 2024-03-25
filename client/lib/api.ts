@@ -1,6 +1,11 @@
+const getUrl = (path: string) => {
+  const host = process.env.NEXTAUTH_URL || '';
+  return `${host}/api/v1/${path}`;
+};
+
 const get = async (url: string) => {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/v1${url}`, {
+    const response = await fetch(getUrl(url), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +27,7 @@ const get = async (url: string) => {
 
 const post = async (url: string, data?: object) => {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/v1${url}`, {
+    const response = await fetch(getUrl(url), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,7 +45,7 @@ const post = async (url: string, data?: object) => {
 };
 const put = async (url: string, data: any, headers: any) => {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/v1${url}`, {
+    const response = await fetch(getUrl(url), {
       method: 'PUT',
       headers,
       body: data,

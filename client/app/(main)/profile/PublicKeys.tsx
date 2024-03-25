@@ -2,16 +2,18 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import api from '@/lib/api';
-import { Switch, useDialog } from '@/components';
-import { useUser } from '@/lib/hooks';
 import { Plus } from 'react-feather';
+import { Switch } from '@/app/util';
+import useDialog from '@/app/dialog';
+import useSession from '@/app/session';
 import PublicKey from './PublicKey';
 
 export default function PublicKeys() {
   const [publicKeys, setPublicKeys] = useState<any[]>([]);
   const [rootOnly, setRootOnly] = useState<boolean>(false);
   const dialog = useDialog();
-  const user = useUser();
+
+  const { user, status, isAdmin } = useSession();
 
   const fetchKeys = useCallback(async () => {
     const data = await api.key.list();
@@ -33,7 +35,7 @@ export default function PublicKeys() {
   };
 
   const addKey = async (key: any) => {
-    if (user.status !== 'authenticated') {
+    if (status !== 'authenticated' || !user) {
       return;
     }
     const { name, email } = user;
@@ -61,7 +63,7 @@ export default function PublicKeys() {
   };
 
   const getButton = () => {
-    if (user.status !== 'authenticated' || !user.isAdmin) {
+    if (isAdmin) {
       return null;
     }
     return (
@@ -81,11 +83,11 @@ export default function PublicKeys() {
   };
 
   useEffect(() => {
-    if (user.status !== 'authenticated') {
+    if (status !== 'authenticated') {
       return;
     }
     fetchKeys();
-  }, [user.status, fetchKeys]);
+  }, [status, fetchKeys]);
 
   return (
     <div className="py-2">

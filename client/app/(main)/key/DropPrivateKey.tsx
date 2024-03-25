@@ -6,14 +6,11 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { Key, File, FilePlus } from 'react-feather';
-import { useRouter } from 'next/navigation';
 import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import useDialog from '@/app/dialog';
-import api from '@/lib/api';
 
 export default function Dropzone() {
-  const router = useRouter();
   const dialog: any = useDialog();
   const onDrop = async (files: File[]) => {
     if (!files || !files.length) {
@@ -32,16 +29,7 @@ export default function Dropzone() {
     const text = await file.text();
     try {
       const key = await crypto.privateKey.fromPEM(text);
-      const hash = await crypto.privateKey.toHash(key);
-
-      const { isValid, error } = await api.key.check(hash);
-
-      if (!isValid) {
-        dialog.error(error);
-        return;
-      }
       await storage.storeKey(key);
-      router.push('/manage');
     } catch (err) {
       dialog.error('File is not a valid public key');
     }

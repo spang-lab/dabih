@@ -34,6 +34,7 @@ export default function Header() {
     status,
     keyStatus,
   } = useSession();
+
   const page = usePage();
 
   const getState = () => {

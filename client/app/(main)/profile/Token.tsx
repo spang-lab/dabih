@@ -2,9 +2,9 @@
 
 import React from 'react';
 import {
-  Trash2, Terminal, Upload, Download,
+  Trash2, Terminal,
 } from 'react-feather';
-import { LocalDate } from '@/components';
+import { LocalDate } from '@/app/util';
 
 export default function Token({ data, onRemove }) {
   const {

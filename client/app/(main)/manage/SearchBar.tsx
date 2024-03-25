@@ -2,12 +2,13 @@
 
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Switch } from '@headlessui/react';
-import { useUser, useDatasets } from '@/lib/hooks';
+import useSession from '@/app/session';
+import useDatasets from './Context';
 import SortBy from './SortBy';
 
 function AdminOptions() {
   const { searchParams, setSearchParams } = useDatasets();
-  const user = useUser();
+  const { isAdmin } = useSession();
 
   const { all, deleted } = searchParams;
   const toggleDeleted = () => {
@@ -26,7 +27,7 @@ function AdminOptions() {
     });
   };
 
-  if (!user || !user.isAdmin) {
+  if (!isAdmin) {
     return null;
   }
   return (

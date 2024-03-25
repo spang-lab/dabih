@@ -4,12 +4,12 @@ import { Disclosure } from '@headlessui/react';
 
 import { useCallback, useState, useEffect } from 'react';
 import { ChevronRight } from 'react-feather';
-import { useUser } from '@/lib/hooks';
 import api from '@/lib/api';
+import useSession from '@/app/session';
 import Orphan from './Orphan';
 
 export default function Orphans() {
-  const user = useUser();
+  const { isAdmin } = useSession();
   const [orphans, setOrphans] = useState<any[]>([]);
 
   const fetchOrphans = useCallback(async () => {
@@ -27,11 +27,11 @@ export default function Orphans() {
   };
 
   useEffect(() => {
-    if (!user.isAdmin) {
+    if (!isAdmin) {
       return;
     }
     fetchOrphans();
-  }, [user.status, user.isAdmin, fetchOrphans]);
+  }, [isAdmin, fetchOrphans]);
 
   const count = orphans.length;
   if (count === 0) {

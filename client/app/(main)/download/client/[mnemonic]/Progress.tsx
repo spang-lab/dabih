@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Bytes } from '@/components';
+import { Bytes } from '@/app/util';
 
 export default function DownloadProgress(props) {
   const { current, total, fileName } = props;

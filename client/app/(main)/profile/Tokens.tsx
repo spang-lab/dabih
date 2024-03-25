@@ -2,14 +2,13 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Plus } from 'react-feather';
-import { useDialog } from '@/components';
-import { useSession } from 'next-auth/react';
 import api from '@/lib/api';
-import TokenModal from './TokenModal';
+import useDialog from '@/app/dialog';
+import useSession from '@/app/session';
 import Token from './Token';
 
 export default function Tokens() {
-  const [tokens, setTokens] = useState<any>([]);
+  const [tokens, setTokens] = useState<any[]>([]);
   const dialog = useDialog();
   const { status } = useSession();
 
@@ -67,7 +66,6 @@ export default function Tokens() {
         <Plus size={24} className="mr-1" />
         Generate an new Token
       </button>
-      <TokenModal />
     </div>
   );
 }

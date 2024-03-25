@@ -3,7 +3,7 @@
 import React from 'react';
 import { RefreshCw, Trash2, User } from 'react-feather';
 import { Switch } from '@headlessui/react';
-import useDatasets from '@/lib/hooks/datasets';
+import useDatasets from './Context';
 
 export default function Member({ data, dataset }) {
   const { mnemonic } = dataset;

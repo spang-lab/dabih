@@ -3,7 +3,7 @@
 import {
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
 } from 'react-feather';
-import { useDatasets } from '@/lib/hooks';
+import useDatasets from './Context';
 
 function PageButton({ value, active }) {
   const { searchParams, setSearchParams } = useDatasets();

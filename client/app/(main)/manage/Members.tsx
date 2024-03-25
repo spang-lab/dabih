@@ -3,18 +3,31 @@
 import React from 'react';
 import { Disclosure } from '@headlessui/react';
 import { Users, ChevronRight } from 'react-feather';
-import { useUsers } from '@/lib/hooks';
 import AddMember from './AddMember';
 import Member from './Member';
+import useDatasets from './Context';
 
-const resolveMembers = (users, mems) => {
+type User = {
+  sub: string,
+  name: string,
+  email: string,
+};
+
+type MemberType = {
+  sub: string,
+  name: string,
+  email: string,
+  permission: string,
+};
+
+const resolveMembers = (users: User[], mems: MemberType[]) => {
   const memberIndex = mems.reduce((acc, m) => {
     acc[m.sub] = m;
     return acc;
   }, {});
 
-  let members = [];
-  const addable = [];
+  let members: MemberType[] = [];
+  const addable: User[] = [];
   if (!users) {
     return {
       members,
@@ -51,7 +64,7 @@ const resolveMembers = (users, mems) => {
 };
 
 export default function Members({ data }) {
-  const users = useUsers();
+  const { users } = useDatasets();
   if (!data.members) {
     return null;
   }

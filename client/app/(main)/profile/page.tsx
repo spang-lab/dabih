@@ -1,11 +1,10 @@
 'use client';
 
-import { ProfileWrapper } from './Context';
 import Tokens from './Tokens';
 import User from './User';
 import PublicKeys from './PublicKeys';
 
-function Profile() {
+export default function Profile() {
   return (
     <div>
       <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
@@ -47,13 +46,5 @@ function Profile() {
       </p>
       <PublicKeys />
     </div>
-  );
-}
-
-export default function ProfileHelper() {
-  return (
-    <ProfileWrapper>
-      <Profile />
-    </ProfileWrapper>
   );
 }

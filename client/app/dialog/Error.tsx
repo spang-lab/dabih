@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog } from '@headlessui/react';
-import { AdminContact } from '@/app/util';
+import Link from 'next/link';
 
 export default function Error({ ctx, closeDialog }) {
   const { error } = ctx;
@@ -18,7 +18,7 @@ export default function Error({ ctx, closeDialog }) {
         <p className="text-gray-600">Dabih encountered an Error</p>
         <p className="font-semibold text-red my-3">{error}</p>
         <p className="text-gray-600">For help please contact an admin</p>
-        <AdminContact />
+        <Link href="/docs/contact" className="text-lg text-blue hover:underline font-bold">Contact Page</Link>
       </div>
 
       <div className="mt-4 text-right">
