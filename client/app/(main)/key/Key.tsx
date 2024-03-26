@@ -49,7 +49,10 @@ export default function Key() {
   }
   if (keyStatus === 'unloaded') {
     return (
-      <LoadKey />
+      <div>
+        <LoadKey />
+
+      </div>
     );
   }
 

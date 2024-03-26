@@ -2,32 +2,10 @@
 
 'use client';
 
-import React, { Fragment, useEffect, useState } from 'react';
-import crypto from '@/lib/crypto';
+import React, { Fragment } from 'react';
 import Image from 'next/image';
-import QRCode from 'qrcode';
 
-function Key({ privateKey }, ref: any) {
-  const [dataUrl, setDataUrl] = useState<string | null>(null);
-  const [hexData, setHexData] = useState<string[]>([]);
-  useEffect(() => {
-    (async () => {
-      if (!privateKey) {
-        return;
-      }
-      const json = await crypto.privateKey.toJSON(privateKey);
-      const url = await QRCode.toDataURL(json, {
-        errorCorrectionLevel: 'M',
-        width: 600,
-      });
-      setDataUrl(url);
-      const hex = await crypto.privateKey.toHex(privateKey);
-      setHexData(hex);
-    })();
-  }, [privateKey]);
-  if (!hexData || !dataUrl) {
-    return null;
-  }
+function Key({ qrCode, hexData }: { qrCode: string, hexData: string[] }, ref: any) {
   const longRow = 48;
   const shortRow = 22;
   const longRows = 10;
@@ -84,7 +62,7 @@ function Key({ privateKey }, ref: any) {
                       <td rowSpan={shortRows} colSpan={longRow - shortRow}>
                         <Image
                           className="mx-auto"
-                          src={dataUrl}
+                          src={qrCode}
                           width={600}
                           height={600}
                           alt="Private Key QR Code"

@@ -2,72 +2,109 @@
 
 import React from 'react';
 
-import { Camera } from 'react-feather';
+import { Camera, File, Key } from 'react-feather';
 import Image from 'next/image';
 import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import useDialog from '@/app/dialog';
 import api from '@/lib/api';
-import DropPrivateKey from './DropPrivateKey';
+import { Dropzone } from '@/app/util';
+import useSession from '@/app/session';
 
 export default function LoadKey() {
+  const { update } = useSession();
   const dialog = useDialog();
 
-  const onKey = async (data: string) => {
+  const saveKey = async (key: CryptoKey) => {
+    const hash = await crypto.privateKey.toHash(key);
+    const result = await api.key.check(hash);
+    if (result.error) {
+      dialog.error(result.error);
+      return;
+    }
+    await storage.storeKey(key);
+    update();
+  };
+
+  const onFile = async (file: File) => {
     try {
-      const key = await crypto.privateKey.fromJSON(data);
-      const hash = await crypto.privateKey.toHash(key);
-      const result = await api.key.check(hash);
-      if (result.error) {
-        dialog.error(result.error);
-        return;
-      }
-      await storage.storeKey(key);
+      const text = await file.text();
+      const key = await crypto.privateKey.fromPEM(text);
+      await saveKey(key);
     } catch (err: any) {
       dialog.error(err.toString());
     }
   };
+
+  const onScan = async (data: string) => {
+    try {
+      const key = await crypto.privateKey.fromJSON(data);
+      await saveKey(key);
+    } catch (err: any) {
+      dialog.error(err.toString());
+    }
+  };
+
+  const onError = (error: string) => dialog.error(error);
 
   return (
     <div className="py-12">
       <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
         Load your existing key
       </h2>
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto lg:max-w-none">
-          <div className="mt-6 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-x-6">
-            <div className="flex items-center flex-col text-center justify-center w-full border-2 rounded-xl h-80 bg-gray-100 border-blue sm:h-64">
-              <div className="m-3">
-                <Image
-                  className="mx-auto"
-                  src="/images/dabih-qr.svg"
-                  alt="QR Code"
-                  width={50}
-                  height={50}
-                />
+      <div className="lg:grid gap-x-6 grid-cols-2 mt-4">
+        <div className="h-80 sm:h-64 flex m-2 grow items-center flex-col justify-center border-2 rounded-3xl bg-gray-100 border-blue ">
+          <Image
+            src="/images/dabih-qr.svg"
+            alt="QR Code"
+            width={60}
+            height={60}
+          />
+          <button
+            className="px-4 rounded-xl text-2xl py-3 text-white bg-blue"
+            type="button"
+            onClick={() => dialog.openDialog('webcam', {
+              onSubmit: onScan,
+            })}
+          >
+            <span className="whitespace-nowrap">
+              <Camera className="inline-block mx-3 mb-1" size={24} />
+              Open camera
+            </span>
+          </button>
+          <p className="pt-3 text-gray-400">
+            Use your computers webcam to scan
+            <br />
+            your key from a QR Code
+          </p>
+        </div>
+        <div className="m-2 h-80 sm:h-64">
+          <Dropzone
+            onFile={onFile}
+            onError={onError}
+            maxSize={100 * 1024}
+          >
+            <div className="text-center">
+              <div className="py-3 flex justify-center">
+                <div className="relative">
+                  <File className="" size={66} />
+                  <Key className="text-blue absolute inset-1 m-4 mt-6" strokeWidth={3} size={24} />
+                </div>
               </div>
               <button
-                className="px-4 rounded-xl text-2xl py-3 text-white bg-blue"
                 type="button"
-                onClick={() => dialog.openDialog('webcam', {
-                  onSubmit: onKey,
-                })}
+                className="px-4 py-3 text-2xl rounded-xl text-white bg-blue inline-flex items-center"
               >
-                <span className="whitespace-nowrap">
-                  <Camera className="inline-block mx-3 mb-1" size={24} />
-                  Open camera
-                </span>
+                <File className="mx-3" />
+                Open key file...
               </button>
               <p className="pt-3 text-gray-400">
-                Use your computers webcam to scan
-                <br />
-                your key from a QR Code
+                This file will
+                <span className="font-semibold text-blue"> not </span>
+                be uploaded.
               </p>
             </div>
-            <div className="flex items-center flex-col text-center justify-center w-full border-2 rounded-xl h-80 bg-gray-100 border-blue sm:h-64">
-              <DropPrivateKey />
-            </div>
-          </div>
+          </Dropzone>
         </div>
       </div>
     </div>

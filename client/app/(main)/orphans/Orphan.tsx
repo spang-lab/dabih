@@ -6,7 +6,7 @@ import {
 } from 'react-feather';
 import {
   Bytes, LocalDate, TimeSince,
-} from '../util';
+} from '@/app/util';
 
 export default function Orphan({ data, onRemove, onDestroy }) {
   const {

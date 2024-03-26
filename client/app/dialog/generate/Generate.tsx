@@ -1,7 +1,7 @@
 'use client';
 
 import React, {
-  useEffect, useState, useCallback, useRef,
+  useEffect, useState, useRef,
 } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import { Download, Printer } from 'react-feather';
@@ -10,54 +10,116 @@ import crypto from '@/lib/crypto';
 import { Dialog } from '@headlessui/react';
 import { Spinner } from '@/app/util';
 
-import DownloadButton from './DownloadButton';
+import QRCode from 'qrcode';
 import Key from './Key';
+
+type KeyData = {
+  privateKey: CryptoKey,
+  publicKey: CryptoKey,
+  hexData: string[],
+  pemUrl: string,
+  qrCode: string,
+  isSaved: boolean,
+};
 
 export default function GenerateKey({ ctx, closeDialog }) {
   const { onSubmit } = ctx;
-  const [privateKey, setPrivateKey] = useState(null);
-  const [keyFile, setKeyfile] = useState(null);
-  const [wasSaved, setSaved] = useState(false);
+  const [keyData, setKeyData] = useState<KeyData | null>(null);
+
   const keyRef = useRef();
 
   const print = useReactToPrint({
     pageStyle:
       '@page { size: auto; margin: 10mm } @media print { body { -webkit-print-color-adjust: exact; } }',
-    content: () => keyRef.current,
+    content: () => keyRef.current || null,
   });
 
-  const generate = useCallback(async () => {
-    try {
-      const privKey = await crypto.privateKey.generate();
-      setPrivateKey(privKey);
-      const pem = await crypto.privateKey.toPEM(privKey);
-      setKeyfile(pem);
-    } catch (err) {
-      onSubmit({ error: err });
-      closeDialog();
-    }
-  }, [onSubmit, closeDialog]);
-
-  const uploadKey = async () => {
-    const publicKey = await crypto.privateKey.toPublicKey(privateKey);
-    const jwk = await crypto.publicKey.toJWK(publicKey);
-    onSubmit(jwk);
-    closeDialog();
-  };
-
   useEffect(() => {
-    generate();
-  }, [generate]);
+    (async () => {
+      const privateKey = await crypto.privateKey.generate();
+      const publicKey = await crypto.privateKey.toPublicKey(privateKey);
+      const pemData = await crypto.privateKey.toPEM(privateKey);
+      const pemFile = new Blob([pemData], { type: 'text/plain' });
+      const pemUrl = window.URL.createObjectURL(pemFile);
+      const hexData = await crypto.privateKey.toHex(privateKey);
+      const json = await crypto.privateKey.toJSON(privateKey);
+      const qrCode = await QRCode.toDataURL(json, {
+        errorCorrectionLevel: 'M',
+        width: 600,
+      });
+      setKeyData({
+        privateKey,
+        publicKey,
+        hexData,
+        qrCode,
+        pemUrl,
+        isSaved: false,
+      });
+    })();
+  }, []);
 
-  const getLoader = () => {
-    if (!privateKey) {
+  const getContent = () => {
+    if (!keyData) {
       return (
         <div className="flex my-10 items-center justify-center h-32">
           <Spinner />
         </div>
       );
     }
-    return null;
+    const { qrCode, hexData, pemUrl } = keyData;
+    return (
+      <div>
+        <Key
+          qrCode={qrCode}
+          hexData={hexData}
+          ref={keyRef}
+        />
+        <p className="text-2xl">
+          <span className="font-extrabold underline text-red"> Warning:</span>
+          {' '}
+          If you do not save this key you will
+          {' '}
+          <span className="font-extrabold underline text-red">
+            not be able to access your data
+          </span>
+          {' '}
+        </p>
+        <div className="flex flex-row items-center justify-center">
+          <span className="text-2xl">Please</span>
+          <button
+            type="button"
+            className="m-2 px-3 py-2 text-lg rounded bg-blue text-white"
+            onClick={print}
+          >
+            <Printer className="inline-block" size={30} />
+            {' '}
+            Print the key
+          </button>
+          <span className="text-2xl">and</span>
+          <a
+            href={qrCode}
+            download="dabih_private_key_qrcode.png"
+            className="button px-3 m-2 py-2 text-lg text-white bg-blue rounded"
+          >
+            <Download className="inline-block" size={30} />
+            {' '}
+            Download the QR Code
+          </a>
+          <span className="text-2xl">or</span>
+          <a
+            href={pemUrl}
+            download="dabih_private_key.pem"
+            className="button px-3 m-2 py-2 text-lg text-white bg-blue rounded"
+            onClick={() => setKeyData({ ...keyData, isSaved: true })}
+          >
+            <Download className="inline-block" size={30} />
+            {' '}
+            Download the Keyfile
+          </a>
+
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -77,40 +139,7 @@ export default function GenerateKey({ ctx, closeDialog }) {
           to save your private key after generating it.
         </p>
       </div>
-      <div className="text-center">
-        {getLoader()}
-        <Key privateKey={privateKey} ref={keyRef} />
-        <p className="text-2xl">
-          <span className="font-extrabold underline text-red"> Warning: </span>
-          If you do not save this key you will
-          <span className="font-extrabold underline text-red">
-            {' '}
-            not be able to access your data
-            {' '}
-          </span>
-        </p>
-        <span className="text-2xl">Please</span>
-        <button
-          type="button"
-          className="m-2 px-3 py-2 text-lg rounded bg-blue text-gray-100 hover:text-white"
-          onClick={print}
-        >
-          <Printer className="inline-block" size={30} />
-          {' '}
-          Print the key
-        </button>
-        <span className="text-2xl">and</span>
-        <DownloadButton
-          className="m-2"
-          file={keyFile}
-          fileName="dabih_private_key.pem"
-          onDownload={() => setSaved(true)}
-        >
-          <Download className="inline-block" size={30} />
-          {' '}
-          Download the Keyfile
-        </DownloadButton>
-      </div>
+      {getContent()}
       <div className="text-end">
         <button
           type="button"
@@ -119,8 +148,11 @@ export default function GenerateKey({ ctx, closeDialog }) {
             enabled:hover:bg-blue enabled:hover:text-white
             focus:outline-none focus:ring-2 focus:ring-offset-2
             focus:ring-offset-gray-800 focus:ring-white disabled:opacity-50`}
-          disabled={!wasSaved}
-          onClick={uploadKey}
+          disabled={!(keyData?.isSaved)}
+          onClick={() => {
+            onSubmit(keyData?.publicKey);
+            closeDialog();
+          }}
         >
           Upload this key to
           {' '}

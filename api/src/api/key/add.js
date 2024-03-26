@@ -18,6 +18,15 @@ const route = async (ctx) => {
   }
   const hash = rsa.hashKey(key);
 
+  const existing = await publicKey.find(ctx, {
+    sub,
+    hash,
+  });
+  if (existing) {
+    ctx.error(`The key ${hash} already exists.`);
+    return;
+  }
+
   const keyData = {
     hash,
     name,

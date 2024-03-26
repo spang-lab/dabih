@@ -12,7 +12,7 @@ import { LocalDate } from '@/app/util';
 import useSession from '@/app/session';
 
 function CryptoKey() {
-  const { key } = useSession();
+  const { key, update } = useSession();
   const [hash, setHash] = useState<string | null>(null);
 
   useEffect(() => {
@@ -62,7 +62,10 @@ function CryptoKey() {
         <button
           type="button"
           className="bg-blue text-white py-1 px-2 rounded-md inline-flex items-center"
-          onClick={() => storage.deleteKey()}
+          onClick={() => {
+            storage.deleteKey();
+            update();
+          }}
         >
           <XCircle className="mr-2" />
           Unload

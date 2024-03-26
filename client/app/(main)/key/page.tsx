@@ -4,10 +4,8 @@ import useSession from '@/app/session';
 import Key from './Key';
 
 export default function ManageKey() {
-  const session = useSession();
   return (
     <div>
-      <pre>{JSON.stringify(session, null, 2)}</pre>
       <h1 className="text-4xl font-extrabold pb-4 tracking-tight sm:text-5xl md:text-6xl">
         Load your
         <span className="text-blue"> encryption key </span>

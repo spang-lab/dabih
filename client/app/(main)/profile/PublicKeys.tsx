@@ -13,7 +13,9 @@ export default function PublicKeys() {
   const [rootOnly, setRootOnly] = useState<boolean>(false);
   const dialog = useDialog();
 
-  const { user, status, isAdmin } = useSession();
+  const {
+    user, status, isAdmin, update,
+  } = useSession();
 
   const fetchKeys = useCallback(async () => {
     const data = await api.key.list();
@@ -32,6 +34,7 @@ export default function PublicKeys() {
   const removeKey = async (id: number) => {
     await api.key.remove(id);
     await fetchKeys();
+    update();
   };
 
   const addKey = async (key: any) => {

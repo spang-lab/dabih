@@ -1,35 +1,46 @@
 'use client';
 
 import React from 'react';
-import { Cpu } from 'react-feather';
+import { Cpu, File, Lock } from 'react-feather';
 import api from '@/lib/api';
 import useDialog from '@/app/dialog';
 import useSession from '@/app/session';
-import DropPublicKey from './DropPublicKey';
+import { Dropzone } from '@/app/util';
+import crypto from '@/lib/crypto';
 
-export default function CreateKey({ onChange }) {
+export default function CreateKey() {
   const dialog = useDialog();
   const {
-    user, status,
+    user, status, update,
   } = useSession();
 
-  const onGenerate = async (publicKey: string, error?: string) => {
+  const uploadKey = async (publicKey: CryptoKey) => {
     if (status !== 'authenticated' || !user) {
       return;
     }
     const { name, email } = user;
-    if (error) {
-      dialog.error(error);
-      return;
-    }
+    const key = await crypto.publicKey.toJWK(publicKey);
+    console.log(key);
     await api.key.add({
       isRootKey: false,
-      key: publicKey,
+      key,
       name,
       email,
     });
-    onChange();
+    update();
   };
+
+  const onFile = async (file: File) => {
+    try {
+      const text = await file.text();
+      const publicKey = await crypto.publicKey.fromFile(text);
+      await uploadKey(publicKey);
+    } catch (err: any) {
+      dialog.error(err.toString());
+    }
+  };
+
+  const onError = (error: string) => dialog.error(error);
   if (status !== 'authenticated') {
     return null;
   }
@@ -41,33 +52,52 @@ export default function CreateKey({ onChange }) {
         <span className="text-blue"> new </span>
         keypair
       </h2>
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto lg:max-w-none">
-          <div className="mt-6 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-x-6">
-            <div className="flex items-center flex-col text-center justify-center w-full border-2 rounded-xl h-80 bg-gray-100 border-blue sm:h-64">
+      <div className="lg:grid gap-x-6 grid-cols-2 mt-4">
+        <div className="flex h-80 sm:h-64 m-2 grow items-center flex-col justify-center border-2 rounded-3xl bg-gray-100 border-blue ">
+          <button
+            className="px-8 py-4 text-2xl bg-blue text-white rounded-xl"
+            type="button"
+            onClick={() => dialog.openDialog('generate', {
+              shake: true,
+              onSubmit: uploadKey,
+            })}
+          >
+            <span className="whitespace-nowrap">
+              <Cpu className="inline-block mx-3 mb-1" size={24} />
+              Generate a keypair
+            </span>
+          </button>
+          <p className="pt-3 text-gray-400">
+            Use dabih to securely generate
+            <br />
+            your crypto keys in the browser
+          </p>
+        </div>
+        <div className="m-2 h-80 sm:h-64">
+          <Dropzone
+            onFile={onFile}
+            onError={onError}
+            maxSize={100 * 1024}
+          >
+            <div className="text-center">
+              <div className="py-3 flex justify-center">
+                <div className="relative">
+                  <File className="" size={66} />
+                  <Lock className="text-blue absolute inset-1 m-4 mt-6" strokeWidth={3} size={24} />
+                </div>
+              </div>
               <button
-                className="px-8 py-4 text-2xl bg-blue text-white rounded-xl"
                 type="button"
-                onClick={() => dialog.openDialog('generate', {
-                  shake: true,
-                  onSubmit: onGenerate,
-                })}
+                className="px-4 py-3 text-2xl rounded-xl text-white bg-blue inline-flex items-center"
               >
-                <span className="whitespace-nowrap">
-                  <Cpu className="inline-block mx-3 mb-1" size={24} />
-                  Generate a keypair
-                </span>
+                <File className="mx-3" />
+                Open public key file...
               </button>
               <p className="pt-3 text-gray-400">
-                Use dabih to securely generate
-                <br />
-                your crypto keys in the browser
+                Add your own public key
               </p>
             </div>
-            <div className="flex items-stretch justify-center w-full border-2 rounded-xl h-80 bg-gray-100 border-blue sm:h-64">
-              <DropPublicKey onKey={onChange} />
-            </div>
-          </div>
+          </Dropzone>
         </div>
       </div>
     </div>

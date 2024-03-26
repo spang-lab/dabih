@@ -5,7 +5,7 @@ import {
   SessionProvider as AuthSessionProvider,
 } from 'next-auth/react';
 import {
-  createContext, useContext, useEffect,
+  createContext, useCallback, useContext, useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -43,12 +43,14 @@ type Session = {
   key?: CryptoKey,
   expires?: string,
   error?: string,
+  update: () => void,
 };
 
 const SessionContext = createContext<Session>({
   status: 'loading',
   keyStatus: 'loading',
   isAdmin: false,
+  update: () => {},
 });
 
 function SessionProvider({ children }) {
@@ -57,52 +59,47 @@ function SessionProvider({ children }) {
     status: 'loading',
   });
 
-  useEffect(() => {
-    const listener = async () => {
-      if (status !== 'authenticated') {
-        setKey({
-          status,
-        });
-        return;
+  const checkKey = useCallback(async () => {
+    if (status !== 'authenticated') {
+      setKey({
+        status,
+      });
+      return;
+    }
+    const storedKey = await storage.readKey();
+    if (!storedKey) {
+      const result = await api.key.check();
+      if (result.status === 'unregistered' || result.status === 'unloaded') {
+        setKey({ status: result.status });
+      } else {
+        throw new Error(`Got unexpected key state ${result.status}`);
       }
-      const storedKey = await storage.readKey();
-      if (!storedKey) {
-        const result = await api.key.check();
-        if (result.status === 'unregistered' || result.status === 'unloaded') {
-          setKey({ status: result.status });
-        } else {
-          throw new Error(`Got unexpected key state ${result.status}`);
-        }
-        return;
-      }
-      const hash = await crypto.privateKey.toHash(storedKey);
-      const result = await api.key.check(hash);
-      if (result.status === 'invalid') {
-        await storage.deleteKey();
-        setKey({
-          status: 'unloaded',
-        });
-        return;
-      }
-      if (result.status === 'disabled') {
-        setKey({ status: 'disabled' });
-        return;
-      }
-      if (result.status === 'active') {
-        setKey({
-          status: 'active',
-          data: storedKey,
-        });
-        return;
-      }
-      throw new Error(`Got unexpected key state ${result.status}`);
-    };
-    listener();
-    window.addEventListener('storage', listener);
-    return () => {
-      window.removeEventListener('storage', listener);
-    };
+      return;
+    }
+    const hash = await crypto.privateKey.toHash(storedKey);
+    const result = await api.key.check(hash);
+    if (result.status === 'invalid') {
+      await storage.deleteKey();
+      checkKey();
+      return;
+    }
+    if (result.status === 'disabled') {
+      setKey({ status: 'disabled' });
+      return;
+    }
+    if (result.status === 'active') {
+      setKey({
+        status: 'active',
+        data: storedKey,
+      });
+      return;
+    }
+    throw new Error(`Got unexpected key state ${result.status}`);
   }, [status]);
+
+  useEffect(() => {
+    checkKey();
+  }, [status, checkKey]);
 
   const value = useMemo(() => ({
     status,
@@ -111,7 +108,8 @@ function SessionProvider({ children }) {
     user: data?.user,
     isAdmin: data?.user.scopes.includes('admin') || false,
     expires: data?.expires,
-  }), [data, key, status]);
+    update: checkKey,
+  }), [data, key, status, checkKey]);
 
   return (
     <AuthSessionProvider>
