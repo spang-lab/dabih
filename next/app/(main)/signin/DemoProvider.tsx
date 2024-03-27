@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react';
 import { Codesandbox } from 'react-feather';
 import SignInError from './SignInError';
 
-export default function URProvider({ provider }) {
+export default function DemoProvider({ provider }) {
   const [name, setName] = useState('');
 
   const onSubmit = (e: any) => {

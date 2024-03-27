@@ -42,7 +42,7 @@ is stored on.
 
 ### Symmetric Cryptograpy
 
-![Upload](./client/public/images/docs/upload.svg)
+![Upload](./next/public/images/docs/upload.svg)
 
 When you upload data to dabih we generate a random key in memory and use
 symmetric encrytion (AES-256-CBC) to encrypt data before it is stored. This only
@@ -60,13 +60,13 @@ different keys:
 - A private key, used to decrypt the data. The private key should never be
   shared and only you should have it.
 
-![Upload full](./client/public/images/docs/upload_full.svg)
+![Upload full](./next/public/images/docs/upload_full.svg)
 
 dabih allows you to easily generate such a keypair on your computer and then
 send the public key to the server. You will only need to do this once, and for
 security reasons every key needs to be confirmed by an admin first.
 
-![Key Upload](./client/public/images/docs/key_upload.svg)
+![Key Upload](./next/public/images/docs/key_upload.svg)
 
 With this public key we can complete the upload and encrypt the AES key. The
 encrypted key is stored and can only be decrypted using the private key that
@@ -79,7 +79,7 @@ required. First the encrypted AES key is downloaded and is decrypted using the
 private key. This results in the unencrypted AES key. Then the encrypted dataset
 is downloaded and decrypted using the newly aquired AES key.
 
-![Download](./client/public/images/docs/download.svg)
+![Download](./next/public/images/docs/download.svg)
 
 Note: This guarantees that only the client with the private key can access the
 dataset.
@@ -92,7 +92,7 @@ the dataset with others. Data sharing is similar to downloading, but only the
 AES key is downloaded. This key is then sent back to dabih and encrypted with
 the public key of the new user.
 
-![Sharing](./client/public/images/docs/share.svg)
+![Sharing](./next/public/images/docs/share.svg)
 
 dabih keeps a record of users who have access (or used to have access) to
 dataset and has 2 different kinds of permissions.
@@ -115,4 +115,4 @@ dataset deletes all its data and is irrevokable.
 
 ### Reencryption
 
-![Reencryption](./client/public/images/docs/reencrypt.svg)
+![Reencryption](./next/public/images/docs/reencrypt.svg)

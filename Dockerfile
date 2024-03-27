@@ -5,14 +5,14 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
-COPY client/package.json client/package-lock.json ./ 
+COPY next/package.json next/package-lock.json ./ 
 RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY client .
+COPY next .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
@@ -41,7 +41,7 @@ COPY prod.config.cjs prod.config.cjs
 EXPOSE 3000
 ENV PORT 3000
 
-CMD ["pm2-runtime", "prod.config.cjs"]
+CMD ["pm2-runtime", "pm2.prod.config.cjs"]
 
 
 

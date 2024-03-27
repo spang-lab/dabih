@@ -2,8 +2,8 @@ import { Provider } from 'next-auth/providers';
 
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-export default function DemoProvider({ enabled }): Provider {
-  const provider = CredentialsProvider({
+export default function DemoProvider(): Provider {
+  return CredentialsProvider({
     name: 'Demo Provider',
     id: 'demo',
     credentials: {
@@ -34,6 +34,4 @@ export default function DemoProvider({ enabled }): Provider {
       };
     },
   });
-  provider.options.enabled = enabled;
-  return provider as Provider;
 }

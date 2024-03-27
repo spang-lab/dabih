@@ -70,7 +70,7 @@ const getKeyRouter = () => {
 
 const getTokenRouter = () => {
   const router = new Router();
-  router.post('/', token.user);
+  router.get('/', token.user);
   router.use(requireScope('token'));
   router.post('/add', token.add);
   router.get('/list', token.list);

@@ -10,6 +10,7 @@ const tokenSecret = randomToken(32);
 
 const apps = [
   {
+    name: 'api',
     cwd: './api',
     script: 'npm start',
     env: {
@@ -25,7 +26,8 @@ const apps = [
     }
   },
   {
-    cwd: './client',
+    name: 'next',
+    cwd: './next',
     script: 'npm start',
     env: {
       PORT: getEnv('PORT', '3000'),

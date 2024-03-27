@@ -138,7 +138,6 @@ export default function useUpload() {
           start: cursor,
           end: cursor + blob.size,
           size: dataset.size,
-          data: blob,
           hash,
         };
         setState({
@@ -168,6 +167,7 @@ export default function useUpload() {
             status: 'duplicate',
             dataset,
           });
+          return;
         }
         setState({
           status: 'uploading',

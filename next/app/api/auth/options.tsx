@@ -24,19 +24,14 @@ const isConfigured = (provider: Provider) => {
     return false;
   }
   const { options } = provider;
-
   if (options.enabled) {
     return options.enabled;
   }
   return !!options.clientId && !!options.clientSecret;
 };
 
-const authOptions = {
-  session: {
-    maxAge: 3 * 60 * 60,
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  providers: [
+const getProviders = () => {
+  const providers = [
     UniRegensburgProvider({
       enabled: process.env.UR_AUTH,
     }),
@@ -48,10 +43,19 @@ const authOptions = {
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
     }),
-    DemoProvider({
-      enabled: process.env.DEMO,
-    }),
-  ].filter(isConfigured),
+  ].filter(isConfigured);
+  if (providers.length === 0) {
+    return [DemoProvider()];
+  }
+  return providers;
+};
+
+const authOptions = {
+  session: {
+    maxAge: 3 * 60 * 60,
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  providers: getProviders(),
   callbacks: {
     session: sessionCb,
     jwt,
