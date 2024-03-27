@@ -4,6 +4,42 @@ import { getModel } from './util.js';
 
 const TOKEN_PREFIX = 'dabih_at_';
 
+const getExpired = (exp) => {
+  if (!exp) {
+    return false;
+  }
+  const now = new Date();
+  const date = new Date(exp);
+  const diff = now.getTime() - date.getTime();
+  if (diff < 0) {
+    return false;
+  }
+
+  const oneMinute = 1000 * 60;
+  const oneHour = 60 * oneMinute;
+  const oneDay = 24 * oneHour;
+
+  if (diff < oneHour) {
+    const minutes = Math.round(diff / oneMinute);
+    return `${minutes} minute(s) ago`;
+  }
+  if (diff < oneDay) {
+    const hours = Math.round(diff / oneHour);
+    return `${hours} hour(s) ago`;
+  }
+  const days = Math.round(diff / oneDay);
+  return `${days} day(s) ago`;
+};
+
+const convertToken = (token) => {
+  const { exp, scope } = token;
+  return {
+    ...token,
+    scopes: scope.split(' '),
+    expired: getExpired(exp),
+  };
+};
+
 async function list(ctx, where = {}) {
   const model = getModel(ctx, 'Token');
   const tokens = await model.findAll(
@@ -12,23 +48,7 @@ async function list(ctx, where = {}) {
       where,
     },
   );
-  const now = new Date();
-
-  return tokens.map((token) => {
-    const { exp, scope } = token;
-    if (!exp) {
-      return {
-        ...token,
-        scopes: scope.split(' '),
-        isExpired: false,
-      };
-    }
-    return {
-      ...token,
-      scopes: scope.split(' '),
-      isExpired: now > exp,
-    };
-  });
+  return tokens.map(convertToken);
 }
 
 async function generate(ctx, rScopes, lifetimeSeconds) {
@@ -87,10 +107,23 @@ async function find(ctx, where) {
   return Token.findOne({ where });
 }
 
+async function findToken(ctx, value) {
+  if (!value.startsWith(TOKEN_PREFIX)) {
+    return null;
+  }
+  const Token = getModel(ctx, 'Token');
+  const token = await Token.findOne({
+    where: { value },
+    raw: true,
+  });
+  return convertToken(token);
+}
+
 export default {
   generate,
   cleanup,
   list,
   destroy,
+  findToken,
   find,
 };

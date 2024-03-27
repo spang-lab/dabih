@@ -27,19 +27,21 @@ const handler = async (request: NextRequest, { params }) => {
   const baseUrl = requireEnv('API_URL');
   const url = path.join(baseUrl, 'api', 'v1', ...params.route);
 
-  const session = await getServerSession(authOptions);
-
   const { headers, method, body } = request;
-
-  if (session) {
-    const { user } = session;
-    const token = await createJWT(user);
-    headers.append('Authorization', `Bearer ${token}`);
+  const existingToken = headers.get('Authorization');
+  if (!existingToken) {
+    const session = await getServerSession(authOptions);
+    if (session) {
+      const { user } = session;
+      const token = await createJWT(user);
+      headers.append('Authorization', `Bearer ${token}`);
+    }
   }
   const result = await fetch(url, {
     method,
     body,
     headers,
+    // @ts-ignore
     duplex: 'half',
   });
   return result;
