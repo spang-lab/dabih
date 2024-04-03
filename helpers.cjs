@@ -1,8 +1,5 @@
 const { randomFillSync } = require('node:crypto');
 
-const uint8ToBase64Url = (array) => Buffer
-  .from(array).toString('base64url');
-
 const getEnv = (key, defaultValue = '') => {
   const { env } = process;
   const value = env[key];
@@ -20,7 +17,7 @@ const randomToken = (len = 8) => {
   const requiredBytes = Math.ceil(requiredBits / bitsPerByte);
   const buffer = new Uint8Array(requiredBytes);
   randomFillSync(buffer);
-  const base64 = uint8ToBase64Url(buffer);
+  const base64 = Buffer.from(buffer).toString('base64url');
   return base64;
 };
 

@@ -1,0 +1,29 @@
+{
+  "entryFile": "src/server.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": [
+    "src/api/**/controller.ts"
+  ],
+  "spec": {
+    "outputDirectory": "build",
+    "specVersion": 3,
+    "securityDefinitions": {
+      "BearerAuth": {
+        "type": "oauth2",
+        "flow": "accessCode",
+        "scopes": {
+          "admin": "Allow the user to perfmorm all actions in dabih",
+          "dataset": "Allow access to the dataset API",
+          "key": "Allow the user to add public keys",
+          "token": "Allow the user to generate access tokens",
+          "upload": "Allow the user to upload files"
+        }
+      }
+    }
+  },
+  "routes": {
+    "routesDir": "build",
+    "middleware": "koa",
+    "authenticationModule": "./src/auth.ts"
+  }
+}
