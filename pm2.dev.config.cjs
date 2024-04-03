@@ -18,13 +18,9 @@ const apps = [
     env: {
       PORT: getEnv('API_PORT', 3001),
       TOKEN_SECRET: getEnv('TOKEN_SECRET', tokenSecret),
-      DB_URL: getEnv('DB_URL', 'file:./data/dabih.sqlite'),
-      DB_DEBUG: getEnv('DB_DEBUG', 'false'),
-      DB_UPDATE: getEnv('DB_UPDATE', 'true'),
       STORAGE_URL: getEnv('STORAGE_URL', 'fs:./data'),
       EPHEMERAL_URL: getEnv('EPHEMERAL_URL', 'memory'),
       EPHEMERAL_SECRET: getEnv('EPHEMERAL_SECRET', emphemeralSecret),
-      CONFIG: getEnv('CONFIG', './config.yaml'),
     }
   },
   {

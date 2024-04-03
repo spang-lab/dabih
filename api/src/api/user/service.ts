@@ -1,4 +1,10 @@
-import { User } from "./user";
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  status?: "Happy" | "Sad";
+  phoneNumbers: string[];
+}
 
 // A post request should not contain an id.
 export type UserCreationParams = Pick<User, "email" | "name" | "phoneNumbers">;

@@ -8,8 +8,7 @@ import {
   Route,
   SuccessResponse,
 } from "@tsoa/runtime";
-import { User } from "./user";
-import { user, UserCreationParams } from "./service";
+import { user, User, UserCreationParams } from "./service";
 
 @Route("user")
 export class UsersController extends Controller {

@@ -10,7 +10,7 @@
     "build": "tsoa spec-and-routes --basePath /api/v1",
     "build:start": "npm run build && npm run start",
     "doc": "redocly build-docs -o ./build/index.html ./build/swagger.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_OPTIONS='--import=tsx --no-warnings' ava"
   },
   "author": "Michael Huttner",
   "license": "MIT",
@@ -22,6 +22,7 @@
     "@types/node": "^20.12.2",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
+    "ava": "^6.1.2",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^18.0.0",
@@ -35,11 +36,20 @@
     "@koa/router": "^12.0.1",
     "@prisma/client": "^5.12.0",
     "@redocly/cli": "^1.10.6",
+    "crc": "^4.3.2",
     "jsonwebtoken": "^9.0.2",
     "koa": "^2.15.2",
     "koa-body": "^6.0.1",
     "tsoa": "^6.2.0",
     "winston": "^3.13.0"
+  },
+  "ava": {
+    "extensions": {
+      "ts": "commonjs"
+    },
+    "files": [
+      "./**/*.test.ts"
+    ]
   },
   "imports": {
     "#logger": "./src/util/logger.ts",
