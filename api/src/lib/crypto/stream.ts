@@ -6,6 +6,7 @@ import {
   BinaryToTextEncoding,
   Hash
 } from 'node:crypto';
+import crc32 from 'crc/calculators/crc32';
 
 
 
@@ -32,6 +33,29 @@ class SHA256Stream extends Transform {
   }
 }
 
+class Crc32 extends Transform {
+  private checksum?: number;
+  constructor() {
+    super();
+    this.checksum = undefined;
+  }
+
+  _transform(chunk: Buffer, encoding: string, callback: () => void) {
+    if (encoding !== 'buffer') {
+      throw new Error(`Unsupported Encoding ${encoding}`);
+    }
+    if (chunk) {
+      this.checksum = crc32(chunk, this.checksum);
+      this.push(chunk);
+    }
+    callback();
+  }
+
+  digest() {
+    return this.checksum?.toString(16);
+  }
+}
 export default {
-  createStream: () => new SHA256Stream(),
+  sha256: () => new SHA256Stream(),
+  crc32: () => new Crc32(),
 };

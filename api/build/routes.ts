@@ -3,7 +3,9 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TsoaRoute, fetchMiddlewares, KoaTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UsersController } from './../src/api/user/controller';
+import { UploadController } from './../src/api/upload/controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { TokenController } from './../src/api/token/controller';
 import { koaAuthentication } from './../src/auth';
 // @ts-ignore - no great way to install types from subpackage
 import type { Context, Next, Middleware, Request as KRequest, Response as KResponse } from 'koa';
@@ -14,26 +16,67 @@ const koaAuthenticationRecasted = koaAuthentication as (req: KRequest, securityN
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "Pick_Dataset.Exclude_keyofDataset.chunks__": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"integer","required":true},"mnemonic":{"dataType":"string","required":true},"fileName":{"dataType":"string","required":true},"createdBy":{"dataType":"string","required":true},"keyHash":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"path":{"dataType":"string","required":true},"hash":{"dataType":"string","required":true},"size":{"dataType":"integer","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Omit_Dataset.chunks_": {
+        "dataType": "refAlias",
+        "type": {"ref":"Pick_Dataset.Exclude_keyofDataset.chunks__","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UploadStartResponse": {
+        "dataType": "refAlias",
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Omit_Dataset.chunks_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"duplicate":{"dataType":"string"}}}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_Dataset.fileName-or-size-or-name-or-path_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"fileName":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"path":{"dataType":"string","required":true},"size":{"dataType":"integer","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UploadStartBody": {
+        "dataType": "refAlias",
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_Dataset.fileName-or-size-or-name-or-path_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"chunkHash":{"dataType":"string","required":true}}}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "User": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
-            "email": {"dataType":"string","required":true},
-            "name": {"dataType":"string","required":true},
-            "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Happy"]},{"dataType":"enum","enums":["Sad"]}]},
-            "phoneNumbers": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "sub": {"dataType":"string","required":true},
+            "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "isAdmin": {"dataType":"boolean","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_User.email-or-name-or-phoneNumbers_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"phoneNumbers":{"dataType":"array","array":{"dataType":"string"},"required":true}},"validators":{}},
+    "Token": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "value": {"dataType":"string","required":true},
+            "sub": {"dataType":"string","required":true},
+            "scope": {"dataType":"string","required":true},
+            "exp": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserCreationParams": {
+    "TokenResponse": {
         "dataType": "refAlias",
-        "type": {"ref":"Pick_User.email-or-name-or-phoneNumbers_","validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Token"},{"dataType":"nestedObjectLiteral","nestedProperties":{"expired":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[false]}],"required":true},"scopes":{"dataType":"array","array":{"dataType":"string"},"required":true}}}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TokenAddBody": {
+        "dataType": "refObject",
+        "properties": {
+            "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "lifetime": {"dataType":"union","subSchemas":[{"dataType":"integer"},{"dataType":"enum","enums":[null]}],"required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -46,14 +89,15 @@ export function RegisterRoutes(router: KoaRouter) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
-        router.get('/user/:userId',
-            ...(fetchMiddlewares<Middleware>(UsersController)),
-            ...(fetchMiddlewares<Middleware>(UsersController.prototype.getUser)),
+        router.post('/upload/start',
+            authenticateMiddleware([{"jwt":["upload"]}]),
+            ...(fetchMiddlewares<Middleware>(UploadController)),
+            ...(fetchMiddlewares<Middleware>(UploadController.prototype.start)),
 
-            async function UsersController_getUser(context: Context, next: Next) {
+            async function UploadController_start(context: Context, next: Next) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    userId: {"in":"path","name":"userId","required":true,"dataType":"double"},
-                    name: {"in":"query","name":"name","dataType":"string"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UploadStartBody"},
             };
 
             let validatedArgs: any[] = [];
@@ -66,10 +110,10 @@ export function RegisterRoutes(router: KoaRouter) {
               context.throw(context.status, error.message, error);
             }
 
-            const controller = new UsersController();
+            const controller = new UploadController();
 
             return templateService.apiHandler({
-              methodName: 'getUser',
+              methodName: 'start',
               controller,
               context,
               validatedArgs,
@@ -77,13 +121,14 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        router.post('/user',
-            ...(fetchMiddlewares<Middleware>(UsersController)),
-            ...(fetchMiddlewares<Middleware>(UsersController.prototype.createUser)),
+        router.put('/upload/chunk',
+            authenticateMiddleware([{"jwt":["upload"]}]),
+            ...(fetchMiddlewares<Middleware>(UploadController)),
+            ...(fetchMiddlewares<Middleware>(UploadController.prototype.chunk)),
 
-            async function UsersController_createUser(context: Context, next: Next) {
+            async function UploadController_chunk(context: Context, next: Next) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UserCreationParams"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
 
             let validatedArgs: any[] = [];
@@ -96,18 +141,217 @@ export function RegisterRoutes(router: KoaRouter) {
               context.throw(context.status, error.message, error);
             }
 
-            const controller = new UsersController();
+            const controller = new UploadController();
 
             return templateService.apiHandler({
-              methodName: 'createUser',
+              methodName: 'chunk',
               controller,
               context,
               validatedArgs,
-              successStatus: 201,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.get('/token/info',
+            authenticateMiddleware([{"api_key":[]},{"jwt":[]}]),
+            ...(fetchMiddlewares<Middleware>(TokenController)),
+            ...(fetchMiddlewares<Middleware>(TokenController.prototype.info)),
+
+            async function TokenController_info(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new TokenController();
+
+            return templateService.apiHandler({
+              methodName: 'info',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/token/add',
+            authenticateMiddleware([{"jwt":["token"]},{"api_key":["token"]}]),
+            ...(fetchMiddlewares<Middleware>(TokenController)),
+            ...(fetchMiddlewares<Middleware>(TokenController.prototype.add)),
+
+            async function TokenController_add(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TokenAddBody"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new TokenController();
+
+            return templateService.apiHandler({
+              methodName: 'add',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.get('/token/list',
+            authenticateMiddleware([{"jwt":["token"]},{"api_key":["token"]}]),
+            ...(fetchMiddlewares<Middleware>(TokenController)),
+            ...(fetchMiddlewares<Middleware>(TokenController.prototype.list)),
+
+            async function TokenController_list(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new TokenController();
+
+            return templateService.apiHandler({
+              methodName: 'list',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/token/remove/:tokenId',
+            authenticateMiddleware([{"jwt":["token"]},{"api_key":["token"]}]),
+            ...(fetchMiddlewares<Middleware>(TokenController)),
+            ...(fetchMiddlewares<Middleware>(TokenController.prototype.remove)),
+
+            async function TokenController_remove(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    tokenId: {"in":"path","name":"tokenId","required":true,"dataType":"double"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new TokenController();
+
+            return templateService.apiHandler({
+              methodName: 'remove',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
+
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+    function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
+        return async function runAuthenticationMiddleware(context: any, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            // keep track of failed auth attempts so we can hand back the most
+            // recent one.  This behavior was previously existing so preserving it
+            // here
+            const failedAttempts: any[] = [];
+            const pushAndRethrow = (error: any) => {
+                failedAttempts.push(error);
+                throw error;
+            };
+
+            const secMethodOrPromises: Promise<any>[] = [];
+            for (const secMethod of security) {
+                if (Object.keys(secMethod).length > 1) {
+                    const secMethodAndPromises: Promise<any>[] = [];
+
+                    for (const name in secMethod) {
+                        secMethodAndPromises.push(
+                            koaAuthenticationRecasted(context.request, name, secMethod[name], context.response)
+                                .catch(pushAndRethrow)
+                        );
+                    }
+
+                    secMethodOrPromises.push(Promise.all(secMethodAndPromises)
+                        .then(users => { return users[0]; }));
+                } else {
+                    for (const name in secMethod) {
+                        secMethodOrPromises.push(
+                            koaAuthenticationRecasted(context.request, name, secMethod[name], context.response)
+                                .catch(pushAndRethrow)
+                        );
+                    }
+                }
+            }
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let success;
+            try {
+                const user = await Promise.any(secMethodOrPromises);
+                success = true;
+                context.request['user'] = user;
+            }
+            catch(err) {
+                // Response was sent in middleware, abort
+                if(context.response.body) {
+                    return;
+                }
+
+                // Show most recent error as response
+                const error = failedAttempts.pop();
+                context.status = error.status || 401;
+                context.throw(context.status, error.message, error);
+            }
+
+            // Response was sent in middleware, abort
+            if(context.response.body) {
+                return;
+            }
+
+            if (success) {
+                await next();
+            }
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        }
+    }
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 }

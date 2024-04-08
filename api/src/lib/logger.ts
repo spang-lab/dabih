@@ -1,8 +1,9 @@
-import { getEnv } from "#env";
+import { getEnv } from "#lib/env";
 import winston from "winston";
 
 const logger = winston.createLogger();
 const { combine, timestamp, json, cli } = winston.format;
+
 
 if (getEnv('NODE_ENV', 'development') === 'production') {
   logger.add(new winston.transports.Console({
@@ -12,8 +13,9 @@ if (getEnv('NODE_ENV', 'development') === 'production') {
 } else {
   logger.add(new winston.transports.Console({
     level: getEnv('LOG_LEVEL', 'info'),
-    format: cli(),
+    format: cli({ levels: logger.levels }),
   }));
+  logger.warn('Server is running in development mode');
 }
 
 

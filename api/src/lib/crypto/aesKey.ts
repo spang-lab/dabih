@@ -11,8 +11,7 @@ import base64url from './base64url';
 import random from './random';
 
 
-const derive = async (secret: string) => {
-  const salt = 'dabih';
+const derive = async (secret: string, salt: string) => {
   const keyBytes = 32;
   const derive = promisify(scrypt);
   const key = await derive(secret, salt, keyBytes) as Buffer;

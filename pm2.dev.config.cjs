@@ -14,14 +14,23 @@ const apps = [
     cwd: './api',
     script: 'npm run build:start',
     watch: ['src'],
-    restart_delay: 5000,
+    autorestart: false,
     env: {
       PORT: getEnv('API_PORT', 3001),
+      DB_URL: getEnv('DB_URL', 'file:../data/dabih.sqlite'),
+      LOG_LEVEL: getEnv('LOG_LEVEL', 'verbose'),
       TOKEN_SECRET: getEnv('TOKEN_SECRET', tokenSecret),
       STORAGE_URL: getEnv('STORAGE_URL', 'fs:./data'),
       EPHEMERAL_URL: getEnv('EPHEMERAL_URL', 'memory'),
       EPHEMERAL_SECRET: getEnv('EPHEMERAL_SECRET', emphemeralSecret),
     }
+  },
+  {
+    name: 'docs',
+    cwd: './api',
+    script: 'npm run doc',
+    watch: ['build/swagger.json'],
+    autorestart: false,
   },
   {
     name: 'next',

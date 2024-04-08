@@ -8,7 +8,12 @@
     "outputDirectory": "build",
     "specVersion": 3,
     "securityDefinitions": {
-      "BearerAuth": {
+      "api_key": {
+        "type": "http",
+        "name": "Authorization",
+        "scheme": "bearer"
+      },
+      "jwt": {
         "type": "oauth2",
         "flow": "accessCode",
         "scopes": {
@@ -17,6 +22,26 @@
           "key": "Allow the user to add public keys",
           "token": "Allow the user to generate access tokens",
           "upload": "Allow the user to upload files"
+        }
+      }
+    },
+    "specMerging": "recursive",
+    "spec": {
+      "paths": {
+        "/upload/chunk": {
+          "put": {
+            "consumes": [
+              "multipart/form-data"
+            ],
+            "parameters": [
+              {
+                "in": "formData",
+                "name": "file",
+                "type": "file",
+                "required": true
+              }
+            ]
+          }
         }
       }
     }

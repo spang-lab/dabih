@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:../data/dabih.sqlite"
+  url      = env("DB_URL")
 }
 
 model User {
@@ -30,13 +30,14 @@ model PublicKey {
   isRootKey Boolean
   enabled   DateTime?
   enabledBy String?
-
-  @@index([userId, hash])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model Dataset {
-  id        Int      @id @default(autoincrement())
-  mnemonic  String   @unique
+  id        Int       @id @default(autoincrement())
+  mnemonic  String    @unique
   fileName  String
   createdBy String
   keyHash   String
@@ -47,11 +48,14 @@ model Dataset {
   chunks    Chunk[]
   members   Member[]
   keys      Key[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model Chunk {
-  id        Int     @id @default(autoincrement())
-  dataset   Dataset @relation(fields: [datasetId], references: [id])
+  id        Int       @id @default(autoincrement())
+  dataset   Dataset   @relation(fields: [datasetId], references: [id])
   datasetId Int
   hash      String
   iv        String
@@ -59,28 +63,39 @@ model Chunk {
   end       Int
   size      Int
   crc       String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model Member {
-  id         Int     @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   sub        String
-  dataset    Dataset @relation(fields: [datasetId], references: [id])
+  dataset    Dataset   @relation(fields: [datasetId], references: [id])
   datasetId  Int
   permission Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
 }
 
 model Key {
-  id            Int     @id @default(autoincrement())
-  dataset       Dataset @relation(fields: [datasetId], references: [id])
+  id            Int       @id @default(autoincrement())
+  dataset       Dataset   @relation(fields: [datasetId], references: [id])
   datasetId     Int
   publicKeyHash String
   key           String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 }
 
 model Token {
-  id    Int       @id @default(autoincrement())
-  value String    @unique
-  sub   String
-  scope String
-  exp   DateTime?
+  id        Int       @id @default(autoincrement())
+  value     String    @unique
+  sub       String
+  scope     String
+  exp       DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

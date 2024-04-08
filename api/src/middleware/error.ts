@@ -1,6 +1,7 @@
-import logger from "#logger";
+import logger from "#lib/logger";
 import { Context, Next } from "koa";
 import { ValidateError } from "@tsoa/runtime";
+import { AuthenticationError } from "src/auth";
 
 interface DabihError {
   message: string;
@@ -56,6 +57,14 @@ const error = async (ctx: Context, next: Next) => {
       });
       return;
     }
+    if (err instanceof AuthenticationError) {
+      ctx.error({
+        message: err.message,
+        code: 401,
+      });
+      return;
+    }
+
     if (err instanceof Error) {
       const stack = getStackMessage(err);
       ctx.error({

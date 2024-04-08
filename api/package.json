@@ -10,40 +10,50 @@
     "build": "tsoa spec-and-routes --basePath /api/v1",
     "build:start": "npm run build && npm run start",
     "doc": "redocly build-docs -o ./build/index.html ./build/swagger.json",
-    "test": "NODE_OPTIONS='--import=tsx --no-warnings' ava"
+    "test:migrate": "DB_URL=\"file:../data/test.sqlite\" prisma migrate dev",
+    "test": "DB_URL=file:../data/test.sqlite ava",
+    "client": "openapi-ts",
+    "migrate": "DB_URL=\"file:../data/dabih.sqlite\" prisma migrate dev"
   },
   "author": "Michael Huttner",
   "license": "MIT",
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.36.0",
     "@types/eslint": "^8.56.7",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/koa": "^2.15.0",
     "@types/koa__router": "^12.0.4",
-    "@types/node": "^20.12.2",
+    "@types/node": "^20.12.5",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
     "ava": "^6.1.2",
-    "eslint": "^8.57.0",
+    "eslint": "^8.56.7",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^18.0.0",
     "eslint-plugin-import": "^2.29.1",
-    "prisma": "^5.12.0",
-    "tsx": "^4.7.1",
-    "typescript": "^5.4.3",
+    "prisma": "^5.12.1",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.4",
     "typescript-eslint": "^7.5.0"
   },
   "dependencies": {
+    "@keyv/memcache": "^1.4.1",
+    "@keyv/redis": "^2.8.4",
     "@koa/router": "^12.0.1",
-    "@prisma/client": "^5.12.0",
-    "@redocly/cli": "^1.10.6",
+    "@prisma/client": "^5.12.1",
+    "@redocly/cli": "^1.11.0",
     "crc": "^4.3.2",
     "jsonwebtoken": "^9.0.2",
+    "keyv": "^4.5.4",
     "koa": "^2.15.2",
     "koa-body": "^6.0.1",
     "tsoa": "^6.2.0",
     "winston": "^3.13.0"
   },
   "ava": {
+    "nodeArguments": [
+      "--import=tsx"
+    ],
     "extensions": {
       "ts": "commonjs"
     },
@@ -52,9 +62,8 @@
     ]
   },
   "imports": {
-    "#logger": "./src/util/logger.ts",
-    "#env": "./src/util/env.ts",
-    "#dbg": "./src/util/dbg.ts",
-    "#db": "./src/util/db.ts"
+    "#lib/*": "./src/lib/*.ts",
+    "#util/*": "./src/lib/util/*.ts",
+    "#crypto": "./src/lib/crypto/index.ts"
   }
 }

@@ -2,16 +2,18 @@ import Keyv from 'keyv';
 import KeyvRedis from '@keyv/redis';
 import KeyvMemcache from '@keyv/memcache';
 import {
-  log, requireEnv, parseUrl,
+  log, parseUrl,
+  getEnv,
 } from '../util/index.js';
-import { aes } from '../crypto/index.js';
+import { aes, random } from '../crypto/index.js';
 
 let store = null;
 let aesKey = null;
 
 export const initEphemeral = async () => {
-  const emphemeralUrl = requireEnv('EPHEMERAL_URL');
-  const secret = requireEnv('EPHEMERAL_SECRET');
+  const emphemeralUrl = getEnv('EPHEMERAL_URL', 'memory');
+  const randomSecret = await random.getToken(32);
+  const secret = getEnv('EPHEMERAL_SECRET', randomSecret);
   aesKey = await aes.deriveKey(secret);
 
   if (emphemeralUrl === 'memory') {

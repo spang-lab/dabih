@@ -1,45 +1,74 @@
 import jwt from 'jsonwebtoken';
-import { requireEnv } from '#env';
+import { requireEnv } from '#lib/env';
 import { Request } from 'koa';
+import { User } from './api/types';
+import { isToken, convertToken } from './lib/database/token';
+import db from './lib/db';
+
+export class AuthenticationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}
 
 const parseHeader = (request: Request): string => {
   const authHeader = request.get('Authorization');
   if (!authHeader) {
-    throw new Error('No Authorization header');
+    throw new AuthenticationError('No Authorization header');
   }
   const [bearer, value] = authHeader.split(' ');
   if (bearer.toLowerCase() === 'bearer' && value) {
     return value;
   }
-  throw new Error('Invalid Authorization header, needs to be "Bearer <token>"');
+  throw new AuthenticationError('Invalid Authorization header, needs to be "Bearer <token>"');
 };
 
 
-interface DecodedToken {
-  sub: string;
-  scopes: string[];
-  isAdmin: boolean;
-}
-
-
-const verifyToken = (request: Request): DecodedToken => {
+const verifyToken = async (request: Request): Promise<User> => {
   const tokenStr = parseHeader(request);
-  const { origin } = request;
 
+  if (isToken(tokenStr)) {
+    const result = await db.token.findUnique({
+      where: {
+        value: tokenStr,
+      }
+    });
+    if (!result) {
+      throw new AuthenticationError('Invalid api token');
+    }
+    const token = convertToken(result, false);
+    if (token.expired) {
+      throw new AuthenticationError(`Token has expired ${token.expired}`);
+    }
+    const { scopes, sub } = token;
+    const isAdmin = scopes.includes('admin');
+    return {
+      sub,
+      scopes,
+      isAdmin,
+    };
+  }
+
+  const { origin } = request;
   const secret = requireEnv('TOKEN_SECRET');
   const decoded = jwt.verify(tokenStr, secret, {
     audience: origin,
   });
   if (typeof decoded === 'string') {
-    throw new Error('Invalid jwt');
+    throw new AuthenticationError('Invalid jwt');
   }
   if (!decoded.sub) {
-    throw new Error('No "sub" key in jwt');
+    throw new AuthenticationError('No "sub" key in jwt');
   }
-  if (!Array.isArray(decoded.scopes)) {
-    throw new Error('No "scopes" key in jwt');
+  if (!decoded.scope) {
+    throw new AuthenticationError('No "scope" key in jwt');
   }
-  const { scopes, sub } = decoded;
+  const { scope, sub } = decoded;
+  if (typeof scope !== 'string') {
+    throw new AuthenticationError(`Invalid "scope" key in jwt: ${scope}, must be a string with space separated values`);
+  }
+  const scopes = scope.split(' ');
   const isAdmin = scopes.includes('admin');
   return {
     sub,
@@ -49,16 +78,16 @@ const verifyToken = (request: Request): DecodedToken => {
 };
 
 
-export function koaAuthentication(request: Request, name: string, scopes?: string[]) {
-  if (name === 'jwt') {
-    const decoded = verifyToken(request);
+export async function koaAuthentication(request: Request, name: string, scopes?: string[]): Promise<User> {
+  if (name === 'jwt' || name === 'api_key') {
+    const decoded = await verifyToken(request);
     const missing = scopes?.filter(scope => !decoded.scopes.includes(scope));
     if (missing?.length) {
-      throw new Error(`JWT does not contain the required scope: ${missing.join(', ')}`);
+      throw new AuthenticationError(`JWT does not contain the required scope: ${missing.join(', ')}`);
     }
     return decoded;
   }
-  throw new Error(`Unknown authentication method: ${name}`);
+  throw new AuthenticationError(`Unknown authentication method: ${name}`);
 }
 
 
