@@ -253,6 +253,82 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"PublicKey": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"hash": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					},
+					"isRootKey": {
+						"type": "boolean"
+					},
+					"enabled": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"enabledBy": {
+						"type": "string",
+						"nullable": true
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"id",
+					"userId",
+					"hash",
+					"data",
+					"isRootKey",
+					"enabled",
+					"enabledBy",
+					"createdAt",
+					"updatedAt",
+					"deletedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_PublicKey.data-or-isRootKey_": {
+				"properties": {
+					"data": {
+						"type": "string"
+					},
+					"isRootKey": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"data",
+					"isRootKey"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"KeyAddBody": {
+				"$ref": "#/components/schemas/Pick_PublicKey.data-or-isRootKey_"
 			}
 		},
 		"securitySchemes": {
@@ -333,7 +409,7 @@
 		},
 		"/token/info": {
 			"get": {
-				"operationId": "Info",
+				"operationId": "tokenInfo",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -362,7 +438,7 @@
 		},
 		"/token/add": {
 			"post": {
-				"operationId": "Add",
+				"operationId": "addToken",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -405,7 +481,7 @@
 		},
 		"/token/list": {
 			"get": {
-				"operationId": "List",
+				"operationId": "listTokens",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -439,9 +515,9 @@
 				"parameters": []
 			}
 		},
-		"/token/remove/{tokenId}": {
+		"/token/{tokenId}/remove": {
 			"post": {
-				"operationId": "Remove",
+				"operationId": "removeToken",
 				"responses": {
 					"204": {
 						"description": "No content"
@@ -466,6 +542,121 @@
 					{
 						"in": "path",
 						"name": "tokenId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/key/add": {
+			"post": {
+				"operationId": "addKey",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PublicKey"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Public Key"
+				],
+				"security": [
+					{
+						"api_key": [
+							"key"
+						]
+					},
+					{
+						"jwt": [
+							"key"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/KeyAddBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/key/list": {
+			"get": {
+				"operationId": "listKeys",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/PublicKey"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Public Key"
+				],
+				"security": [
+					{
+						"api_key": [
+							"key"
+						]
+					},
+					{
+						"jwt": [
+							"key"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/key/{keyId}/remove": {
+			"post": {
+				"operationId": "removeKey",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Public Key"
+				],
+				"security": [
+					{
+						"api_key": [
+							"key"
+						]
+					},
+					{
+						"jwt": [
+							"key"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "keyId",
 						"required": true,
 						"schema": {
 							"format": "double",

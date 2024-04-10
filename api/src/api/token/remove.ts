@@ -9,4 +9,5 @@ export default async function remove(user: User, tokenId: number) {
       sub,
     },
   });
+
 }

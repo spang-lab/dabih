@@ -153,3 +153,19 @@ export type TokenResponse = Token & {
   expired: string | false;
 };
 
+export interface PublicKey {
+  id: number;
+  userId: number;
+  hash: string;
+  data: string;
+  isRootKey: boolean;
+  enabled: Date | null;
+  enabledBy: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}
+
+export type KeyAddBody = Pick<PublicKey, "data" | "isRootKey">;
+
+

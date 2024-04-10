@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "build:tsoa": "tsoa spec-and-routes --basePath /api/v1",
-    "build:docs": "redocly build-docs -o ./build/index.html ./build/swagger.json",
-    "build:client": "openapi-typescript ./build/swagger.json -o ./build/api/v1.d.ts",
+    "build:docs": "redocly build-docs -o ./build/index.html ./build/spec.json",
+    "build:client": "node --import tsx/esm src/client.ts",
     "build": "npm run build:tsoa && npm run build:docs && npm run build:client",
     "dev:start": "dotenv -e .env.dev -- node --import tsx/esm src/server.ts",
     "dev": "npm run build && npm run dev:start",
