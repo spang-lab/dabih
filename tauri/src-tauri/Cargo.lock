@@ -675,7 +675,7 @@ dependencies = [
 
 [[package]]
 name = "dabih"
-version = "1.15.3"
+version = "1.15.4"
 dependencies = [
  "anyhow",
  "base64 0.21.3",
@@ -700,7 +700,7 @@ dependencies = [
 
 [[package]]
 name = "dabih-uploader"
-version = "1.15.3"
+version = "1.15.4"
 dependencies = [
  "anyhow",
  "base64 0.21.3",
