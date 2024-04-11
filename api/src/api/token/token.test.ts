@@ -56,37 +56,61 @@ test('invalid scope', async t => {
   });
   t.is(response.status, 500);
 });
-
 test('use access token', async t => {
-  const scopes = ["upload", "token"];
+  const scopes = ["token"];
   const { data } = await client.POST('/token/add', {
     body: {
       scopes,
-      lifetime: 1,
+      lifetime: null,
     }
   });
   if (!data) {
     return t.fail()
   }
   const { value } = data;
-  const result = await client.GET('/token/info',
-    {
-      headers: {
-        Authorization: `Bearer ${value}`
-      },
-    })
+  const result = await client.GET('/token/info', {
+    headers: {
+      Authorization: `Bearer ${value}`
+    },
+  });
   t.truthy(result.data);
   t.deepEqual(result.data?.scopes, scopes)
-  // wait for the token to expire
-  await new Promise(r => setTimeout(r, 1000));
-  const expResult = await client.GET('/token/info',
-    {
-      headers: {
-        Authorization: `Bearer ${value}`
-      },
-    });
-  t.is(expResult.response.status, 401)
-  t.falsy(expResult.data);
+
+  const { data: data2 } = await client.POST('/token/add', {
+    headers: {
+      Authorization: `Bearer ${value}`
+    },
+    body: {
+      scopes,
+      lifetime: null,
+    },
+  });
+  t.truthy(data2);
+
+  await cleanup(t, data.id);
+  await cleanup(t, data2?.id);
+});
+
+
+test('expire token', async t => {
+  const scopes = ["upload", "token"];
+  const { data } = await client.POST('/token/add', {
+    body: {
+      scopes,
+      lifetime: -1,
+    }
+  });
+  if (!data) {
+    return t.fail()
+  }
+  const { value } = data;
+  const result = await client.GET('/token/info', {
+    headers: {
+      Authorization: `Bearer ${value}`
+    },
+  });
+  t.is(result.response.status, 401)
+  t.falsy(result.data);
   await cleanup(t, data.id);
 });
 
@@ -94,7 +118,7 @@ test('list tokens', async t => {
   const { data } = await client.POST('/token/add', {
     body: {
       scopes: [],
-      lifetime: 1,
+      lifetime: null,
     }
   });
   if (!data) {

@@ -15,7 +15,7 @@ export default async function add(user: User, body: TokenAddBody): Promise<Token
   });
   const value = await generateValue();
   let exp = null;
-  if (lifetime) {
+  if (lifetime !== null) {
     const nowMs = new Date().getTime();
     const expMs = nowMs + lifetime * 1000;
     exp = new Date(expMs);
