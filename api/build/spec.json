@@ -311,24 +311,85 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_PublicKey.data-or-isRootKey_": {
+			"crypto.JsonWebKey": {
 				"properties": {
-					"data": {
+					"crv": {
 						"type": "string"
 					},
+					"d": {
+						"type": "string"
+					},
+					"dp": {
+						"type": "string"
+					},
+					"dq": {
+						"type": "string"
+					},
+					"e": {
+						"type": "string"
+					},
+					"k": {
+						"type": "string"
+					},
+					"kty": {
+						"type": "string"
+					},
+					"n": {
+						"type": "string"
+					},
+					"p": {
+						"type": "string"
+					},
+					"q": {
+						"type": "string"
+					},
+					"qi": {
+						"type": "string"
+					},
+					"x": {
+						"type": "string"
+					},
+					"y": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": {}
+			},
+			"KeyAddBody": {
+				"properties": {
+					"data": {
+						"$ref": "#/components/schemas/crypto.JsonWebKey",
+						"description": "The public key in PEM format"
+					},
 					"isRootKey": {
-						"type": "boolean"
+						"type": "boolean",
+						"description": "If true the key is a root key, used to decrypt all datasets"
+					},
+					"user": {
+						"properties": {
+							"email": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"email",
+							"name"
+						],
+						"type": "object",
+						"description": "The user info of the key owner"
 					}
 				},
 				"required": [
 					"data",
-					"isRootKey"
+					"isRootKey",
+					"user"
 				],
 				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"KeyAddBody": {
-				"$ref": "#/components/schemas/Pick_PublicKey.data-or-isRootKey_"
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {

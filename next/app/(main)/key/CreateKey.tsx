@@ -20,7 +20,6 @@ export default function CreateKey() {
     }
     const { name, email } = user;
     const key = await crypto.publicKey.toJWK(publicKey);
-    console.log(key);
     await api.key.add({
       isRootKey: false,
       key,

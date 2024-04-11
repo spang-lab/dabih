@@ -64,7 +64,6 @@ const error = async (ctx: Context, next: Next) => {
       });
       return;
     }
-
     if (err instanceof Error) {
       const stack = getStackMessage(err);
       ctx.error({

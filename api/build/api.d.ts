@@ -251,12 +251,33 @@ export interface components {
             /** Format: date-time */
             deletedAt: Date | null;
         };
-        /** @description From T, pick a set of properties whose keys are in the union K */
-        "Pick_PublicKey.data-or-isRootKey_": {
-            data: string;
-            isRootKey: boolean;
+        "crypto.JsonWebKey": {
+            crv?: string;
+            d?: string;
+            dp?: string;
+            dq?: string;
+            e?: string;
+            k?: string;
+            kty?: string;
+            n?: string;
+            p?: string;
+            q?: string;
+            qi?: string;
+            x?: string;
+            y?: string;
+            [key: string]: unknown;
         };
-        KeyAddBody: components["schemas"]["Pick_PublicKey.data-or-isRootKey_"];
+        KeyAddBody: {
+            /** @description The public key in PEM format */
+            data: components["schemas"]["crypto.JsonWebKey"];
+            /** @description If true the key is a root key, used to decrypt all datasets */
+            isRootKey: boolean;
+            /** @description The user info of the key owner */
+            user: {
+                email: string;
+                name: string;
+            };
+        };
     };
     responses: never;
     parameters: never;

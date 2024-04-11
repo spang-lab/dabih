@@ -1,3 +1,4 @@
+import { JsonWebKey } from "crypto";
 
 /**
   * mnemonics are human readable unique identifiers for datasets
@@ -163,9 +164,24 @@ export interface PublicKey {
   enabledBy: string | null;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date | null;
 }
 
-export type KeyAddBody = Pick<PublicKey, "data" | "isRootKey">;
+export interface KeyAddBody {
+  /**
+    * The public key in PEM format
+    */
+  data: JsonWebKey;
+  /**
+    * If true the key is a root key, used to decrypt all datasets
+    */
+  isRootKey: boolean;
+  /**
+    * The user info of the key owner
+    */
+  user: {
+    name: string;
+    email: string;
+  }
+}
 
 

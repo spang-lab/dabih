@@ -1,28 +1,18 @@
 
-import anyTest, { ExecutionContext, TestFn } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import app from 'src/app';
 import { Server } from 'http';
 
-const test = anyTest as TestFn<{ server: Server }>;
+const test = anyTest as TestFn<{ server: Server, port: number }>;
 import client from '#lib/client';
-
-
-const cleanup = async (t: ExecutionContext, id?: number) => {
-  if (!id) {
-    return;
-  }
-  const { response } = await client.POST('/token/{tokenId}/remove', {
-    params: {
-      path: { tokenId: id },
-    }
-  });
-  t.is(response.status, 204);
-}
+import getPort from '@ava/get-port';
 
 
 test.before(async t => {
+  const port = await getPort();
   t.context = {
-    server: await app()
+    server: await app(port),
+    port,
   };
 })
 
@@ -31,52 +21,54 @@ test.after.always(t => {
 })
 
 test('valid access token', async t => {
-  const response = await client.GET('/token/info')
-  t.truthy(response.data);
-  t.truthy(response.data!.isAdmin);
+  const api = client(t.context.port);
+  const { data } = await api.token.info();
+  t.truthy(data);
+  t.truthy(data!.isAdmin);
 })
 
 test('create a dabih access_token', async t => {
-  const { data } = await client.POST('/token/add', {
-    body: {
-      scopes: ["upload"],
-      lifetime: null
-    }
+  const api = client(t.context.port);
+  const { data } = await api.token.add({
+    scopes: ["upload"],
+    lifetime: null,
   });
   t.truthy(data);
-  await cleanup(t, data?.id);
+  if (data) {
+    const { response } = await api.token.remove(data.id);
+    t.is(response.status, 204);
+  }
 })
 
 test('invalid scope', async t => {
-  const { response } = await client.POST('/token/add', {
-    body: {
-      scopes: ["uploads"],
-      lifetime: null
-    }
+  const api = client(t.context.port);
+  const { response } = await api.token.add({
+    scopes: ["uploads"],
+    lifetime: null,
   });
   t.is(response.status, 500);
 });
+
 test('use access token', async t => {
+  const api = client(t.context.port);
   const scopes = ["token"];
-  const { data } = await client.POST('/token/add', {
-    body: {
-      scopes,
-      lifetime: null,
-    }
+  const { data: token } = await api.token.add({
+    scopes,
+    lifetime: null,
   });
-  if (!data) {
+  if (!token) {
     return t.fail()
   }
-  const { value } = data;
-  const result = await client.GET('/token/info', {
+  const { value } = token;
+  const { data: info } = await api.GET('/token/info', {
     headers: {
       Authorization: `Bearer ${value}`
     },
   });
-  t.truthy(result.data);
-  t.deepEqual(result.data?.scopes, scopes)
+  t.truthy(info);
+  t.deepEqual(info?.scopes, scopes)
 
-  const { data: data2 } = await client.POST('/token/add', {
+  const { data: token2 } = await api.POST('/token/add', {
     headers: {
       Authorization: `Bearer ${value}`
     },
@@ -85,51 +77,50 @@ test('use access token', async t => {
       lifetime: null,
     },
   });
-  t.truthy(data2);
-
-  await cleanup(t, data.id);
-  await cleanup(t, data2?.id);
+  t.truthy(token2);
+  await api.token.remove(token.id);
+  if (!token2) {
+    return t.fail()
+  }
+  await api.token.remove(token2?.id);
 });
 
 
 test('expire token', async t => {
+  const api = client(t.context.port);
   const scopes = ["upload", "token"];
-  const { data } = await client.POST('/token/add', {
-    body: {
-      scopes,
-      lifetime: -1,
-    }
+  const { data: token } = await api.token.add({
+    scopes,
+    lifetime: 0,
   });
-  if (!data) {
+  if (!token) {
     return t.fail()
   }
-  const { value } = data;
-  const result = await client.GET('/token/info', {
+  const { value } = token;
+  const { response, data: info } = await api.GET('/token/info', {
     headers: {
       Authorization: `Bearer ${value}`
     },
   });
-  t.is(result.response.status, 401)
-  t.falsy(result.data);
-  await cleanup(t, data.id);
+  t.is(response.status, 401)
+  t.falsy(info);
+  await api.token.remove(token.id);
 });
 
 test('list tokens', async t => {
-  const { data } = await client.POST('/token/add', {
-    body: {
-      scopes: [],
-      lifetime: null,
-    }
+  const api = client(t.context.port);
+  const { data: token } = await api.token.add({
+    scopes: [],
+    lifetime: null,
   });
-  if (!data) {
+  if (!token) {
     return t.fail()
   }
-  const result = await client.GET('/token/list')
-  if (!result.data) {
+  const { data: tokenList } = await api.token.list();
+  if (!tokenList) {
     return t.fail();
   }
-  const tokens = result.data;
-  t.truthy(tokens.length > 1)
-  await cleanup(t, data.id);
+  t.truthy(tokenList.length > 1)
+  await api.token.remove(token.id);
 })
 

@@ -13,6 +13,9 @@ import {
 
 
 import { RequestWithUser, PublicKey, KeyAddBody } from "../types";
+import add from "./add";
+import list from "./list";
+import remove from "./remove";
 
 
 @Route("key")
@@ -27,7 +30,8 @@ export class KeyController extends Controller {
     @Body() requestBody: KeyAddBody,
   ): Promise<PublicKey> {
     const { user } = request;
-    throw new Error("Not implemented");
+    const key = await add(user, requestBody);
+    return key;
   }
 
 
@@ -37,7 +41,8 @@ export class KeyController extends Controller {
   public async list(
     @Request() request: RequestWithUser,
   ): Promise<PublicKey[]> {
-    throw new Error("Not implemented");
+    const { user } = request;
+    return list(user);
   }
   @Post("{keyId}/remove")
   @OperationId("removeKey")
@@ -46,7 +51,7 @@ export class KeyController extends Controller {
     @Request() request: RequestWithUser,
   ) {
     const { user } = request;
-    throw new Error("Not implemented");
+    await remove(user, keyId);
 
   }
 

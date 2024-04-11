@@ -12,7 +12,7 @@ import { initKeyV } from '#lib/keyv';
 import { initFilesystem } from '#lib/fs';
 
 
-const app = async () => {
+const app = async (port?: number) => {
   await initKeyV();
   await initFilesystem();
   const app = new Koa();
@@ -37,10 +37,10 @@ const app = async () => {
     .use(appRouter.routes())
     .use(appRouter.allowedMethods());
 
+  const lPort = port?.toString() ?? getEnv('PORT', '3001');
 
-  const port = getEnv('PORT', '3001');
-  const state = app.listen(port);
-  logger.info(`API server listening on port ${port}`);
+  const state = app.listen(lPort);
+  logger.info(`API server listening on port ${lPort}`);
   return state;
 }
 

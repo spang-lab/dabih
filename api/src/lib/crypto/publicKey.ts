@@ -5,15 +5,23 @@ import {
   constants,
   createHash,
   KeyObject,
+  JsonWebKey,
 } from 'node:crypto';
 import base64url from './base64url';
 
-const fromJwk = (key: string) => {
+const fromJwk = (key: JsonWebKey) => {
   const publicKey = createPublicKey({
     key,
     format: 'jwk',
   });
   return publicKey;
+};
+
+const toJwk = (key: KeyObject) => {
+  const jwk = key.export({
+    format: 'jwk',
+  });
+  return jwk;
 };
 
 const encrypt = (key: KeyObject, base64: string) => {
@@ -36,6 +44,7 @@ const toHash = (key: KeyObject) => {
 
 const publicKey = {
   fromJwk,
+  toJwk,
   toHash,
   encrypt,
 
