@@ -1,11 +1,33 @@
-import { CheckCircle, Clock, UploadCloud } from 'react-feather';
+import {
+  CheckCircle, XCircle, Clock, UploadCloud,
+} from 'react-feather';
 import { formatBytes } from './Bytes';
 
 export default function Upload({ data }: { data: any }) {
   const {
-    mnemonic, total, current, path, state,
+    mnemonic, total, current, path, state, message,
   } = data;
   const fileName = path.split('/').at(-1);
+
+  if (state === 'error') {
+    return (
+      <div className="border bg-red/20 border-gray-600 rounded-md p-2 m-2">
+        <h3 className="text-lg font-extrabold">
+          <XCircle className="inline-flex mx-3" size={30} />
+          Error uploading
+          <span className="px-1">
+            &quot;
+            {fileName}
+            &quot;
+          </span>
+        </h3>
+        <p className="py-1 font-thin text-gray-400">
+          {message}
+        </p>
+
+      </div>
+    );
+  }
 
   if (state === 'waiting') {
     return (

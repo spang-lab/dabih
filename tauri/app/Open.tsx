@@ -16,7 +16,7 @@ export default function Open() {
       const { listen } = await import('@tauri-apps/api/event');
       const unlisten = await listen<any>('upload_progress', ({ payload }) => {
         const {
-          id, state, mnemonic, current, total,
+          id, state, mnemonic, current, total, message,
         } = payload;
         setFiles(((oldFiles) => oldFiles.map((f) => {
           if (f.id !== id) {
@@ -28,6 +28,7 @@ export default function Open() {
             total,
             mnemonic,
             state,
+            message,
           };
         })));
       });

@@ -88,8 +88,7 @@ async fn upload(app_handle: tauri::AppHandle, file: &str, id: &str) -> Result<()
         let mut upload = Upload::new(&ctx, &path).unwrap();
         let mut progress = UploadProgress::new(id_str);
         loop {
-            let state_result = upload.next().await;
-            let state = match state_result {
+            let state = match upload.next().await {
                 Ok(s) => s,
                 Err(e) => {
                     progress.set_state("error".to_owned());
