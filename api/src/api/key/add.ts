@@ -1,6 +1,5 @@
 import { KeyAddBody, User } from "../types";
 
-import dbg from "#lib/util/dbg";
 import db from "#lib/db";
 import crypto from "#crypto";
 

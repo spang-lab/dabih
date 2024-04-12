@@ -166,22 +166,101 @@ export interface PublicKey {
   updatedAt: Date;
 }
 
-export interface KeyAddBody {
+export interface UserAddBody {
   /**
-    * The public key in PEM format
+    * The unique user sub
+    * if undefined the sub from the auth token will be used 
+    */
+  sub?: string;
+  /**
+    * The name of the user
+    */
+  name: string;
+  /**
+    * The email of the user
+    */
+  email: string;
+  /**
+    * The public key of the user as a JWK
+    */
+  key: JsonWebKey
+  /**
+    * If true the key is a root key, used to decrypt all datasets
+    */
+  isRootKey?: boolean;
+}
+
+export interface KeyAddBody {
+  /** 
+    * The user the key should belong to
+    */
+  sub: string;
+  /**
+    * The public key as a JWK 
     */
   data: JsonWebKey;
   /**
     * If true the key is a root key, used to decrypt all datasets
     */
   isRootKey: boolean;
-  /**
-    * The user info of the key owner
-    */
-  user: {
-    name: string;
-    email: string;
-  }
 }
 
+export interface KeyEnableBody {
+  /**
+    * The user the key belongs to
+    */
+  sub: string;
+  /**
+    * The hash of the key
+    */
+  hash: string;
+  /**
+    * The key status to set
+    */
+  enabled: boolean;
+}
+
+export interface KeyRemoveBody {
+  /**
+    * The user the key belongs to
+    */
+  sub: string;
+  /**
+    * The hash of the key
+    */
+  hash: string;
+}
+
+
+export interface UserResponse {
+  /**
+    * The database id of the user
+    * @isInt
+    */
+  id: number;
+  /**
+    * The unique user sub
+    */
+  sub: string;
+  /**
+    * The name of the user
+    */
+  name: string;
+  /**
+    * The email of the user
+    */
+  email: string;
+  /**
+    * The date the user was created
+    */
+  createdAt: Date;
+  /**
+    * The date the user was last updated
+    */
+  updatedAt: Date;
+  /**
+    * The public keys of the user
+    */
+  keys: PublicKey[];
+}
 

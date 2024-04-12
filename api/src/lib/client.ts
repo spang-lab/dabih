@@ -15,7 +15,7 @@ const init = (port?: number) => {
 
   const admin = {
     sub: "admin",
-    scope: "upload key dataset token admin",
+    scope: "upload user dataset token admin",
     aud: host,
   };
   const apiToken = jwt.sign(admin, tokenSecret);
@@ -33,17 +33,23 @@ const init = (port?: number) => {
     remove: (id: number) => c.POST('/token/{tokenId}/remove', { params: { path: { tokenId: id } } }),
     list: () => c.GET('/token/list'),
   }
-
-  const key = {
-    add: (body: schemas["KeyAddBody"]) => c.POST('/key/add', { body }),
-    remove: (id: number) => c.POST('/key/{keyId}/remove', { params: { path: { keyId: id } } }),
+  const user = {
+    add: (body: schemas["UserAddBody"]) => c.POST('/user/add', { body }),
+    me: () => c.GET('/user/me'),
+    find: (sub: string) => c.POST('/user/find', { body: { sub } }),
+    list: () => c.GET('/user/list'),
+    remove: (sub: string) => c.POST('/user/remove', { body: { sub } }),
+    addKey: (body: schemas["KeyAddBody"]) => c.POST('/user/key/add', { body }),
+    enableKey: (body: schemas["KeyEnableBody"]) => c.POST('/user/key/enable', { body }),
+    removeKey: (body: schemas["KeyRemoveBody"]) => c.POST('/user/key/remove', { body }),
   }
+
 
 
   const client = {
     ...c,
     token,
-    key,
+    user,
   }
 
   return client;

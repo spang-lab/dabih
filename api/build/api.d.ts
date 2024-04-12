@@ -1,4 +1,132 @@
 export interface paths {
+    "/user/add": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["addUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/find": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["findUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["removeUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/key/add": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["addKey"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/key/enable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["enableKey"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/key/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["removeKey"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/upload/start": {
         parameters: {
             query?: never;
@@ -79,54 +207,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/key/add": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["addKey"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/key/list": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["listKeys"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/key/{keyId}/remove": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["removeKey"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/upload/chunk": {
         parameters: {
             query?: never;
@@ -147,6 +227,98 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        PublicKey: {
+            /** Format: double */
+            id: number;
+            /** Format: double */
+            userId: number;
+            hash: string;
+            data: string;
+            isRootKey: boolean;
+            /** Format: date-time */
+            enabled: Date | null;
+            enabledBy: string | null;
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+        };
+        UserResponse: {
+            /**
+             * Format: int32
+             * @description The database id of the user
+             */
+            id: number;
+            /** @description The unique user sub */
+            sub: string;
+            /** @description The name of the user */
+            name: string;
+            /** @description The email of the user */
+            email: string;
+            /**
+             * Format: date-time
+             * @description The date the user was created
+             */
+            createdAt: Date;
+            /**
+             * Format: date-time
+             * @description The date the user was last updated
+             */
+            updatedAt: Date;
+            /** @description The public keys of the user */
+            keys: components["schemas"]["PublicKey"][];
+        };
+        "crypto.JsonWebKey": {
+            crv?: string;
+            d?: string;
+            dp?: string;
+            dq?: string;
+            e?: string;
+            k?: string;
+            kty?: string;
+            n?: string;
+            p?: string;
+            q?: string;
+            qi?: string;
+            x?: string;
+            y?: string;
+            [key: string]: unknown;
+        };
+        UserAddBody: {
+            /** @description The unique user sub
+             *     if undefined the sub from the auth token will be used */
+            sub?: string;
+            /** @description The name of the user */
+            name: string;
+            /** @description The email of the user */
+            email: string;
+            /** @description The public key of the user as a JWK */
+            key: components["schemas"]["crypto.JsonWebKey"];
+            /** @description If true the key is a root key, used to decrypt all datasets */
+            isRootKey?: boolean;
+        };
+        KeyAddBody: {
+            /** @description The user the key should belong to */
+            sub: string;
+            /** @description The public key as a JWK */
+            data: components["schemas"]["crypto.JsonWebKey"];
+            /** @description If true the key is a root key, used to decrypt all datasets */
+            isRootKey: boolean;
+        };
+        KeyEnableBody: {
+            /** @description The user the key belongs to */
+            sub: string;
+            /** @description The hash of the key */
+            hash: string;
+            /** @description The key status to set */
+            enabled: boolean;
+        };
+        KeyRemoveBody: {
+            /** @description The user the key belongs to */
+            sub: string;
+            /** @description The hash of the key */
+            hash: string;
+        };
         /** @description From T, pick a set of properties whose keys are in the union K */
         "Pick_Dataset.Exclude_keyofDataset.chunks__": {
             /**
@@ -233,51 +405,6 @@ export interface components {
              */
             lifetime: number | null;
         };
-        PublicKey: {
-            /** Format: double */
-            id: number;
-            /** Format: double */
-            userId: number;
-            hash: string;
-            data: string;
-            isRootKey: boolean;
-            /** Format: date-time */
-            enabled: Date | null;
-            enabledBy: string | null;
-            /** Format: date-time */
-            createdAt: Date;
-            /** Format: date-time */
-            updatedAt: Date;
-            /** Format: date-time */
-            deletedAt: Date | null;
-        };
-        "crypto.JsonWebKey": {
-            crv?: string;
-            d?: string;
-            dp?: string;
-            dq?: string;
-            e?: string;
-            k?: string;
-            kty?: string;
-            n?: string;
-            p?: string;
-            q?: string;
-            qi?: string;
-            x?: string;
-            y?: string;
-            [key: string]: unknown;
-        };
-        KeyAddBody: {
-            /** @description The public key in PEM format */
-            data: components["schemas"]["crypto.JsonWebKey"];
-            /** @description If true the key is a root key, used to decrypt all datasets */
-            isRootKey: boolean;
-            /** @description The user info of the key owner */
-            user: {
-                email: string;
-                name: string;
-            };
-        };
     };
     responses: never;
     parameters: never;
@@ -287,6 +414,190 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    addUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserAddBody"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponse"];
+                };
+            };
+        };
+    };
+    me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponse"] | null;
+                };
+            };
+        };
+    };
+    findUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    sub: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponse"] | null;
+                };
+            };
+        };
+    };
+    listUsers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponse"][];
+                };
+            };
+        };
+    };
+    removeUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    sub: string;
+                };
+            };
+        };
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    addKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KeyAddBody"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicKey"];
+                };
+            };
+        };
+    };
+    enableKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KeyEnableBody"];
+            };
+        };
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicKey"];
+                };
+            };
+        };
+    };
+    removeKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KeyRemoveBody"];
+            };
+        };
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     Start: {
         parameters: {
             query?: never;
@@ -381,70 +692,6 @@ export interface operations {
             header?: never;
             path: {
                 tokenId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    addKey: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["KeyAddBody"];
-            };
-        };
-        responses: {
-            /** @description Ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PublicKey"];
-                };
-            };
-        };
-    };
-    listKeys: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PublicKey"][];
-                };
-            };
-        };
-    };
-    removeKey: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                keyId: number;
             };
             cookie?: never;
         };

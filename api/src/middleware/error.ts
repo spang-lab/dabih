@@ -1,7 +1,7 @@
 import logger from "#lib/logger";
 import { Context, Next } from "koa";
 import { ValidateError } from "@tsoa/runtime";
-import { AuthenticationError } from "src/auth";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 interface DabihError {
   message: string;
@@ -42,6 +42,9 @@ const error = async (ctx: Context, next: Next) => {
         };
       }
       ctx.status = error.code ?? 500;
+      logger.error(`${ctx.status}: ${error.message}`);
+      logger.verbose(error.details);
+
       ctx.body = {
         message: error.message,
         details: error.details,
@@ -49,6 +52,21 @@ const error = async (ctx: Context, next: Next) => {
     };
     await next();
   } catch (err) {
+    if (!(err instanceof Error)) {
+      logger.error(`Unexpected Error: Type ${typeof err} was thrown,
+                   only Errors should be thrown in Koa middleware.`);
+      logger.error(err);
+      ctx.error('Internal Server Error');
+      return;
+    }
+    if (err instanceof PrismaClientKnownRequestError) {
+      const { code, message } = err;
+      ctx.error({
+        message: `Database Error with code "${code}"`,
+        details: message,
+        code: 400,
+      });
+    }
     if (err instanceof ValidateError) {
       ctx.error({
         message: 'Validation Failed',
@@ -57,26 +75,19 @@ const error = async (ctx: Context, next: Next) => {
       });
       return;
     }
-    if (err instanceof AuthenticationError) {
+    if ("code" in err && typeof err.code === 'number') {
       ctx.error({
         message: err.message,
-        code: 401,
+        code: err.code,
       });
       return;
     }
-    if (err instanceof Error) {
-      const stack = getStackMessage(err);
-      ctx.error({
-        message: err.message,
-        details: stack,
-        code: 500,
-      });
-      return;
-    }
-    logger.error(`Unexpected Error: Type ${typeof err} was thrown,
-                 only Errors should be thrown in Koa middleware.`);
-    logger.error(err);
-    ctx.error('Internal Server Error');
+    const stack = getStackMessage(err);
+    ctx.error({
+      message: err.message,
+      details: stack,
+      code: 500,
+    });
   }
 };
 export default () => error;

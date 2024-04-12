@@ -5,12 +5,7 @@ import { User } from './api/types';
 import { isToken, convertToken } from './lib/database/token';
 import db from './lib/db';
 
-export class AuthenticationError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'AuthenticationError';
-  }
-}
+import { AuthenticationError } from './api/errors';
 
 const parseHeader = (request: Request): string => {
   const authHeader = request.get('Authorization');

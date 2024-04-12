@@ -1,5 +1,6 @@
 import { publicKey } from '../../database/index.js';
 
+
 const route = async (ctx) => {
   const { sub } = ctx.data;
   const { keyHash } = ctx.request.body;
