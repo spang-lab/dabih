@@ -191,7 +191,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/token/{tokenId}/remove": {
+    "/token/remove": {
         parameters: {
             query?: never;
             header?: never;
@@ -690,12 +690,17 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                tokenId: number;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: double */
+                    tokenId: number;
+                };
+            };
+        };
         responses: {
             /** @description No content */
             204: {

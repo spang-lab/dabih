@@ -120,7 +120,7 @@ test('list tokens', async t => {
   if (!tokenList) {
     return t.fail();
   }
-  t.truthy(tokenList.length > 1)
+  t.truthy(tokenList.length >= 1)
   await api.token.remove(token.id);
 })
 

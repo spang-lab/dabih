@@ -5,7 +5,6 @@ import {
   Route,
   Post,
   Get,
-  Path,
   Body,
   Request,
   Security,
@@ -55,13 +54,14 @@ export class TokenController extends Controller {
   }
   @Security("jwt", ["token"])
   @Security("api_key", ["token"])
-  @Post("{tokenId}/remove")
+  @Post("remove")
   @OperationId("removeToken")
   public async remove(
-    @Path() tokenId: number,
     @Request() request: RequestWithUser,
+    @Body() body: { tokenId: number },
   ) {
     const { user } = request;
+    const { tokenId } = body;
     await remove(user, tokenId);
 
   }

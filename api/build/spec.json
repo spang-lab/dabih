@@ -1018,7 +1018,7 @@
 				"parameters": []
 			}
 		},
-		"/token/{tokenId}/remove": {
+		"/token/remove": {
 			"post": {
 				"operationId": "removeToken",
 				"responses": {
@@ -1041,17 +1041,26 @@
 						]
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "tokenId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"tokenId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"tokenId"
+								],
+								"type": "object"
+							}
 						}
 					}
-				]
+				}
 			}
 		},
 		"/upload/chunk": {

@@ -30,7 +30,7 @@ const init = (port?: number) => {
   const token = {
     info: () => c.GET('/token/info'),
     add: (body: schemas["TokenAddBody"]) => c.POST('/token/add', { body }),
-    remove: (id: number) => c.POST('/token/{tokenId}/remove', { params: { path: { tokenId: id } } }),
+    remove: (id: number) => c.POST('/token/remove', { body: { tokenId: id } }),
     list: () => c.GET('/token/list'),
   }
   const user = {

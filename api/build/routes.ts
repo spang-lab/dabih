@@ -591,15 +591,15 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        router.post('/token/:tokenId/remove',
+        router.post('/token/remove',
             authenticateMiddleware([{"jwt":["token"]},{"api_key":["token"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.remove)),
 
             async function TokenController_remove(context: Context, next: Next) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    tokenId: {"in":"path","name":"tokenId","required":true,"dataType":"double"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"tokenId":{"dataType":"double","required":true}}},
             };
 
             let validatedArgs: any[] = [];
