@@ -24,15 +24,13 @@ model PublicKey {
   id        Int       @id @default(autoincrement())
   user      User      @relation(fields: [userId], references: [id])
   userId    Int
-  hash      String
+  hash      String    @unique
   data      String
   isRootKey Boolean
   enabled   DateTime?
   enabledBy String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
-  @@unique([userId, hash])
 }
 
 model Dataset {

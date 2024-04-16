@@ -121,17 +121,36 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UploadStartResponse": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Omit_Dataset.chunks_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"duplicate":{"dataType":"string"}}}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_Dataset.fileName-or-size-or-name-or-path_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"fileName":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"path":{"dataType":"string","required":true},"size":{"dataType":"integer","required":true}},"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Omit_Dataset.chunks_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"duplicate":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UploadStartBody": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_Dataset.fileName-or-size-or-name-or-path_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"chunkHash":{"dataType":"string","required":true}}}],"validators":{}},
+        "dataType": "refObject",
+        "properties": {
+            "fileName": {"dataType":"string","required":true},
+            "size": {"dataType":"integer"},
+            "name": {"dataType":"string"},
+            "path": {"dataType":"string"},
+            "chunkHash": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Chunk": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"integer","required":true},
+            "hash": {"dataType":"string","required":true},
+            "iv": {"dataType":"string","required":true},
+            "start": {"dataType":"integer","required":true},
+            "end": {"dataType":"integer","required":true},
+            "size": {"dataType":"integer","required":true},
+            "crc": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "User": {
@@ -462,18 +481,53 @@ export function RegisterRoutes(router: KoaRouter) {
               controller,
               context,
               validatedArgs,
+              successStatus: 201,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/upload/:mnemonic/cancel',
+            authenticateMiddleware([{"jwt":["upload"]}]),
+            ...(fetchMiddlewares<Middleware>(UploadController)),
+            ...(fetchMiddlewares<Middleware>(UploadController.prototype.cancel)),
+
+            async function UploadController_cancel(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new UploadController();
+
+            return templateService.apiHandler({
+              methodName: 'cancel',
+              controller,
+              context,
+              validatedArgs,
               successStatus: undefined,
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        router.put('/upload/chunk',
+        router.put('/upload/:mnemonic/chunk',
             authenticateMiddleware([{"jwt":["upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.chunk)),
 
             async function UploadController_chunk(context: Context, next: Next) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    contentRange: {"in":"header","name":"content-range","required":true,"dataType":"string"},
+                    digest: {"in":"header","name":"digest","required":true,"dataType":"string"},
             };
 
             let validatedArgs: any[] = [];
@@ -493,7 +547,7 @@ export function RegisterRoutes(router: KoaRouter) {
               controller,
               context,
               validatedArgs,
-              successStatus: undefined,
+              successStatus: 201,
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

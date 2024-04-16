@@ -55,7 +55,6 @@ export const store = async (bucket: string, key: string) => {
     logger.error(err);
     throw new Error(`Failed to write to file ${path}`);
   }
-
 };
 
 export const head = async (bucket: string, key: string) => {

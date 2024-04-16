@@ -26,6 +26,16 @@ const toJwk = (key: KeyObject) => {
   return jwk;
 };
 
+const fromString = (key: string) => {
+  const jwk = JSON.parse(key) as JsonWebKey;
+  return fromJwk(jwk);
+}
+
+const toString = (key: KeyObject) => {
+  const jwk = toJwk(key);
+  return JSON.stringify(jwk);
+}
+
 const encrypt = (key: KeyObject, base64: string) => {
   const buffer = base64url.toUint8(base64);
   const result = publicEncrypt({
@@ -47,6 +57,8 @@ const toHash = (key: KeyObject) => {
 const publicKey = {
   fromJwk,
   toJwk,
+  toString,
+  fromString,
   toHash,
   encrypt,
 

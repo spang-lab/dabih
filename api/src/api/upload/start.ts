@@ -1,41 +1,69 @@
 
-import db, { Permission } from "#lib/db";
+import db from "#lib/db";
 import mnemonicGen from "#lib/mnemonic";
 import crypto from "#crypto";
 import { storeKey } from "#lib/keyv";
-import { generateKeys } from "#lib/database/keys";
+import { addKeys } from "#lib/database/keys";
+import { Permission } from "#lib/database/member";
+import { createBucket } from "#lib/fs";
 
 import { User, UploadStartBody, UploadStartResponse } from "../types";
+import { RequestError } from "../errors";
 
 
 
 export default async function start(user: User, body: UploadStartBody): Promise<UploadStartResponse> {
   const mnemonic = mnemonicGen.generate();
   const { sub } = user;
+
+  const hasPublicKey = await db.user.findFirst({
+    where: {
+      sub,
+      keys: {
+        some: {
+          enabled: {
+            not: null
+          }
+        }
+      }
+    },
+    include: {
+      keys: true
+    }
+  });
+  if (!hasPublicKey) {
+    throw new RequestError(`User ${sub} has no public keys for encryption`);
+  }
+
+
+
   const {
     name, fileName, size, path, chunkHash,
   } = body;
 
-  const duplicate = await db.dataset.findFirst({
-    where: {
-      createdBy: sub,
-      fileName,
-      size,
-      hash: {
-        not: null
-      },
-      deletedAt: null,
-      chunks: {
-        some: {
-          start: 0,
-          hash: chunkHash,
+  let duplicate = null;
+  if (chunkHash && size) {
+    duplicate = await db.dataset.findFirst({
+      where: {
+        createdBy: sub,
+        fileName,
+        size,
+        hash: {
+          not: null
+        },
+        deletedAt: null,
+        chunks: {
+          some: {
+            start: 0,
+            hash: chunkHash,
+          },
         },
       },
-    },
-    include: {
-      chunks: true
-    }
-  });
+      include: {
+        chunks: true
+      }
+    });
+  }
 
   const key = await crypto.aesKey.generate();
   const keyHash = crypto.aesKey.toHash(key);
@@ -59,11 +87,12 @@ export default async function start(user: User, body: UploadStartBody): Promise<
     }
   });
   await storeKey(mnemonic, key);
-  await generateKeys(mnemonic);
+  await addKeys(mnemonic);
+  await createBucket(mnemonic);
   return {
     ...dataset,
-    duplicate: duplicate?.hash ?? undefined,
-  }
+    duplicate: duplicate?.hash ?? null
+  };
 }
 
 

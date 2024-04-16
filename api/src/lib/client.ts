@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import jwt from 'jsonwebtoken';
 import createClient from 'openapi-fetch'
 import { getEnv, requireEnv } from './env';
@@ -5,6 +6,16 @@ import { getEnv, requireEnv } from './env';
 import type { components, paths } from 'build/api';
 
 type schemas = components["schemas"];
+
+
+interface Chunk {
+  mnemonic: string;
+  start: number;
+  end: number;
+  size: number;
+  hash: string;
+  data: Blob;
+}
 
 const init = (port?: number) => {
   const lPort = port?.toString() ?? getEnv('PORT', '3001');
@@ -43,6 +54,33 @@ const init = (port?: number) => {
     enableKey: (body: schemas["KeyEnableBody"]) => c.POST('/user/key/enable', { body }),
     removeKey: (body: schemas["KeyRemoveBody"]) => c.POST('/user/key/remove', { body }),
   }
+  const upload = {
+    start: (body: schemas["UploadStartBody"]) => c.POST('/upload/start', { body }),
+    chunk: (ck: Chunk) => {
+      return c.PUT('/upload/{mnemonic}/chunk', {
+        params: {
+          path: { mnemonic: ck.mnemonic },
+          header: {
+            'content-range': `bytes ${ck.start}-${ck.end}/${ck.size}`,
+            digest: `sha-256=${ck.hash}`
+          }
+        },
+        body: {
+          chunk: ck.data,
+        },
+        bodySerializer: (body) => {
+          const fd = new FormData();
+          for (const key in body) {
+            // @ts-expect-error this is ok 
+            fd.append(key, body[key]);
+          }
+          return fd;
+        },
+
+      });
+    },
+    cancel: (mnemonic: string) => c.POST('/upload/{mnemonic}/cancel', { params: { path: { mnemonic } } }),
+  }
 
 
 
@@ -50,6 +88,7 @@ const init = (port?: number) => {
     ...c,
     token,
     user,
+    upload,
   }
 
   return client;

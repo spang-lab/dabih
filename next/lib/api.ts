@@ -109,8 +109,8 @@ const upload = {
     const body = new FormData();
     body.append('chunk', data);
     return put(`/upload/${mnemonic}/chunk`, body, {
-      Digest: `sha-256=${hash}`,
-      'Content-Range': `bytes ${start}-${end}/${size}`,
+      digest: `sha-256=${hash}`,
+      'content-range': `bytes ${start}-${end}/${size}`,
       // 'Content-Type': 'multipart/form-data',
     });
   },

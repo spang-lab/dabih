@@ -29,19 +29,23 @@
     "specMerging": "recursive",
     "spec": {
       "paths": {
-        "/upload/chunk": {
+        "/upload/{mnemonic}/chunk": {
           "put": {
-            "consumes": [
-              "multipart/form-data"
-            ],
-            "parameters": [
-              {
-                "in": "formData",
-                "name": "file",
-                "type": "file",
-                "required": true
+            "requestBody": {
+              "content": {
+                "multipart/form-data": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "chunk": {
+                        "type": "string",
+                        "format": "binary"
+                      }
+                    }
+                  }
+                }
               }
-            ]
+            }
           }
         }
       }

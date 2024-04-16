@@ -18,6 +18,10 @@ export interface User {
 export interface RequestWithUser {
   user: User;
 }
+export interface RequestWithFormData {
+  user: User;
+  body: unknown;
+}
 
 
 export interface Chunk {
@@ -105,17 +109,34 @@ export interface Dataset {
   chunks?: Chunk[];
 }
 
-export type UploadStartBody = Pick<Dataset, "fileName" | "size" | "name" | "path"> & {
+export interface UploadStartBody {
+  /**
+    * The name of the file to upload
+    */
+  fileName: string;
+  /**
+    * The total size of the file in bytes, if known
+    * @isInt
+    */
+  size?: number;
+  /**
+    * A custom name for the dataset
+    */
+  name?: string;
+  /**
+    * The original path of the file
+    */
+  path?: string;
   /**
     * The hash of the first 2MiB chunk of the file
     */
-  chunkHash: string;
+  chunkHash?: string;
 }
 export type UploadStartResponse = Omit<Dataset, "chunks"> & {
   /**
     * The hash of the duplicate dataset or null if there is no duplicate
     */
-  duplicate?: string;
+  duplicate: string | null;
 }
 
 

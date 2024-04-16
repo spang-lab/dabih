@@ -16,13 +16,11 @@ export function convertKey(user: User, key: JsonWebKey, isRootKey?: boolean) {
 
 
   const hash = crypto.publicKey.toHash(publicKey);
-  const jwk = crypto.publicKey.toJwk(publicKey);
-
-
+  const data = crypto.publicKey.toString(publicKey);
 
   return {
     hash,
-    data: JSON.stringify(jwk),
+    data,
     isRootKey: isRootKey ?? false,
     enabled: (isAdmin ? new Date() : null),
     enabledBy: (isAdmin ? sub : null),
