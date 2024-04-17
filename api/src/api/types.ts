@@ -1,3 +1,4 @@
+import { BusboyHeaders } from "@fastify/busboy";
 import { JsonWebKey } from "crypto";
 
 /**
@@ -18,10 +19,13 @@ export interface User {
 export interface RequestWithUser {
   user: User;
 }
-export interface RequestWithFormData {
+
+import { Request } from "koa";
+
+export type RequestWithHeaders = Request & {
   user: User;
-  body: unknown;
-}
+};
+
 
 
 export interface Chunk {
@@ -48,11 +52,6 @@ export interface Chunk {
     * @isInt
     */
   end: number;
-  /**
-    * The size of the whole file in bytes
-    * @isInt
-    */
-  size: number;
   /**
     * The CRC32 checksum of the encrypted chunk data base64url encoded
     */
@@ -285,3 +284,11 @@ export interface UserResponse {
   keys: PublicKey[];
 }
 
+
+export interface ChunkAddBody {
+  mnemonic: Mnemonic;
+  hash: string;
+  start: number;
+  end: number;
+  size?: number;
+}

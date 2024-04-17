@@ -381,11 +381,6 @@
 						"format": "int32",
 						"description": "The end of the chunk as a byte position in the file"
 					},
-					"size": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The size of the whole file in bytes"
-					},
 					"crc": {
 						"type": "string",
 						"nullable": true,
@@ -411,11 +406,82 @@
 					"iv",
 					"start",
 					"end",
-					"size",
 					"crc",
 					"createdAt",
 					"updatedAt",
 					"deletedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Mnemonic": {
+				"type": "string",
+				"example": "happy_jane",
+				"description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
+				"pattern": "^[a-z]+_[a-z]+$"
+			},
+			"Dataset": {
+				"description": "A dataset is a file uploaded to dabih.\nIt is a collection of chunks that are encrypted with the same keyHash",
+				"properties": {
+					"id": {
+						"type": "integer",
+						"format": "int32",
+						"description": "The database id of the dataset"
+					},
+					"mnemonic": {
+						"$ref": "#/components/schemas/Mnemonic",
+						"description": "The mnemonic of the dataset"
+					},
+					"fileName": {
+						"type": "string",
+						"description": "The name of the file the dataset was created from"
+					},
+					"createdBy": {
+						"type": "string",
+						"description": "The user that uploaded the dataset"
+					},
+					"keyHash": {
+						"type": "string",
+						"description": "The hash of the AES-256 encryption key"
+					},
+					"name": {
+						"type": "string",
+						"nullable": true,
+						"description": "A custom non unique name of the dataset"
+					},
+					"path": {
+						"type": "string",
+						"nullable": true,
+						"description": "The original path of the dataset"
+					},
+					"hash": {
+						"type": "string",
+						"nullable": true,
+						"description": "The hash of the entire dataset"
+					},
+					"size": {
+						"type": "integer",
+						"format": "int32",
+						"nullable": true,
+						"description": "The size of the dataset in bytes"
+					},
+					"chunks": {
+						"items": {
+							"$ref": "#/components/schemas/Chunk"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"mnemonic",
+					"fileName",
+					"createdBy",
+					"keyHash",
+					"name",
+					"path",
+					"hash",
+					"size"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -990,6 +1056,43 @@
 				]
 			}
 		},
+		"/upload/{mnemonic}/finish": {
+			"post": {
+				"operationId": "Finish",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Dataset"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Upload"
+				],
+				"security": [
+					{
+						"jwt": [
+							"upload"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/token/info": {
 			"get": {
 				"operationId": "tokenInfo",
@@ -1178,6 +1281,7 @@
 						}
 					},
 					{
+						"description": "The range of bytes in the chunk\nIt should be in the format `bytes {start}-{end}/{size}`",
 						"in": "header",
 						"name": "content-range",
 						"required": true,
@@ -1186,6 +1290,7 @@
 						}
 					},
 					{
+						"description": "The SHA-256 hash of the chunk data encoded in base64url\nIt should be in the format `sha-256={hash}`",
 						"in": "header",
 						"name": "digest",
 						"required": true,

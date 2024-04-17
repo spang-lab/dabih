@@ -59,7 +59,6 @@ model Chunk {
   iv        String
   start     Int
   end       Int
-  size      Int
   crc       String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

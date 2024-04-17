@@ -3,18 +3,20 @@ import { Transform } from 'node:stream';
 
 import {
   createHash,
-  BinaryToTextEncoding,
   Hash
 } from 'node:crypto';
 import crc32 from 'crc/calculators/crc32';
 
 
 
-class SHA256Stream extends Transform {
+class ValidationStream extends Transform {
   private hash: Hash;
+  private byteCount: number;
+
   constructor() {
     super({});
     this.hash = createHash('sha256');
+    this.byteCount = 0;
   }
 
   _transform(chunk: Buffer, encoding: string, callback: () => void) {
@@ -22,14 +24,18 @@ class SHA256Stream extends Transform {
       throw new Error(`Unsupported Encoding ${encoding}`);
     }
     if (chunk) {
+      this.byteCount += chunk.length;
       this.hash.update(chunk);
       this.push(chunk);
     }
     callback();
   }
 
-  digest(encoding: BinaryToTextEncoding = 'base64url') {
-    return this.hash.digest(encoding);
+  digest() {
+    return {
+      hash: this.hash.digest('base64url'),
+      byteCount: this.byteCount,
+    };
   }
 }
 
@@ -52,10 +58,13 @@ class Crc32 extends Transform {
   }
 
   digest() {
-    return this.checksum?.toString(16);
+    if (!this.checksum) {
+      throw new Error('No data to checksum');
+    }
+    return this.checksum.toString(16);
   }
 }
 export default {
-  sha256: () => new SHA256Stream(),
+  validate: () => new ValidationStream(),
   crc32: () => new Crc32(),
 };

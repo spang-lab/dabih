@@ -159,6 +159,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/upload/{mnemonic}/finish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Finish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/token/info": {
         parameters: {
             query?: never;
@@ -403,11 +419,6 @@ export interface components {
              * @description The end of the chunk as a byte position in the file
              */
             end: number;
-            /**
-             * Format: int32
-             * @description The size of the whole file in bytes
-             */
-            size: number;
             /** @description The CRC32 checksum of the encrypted chunk data base64url encoded */
             crc: string | null;
             /** Format: date-time */
@@ -416,6 +427,41 @@ export interface components {
             updatedAt: Date;
             /** Format: date-time */
             deletedAt: Date | null;
+        };
+        /**
+         * @description mnemonics are human readable unique identifiers for datasets
+         *     mnemonics have the form <random adjective>_<random first name>
+         * @example happy_jane
+         */
+        Mnemonic: string;
+        /** @description A dataset is a file uploaded to dabih.
+         *     It is a collection of chunks that are encrypted with the same keyHash */
+        Dataset: {
+            /**
+             * Format: int32
+             * @description The database id of the dataset
+             */
+            id: number;
+            /** @description The mnemonic of the dataset */
+            mnemonic: components["schemas"]["Mnemonic"];
+            /** @description The name of the file the dataset was created from */
+            fileName: string;
+            /** @description The user that uploaded the dataset */
+            createdBy: string;
+            /** @description The hash of the AES-256 encryption key */
+            keyHash: string;
+            /** @description A custom non unique name of the dataset */
+            name: string | null;
+            /** @description The original path of the dataset */
+            path: string | null;
+            /** @description The hash of the entire dataset */
+            hash: string | null;
+            /**
+             * Format: int32
+             * @description The size of the dataset in bytes
+             */
+            size: number | null;
+            chunks?: components["schemas"]["Chunk"][];
         };
         User: {
             sub: string;
@@ -689,6 +735,28 @@ export interface operations {
             };
         };
     };
+    Finish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Dataset"];
+                };
+            };
+        };
+    };
     tokenInfo: {
         parameters: {
             query?: never;
@@ -782,7 +850,11 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description The range of bytes in the chunk
+                 *     It should be in the format `bytes {start}-{end}/{size}` */
                 "content-range": string;
+                /** @description The SHA-256 hash of the chunk data encoded in base64url
+                 *     It should be in the format `sha-256={hash}` */
                 digest: string;
             };
             path: {

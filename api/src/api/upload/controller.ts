@@ -17,8 +17,10 @@ import {
 import start from "./start";
 import cancel from "./cancel";
 import chunk from "./chunk";
+import finish from "./finish";
 
-import { UploadStartBody, UploadStartResponse, RequestWithUser, Chunk } from '../types';
+import { UploadStartBody, UploadStartResponse, RequestWithUser, Chunk, RequestWithHeaders, Dataset } from '../types';
+import { parseDigest, parseContentRange } from "./util";
 
 
 
@@ -52,14 +54,34 @@ export class UploadController extends Controller {
   @SuccessResponse("201", "Created")
   public async chunk(
     @Path() mnemonic: string,
-    @Request() request: RequestWithUser,
+    @Request() request: RequestWithHeaders,
+    /**
+      * The range of bytes in the chunk
+      * It should be in the format `bytes {start}-{end}/{size}`
+      */
     @Header("content-range") contentRange: string,
+    /**
+      * The SHA-256 hash of the chunk data encoded in base64url
+      * It should be in the format `sha-256={hash}`
+      */
     @Header("digest") digest: string,
   ): Promise<Chunk> {
-    console.log(digest);
-    console.log(contentRange);
-    const result = await chunk(mnemonic, request);
+    const result = await chunk({
+      mnemonic,
+      ...parseContentRange(contentRange),
+      hash: parseDigest(digest),
+    }, request);
     this.setStatus(201);
     return result;
   }
+
+  @Post("{mnemonic}/finish")
+  public async finish(
+    @Request() request: RequestWithUser,
+    @Path() mnemonic: string,
+  ): Promise<Dataset> {
+    const { user } = request;
+    return finish(user, mnemonic);
+  }
+
 }

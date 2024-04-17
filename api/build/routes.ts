@@ -144,11 +144,32 @@ const models: TsoaRoute.Models = {
             "iv": {"dataType":"string","required":true},
             "start": {"dataType":"integer","required":true},
             "end": {"dataType":"integer","required":true},
-            "size": {"dataType":"integer","required":true},
             "crc": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
             "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Mnemonic": {
+        "dataType": "refAlias",
+        "type": {"dataType":"string","validators":{"pattern":{"value":"^[a-z]+_[a-z]+$"}}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Dataset": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"integer","required":true},
+            "mnemonic": {"ref":"Mnemonic","required":true},
+            "fileName": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+            "keyHash": {"dataType":"string","required":true},
+            "name": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "path": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "hash": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "size": {"dataType":"union","subSchemas":[{"dataType":"integer"},{"dataType":"enum","enums":[null]}],"required":true},
+            "chunks": {"dataType":"array","array":{"dataType":"refObject","ref":"Chunk"}},
         },
         "additionalProperties": false,
     },
@@ -548,6 +569,38 @@ export function RegisterRoutes(router: KoaRouter) {
               context,
               validatedArgs,
               successStatus: 201,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/upload/:mnemonic/finish',
+            authenticateMiddleware([{"jwt":["upload"]}]),
+            ...(fetchMiddlewares<Middleware>(UploadController)),
+            ...(fetchMiddlewares<Middleware>(UploadController.prototype.finish)),
+
+            async function UploadController_finish(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new UploadController();
+
+            return templateService.apiHandler({
+              methodName: 'finish',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
