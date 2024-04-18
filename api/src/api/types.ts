@@ -1,4 +1,5 @@
 import { BusboyHeaders } from "@fastify/busboy";
+import { Prisma } from "@prisma/client";
 import { JsonWebKey } from "crypto";
 
 /**
@@ -56,10 +57,34 @@ export interface Chunk {
     * The CRC32 checksum of the encrypted chunk data base64url encoded
     */
   crc: string | null;
+  /**
+    * chunk creation timestamp
+    */
+  createdAt: Date;
+  /**
+    * chunk last update timestamp
+    */
+  updatedAt: Date;
+}
+
+export interface Member {
+  id: number;
+  sub: string;
+  datasetId: number;
+  permission: number;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date | null;
 }
+
+export interface Key {
+  id: number;
+  datasetId: number;
+  publicKeyHash: string;
+  key: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 
 /**
   * A dataset is a file uploaded to dabih.
@@ -72,20 +97,19 @@ export interface Dataset {
     * @isInt
     */
   id: number;
-  /**
-    * The mnemonic of the dataset
-    */
   mnemonic: Mnemonic;
   /**
     * The name of the file the dataset was created from
+    * @example "file.txt"
     */
   fileName: string;
   /**
     * The user that uploaded the dataset
+    * @example "admin"
     */
   createdBy: string;
   /**
-    * The hash of the AES-256 encryption key
+    * The hash of the AES-256 encryption key base64url encoded
     */
   keyHash: string;
   /**
@@ -97,7 +121,7 @@ export interface Dataset {
     */
   path: string | null;
   /**
-    * The hash of the entire dataset
+    * The hash of the entire dataset base64url encoded
     */
   hash: string | null;
   /**
@@ -105,7 +129,21 @@ export interface Dataset {
     * @isInt
     */
   size: number | null;
-  chunks?: Chunk[];
+  /** 
+    * The list of chunks that make up the dataset
+    */
+  chunks: Chunk[];
+  /**
+    * The list of members that have access to the dataset
+    */
+  members: Member[];
+  /**
+    * A list of encrypted keys for the dataset
+    */
+  keys: Key[];
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 }
 
 export interface UploadStartBody {
@@ -131,7 +169,7 @@ export interface UploadStartBody {
     */
   chunkHash?: string;
 }
-export type UploadStartResponse = Omit<Dataset, "chunks"> & {
+export type UploadStartResponse = Omit<Dataset, "chunks" | "keys"> & {
   /**
     * The hash of the duplicate dataset or null if there is no duplicate
     */
@@ -291,4 +329,51 @@ export interface ChunkAddBody {
   start: number;
   end: number;
   size?: number;
+}
+
+export interface SearchRequestBody {
+  /**
+    * The search query
+    */
+  query?: string;
+  /**
+    * Also show deleted datasets
+    */
+  showDeleted?: boolean;
+  /**
+    * Also show datasets the user does not have access to
+    * This is ignored if the user is not an admin 
+    */
+  showAll?: boolean;
+  /**
+    * The number of datasets to skip before returning results.
+    * @isInt
+    */
+  skip?: number;
+  /**
+    * The maximum number of results to return
+    * @isInt
+    */
+  take?: number;
+  /**
+    * The field to sort the results by
+    */
+  sortBy?: keyof Dataset;
+  /**
+    * The direction to sort the results by
+    */
+  sortDir?: Prisma.SortOrder,
+}
+
+type SearchDataset = Omit<Dataset, "chunks" | "keys">;
+export interface SearchResponseBody {
+  /**
+    * The total number of datasets that match the search query
+    * @isInt
+    */
+  count: number;
+  /**
+    * The datasets that match the search query, paginated 
+    */
+  datasets: SearchDataset[];
 }

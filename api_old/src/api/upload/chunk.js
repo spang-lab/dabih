@@ -45,7 +45,7 @@ const readFile = async (req, encrypt, stream) => new Promise((resolve, reject) =
     }));
     file.pipe(hashStream).pipe(encrypt).pipe(crcStream).pipe(stream);
   });
-  busboy.on('finish', () => {});
+  busboy.on('finish', () => { });
   busboy.on('error', reject);
   req.pipe(busboy);
 });
@@ -84,7 +84,7 @@ const route = async (ctx) => {
       mnemonic,
       chunk.hash,
     );
-    if (!existing) {
+    if (existing) {
       ctx.body = existing;
       return;
     }

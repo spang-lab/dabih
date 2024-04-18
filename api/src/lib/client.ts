@@ -4,6 +4,8 @@ import createClient from 'openapi-fetch'
 import { getEnv, requireEnv } from './env';
 
 import type { components, paths } from 'build/api';
+import { createHash } from 'crypto';
+import search from 'src/api/dataset/search';
 
 type schemas = components["schemas"];
 
@@ -17,7 +19,7 @@ interface Chunk {
   data: Blob;
 }
 
-const init = (port?: number) => {
+const init = (port?: number, sub?: string) => {
   const lPort = port?.toString() ?? getEnv('PORT', '3001');
 
   const host = `http://localhost:${lPort}`;
@@ -25,7 +27,7 @@ const init = (port?: number) => {
   const tokenSecret = requireEnv("TOKEN_SECRET");
 
   const admin = {
-    sub: "admin",
+    sub: sub ?? "admin",
     scope: "upload user dataset token admin",
     aud: host,
   };
@@ -83,6 +85,48 @@ const init = (port?: number) => {
     finish: (mnemonic: string) => c.POST('/upload/{mnemonic}/finish', { params: { path: { mnemonic } } }),
   }
 
+  const dataset = {
+    get: (mnemonic: string) => c.GET('/dataset/{mnemonic}', { params: { path: { mnemonic } } }),
+    search: (body: schemas["SearchRequestBody"]) => c.POST('/dataset/search', { body }),
+    rename: (mnemonic: string, name: string) => c.POST('/dataset/{mnemonic}/rename', { params: { path: { mnemonic } }, body: { name } }),
+    remove: (mnemonic: string) => c.POST('/dataset/{mnemonic}/remove', { params: { path: { mnemonic } } }),
+    restore: (mnemonic: string) => c.POST('/dataset/{mnemonic}/restore', { params: { path: { mnemonic } } }),
+    destroy: (mnemonic: string, force?: boolean) => c.POST('/dataset/{mnemonic}/destroy', { params: { path: { mnemonic } }, body: { force: force ?? false } }),
+  }
+
+  const uploadBlob = async (fileName: string, data: Blob) => {
+    const { data: dataset, response, error } = await upload.start({ fileName });
+    if (error) {
+      return { response, error };
+    }
+    if (!dataset) {
+      return { response, error: { message: "No dataset" } };
+    }
+    const { mnemonic } = dataset;
+    const hash = createHash('sha256');
+    const buffer = Buffer.from(await data.arrayBuffer());
+    hash.update(buffer);
+
+    const chunk = {
+      mnemonic,
+      start: 0,
+      end: data.size - 1,
+      size: data.size,
+      hash: hash.digest('base64url'),
+      data,
+    }
+    const { response: response2, error: error2 } = await upload.chunk(chunk);
+    if (error2) {
+      return { response: response2, error: error2 };
+    }
+    const { response: response3, error: error3, data: result } = await upload.finish(mnemonic);
+    if (error3) {
+      return { response: response3, error: error3 };
+    }
+    return {
+      data: result,
+    }
+  }
 
 
   const client = {
@@ -90,6 +134,8 @@ const init = (port?: number) => {
     token,
     user,
     upload,
+    dataset,
+    uploadBlob,
   }
 
   return client;

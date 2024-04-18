@@ -247,7 +247,44 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_Dataset.Exclude_keyofDataset.chunks__": {
+			"Member": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"sub": {
+						"type": "string"
+					},
+					"datasetId": {
+						"type": "number",
+						"format": "double"
+					},
+					"permission": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"sub",
+					"datasetId",
+					"permission",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__": {
 				"properties": {
 					"id": {
 						"type": "integer",
@@ -255,20 +292,21 @@
 						"description": "The database id of the dataset"
 					},
 					"mnemonic": {
-						"type": "string",
-						"description": "The mnemonic of the dataset"
+						"type": "string"
 					},
 					"fileName": {
 						"type": "string",
-						"description": "The name of the file the dataset was created from"
+						"description": "The name of the file the dataset was created from",
+						"example": "file.txt"
 					},
 					"createdBy": {
 						"type": "string",
-						"description": "The user that uploaded the dataset"
+						"description": "The user that uploaded the dataset",
+						"example": "admin"
 					},
 					"keyHash": {
 						"type": "string",
-						"description": "The hash of the AES-256 encryption key"
+						"description": "The hash of the AES-256 encryption key base64url encoded"
 					},
 					"name": {
 						"type": "string",
@@ -280,12 +318,31 @@
 					},
 					"hash": {
 						"type": "string",
-						"description": "The hash of the entire dataset"
+						"description": "The hash of the entire dataset base64url encoded"
 					},
 					"size": {
 						"type": "integer",
 						"format": "int32",
 						"description": "The size of the dataset in bytes"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array",
+						"description": "The list of members that have access to the dataset"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
 					}
 				},
 				"required": [
@@ -297,19 +354,23 @@
 					"name",
 					"path",
 					"hash",
-					"size"
+					"size",
+					"members",
+					"createdAt",
+					"updatedAt",
+					"deletedAt"
 				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
-			"Omit_Dataset.chunks_": {
-				"$ref": "#/components/schemas/Pick_Dataset.Exclude_keyofDataset.chunks__",
+			"Omit_Dataset.chunks-or-keys_": {
+				"$ref": "#/components/schemas/Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__",
 				"description": "Construct a type with the properties of T except for those in type K."
 			},
 			"UploadStartResponse": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/Omit_Dataset.chunks_"
+						"$ref": "#/components/schemas/Omit_Dataset.chunks-or-keys_"
 					},
 					{
 						"properties": {
@@ -388,16 +449,13 @@
 					},
 					"createdAt": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"description": "chunk creation timestamp"
 					},
 					"updatedAt": {
 						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
 						"format": "date-time",
-						"nullable": true
+						"description": "chunk last update timestamp"
 					}
 				},
 				"required": [
@@ -408,8 +466,7 @@
 					"end",
 					"crc",
 					"createdAt",
-					"updatedAt",
-					"deletedAt"
+					"updatedAt"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -420,6 +477,42 @@
 				"description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
 				"pattern": "^[a-z]+_[a-z]+$"
 			},
+			"Key": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"datasetId": {
+						"type": "number",
+						"format": "double"
+					},
+					"publicKeyHash": {
+						"type": "string"
+					},
+					"key": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"datasetId",
+					"publicKeyHash",
+					"key",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Dataset": {
 				"description": "A dataset is a file uploaded to dabih.\nIt is a collection of chunks that are encrypted with the same keyHash",
 				"properties": {
@@ -429,20 +522,21 @@
 						"description": "The database id of the dataset"
 					},
 					"mnemonic": {
-						"$ref": "#/components/schemas/Mnemonic",
-						"description": "The mnemonic of the dataset"
+						"$ref": "#/components/schemas/Mnemonic"
 					},
 					"fileName": {
 						"type": "string",
-						"description": "The name of the file the dataset was created from"
+						"description": "The name of the file the dataset was created from",
+						"example": "file.txt"
 					},
 					"createdBy": {
 						"type": "string",
-						"description": "The user that uploaded the dataset"
+						"description": "The user that uploaded the dataset",
+						"example": "admin"
 					},
 					"keyHash": {
 						"type": "string",
-						"description": "The hash of the AES-256 encryption key"
+						"description": "The hash of the AES-256 encryption key base64url encoded"
 					},
 					"name": {
 						"type": "string",
@@ -457,7 +551,7 @@
 					"hash": {
 						"type": "string",
 						"nullable": true,
-						"description": "The hash of the entire dataset"
+						"description": "The hash of the entire dataset base64url encoded"
 					},
 					"size": {
 						"type": "integer",
@@ -469,7 +563,35 @@
 						"items": {
 							"$ref": "#/components/schemas/Chunk"
 						},
-						"type": "array"
+						"type": "array",
+						"description": "The list of chunks that make up the dataset"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array",
+						"description": "The list of members that have access to the dataset"
+					},
+					"keys": {
+						"items": {
+							"$ref": "#/components/schemas/Key"
+						},
+						"type": "array",
+						"description": "A list of encrypted keys for the dataset"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -481,7 +603,13 @@
 					"name",
 					"path",
 					"hash",
-					"size"
+					"size",
+					"chunks",
+					"members",
+					"keys",
+					"createdAt",
+					"updatedAt",
+					"deletedAt"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -607,6 +735,92 @@
 					"scopes",
 					"lifetime"
 				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SearchDataset": {
+				"$ref": "#/components/schemas/Omit_Dataset.chunks-or-keys_"
+			},
+			"SearchResponseBody": {
+				"properties": {
+					"count": {
+						"type": "integer",
+						"format": "int32",
+						"description": "The total number of datasets that match the search query"
+					},
+					"datasets": {
+						"items": {
+							"$ref": "#/components/schemas/SearchDataset"
+						},
+						"type": "array",
+						"description": "The datasets that match the search query, paginated"
+					}
+				},
+				"required": [
+					"count",
+					"datasets"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Prisma.SortOrder": {
+				"type": "string",
+				"enum": [
+					"asc",
+					"desc"
+				]
+			},
+			"SearchRequestBody": {
+				"properties": {
+					"query": {
+						"type": "string",
+						"description": "The search query"
+					},
+					"showDeleted": {
+						"type": "boolean",
+						"description": "Also show deleted datasets"
+					},
+					"showAll": {
+						"type": "boolean",
+						"description": "Also show datasets the user does not have access to\nThis is ignored if the user is not an admin"
+					},
+					"skip": {
+						"type": "integer",
+						"format": "int32",
+						"description": "The number of datasets to skip before returning results."
+					},
+					"take": {
+						"type": "integer",
+						"format": "int32",
+						"description": "The maximum number of results to return"
+					},
+					"sortBy": {
+						"type": "string",
+						"enum": [
+							"chunks",
+							"keys",
+							"id",
+							"mnemonic",
+							"fileName",
+							"createdBy",
+							"keyHash",
+							"name",
+							"path",
+							"hash",
+							"size",
+							"members",
+							"createdAt",
+							"updatedAt",
+							"deletedAt"
+						],
+						"nullable": false,
+						"description": "The field to sort the results by"
+					},
+					"sortDir": {
+						"$ref": "#/components/schemas/Prisma.SortOrder",
+						"description": "The direction to sort the results by"
+					}
+				},
 				"type": "object",
 				"additionalProperties": false
 			}
@@ -1238,6 +1452,267 @@
 								},
 								"required": [
 									"tokenId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/dataset/{mnemonic}": {
+			"get": {
+				"operationId": "datasetInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Dataset"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Dataset"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/dataset/search": {
+			"post": {
+				"operationId": "searchDatasets",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SearchResponseBody"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Dataset"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SearchRequestBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/dataset/{mnemonic}/rename": {
+			"post": {
+				"operationId": "renameDataset",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Dataset"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"name": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"name"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/dataset/{mnemonic}/remove": {
+			"post": {
+				"operationId": "removeDataset",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Dataset"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/dataset/{mnemonic}/restore": {
+			"post": {
+				"operationId": "restoreDataset",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Dataset"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/dataset/{mnemonic}/destroy": {
+			"post": {
+				"operationId": "destroyDataset",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Dataset"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"force": {
+										"type": "boolean"
+									}
+								},
+								"required": [
+									"force"
 								],
 								"type": "object"
 							}

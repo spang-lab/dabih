@@ -239,6 +239,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/dataset/{mnemonic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["datasetInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dataset/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["searchDatasets"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dataset/{mnemonic}/rename": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["renameDataset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dataset/{mnemonic}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["removeDataset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dataset/{mnemonic}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["restoreDataset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dataset/{mnemonic}/destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["destroyDataset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/upload/{mnemonic}/chunk": {
         parameters: {
             query?: never;
@@ -351,36 +447,62 @@ export interface components {
             /** @description The hash of the key */
             hash: string;
         };
+        Member: {
+            /** Format: double */
+            id: number;
+            sub: string;
+            /** Format: double */
+            datasetId: number;
+            /** Format: double */
+            permission: number;
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+        };
         /** @description From T, pick a set of properties whose keys are in the union K */
-        "Pick_Dataset.Exclude_keyofDataset.chunks__": {
+        "Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__": {
             /**
              * Format: int32
              * @description The database id of the dataset
              */
             id: number;
-            /** @description The mnemonic of the dataset */
             mnemonic: string;
-            /** @description The name of the file the dataset was created from */
+            /**
+             * @description The name of the file the dataset was created from
+             * @example file.txt
+             */
             fileName: string;
-            /** @description The user that uploaded the dataset */
+            /**
+             * @description The user that uploaded the dataset
+             * @example admin
+             */
             createdBy: string;
-            /** @description The hash of the AES-256 encryption key */
+            /** @description The hash of the AES-256 encryption key base64url encoded */
             keyHash: string;
             /** @description A custom non unique name of the dataset */
             name: string;
             /** @description The original path of the dataset */
             path: string;
-            /** @description The hash of the entire dataset */
+            /** @description The hash of the entire dataset base64url encoded */
             hash: string;
             /**
              * Format: int32
              * @description The size of the dataset in bytes
              */
             size: number;
+            /** @description The list of members that have access to the dataset */
+            members: components["schemas"]["Member"][];
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+            /** Format: date-time */
+            deletedAt: Date;
         };
         /** @description Construct a type with the properties of T except for those in type K. */
-        "Omit_Dataset.chunks_": components["schemas"]["Pick_Dataset.Exclude_keyofDataset.chunks__"];
-        UploadStartResponse: components["schemas"]["Omit_Dataset.chunks_"] & {
+        "Omit_Dataset.chunks-or-keys_": components["schemas"]["Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__"];
+        UploadStartResponse: components["schemas"]["Omit_Dataset.chunks-or-keys_"] & {
             /** @description The hash of the duplicate dataset or null if there is no duplicate */
             duplicate: string | null;
         };
@@ -421,12 +543,16 @@ export interface components {
             end: number;
             /** @description The CRC32 checksum of the encrypted chunk data base64url encoded */
             crc: string | null;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @description chunk creation timestamp
+             */
             createdAt: Date;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @description chunk last update timestamp
+             */
             updatedAt: Date;
-            /** Format: date-time */
-            deletedAt: Date | null;
         };
         /**
          * @description mnemonics are human readable unique identifiers for datasets
@@ -434,6 +560,18 @@ export interface components {
          * @example happy_jane
          */
         Mnemonic: string;
+        Key: {
+            /** Format: double */
+            id: number;
+            /** Format: double */
+            datasetId: number;
+            publicKeyHash: string;
+            key: string;
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+        };
         /** @description A dataset is a file uploaded to dabih.
          *     It is a collection of chunks that are encrypted with the same keyHash */
         Dataset: {
@@ -442,26 +580,42 @@ export interface components {
              * @description The database id of the dataset
              */
             id: number;
-            /** @description The mnemonic of the dataset */
             mnemonic: components["schemas"]["Mnemonic"];
-            /** @description The name of the file the dataset was created from */
+            /**
+             * @description The name of the file the dataset was created from
+             * @example file.txt
+             */
             fileName: string;
-            /** @description The user that uploaded the dataset */
+            /**
+             * @description The user that uploaded the dataset
+             * @example admin
+             */
             createdBy: string;
-            /** @description The hash of the AES-256 encryption key */
+            /** @description The hash of the AES-256 encryption key base64url encoded */
             keyHash: string;
             /** @description A custom non unique name of the dataset */
             name: string | null;
             /** @description The original path of the dataset */
             path: string | null;
-            /** @description The hash of the entire dataset */
+            /** @description The hash of the entire dataset base64url encoded */
             hash: string | null;
             /**
              * Format: int32
              * @description The size of the dataset in bytes
              */
             size: number | null;
-            chunks?: components["schemas"]["Chunk"][];
+            /** @description The list of chunks that make up the dataset */
+            chunks: components["schemas"]["Chunk"][];
+            /** @description The list of members that have access to the dataset */
+            members: components["schemas"]["Member"][];
+            /** @description A list of encrypted keys for the dataset */
+            keys: components["schemas"]["Key"][];
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+            /** Format: date-time */
+            deletedAt: Date | null;
         };
         User: {
             sub: string;
@@ -497,6 +651,44 @@ export interface components {
              *     If null the token will never expire
              */
             lifetime: number | null;
+        };
+        SearchDataset: components["schemas"]["Omit_Dataset.chunks-or-keys_"];
+        SearchResponseBody: {
+            /**
+             * Format: int32
+             * @description The total number of datasets that match the search query
+             */
+            count: number;
+            /** @description The datasets that match the search query, paginated */
+            datasets: components["schemas"]["SearchDataset"][];
+        };
+        /** @enum {string} */
+        "Prisma.SortOrder": "asc" | "desc";
+        SearchRequestBody: {
+            /** @description The search query */
+            query?: string;
+            /** @description Also show deleted datasets */
+            showDeleted?: boolean;
+            /** @description Also show datasets the user does not have access to
+             *     This is ignored if the user is not an admin */
+            showAll?: boolean;
+            /**
+             * Format: int32
+             * @description The number of datasets to skip before returning results.
+             */
+            skip?: number;
+            /**
+             * Format: int32
+             * @description The maximum number of results to return
+             */
+            take?: number;
+            /**
+             * @description The field to sort the results by
+             * @enum {string}
+             */
+            sortBy?: "chunks" | "keys" | "id" | "mnemonic" | "fileName" | "createdBy" | "keyHash" | "name" | "path" | "hash" | "size" | "members" | "createdAt" | "updatedAt" | "deletedAt";
+            /** @description The direction to sort the results by */
+            sortDir?: components["schemas"]["Prisma.SortOrder"];
         };
     };
     responses: never;
@@ -833,6 +1025,144 @@ export interface operations {
                 "application/json": {
                     /** Format: double */
                     tokenId: number;
+                };
+            };
+        };
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    datasetInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Dataset"];
+                };
+            };
+        };
+    };
+    searchDatasets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SearchRequestBody"];
+            };
+        };
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchResponseBody"];
+                };
+            };
+        };
+    };
+    renameDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                };
+            };
+        };
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    removeDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    restoreDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    destroyDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    force: boolean;
                 };
             };
         };

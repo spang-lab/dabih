@@ -8,6 +8,8 @@ import { UserController } from './../src/api/user/controller';
 import { UploadController } from './../src/api/upload/controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TokenController } from './../src/api/token/controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { DatasetController } from './../src/api/dataset/controller';
 import { koaAuthentication } from './../src/auth';
 // @ts-ignore - no great way to install types from subpackage
 import type { Context, Next, Middleware, Request as KRequest, Response as KResponse } from 'koa';
@@ -109,19 +111,32 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_Dataset.Exclude_keyofDataset.chunks__": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"integer","required":true},"mnemonic":{"dataType":"string","required":true},"fileName":{"dataType":"string","required":true},"createdBy":{"dataType":"string","required":true},"keyHash":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"path":{"dataType":"string","required":true},"hash":{"dataType":"string","required":true},"size":{"dataType":"integer","required":true}},"validators":{}},
+    "Member": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "sub": {"dataType":"string","required":true},
+            "datasetId": {"dataType":"double","required":true},
+            "permission": {"dataType":"double","required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Omit_Dataset.chunks_": {
+    "Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__": {
         "dataType": "refAlias",
-        "type": {"ref":"Pick_Dataset.Exclude_keyofDataset.chunks__","validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"integer","required":true},"mnemonic":{"dataType":"string","required":true},"fileName":{"dataType":"string","required":true},"createdBy":{"dataType":"string","required":true},"keyHash":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"path":{"dataType":"string","required":true},"hash":{"dataType":"string","required":true},"size":{"dataType":"integer","required":true},"members":{"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},"createdAt":{"dataType":"datetime","required":true},"updatedAt":{"dataType":"datetime","required":true},"deletedAt":{"dataType":"datetime","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Omit_Dataset.chunks-or-keys_": {
+        "dataType": "refAlias",
+        "type": {"ref":"Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UploadStartResponse": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Omit_Dataset.chunks_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"duplicate":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Omit_Dataset.chunks-or-keys_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"duplicate":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UploadStartBody": {
@@ -147,7 +162,6 @@ const models: TsoaRoute.Models = {
             "crc": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
-            "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
         },
         "additionalProperties": false,
     },
@@ -155,6 +169,19 @@ const models: TsoaRoute.Models = {
     "Mnemonic": {
         "dataType": "refAlias",
         "type": {"dataType":"string","validators":{"pattern":{"value":"^[a-z]+_[a-z]+$"}}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Key": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "datasetId": {"dataType":"double","required":true},
+            "publicKeyHash": {"dataType":"string","required":true},
+            "key": {"dataType":"string","required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Dataset": {
@@ -169,7 +196,12 @@ const models: TsoaRoute.Models = {
             "path": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "hash": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "size": {"dataType":"union","subSchemas":[{"dataType":"integer"},{"dataType":"enum","enums":[null]}],"required":true},
-            "chunks": {"dataType":"array","array":{"dataType":"refObject","ref":"Chunk"}},
+            "chunks": {"dataType":"array","array":{"dataType":"refObject","ref":"Chunk"},"required":true},
+            "members": {"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},
+            "keys": {"dataType":"array","array":{"dataType":"refObject","ref":"Key"},"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
         },
         "additionalProperties": false,
     },
@@ -208,6 +240,39 @@ const models: TsoaRoute.Models = {
         "properties": {
             "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "lifetime": {"dataType":"union","subSchemas":[{"dataType":"integer"},{"dataType":"enum","enums":[null]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SearchDataset": {
+        "dataType": "refAlias",
+        "type": {"ref":"Omit_Dataset.chunks-or-keys_","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SearchResponseBody": {
+        "dataType": "refObject",
+        "properties": {
+            "count": {"dataType":"integer","required":true},
+            "datasets": {"dataType":"array","array":{"dataType":"refAlias","ref":"SearchDataset"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Prisma.SortOrder": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SearchRequestBody": {
+        "dataType": "refObject",
+        "properties": {
+            "query": {"dataType":"string"},
+            "showDeleted": {"dataType":"boolean"},
+            "showAll": {"dataType":"boolean"},
+            "skip": {"dataType":"integer"},
+            "take": {"dataType":"integer"},
+            "sortBy": {"dataType":"enum","enums":["chunks","keys","id","mnemonic","fileName","createdBy","keyHash","name","path","hash","size","members","createdAt","updatedAt","deletedAt"]},
+            "sortDir": {"ref":"Prisma.SortOrder"},
         },
         "additionalProperties": false,
     },
@@ -723,6 +788,200 @@ export function RegisterRoutes(router: KoaRouter) {
 
             return templateService.apiHandler({
               methodName: 'remove',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.get('/dataset/:mnemonic',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DatasetController)),
+            ...(fetchMiddlewares<Middleware>(DatasetController.prototype.get)),
+
+            async function DatasetController_get(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DatasetController();
+
+            return templateService.apiHandler({
+              methodName: 'get',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/dataset/search',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DatasetController)),
+            ...(fetchMiddlewares<Middleware>(DatasetController.prototype.search)),
+
+            async function DatasetController_search(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    body: {"in":"body","name":"body","required":true,"ref":"SearchRequestBody"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DatasetController();
+
+            return templateService.apiHandler({
+              methodName: 'search',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/dataset/:mnemonic/rename',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DatasetController)),
+            ...(fetchMiddlewares<Middleware>(DatasetController.prototype.rename)),
+
+            async function DatasetController_rename(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                    body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true}}},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DatasetController();
+
+            return templateService.apiHandler({
+              methodName: 'rename',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/dataset/:mnemonic/remove',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DatasetController)),
+            ...(fetchMiddlewares<Middleware>(DatasetController.prototype.remove)),
+
+            async function DatasetController_remove(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DatasetController();
+
+            return templateService.apiHandler({
+              methodName: 'remove',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/dataset/:mnemonic/restore',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DatasetController)),
+            ...(fetchMiddlewares<Middleware>(DatasetController.prototype.restore)),
+
+            async function DatasetController_restore(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DatasetController();
+
+            return templateService.apiHandler({
+              methodName: 'restore',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/dataset/:mnemonic/destroy',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DatasetController)),
+            ...(fetchMiddlewares<Middleware>(DatasetController.prototype.destroy)),
+
+            async function DatasetController_destroy(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                    body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"force":{"dataType":"boolean","required":true}}},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DatasetController();
+
+            return templateService.apiHandler({
+              methodName: 'destroy',
               controller,
               context,
               validatedArgs,
