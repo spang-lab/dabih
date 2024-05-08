@@ -184,3 +184,4 @@ test('disable/enable key', async t => {
   const { response: response4 } = await api.user.remove(sub);
   t.is(response4.status, 204);
 });
+

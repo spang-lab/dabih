@@ -1,6 +1,5 @@
-import { getPermission } from "#lib/database/member";
+import { getPermission, Permission } from "#lib/database/member";
 import { User } from "../types";
-import { Permission } from "#lib/database/member";
 import { AuthorizationError, RequestError } from "../errors";
 import db from "#lib/db";
 import { removeBucket } from "#lib/fs";

@@ -29,7 +29,7 @@ export const getMembers = async (mnemonic: string, hasPermission: Permission) =>
 }
 
 export const getPermission = async (mnemonic: string, sub: string) => {
-  const dataset = await db.dataset.findFirst({
+  const dataset = await db.dataset.findUnique({
     where: {
       mnemonic,
     },

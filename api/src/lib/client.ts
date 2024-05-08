@@ -5,7 +5,6 @@ import { getEnv, requireEnv } from './env';
 
 import type { components, paths } from 'build/api';
 import { createHash } from 'crypto';
-import search from 'src/api/dataset/search';
 
 type schemas = components["schemas"];
 

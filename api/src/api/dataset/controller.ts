@@ -13,7 +13,7 @@ import {
 } from "@tsoa/runtime";
 
 
-import { Dataset, RequestWithUser, SearchRequestBody, SearchResponseBody } from "../types";
+import { Dataset, MemberAddBody, RequestWithUser, SearchRequestBody, SearchResponseBody } from "../types";
 
 import get from "./get";
 import remove from "./remove";
@@ -21,6 +21,7 @@ import restore from "./restore";
 import rename from "./rename";
 import destroy from "./destroy";
 import search from "./search";
+import addMember from "./addMember";
 
 @Route("dataset")
 @Tags("Dataset")
@@ -45,6 +46,17 @@ export class DatasetController extends Controller {
   ): Promise<SearchResponseBody> {
     const { user } = request;
     return search(user, body);
+  }
+
+  @Post("{mnemonic}/addMember")
+  @OperationId("addMember")
+  public addMember(
+    @Path() mnemonic: string,
+    @Body() body: MemberAddBody,
+    @Request() request: RequestWithUser,
+  ): Promise<void> {
+    const { user } = request;
+    return addMember(user, mnemonic, body);
   }
 
   @Post("{mnemonic}/rename")
@@ -88,4 +100,5 @@ export class DatasetController extends Controller {
     const { user } = request;
     return destroy(user, mnemonic, body.force);
   }
+
 }

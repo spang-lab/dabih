@@ -85,11 +85,7 @@ export const getSurplusKeys = async (mnemonic: string) => {
 }
 
 
-export const addKeys = async (mnemonic: string) => {
-  const aesKey = await readKey(mnemonic);
-  if (!aesKey) {
-    throw new Error("aesKey not found in ephemeral storage");
-  }
+export const addKeys = async (mnemonic: string, aesKey: string) => {
   const newKeys = await getMissingKeys(mnemonic);
   const keys = newKeys.map(publicKey => {
     const pubKey = crypto.publicKey.fromString(publicKey.data);

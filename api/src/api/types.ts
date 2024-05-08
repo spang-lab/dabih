@@ -1,4 +1,3 @@
-import { BusboyHeaders } from "@fastify/busboy";
 import { Prisma } from "@prisma/client";
 import { JsonWebKey } from "crypto";
 
@@ -9,6 +8,12 @@ import { JsonWebKey } from "crypto";
   * @example "happy_jane"
   */
 export type Mnemonic = string;
+
+/**
+  * The AES-256 encryption key used to encrypt and decrypt datasets
+  * base64url encoded
+  */
+export type AESKey = string;
 
 export interface User {
   sub: string;
@@ -169,7 +174,7 @@ export interface UploadStartBody {
     */
   chunkHash?: string;
 }
-export type UploadStartResponse = Omit<Dataset, "chunks" | "keys"> & {
+export type UploadStartResponse = Omit<Dataset, "members" | "chunks" | "keys"> & {
   /**
     * The hash of the duplicate dataset or null if there is no duplicate
     */
@@ -330,6 +335,7 @@ export interface ChunkAddBody {
   end: number;
   size?: number;
 }
+type SearchDataset = Omit<Dataset, "chunks" | "keys">;
 
 export interface SearchRequestBody {
   /**
@@ -358,14 +364,13 @@ export interface SearchRequestBody {
   /**
     * The field to sort the results by
     */
-  sortBy?: keyof Dataset;
+  sortBy?: Exclude<keyof SearchDataset, "members">;
   /**
     * The direction to sort the results by
     */
   sortDir?: Prisma.SortOrder,
 }
 
-type SearchDataset = Omit<Dataset, "chunks" | "keys">;
 export interface SearchResponseBody {
   /**
     * The total number of datasets that match the search query
@@ -376,4 +381,12 @@ export interface SearchResponseBody {
     * The datasets that match the search query, paginated 
     */
   datasets: SearchDataset[];
+}
+
+export interface MemberAddBody {
+  /**
+    * The user to add to the dataset
+    */
+  sub: string;
+  key: AESKey;
 }
