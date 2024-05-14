@@ -24,9 +24,6 @@ const hashChunks = (chunks: { hash: string }[]) => {
   return hash.digest('base64url');
 };
 
-
-
-
 export default async function finish(user: User, mnemonic: string) {
   const { sub } = user;
   const dataset = await db.dataset.findUnique({
@@ -67,6 +64,6 @@ export default async function finish(user: User, mnemonic: string) {
       size: end + 1,
     }
   });
-  await deleteKey(mnemonic);
+  await deleteKey(sub, mnemonic);
   return result;
 }

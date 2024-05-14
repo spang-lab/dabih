@@ -239,6 +239,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/download/{mnemonic}/decrypt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["decrypt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/download/{mnemonic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["downloadDataset"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/download/{mnemonic}/chunk/{hash}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["chunk"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/dataset/{mnemonic}": {
         parameters: {
             query?: never;
@@ -281,6 +329,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["addMember"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dataset/{mnemonic}/setAccess": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["setAccess"];
         delete?: never;
         options?: never;
         head?: never;
@@ -666,6 +730,9 @@ export interface components {
              */
             lifetime: number | null;
         };
+        /** @description The AES-256 encryption key used to encrypt and decrypt datasets
+         *     base64url encoded */
+        AESKey: string;
         /** @description From T, pick a set of properties whose keys are in the union K */
         "Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__": {
             /** @description The list of members that have access to the dataset */
@@ -748,13 +815,19 @@ export interface components {
             /** @description The direction to sort the results by */
             sortDir?: components["schemas"]["Prisma.SortOrder"];
         };
-        /** @description The AES-256 encryption key used to encrypt and decrypt datasets
-         *     base64url encoded */
-        AESKey: string;
         MemberAddBody: {
             /** @description The user to add to the dataset */
             sub: string;
             key: components["schemas"]["AESKey"];
+        };
+        SetAccessBody: {
+            /** @description The user to set the permission for */
+            sub: string;
+            /**
+             * @description The permission to set
+             * @enum {string}
+             */
+            permission: "read" | "write" | "none";
         };
     };
     responses: never;
@@ -1104,6 +1177,77 @@ export interface operations {
             };
         };
     };
+    decrypt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    key: components["schemas"]["AESKey"];
+                };
+            };
+        };
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    downloadDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+        };
+    };
+    chunk: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+                hash: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+        };
+    };
     datasetInfo: {
         parameters: {
             query?: never;
@@ -1162,6 +1306,30 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["MemberAddBody"];
+            };
+        };
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    setAccess: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetAccessBody"];
             };
         };
         responses: {

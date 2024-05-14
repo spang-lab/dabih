@@ -28,9 +28,7 @@ export interface RequestWithUser {
 
 import { Request } from "koa";
 
-export type RequestWithHeaders = Request & {
-  user: User;
-};
+export type RequestWithHeaders = Request & RequestWithUser;
 
 
 
@@ -390,3 +388,15 @@ export interface MemberAddBody {
   sub: string;
   key: AESKey;
 }
+
+export interface SetAccessBody {
+  /**
+    * The user to set the permission for
+    */
+  sub: string;
+  /**
+    * The permission to set
+    */
+  permission: "read" | "write" | "none";
+}
+

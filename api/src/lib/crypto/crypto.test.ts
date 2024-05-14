@@ -9,7 +9,6 @@ import stream from './stream';
 
 import { Readable } from 'stream';
 import { text } from 'node:stream/consumers';
-import { crc32 } from 'crc';
 
 test('basic', t => {
   t.is(Math.sqrt(9), 3);
@@ -101,23 +100,25 @@ test('aesKey derive', async t => {
 
 test('crc32 stream', async t => {
   const data = 'Hello World';
-  const readStreamd = Readable.from(data);
+  const readStream = Readable.from(data);
   const crc = stream.crc32();
-  const result = readStreamd.pipe(crc);
+  const result = readStream.pipe(crc);
   const data2 = await text(result);
   const checksum = crc.digest();
   t.is(checksum, '4a17b156');
   t.is(data, data2);
 });
 
-test('sha256 stream', async t => {
+test('validate stream', async t => {
   const data = 'Hello World';
-  const readStreamd = Readable.from(data);
-  const sha256 = stream.sha256();
-  const result = readStreamd.pipe(sha256);
+  const readStream = Readable.from(data);
+  const validator = stream.validate();
+
+  const result = readStream.pipe(validator);
   const data2 = await text(result);
-  const checksum = sha256.digest();
-  t.is(checksum, 'pZGm1Av0IEBKARczz7exkNYsZb8LzaMrV7J32a2fFG4');
+  const { hash, byteCount } = validator.digest();
+  t.is(hash, 'pZGm1Av0IEBKARczz7exkNYsZb8LzaMrV7J32a2fFG4');
+  t.is(byteCount, 11);
   t.is(data, data2);
 });
 

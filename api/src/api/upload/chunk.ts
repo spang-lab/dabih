@@ -38,7 +38,7 @@ export default async function chunk(
     }
   }
 
-  const aesKey = await readKey(mnemonic);
+  const aesKey = await readKey(sub, mnemonic);
   if (!aesKey) {
     throw new RequestError(`No encryption key for ${mnemonic} in ephemeral storage.`);
   }

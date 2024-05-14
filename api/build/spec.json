@@ -730,6 +730,10 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"AESKey": {
+				"type": "string",
+				"description": "The AES-256 encryption key used to encrypt and decrypt datasets\nbase64url encoded"
+			},
 			"Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__": {
 				"properties": {
 					"members": {
@@ -899,10 +903,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AESKey": {
-				"type": "string",
-				"description": "The AES-256 encryption key used to encrypt and decrypt datasets\nbase64url encoded"
-			},
 			"MemberAddBody": {
 				"properties": {
 					"sub": {
@@ -916,6 +916,29 @@
 				"required": [
 					"sub",
 					"key"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SetAccessBody": {
+				"properties": {
+					"sub": {
+						"type": "string",
+						"description": "The user to set the permission for"
+					},
+					"permission": {
+						"type": "string",
+						"enum": [
+							"read",
+							"write",
+							"none"
+						],
+						"description": "The permission to set"
+					}
+				},
+				"required": [
+					"sub",
+					"permission"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1556,6 +1579,153 @@
 				}
 			}
 		},
+		"/download/{mnemonic}/decrypt": {
+			"post": {
+				"operationId": "decrypt",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Download"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"key": {
+										"$ref": "#/components/schemas/AESKey"
+									}
+								},
+								"required": [
+									"key"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/download/{mnemonic}": {
+			"get": {
+				"operationId": "downloadDataset",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"format": "byte"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Download"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/download/{mnemonic}/chunk/{hash}": {
+			"get": {
+				"operationId": "chunk",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"format": "byte"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Download"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "hash",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/dataset/{mnemonic}": {
 			"get": {
 				"operationId": "datasetInfo",
@@ -1680,6 +1850,51 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/MemberAddBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/dataset/{mnemonic}/setAccess": {
+			"post": {
+				"operationId": "setAccess",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Dataset"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dataset"
+						]
+					},
+					{
+						"jwt": [
+							"dataset"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetAccessBody"
 							}
 						}
 					}

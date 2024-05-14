@@ -86,7 +86,7 @@ export default async function start(user: User, body: UploadStartBody): Promise<
       }
     }
   });
-  await storeKey(mnemonic, key);
+  await storeKey(sub, mnemonic, key);
   await addKeys(mnemonic, key);
   await createBucket(mnemonic);
   return {

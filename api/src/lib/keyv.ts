@@ -10,89 +10,84 @@ import crypto from '#crypto';
 let store: Keyv<string> | null = null;
 let aesKey: string | null = null;
 
-
-export const parseUrl = (url: string) => {
-  if (!url.includes(':')) {
-    throw new Error(`Could not parse url ${url},
-      needs to be of the form "<backend>:<path>"`);
-  }
-  const [backend, path] = url.split(':', 2);
-  return { backend, path };
+export const initKeyV = async (url?: string, secret?: string) => {
+  store = createStore(url);
+  aesKey = await deriveKey(secret);
 };
-
-
-export const initKeyV = async () => {
-  const emphemeralUrl = getEnv('EPHEMERAL_URL', 'memory');
-  const randomSecret = await crypto.random.getToken(10);
-  const secret = getEnv('EPHEMERAL_SECRET', randomSecret);
-
-  aesKey = await crypto.aesKey.derive(secret, 'ephemeral');
-
+export const createStore = (url?: string) => {
+  const emphemeralUrl = url ?? getEnv('EPHEMERAL_URL', 'memory');
   if (emphemeralUrl === 'memory') {
     logger.info('Memory adapter selected. You will need another adapter if you use multiple replicas.');
-    store = new Keyv();
-    return;
+    return new Keyv();
   }
-  const { backend, path } = parseUrl(emphemeralUrl);
+  if (!emphemeralUrl.includes(':')) {
+    throw new Error(`Could not parse url ${emphemeralUrl},
+      needs to be of the form "<backend>:<path>"`);
+  }
+  const [backend, path] = emphemeralUrl.split(':', 2);
   if (backend === 'redis') {
     const keyvRedis = new KeyvRedis(emphemeralUrl);
-    store = new Keyv({
+    return new Keyv({
       store: keyvRedis,
     });
-    return;
   }
   if (backend === 'memcached') {
     const keyvMemcache = new KeyvMemcache(path);
-    store = new Keyv({
+    return new Keyv({
       store: keyvMemcache,
     });
-    return;
   }
   throw new Error(`Invalid emphemeral adapter "${backend}", options are "memcached" or "memory"`);
+}
+
+export const deriveKey = async (secret?: string) => {
+  const randomSecret = await crypto.random.getToken(10);
+  const s = secret ?? getEnv('EPHEMERAL_SECRET', randomSecret);
+  const key = await crypto.aesKey.derive(s, 'ephemeral');
+  return key;
 };
 
-export const storeKey = async (mnemonic: string, key: string) => {
+export const storeKey = async (sub: string, mnemonic: string, key: string) => {
   if (!store || !aesKey) {
     throw new Error('Ephemeral store not initialized');
   }
   const iv = await crypto.aesKey.generateIv();
   const encrypted = crypto.aesKey.encryptString(aesKey, iv, key);
   const timestamp = +new Date();
-  await store.set(`iv:${mnemonic}`, iv);
-  await store.set(`timestamp:${mnemonic}`, timestamp.toString());
-  await store.set(`aesKey:${mnemonic}`, encrypted);
+  await store.set(`iv:${sub}:${mnemonic}`, iv);
+  await store.set(`timestamp:${sub}:${mnemonic}`, timestamp.toString());
+  await store.set(`aesKey:${sub}:${mnemonic}`, encrypted);
 };
 
-export const readKey = async (mnemonic: string) => {
+export const readKey = async (sub: string, mnemonic: string) => {
   if (!store || !aesKey) {
     throw new Error('Ephemeral store not initialized');
   }
-  const iv = await store.get(`iv:${mnemonic}`);
-  store
-  const encrypted = await store.get(`aesKey:${mnemonic}`);
+  const iv = await store.get(`iv:${sub}:${mnemonic}`);
+  const encrypted = await store.get(`aesKey:${sub}:${mnemonic}`);
   if (!encrypted || !iv) {
     return null;
   }
   const key = crypto.aesKey.decryptString(aesKey, iv, encrypted)
   const timestamp = +new Date();
-  await store.set(`timestamp:${mnemonic}`, timestamp.toString());
+  await store.set(`timestamp:${sub}:${mnemonic}`, timestamp.toString());
   return key;
 };
 
-export const deleteKey = async (mnemonic: string) => {
+export const deleteKey = async (sub: string, mnemonic: string) => {
   if (!store) {
     throw new Error('Ephemeral store not initialized');
   }
-  await store.delete(`iv:${mnemonic}`);
-  await store.delete(`aesKey:${mnemonic}`);
-  await store.delete(`timestamp:${mnemonic}`);
+  await store.delete(`iv:${sub}:${mnemonic}`);
+  await store.delete(`aesKey:${sub}:${mnemonic}`);
+  await store.delete(`timestamp:${sub}:${mnemonic}`);
 };
 
-export const isExpired = async (mnemonic: string) => {
+export const isExpired = async (sub: string, mnemonic: string) => {
   if (!store) {
     throw new Error('Ephemeral store not initialized');
   }
-  const timestampStr = await store.get(`timestamp:${mnemonic}`);
+  const timestampStr = await store.get(`timestamp:${sub}:${mnemonic}`);
   if (!timestampStr) {
     return false;
   }
@@ -102,3 +97,5 @@ export const isExpired = async (mnemonic: string) => {
   const oneHourMs = 60 * 60 * 1000;
   return (now - timestamp) > oneHourMs;
 };
+
+

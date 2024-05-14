@@ -18,9 +18,8 @@
     "test:stopdb": "docker stop pg-dabih-test && docker rm pg-dabih-test",
     "test:clean": "source .env.test && rm -rf $TEST_FOLDER/*",
     "test:prepare": "dotenv -e .env.test prisma migrate deploy",
-    "test:api": "dotenv -e .env.test ava --serial -- src/api/**/*.test.ts",
-    "test:e2e": "npm run test:clean && npm run test:startdb && sleep 3 && npm run test:prepare && npm run test:api ; npm run test:stopdb",
-    "test:unit": "dotenv -e .env.test ava \"src/lib/**/\""
+    "test:api": "dotenv -e .env.test ava --serial",
+    "test": "npm run test:clean && npm run test:startdb && sleep 3 && npm run test:prepare && npm run test:api ; npm run test:stopdb"
   },
   "author": "Michael Huttner",
   "license": "MIT",

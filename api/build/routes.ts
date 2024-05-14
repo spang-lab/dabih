@@ -9,6 +9,8 @@ import { UploadController } from './../src/api/upload/controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TokenController } from './../src/api/token/controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { DownloadController } from './../src/api/download/controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { DatasetController } from './../src/api/dataset/controller';
 import { koaAuthentication } from './../src/auth';
 // @ts-ignore - no great way to install types from subpackage
@@ -244,6 +246,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AESKey": {
+        "dataType": "refAlias",
+        "type": {"dataType":"string","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"members":{"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true},"id":{"dataType":"integer","required":true},"mnemonic":{"dataType":"string","required":true},"fileName":{"dataType":"string","required":true},"createdBy":{"dataType":"string","required":true},"keyHash":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"path":{"dataType":"string","required":true},"hash":{"dataType":"string","required":true},"size":{"dataType":"integer","required":true},"createdAt":{"dataType":"datetime","required":true},"updatedAt":{"dataType":"datetime","required":true},"deletedAt":{"dataType":"datetime","required":true}},"validators":{}},
@@ -292,16 +299,20 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AESKey": {
-        "dataType": "refAlias",
-        "type": {"dataType":"string","validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MemberAddBody": {
         "dataType": "refObject",
         "properties": {
             "sub": {"dataType":"string","required":true},
             "key": {"ref":"AESKey","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SetAccessBody": {
+        "dataType": "refObject",
+        "properties": {
+            "sub": {"dataType":"string","required":true},
+            "permission": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["read"]},{"dataType":"enum","enums":["write"]},{"dataType":"enum","enums":["none"]}],"required":true},
         },
         "additionalProperties": false,
     },
@@ -824,6 +835,103 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/download/:mnemonic/decrypt',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DownloadController)),
+            ...(fetchMiddlewares<Middleware>(DownloadController.prototype.decrypt)),
+
+            async function DownloadController_decrypt(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"ref":"AESKey","required":true}}},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DownloadController();
+
+            return templateService.apiHandler({
+              methodName: 'decrypt',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.get('/download/:mnemonic',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DownloadController)),
+            ...(fetchMiddlewares<Middleware>(DownloadController.prototype.download)),
+
+            async function DownloadController_download(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DownloadController();
+
+            return templateService.apiHandler({
+              methodName: 'download',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.get('/download/:mnemonic/chunk/:hash',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DownloadController)),
+            ...(fetchMiddlewares<Middleware>(DownloadController.prototype.chunk)),
+
+            async function DownloadController_chunk(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                    hash: {"in":"path","name":"hash","required":true,"dataType":"string"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DownloadController();
+
+            return templateService.apiHandler({
+              methodName: 'chunk',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.get('/dataset/:mnemonic',
             authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
             ...(fetchMiddlewares<Middleware>(DatasetController)),
@@ -914,6 +1022,39 @@ export function RegisterRoutes(router: KoaRouter) {
 
             return templateService.apiHandler({
               methodName: 'addMember',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/dataset/:mnemonic/setAccess',
+            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            ...(fetchMiddlewares<Middleware>(DatasetController)),
+            ...(fetchMiddlewares<Middleware>(DatasetController.prototype.setAccess)),
+
+            async function DatasetController_setAccess(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                    body: {"in":"body","name":"body","required":true,"ref":"SetAccessBody"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new DatasetController();
+
+            return templateService.apiHandler({
+              methodName: 'setAccess',
               controller,
               context,
               validatedArgs,

@@ -3,7 +3,6 @@ import db from "#lib/db";
 
 import { MemberAddBody, User } from "../types";
 import { AuthorizationError, RequestError } from "../errors";
-import dbg from "#lib/util/dbg";
 import crypto from "#lib/crypto/index";
 import { addKeys } from "#lib/database/keys";
 
@@ -31,7 +30,7 @@ export default async function addMember(user: User, mnemonic: string, body: Memb
     throw new RequestError(`Invalid key for dataset ${mnemonic}, hash mismatch ${dataset.keyHash} !== ${keyHash}`);
   }
 
-  const result = await db.dataset.update({
+  await db.dataset.update({
     where: {
       id: dataset.id,
     },
@@ -59,8 +58,4 @@ export default async function addMember(user: User, mnemonic: string, body: Memb
     },
   });
   await addKeys(mnemonic, key);
-
-
-  dbg(result);
-
 }

@@ -7,6 +7,19 @@ export enum Permission {
   WRITE = 2,
 }
 
+export const parsePermission = (permission: string): Permission => {
+  switch (permission.toLowerCase()) {
+    case 'read':
+      return Permission.READ;
+    case 'write':
+      return Permission.WRITE;
+    case 'none':
+      return Permission.NONE;
+    default:
+      throw new Error(`Invalid permission string ${permission}`);
+  }
+}
+
 export const getMembers = async (mnemonic: string, hasPermission: Permission) => {
   const dataset = await db.dataset.findFirst({
     where: {
@@ -46,5 +59,4 @@ export const getPermission = async (mnemonic: string, sub: string) => {
   }
   const member = dataset.members[0];
   return member?.permission as Permission || Permission.NONE;
-
 }
