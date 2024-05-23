@@ -1,23 +1,10 @@
-/* eslint-disable no-param-reassign, no-console */
+import NextAuth from "next-auth"
 
 import { Provider } from 'next-auth/providers';
-import GitHubProvider from 'next-auth/providers/github';
-import UniRegensburgProvider from './ur';
+import DemoProvider from "./demo";
 import SpangLabProvider from './spang-lab';
-import DemoProvider from './demo';
-
-const sessionCb = ({ session, token }) => {
-  session.user.scopes = token.scopes;
-  session.user.sub = token.sub;
-  return session;
-};
-
-const jwt = ({ token, user }) => {
-  if (user) {
-    token.scopes = user.scopes;
-  }
-  return token;
-};
+import UniRegensburgProvider from './ur';
+import GitHubProvider from 'next-auth/providers/github';
 
 const isConfigured = (provider: Provider) => {
   if (!provider || !provider.options) {
@@ -50,19 +37,8 @@ const getProviders = () => {
   return providers;
 };
 
-const authOptions = {
-  session: {
-    maxAge: 3 * 60 * 60,
-  },
-  secret: process.env.NEXTAUTH_SECRET,
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: getProviders(),
-  callbacks: {
-    session: sessionCb,
-    jwt,
-  },
-  pages: {
-    signIn: '/signin',
-    error: '/auth/error',
-  },
-};
-export default authOptions;
+});
+

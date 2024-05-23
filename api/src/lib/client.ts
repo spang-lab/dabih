@@ -27,7 +27,7 @@ const init = (port?: number, sub?: string) => {
 
   const admin = {
     sub: sub ?? "admin",
-    scope: "upload download user dataset token admin",
+    scope: "dabih:upload dabih:api dabih:admin",
     aud: host,
   };
   const apiToken = jwt.sign(admin, tokenSecret);

@@ -7,6 +7,9 @@ import db from './lib/db';
 
 import { AuthenticationError } from './api/errors';
 
+
+
+
 const parseHeader = (request: Request): string => {
   const authHeader = request.get('Authorization');
   if (!authHeader) {
@@ -37,7 +40,7 @@ const verifyToken = async (request: Request): Promise<User> => {
       throw new AuthenticationError(`Token has expired ${token.expired}`);
     }
     const { scopes, sub } = token;
-    const isAdmin = scopes.includes('admin');
+    const isAdmin = scopes.includes('dabih:admin');
     return {
       sub,
       scopes,
@@ -64,7 +67,7 @@ const verifyToken = async (request: Request): Promise<User> => {
     throw new AuthenticationError(`Invalid "scope" key in jwt: ${scope}, must be a string with space separated values`);
   }
   const scopes = scope.split(' ');
-  const isAdmin = scopes.includes('admin');
+  const isAdmin = scopes.includes('dabih:admin');
   return {
     sub,
     scopes,

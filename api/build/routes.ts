@@ -333,7 +333,7 @@ export function RegisterRoutes(router: KoaRouter) {
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
         router.post('/user/add',
-            authenticateMiddleware([{"api_key":["user"]},{"jwt":["user"]}]),
+            authenticateMiddleware([{"api_key":["dabi:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.add)),
 
@@ -365,7 +365,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.get('/user/me',
-            authenticateMiddleware([{"api_key":["user"]},{"jwt":["user"]}]),
+            authenticateMiddleware([{"api_key":["dabi:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.me)),
 
@@ -396,7 +396,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/user/find',
-            authenticateMiddleware([{"api_key":["user"]},{"jwt":["user"]}]),
+            authenticateMiddleware([{"api_key":["dabi:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.get)),
 
@@ -427,7 +427,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.get('/user/list',
-            authenticateMiddleware([{"api_key":["user"]},{"jwt":["user"]}]),
+            authenticateMiddleware([{"api_key":["dabi:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.list)),
 
@@ -457,7 +457,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/user/remove',
-            authenticateMiddleware([{"api_key":["user"]},{"jwt":["user"]}]),
+            authenticateMiddleware([{"api_key":["dabi:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.remove)),
 
@@ -489,7 +489,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/user/key/add',
-            authenticateMiddleware([{"api_key":["user"]},{"jwt":["user"]}]),
+            authenticateMiddleware([{"api_key":["dabi:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.addKey)),
 
@@ -521,7 +521,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/user/key/enable',
-            authenticateMiddleware([{"api_key":["user"]},{"jwt":["user"]}]),
+            authenticateMiddleware([{"api_key":["dabi:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.enableKey)),
 
@@ -553,7 +553,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/user/key/remove',
-            authenticateMiddleware([{"api_key":["user"]},{"jwt":["user"]}]),
+            authenticateMiddleware([{"api_key":["dabi:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.removeKey)),
 
@@ -585,7 +585,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/upload/start',
-            authenticateMiddleware([{"jwt":["upload"]}]),
+            authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabi:upload"]},{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.start)),
 
@@ -617,7 +617,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/upload/:mnemonic/cancel',
-            authenticateMiddleware([{"jwt":["upload"]}]),
+            authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabi:upload"]},{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.cancel)),
 
@@ -649,7 +649,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.put('/upload/:mnemonic/chunk',
-            authenticateMiddleware([{"jwt":["upload"]}]),
+            authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabi:upload"]},{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.chunk)),
 
@@ -683,7 +683,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/upload/:mnemonic/finish',
-            authenticateMiddleware([{"jwt":["upload"]}]),
+            authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabi:upload"]},{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.finish)),
 
@@ -746,7 +746,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/token/add',
-            authenticateMiddleware([{"jwt":["token"]},{"api_key":["token"]}]),
+            authenticateMiddleware([{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.add)),
 
@@ -778,7 +778,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.get('/token/list',
-            authenticateMiddleware([{"jwt":["token"]},{"api_key":["token"]}]),
+            authenticateMiddleware([{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.list)),
 
@@ -809,7 +809,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/token/remove',
-            authenticateMiddleware([{"jwt":["token"]},{"api_key":["token"]}]),
+            authenticateMiddleware([{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.remove)),
 
@@ -841,7 +841,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/download/:mnemonic/decrypt',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabi:api"]}]),
             ...(fetchMiddlewares<Middleware>(DownloadController)),
             ...(fetchMiddlewares<Middleware>(DownloadController.prototype.decrypt)),
 
@@ -874,7 +874,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.get('/download/:mnemonic',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabi:api"]}]),
             ...(fetchMiddlewares<Middleware>(DownloadController)),
             ...(fetchMiddlewares<Middleware>(DownloadController.prototype.download)),
 
@@ -906,7 +906,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.get('/download/:mnemonic/chunk/:hash',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabi:api"]}]),
             ...(fetchMiddlewares<Middleware>(DownloadController)),
             ...(fetchMiddlewares<Middleware>(DownloadController.prototype.chunk)),
 
@@ -938,7 +938,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.get('/dataset/:mnemonic',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dapib:api"]}]),
             ...(fetchMiddlewares<Middleware>(DatasetController)),
             ...(fetchMiddlewares<Middleware>(DatasetController.prototype.get)),
 
@@ -970,7 +970,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/dataset/search',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dapib:api"]}]),
             ...(fetchMiddlewares<Middleware>(DatasetController)),
             ...(fetchMiddlewares<Middleware>(DatasetController.prototype.search)),
 
@@ -1002,7 +1002,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/dataset/:mnemonic/addMember',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dapib:api"]}]),
             ...(fetchMiddlewares<Middleware>(DatasetController)),
             ...(fetchMiddlewares<Middleware>(DatasetController.prototype.addMember)),
 
@@ -1035,7 +1035,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/dataset/:mnemonic/setAccess',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dapib:api"]}]),
             ...(fetchMiddlewares<Middleware>(DatasetController)),
             ...(fetchMiddlewares<Middleware>(DatasetController.prototype.setAccess)),
 
@@ -1068,7 +1068,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/dataset/:mnemonic/rename',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dapib:api"]}]),
             ...(fetchMiddlewares<Middleware>(DatasetController)),
             ...(fetchMiddlewares<Middleware>(DatasetController.prototype.rename)),
 
@@ -1101,7 +1101,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/dataset/:mnemonic/remove',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dapib:api"]}]),
             ...(fetchMiddlewares<Middleware>(DatasetController)),
             ...(fetchMiddlewares<Middleware>(DatasetController.prototype.remove)),
 
@@ -1133,7 +1133,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/dataset/:mnemonic/restore',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dapib:api"]}]),
             ...(fetchMiddlewares<Middleware>(DatasetController)),
             ...(fetchMiddlewares<Middleware>(DatasetController.prototype.restore)),
 
@@ -1165,7 +1165,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/dataset/:mnemonic/destroy',
-            authenticateMiddleware([{"api_key":["dataset"]},{"jwt":["dataset"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dapib:api"]}]),
             ...(fetchMiddlewares<Middleware>(DatasetController)),
             ...(fetchMiddlewares<Middleware>(DatasetController.prototype.destroy)),
 

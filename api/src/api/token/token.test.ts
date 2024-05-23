@@ -30,7 +30,7 @@ test('valid access token', async t => {
 test('create a dabih access_token', async t => {
   const api = client(t.context.port);
   const { data } = await api.token.add({
-    scopes: ["upload"],
+    scopes: ["dabih:upload"],
     lifetime: null,
   });
   t.truthy(data);
@@ -43,7 +43,7 @@ test('create a dabih access_token', async t => {
 test('invalid scope', async t => {
   const api = client(t.context.port);
   const { response } = await api.token.add({
-    scopes: ["uploads"],
+    scopes: ["upload"],
     lifetime: null,
   });
   t.is(response.status, 500);
@@ -51,7 +51,7 @@ test('invalid scope', async t => {
 
 test('use access token', async t => {
   const api = client(t.context.port);
-  const scopes = ["token"];
+  const scopes = ["dabih:api"];
   const { data: token } = await api.token.add({
     scopes,
     lifetime: null,
@@ -88,7 +88,7 @@ test('use access token', async t => {
 
 test('expire token', async t => {
   const api = client(t.context.port);
-  const scopes = ["upload", "token"];
+  const scopes = ["dabih:api"];
   const { data: token } = await api.token.add({
     scopes,
     lifetime: 0,

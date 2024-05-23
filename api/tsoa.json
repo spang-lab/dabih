@@ -18,11 +18,9 @@
         "type": "oauth2",
         "flow": "accessCode",
         "scopes": {
-          "admin": "Allow the user to perfmorm all actions in dabih",
-          "dataset": "Allow access to the dataset API",
-          "key": "Allow the user to add public keys",
-          "token": "Allow the user to generate access tokens",
-          "upload": "Allow the user to upload files"
+          "dabih:admin": "Allow the user to perform admin actions in dabih",
+          "dabih:api": "Allow access to the dataset API",
+          "dabih:upload": "Allow the user to upload files"
         }
       }
     },

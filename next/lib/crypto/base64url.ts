@@ -10,14 +10,14 @@ const fromBase64 = (
 
 const fromUint8 = (array: ArrayBuffer): string => {
   const uintArray = new Uint8Array(array);
-  const base64 = window.btoa(String.fromCharCode(...uintArray));
+  const base64 = btoa(String.fromCharCode(...uintArray));
   return fromBase64(base64);
 };
 
 const toUint8 = (base64url: string): Uint8Array => {
   const base64 = toBase64(base64url);
   const mapper = (c: string) => c.charCodeAt(0);
-  return Uint8Array.from(window.atob(base64), mapper);
+  return Uint8Array.from(atob(base64), mapper);
 };
 
 const toBigInt2 = (base64url: string): bigint => {

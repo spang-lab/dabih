@@ -22,8 +22,8 @@ import { Readable } from "stream";
 
 @Route("download")
 @Tags("Download")
-@Security("api_key", ['dataset'])
-@Security("jwt", ['dataset'])
+@Security("api_key", ['dabih:api'])
+@Security("jwt", ['dabi:api'])
 export class DownloadController extends Controller {
   @Post("{mnemonic}/decrypt")
   @OperationId("decryptDataset")

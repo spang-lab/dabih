@@ -24,8 +24,8 @@ import removeKey from "./removeKey";
 
 @Route("user")
 @Tags("User")
-@Security("api_key", ["user"])
-@Security("jwt", ["user"])
+@Security("api_key", ["dabi:api"])
+@Security("jwt", ["dabih:api"])
 export class UserController extends Controller {
   @Post("add")
   @OperationId("addUser")

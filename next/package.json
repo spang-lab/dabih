@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next dev",
-    "test": "jest",
+    "test": "ava",
     "prod": "NODE_ENV=production next start",
     "lint": "next lint"
   },
@@ -17,11 +17,12 @@
     "@next/mdx": "^14.2.3",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/mdx": "^2.0.13",
+    "ava": "^6.1.3",
     "highlight.js": "^11.9.0",
     "jsonwebtoken": "^9.0.2",
     "ldapjs": "^3.0.7",
     "next": "14.2.3",
-    "next-auth": "4.24.7",
+    "next-auth": "^5.0.0-beta.18",
     "qr-scanner": "^1.4.2",
     "qrcode": "^1.5.3",
     "react": "18.3.1",
@@ -30,7 +31,8 @@
     "react-feather": "^2.0.10",
     "react-to-print": "^2.15.1",
     "rehype-highlight": "^7.0.0",
-    "remark-frontmatter": "^5.0.0"
+    "remark-frontmatter": "^5.0.0",
+    "tsx": "^4.11.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.5",
@@ -54,6 +56,17 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3"
+  },
+  "ava": {
+    "nodeArguments": [
+      "--import=tsx"
+    ],
+    "extensions": {
+      "ts": "commonjs"
+    },
+    "files": [
+      "./**/*.test.ts"
+    ]
   },
   "overrides": {},
   "browser": {

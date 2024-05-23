@@ -32,8 +32,8 @@ export class TokenController extends Controller {
     return user;
   }
 
-  @Security("jwt", ["token"])
-  @Security("api_key", ["token"])
+  @Security("jwt", ["dabih:api"])
+  @Security("api_key", ["dabih:api"])
   @Post("add")
   @OperationId("addToken")
   public async add(
@@ -43,8 +43,8 @@ export class TokenController extends Controller {
     const { user } = request;
     return add(user, requestBody);
   }
-  @Security("jwt", ["token"])
-  @Security("api_key", ["token"])
+  @Security("jwt", ["dabih:api"])
+  @Security("api_key", ["dabih:api"])
   @Get("list")
   @OperationId("listTokens")
   public async list(
@@ -52,8 +52,8 @@ export class TokenController extends Controller {
   ): Promise<TokenResponse[]> {
     return list(request.user);
   }
-  @Security("jwt", ["token"])
-  @Security("api_key", ["token"])
+  @Security("jwt", ["dabih:api"])
+  @Security("api_key", ["dabih:api"])
   @Post("remove")
   @OperationId("removeToken")
   public async remove(
