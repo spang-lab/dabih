@@ -19,7 +19,10 @@ import cancel from "./cancel";
 import chunk from "./chunk";
 import finish from "./finish";
 
-import { UploadStartBody, UploadStartResponse, RequestWithUser, Chunk, RequestWithHeaders, Dataset } from '../types';
+import {
+  Mnemonic, UploadStartBody, UploadStartResponse,
+  RequestWithUser, Chunk, RequestWithHeaders, UploadFinishResponse
+} from '../types';
 import { parseDigest, parseContentRange } from "./util";
 
 
@@ -44,7 +47,7 @@ export class UploadController extends Controller {
   @Post("{mnemonic}/cancel")
   public async cancel(
     @Request() request: RequestWithUser,
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
   ) {
     const { user } = request;
     await cancel(user, mnemonic);
@@ -53,7 +56,7 @@ export class UploadController extends Controller {
   @Put("{mnemonic}/chunk")
   @SuccessResponse("201", "Created")
   public async chunk(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithHeaders,
     /**
       * The range of bytes in the chunk
@@ -78,8 +81,8 @@ export class UploadController extends Controller {
   @Post("{mnemonic}/finish")
   public async finish(
     @Request() request: RequestWithUser,
-    @Path() mnemonic: string,
-  ): Promise<Dataset> {
+    @Path() mnemonic: Mnemonic,
+  ): Promise<UploadFinishResponse> {
     const { user } = request;
     return finish(user, mnemonic);
   }

@@ -25,12 +25,13 @@ export default function DemoProvider(): Provider {
         .replace(/[^a-zA-Z0-9_]/g, '')
         .toLowerCase();
 
+      const scopes = 'upload download user dataset token admin'.split(' ');
       return {
         id,
         sub: id,
         name: short,
         email: `${id}@dabih.com`,
-        scopes: ['upload', 'dataset', 'key', 'token', 'admin'],
+        scopes,
       };
     },
   });

@@ -248,7 +248,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["decrypt"];
+        post: operations["decryptDataset"];
         delete?: never;
         options?: never;
         head?: never;
@@ -278,7 +278,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["chunk"];
+        get: operations["downloadChunk"];
         put?: never;
         post?: never;
         delete?: never;
@@ -586,6 +586,12 @@ export interface components {
             /** @description The hash of the first 2MiB chunk of the file */
             chunkHash?: string;
         };
+        /**
+         * @description mnemonics are human readable unique identifiers for datasets
+         *     mnemonics have the form <random adjective>_<random first name>
+         * @example happy_jane
+         */
+        Mnemonic: string;
         Chunk: {
             /**
              * Format: int32
@@ -619,12 +625,45 @@ export interface components {
              */
             updatedAt: Date;
         };
-        /**
-         * @description mnemonics are human readable unique identifiers for datasets
-         *     mnemonics have the form <random adjective>_<random first name>
-         * @example happy_jane
-         */
-        Mnemonic: string;
+        UploadFinishResponse: components["schemas"]["Omit_Dataset.members-or-chunks-or-keys_"];
+        User: {
+            sub: string;
+            scopes: string[];
+            isAdmin: boolean;
+        };
+        Token: {
+            /** Format: double */
+            id: number;
+            value: string;
+            sub: string;
+            scope: string;
+            /** Format: date-time */
+            exp: Date | null;
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+        };
+        TokenResponse: components["schemas"]["Token"] & {
+            /** @description false if the token has not expired,
+             *     otherwise a string describing how long ago the token expired */
+            expired: string | false;
+            /** @description The array of scopes the token has */
+            scopes: string[];
+        };
+        TokenAddBody: {
+            /** @description The array of scopes the token should have */
+            scopes: string[];
+            /**
+             * Format: int32
+             * @description The time in seconds the token should be valid for
+             *     If null the token will never expire
+             */
+            lifetime: number | null;
+        };
+        /** @description The AES-256 encryption key used to encrypt and decrypt datasets.
+         *     base64url encoded */
+        AESKey: string;
         Member: {
             /** Format: double */
             id: number;
@@ -695,44 +734,6 @@ export interface components {
             /** Format: date-time */
             deletedAt: Date | null;
         };
-        User: {
-            sub: string;
-            scopes: string[];
-            isAdmin: boolean;
-        };
-        Token: {
-            /** Format: double */
-            id: number;
-            value: string;
-            sub: string;
-            scope: string;
-            /** Format: date-time */
-            exp: Date | null;
-            /** Format: date-time */
-            createdAt: Date;
-            /** Format: date-time */
-            updatedAt: Date;
-        };
-        TokenResponse: components["schemas"]["Token"] & {
-            /** @description false if the token has not expired,
-             *     otherwise a string describing how long ago the token expired */
-            expired: string | false;
-            /** @description The array of scopes the token has */
-            scopes: string[];
-        };
-        TokenAddBody: {
-            /** @description The array of scopes the token should have */
-            scopes: string[];
-            /**
-             * Format: int32
-             * @description The time in seconds the token should be valid for
-             *     If null the token will never expire
-             */
-            lifetime: number | null;
-        };
-        /** @description The AES-256 encryption key used to encrypt and decrypt datasets
-         *     base64url encoded */
-        AESKey: string;
         /** @description From T, pick a set of properties whose keys are in the union K */
         "Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__": {
             /** @description The list of members that have access to the dataset */
@@ -1051,7 +1052,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1071,7 +1072,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1083,7 +1084,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Dataset"];
+                    "application/json": components["schemas"]["UploadFinishResponse"];
                 };
             };
         };
@@ -1177,12 +1178,12 @@ export interface operations {
             };
         };
     };
-    decrypt: {
+    decryptDataset: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1208,7 +1209,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1225,12 +1226,12 @@ export interface operations {
             };
         };
     };
-    chunk: {
+    downloadChunk: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
                 hash: string;
             };
             cookie?: never;
@@ -1253,7 +1254,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1299,7 +1300,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1323,7 +1324,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1347,7 +1348,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1373,7 +1374,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1393,7 +1394,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1413,7 +1414,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };
@@ -1446,7 +1447,7 @@ export interface operations {
                 digest: string;
             };
             path: {
-                mnemonic: string;
+                mnemonic: components["schemas"]["Mnemonic"];
             };
             cookie?: never;
         };

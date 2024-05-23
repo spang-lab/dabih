@@ -10,7 +10,7 @@ import { JsonWebKey } from "crypto";
 export type Mnemonic = string;
 
 /**
-  * The AES-256 encryption key used to encrypt and decrypt datasets
+  * The AES-256 encryption key used to encrypt and decrypt datasets.
   * base64url encoded
   */
 export type AESKey = string;
@@ -178,6 +178,8 @@ export type UploadStartResponse = Omit<Dataset, "members" | "chunks" | "keys"> &
     */
   duplicate: string | null;
 }
+
+export type UploadFinishResponse = Omit<Dataset, "members" | "chunks" | "keys">;
 
 
 export interface Token {

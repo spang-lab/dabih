@@ -11,7 +11,7 @@ import {
   Path,
 } from "@tsoa/runtime";
 
-import { AESKey, RequestWithUser } from "../types";
+import { Mnemonic, AESKey, RequestWithUser } from "../types";
 
 import chunk from "./chunk";
 import decrypt from "./decrypt";
@@ -26,9 +26,9 @@ import { Readable } from "stream";
 @Security("jwt", ['dataset'])
 export class DownloadController extends Controller {
   @Post("{mnemonic}/decrypt")
-  @OperationId("decrypt")
+  @OperationId("decryptDataset")
   public decrypt(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithUser,
     @Body() body: { key: AESKey },
   ): Promise<void> {
@@ -39,7 +39,7 @@ export class DownloadController extends Controller {
   @Get("{mnemonic}")
   @OperationId("downloadDataset")
   public async download(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithUser,
   ): Promise<Readable> {
     const { user } = request;
@@ -50,9 +50,9 @@ export class DownloadController extends Controller {
   }
 
   @Get("{mnemonic}/chunk/{hash}")
-  @OperationId("chunk")
+  @OperationId("downloadChunk")
   public chunk(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Path() hash: string,
   ): Promise<Readable> {
     return chunk(mnemonic, hash);

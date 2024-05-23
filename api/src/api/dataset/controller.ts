@@ -13,7 +13,7 @@ import {
 } from "@tsoa/runtime";
 
 
-import { Dataset, MemberAddBody, RequestWithUser, SearchRequestBody, SearchResponseBody, SetAccessBody } from "../types";
+import { Mnemonic, Dataset, MemberAddBody, RequestWithUser, SearchRequestBody, SearchResponseBody, SetAccessBody } from "../types";
 
 import get from "./get";
 import remove from "./remove";
@@ -32,7 +32,7 @@ export class DatasetController extends Controller {
   @Get("{mnemonic}")
   @OperationId("datasetInfo")
   public get(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithUser,
   ): Promise<Dataset> {
     const { user } = request;
@@ -52,7 +52,7 @@ export class DatasetController extends Controller {
   @Post("{mnemonic}/addMember")
   @OperationId("addMember")
   public addMember(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Body() body: MemberAddBody,
     @Request() request: RequestWithUser,
   ): Promise<void> {
@@ -63,7 +63,7 @@ export class DatasetController extends Controller {
   @Post("{mnemonic}/setAccess")
   @OperationId("setAccess")
   public setAccess(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Body() body: SetAccessBody,
     @Request() request: RequestWithUser,
   ): Promise<void> {
@@ -74,7 +74,7 @@ export class DatasetController extends Controller {
   @Post("{mnemonic}/rename")
   @OperationId("renameDataset")
   public rename(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Body() body: { name: string },
     @Request() request: RequestWithUser,
   ): Promise<void> {
@@ -85,7 +85,7 @@ export class DatasetController extends Controller {
   @Post("{mnemonic}/remove")
   @OperationId("removeDataset")
   public remove(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithUser,
   ): Promise<void> {
     const { user } = request;
@@ -95,7 +95,7 @@ export class DatasetController extends Controller {
   @Post("{mnemonic}/restore")
   @OperationId("restoreDataset")
   public restore(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithUser,
   ): Promise<void> {
     const { user } = request;
@@ -105,7 +105,7 @@ export class DatasetController extends Controller {
   @Post("{mnemonic}/destroy")
   @OperationId("destroyDataset")
   public destroy(
-    @Path() mnemonic: string,
+    @Path() mnemonic: Mnemonic,
     @Body() body: { force: boolean },
     @Request() request: RequestWithUser,
   ): Promise<void> {

@@ -14,7 +14,7 @@ export default function Tokens() {
 
   const fetchTokens = useCallback(async () => {
     const result = await api.token.list();
-    if (result.error) {
+    if (!result || result.error) {
       return;
     }
     setTokens(result);

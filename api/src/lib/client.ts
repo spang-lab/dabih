@@ -27,7 +27,7 @@ const init = (port?: number, sub?: string) => {
 
   const admin = {
     sub: sub ?? "admin",
-    scope: "upload user dataset token admin",
+    scope: "upload download user dataset token admin",
     aud: host,
   };
   const apiToken = jwt.sign(admin, tokenSecret);
@@ -91,7 +91,16 @@ const init = (port?: number, sub?: string) => {
     remove: (mnemonic: string) => c.POST('/dataset/{mnemonic}/remove', { params: { path: { mnemonic } } }),
     restore: (mnemonic: string) => c.POST('/dataset/{mnemonic}/restore', { params: { path: { mnemonic } } }),
     destroy: (mnemonic: string, force?: boolean) => c.POST('/dataset/{mnemonic}/destroy', { params: { path: { mnemonic } }, body: { force: force ?? false } }),
+    addMember: (mnemonic: string, body: schemas["MemberAddBody"]) => c.POST('/dataset/{mnemonic}/addMember', { params: { path: { mnemonic } }, body }),
+    setAccess: (mnemonic: string, body: schemas["SetAccessBody"]) => c.POST('/dataset/{mnemonic}/setAccess', { params: { path: { mnemonic } }, body }),
   }
+
+  const download = {
+    decrypt: (mnemonic: string, key: string) => c.POST('/download/{mnemonic}/decrypt', { params: { path: { mnemonic } }, body: { key } }),
+    mnemonic: (mnemonic: string) => c.GET('/download/{mnemonic}', { params: { path: { mnemonic } } }),
+    chunk: (mnemonic: string, hash: string) => c.GET('/download/{mnemonic}/chunk/{hash}', { params: { path: { mnemonic, hash } } }),
+  };
+
 
   const uploadBlob = async (fileName: string, data: Blob) => {
     const { data: dataset, response, error } = await upload.start({ fileName });
@@ -133,6 +142,7 @@ const init = (port?: number, sub?: string) => {
     token,
     user,
     upload,
+    download,
     dataset,
     uploadBlob,
   }
