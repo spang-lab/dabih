@@ -21,18 +21,18 @@ type KeyStatus =
   'disabled' |
   'active';
 
-type KeyState = {
+interface KeyState {
   status: KeyStatus,
   data?: CryptoKey,
-};
-type User = {
+}
+interface User {
   scopes: string[],
   sub: string,
   name: string,
   email: string
-};
+}
 
-type Session = {
+interface Session {
   status:
   'unauthenticated' |
   'loading' |
@@ -44,17 +44,18 @@ type Session = {
   expires?: string,
   error?: string,
   update: () => void,
-};
+}
 
 const SessionContext = createContext<Session>({
   status: 'loading',
   keyStatus: 'loading',
   isAdmin: false,
-  update: () => {},
+  update: () => { },
 });
 
 function SessionProvider({ children }) {
   const { data, status } = useAuthSession();
+  console.log(data, status);
   const [key, setKey] = useState<KeyState>({
     status: 'loading',
   });

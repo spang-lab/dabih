@@ -22,5 +22,8 @@
         "plugin:@typescript-eslint/disable-type-checked"
       ]
     }
-  ]
+  ],
+  "rules": {
+    "@typescript-eslint/no-misused-promises": "off"
+  }
 }

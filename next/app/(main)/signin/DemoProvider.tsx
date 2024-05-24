@@ -1,21 +1,12 @@
-'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { Codesandbox } from 'react-feather';
-import SignInError from './SignInError';
+import { Provider } from '@/lib/auth/auth';
+import { signIn } from '@/lib/auth/auth';
 
-export default function DemoProvider({ provider }) {
-  const [name, setName] = useState('');
-
-  const onSubmit = (e: any) => {
-    e.preventDefault();
-    signIn(provider.id, { name });
-  };
+export default function DemoProvider({ provider }: { provider: Provider }) {
   return (
     <div className="flex">
       <div className="pb-4 mb-4 ">
-        <SignInError />
         <div className="text-red p-2">
           <p className="font-extrabold text-xl text-center pb-2">
             Warning
@@ -30,7 +21,12 @@ export default function DemoProvider({ provider }) {
           it will accept any username without authentication.
 
         </div>
-        <form method="post" onSubmit={onSubmit}>
+        <form action={async (formData) => {
+          "use server";
+          await signIn(provider.id, formData, { redirectTo: '/key' })
+        }
+
+        }>
           <div className="w-full">
             <label htmlFor="name">
               <p className="font-extrabold m-1 text-xl">
@@ -41,8 +37,6 @@ export default function DemoProvider({ provider }) {
                 name="name"
                 maxLength={20}
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
               />
             </label>
           </div>

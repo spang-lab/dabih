@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server';
-import { getServerSession } from 'next-auth';
 import path from 'path';
 import { requireEnv } from '@/lib/config';
 import jwt from 'jsonwebtoken';
-import authOptions from '../../auth/options';
+import { User } from 'next-auth';
+import { auth } from '@/lib/auth/auth';
 
-const createJWT = async (user: any) => {
+const createJWT = (user: User) => {
   const { sub, scopes } = user;
   const secret = requireEnv('TOKEN_SECRET');
   const apiUrl = requireEnv('API_URL');
@@ -23,17 +23,17 @@ const createJWT = async (user: any) => {
   return token;
 };
 
-const handler = async (request: NextRequest, { params }) => {
+const handler = async (request: NextRequest, { params }: { params: { route: string } }) => {
   const baseUrl = requireEnv('API_URL');
   const url = path.join(baseUrl, 'api', 'v1', ...params.route);
 
   const { headers, method, body } = request;
   const existingToken = headers.get('Authorization');
   if (!existingToken) {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (session) {
       const { user } = session;
-      const token = await createJWT(user);
+      const token = createJWT(user);
       headers.append('Authorization', `Bearer ${token}`);
     }
   }
@@ -41,7 +41,7 @@ const handler = async (request: NextRequest, { params }) => {
     method,
     body,
     headers,
-    // @ts-ignore
+    // @ts-expect-error - types are wrong
     duplex: 'half',
   });
   return result;

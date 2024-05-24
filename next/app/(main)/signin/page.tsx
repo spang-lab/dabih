@@ -1,17 +1,14 @@
 import React from 'react';
 
-import { getProviders } from 'next-auth/react';
-import { getServerSession } from 'next-auth/next';
-import authOptions from '@/app/api/auth/options';
+import { auth, providerMap } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
 import Provider from './Provider';
 
 export default async function SignIn() {
-  const session = await getServerSession(authOptions);
-  if (session && session.user) {
+  const session = await auth();
+  if (session?.user) {
     redirect('/key');
   }
-  const providers = await getProviders() ?? [];
 
   return (
     <div>
@@ -55,7 +52,7 @@ export default async function SignIn() {
         </ul>
       </div>
       <div className="flex flex-col max-w-md mx-auto my-10">
-        {Object.values(providers).map((p) => (
+        {providerMap.map((p) => (
           <Provider key={p.id} provider={p} />
         ))}
       </div>

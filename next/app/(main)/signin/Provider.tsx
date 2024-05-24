@@ -1,11 +1,12 @@
-'use client';
-
 import Image from 'next/image';
-import { signIn } from 'next-auth/react';
 import URProvider from './UrProvider';
 import DemoProvider from './DemoProvider';
 
-export default function Provider({ provider }) {
+import { signIn, Provider } from '@/lib/auth/auth';
+
+
+
+export default function Provider({ provider }: { provider: Provider }) {
   const { id } = provider;
   if (id === 'demo') {
     return <DemoProvider provider={provider} />;
@@ -17,22 +18,28 @@ export default function Provider({ provider }) {
   const logoSrc = `/images/providers/${id}.png`;
   return (
     <div className="flex p-2">
-      <button
-        type="button"
-        className="px-3 py-2 inline-flex items-center text-lg font-semibold bg-blue text-white rounded-md"
-        onClick={() => signIn(provider.id)}
+      <form
+        action={async () => {
+          "use server";
+          await signIn(provider.id)
+        }}
       >
-        <Image
-          width={32}
-          height={32}
-          className="mx-2"
-          src={logoSrc}
-          alt="Provider logo"
-        />
-        Sign in with
-        {' '}
-        {provider.name}
-      </button>
+        <button
+          type="button"
+          className="px-3 py-2 inline-flex items-center text-lg font-semibold bg-blue text-white rounded-md"
+        >
+          <Image
+            width={32}
+            height={32}
+            className="mx-2"
+            src={logoSrc}
+            alt="Provider logo"
+          />
+          Sign in with
+          {' '}
+          {provider.name}
+        </button>
+      </form>
     </div>
 
   );
