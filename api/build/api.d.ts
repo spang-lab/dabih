@@ -796,6 +796,14 @@ export interface components {
         SearchRequestBody: {
             /** @description The search query */
             query?: string;
+            /** @description Search for datasets with a specific file name */
+            fileName?: string;
+            /** @description Search for datasets with a specific custom name */
+            name?: string;
+            /** @description Search for datasets with a specific mnemonic */
+            mnemonic?: string;
+            /** @description Search for datasets with a specific key hash */
+            hash?: string;
             /** @description Also show deleted datasets */
             showDeleted?: boolean;
             /** @description Also show datasets the user does not have access to

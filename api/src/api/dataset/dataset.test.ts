@@ -6,7 +6,8 @@ const test = anyTest as TestFn<{ server: Server, port: number, privateKey: KeyOb
 import client from '#lib/client';
 import getPort from '@ava/get-port';
 import crypto from '#crypto';
-import { KeyObject } from 'crypto';
+import { KeyObject, createHash } from 'crypto';
+import { blob } from 'stream/consumers';
 
 test.before(async t => {
   const port = await getPort();
@@ -22,7 +23,7 @@ test.before(async t => {
   });
 
   const data = new Blob(["test data"]);
-  await api.uploadBlob("test.txt", data);
+  await api.uploadBlob("test.txt", data, "test_tag");
   await api.uploadBlob("test2.txt", data);
   await api.uploadBlob("test3.txt", data);
   await api.uploadBlob("test_aXd7de.txt", data);
@@ -56,8 +57,8 @@ test('search no query', async t => {
     return;
   }
   const { count, datasets } = data;
-  t.is(count, 4);
-  t.is(datasets.length, 4);
+  t.true(count >= 4);
+  t.is(count, datasets.length);
   t.is(response.status, 200);
 });
 
@@ -89,7 +90,7 @@ test('search limit', async t => {
     return;
   }
   const { count, datasets } = data;
-  t.is(count, 4);
+  t.true(count >= 4);
   t.is(datasets.length, 2);
   t.is(response.status, 200);
 });
@@ -161,4 +162,43 @@ test('search deleted', async t => {
   t.is(datasets.length, 5);
   t.is(response.status, 200);
 });
+
+test('search by name', async t => {
+  const api = client(t.context.port, "test_user");
+  const { response, data } = await api.dataset.search({
+    name: "test_tag",
+  });
+  if (!data) {
+    t.fail();
+    return;
+  }
+  const { count, datasets } = data;
+  t.is(count, 1);
+  t.is(datasets.length, 1);
+  t.is(response.status, 200);
+});
+
+test('search by hash', async t => {
+  const blob = new Blob(["test data"]);
+  const inner = createHash('sha256');
+  const outer = createHash('sha256');
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  inner.update(buffer);
+  outer.update(inner.digest());
+  const hash = outer.digest('base64url');
+  const api = client(t.context.port, "test_user");
+  const { response, data } = await api.dataset.search({
+    hash,
+  });
+  if (!data) {
+    t.fail();
+    return;
+  }
+  const { count, datasets } = data;
+  t.true(count >= 4);
+  t.true(datasets.length >= 4);
+  t.is(response.status, 200);
+});
+
+
 

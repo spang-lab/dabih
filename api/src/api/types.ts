@@ -4,7 +4,7 @@ import { JsonWebKey } from "crypto";
 /**
   * mnemonics are human readable unique identifiers for datasets
   * mnemonics have the form <random adjective>_<random first name>
-  * @pattern ^[a-z]+_[a-z]+$
+  * @pattern ^[a-z_]+$
   * @example "happy_jane"
   */
 export type Mnemonic = string;
@@ -342,6 +342,22 @@ export interface SearchRequestBody {
     * The search query
     */
   query?: string;
+  /**
+    * Search for datasets with a specific file name
+    */
+  fileName?: string;
+  /**
+    * Search for datasets with a specific custom name
+    */
+  name?: string;
+  /**
+    * Search for datasets with a specific mnemonic
+    */
+  mnemonic?: string;
+  /**
+    * Search for datasets with a specific key hash
+    */
+  hash?: string;
   /**
     * Also show deleted datasets
     */

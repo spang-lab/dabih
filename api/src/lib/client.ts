@@ -102,9 +102,10 @@ const init = (port?: number, sub?: string) => {
   };
 
 
-  const uploadBlob = async (fileName: string, data: Blob) => {
-    const { data: dataset, response, error } = await upload.start({ fileName });
+  const uploadBlob = async (fileName: string, data: Blob, name?: string) => {
+    const { data: dataset, response, error } = await upload.start({ fileName, name });
     if (error) {
+      console.error(error);
       return { response, error };
     }
     if (!dataset) {
@@ -125,10 +126,12 @@ const init = (port?: number, sub?: string) => {
     }
     const { response: response2, error: error2 } = await upload.chunk(chunk);
     if (error2) {
+      console.error(error2);
       return { response: response2, error: error2 };
     }
     const { response: response3, error: error3, data: result } = await upload.finish(mnemonic);
     if (error3) {
+      console.error(error3);
       return { response: response3, error: error3 };
     }
     return {

@@ -376,7 +376,7 @@
 				"type": "string",
 				"example": "happy_jane",
 				"description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
-				"pattern": "^[a-z]+_[a-z]+$"
+				"pattern": "^[a-z_]+$"
 			},
 			"Chunk": {
 				"properties": {
@@ -875,6 +875,22 @@
 					"query": {
 						"type": "string",
 						"description": "The search query"
+					},
+					"fileName": {
+						"type": "string",
+						"description": "Search for datasets with a specific file name"
+					},
+					"name": {
+						"type": "string",
+						"description": "Search for datasets with a specific custom name"
+					},
+					"mnemonic": {
+						"type": "string",
+						"description": "Search for datasets with a specific mnemonic"
+					},
+					"hash": {
+						"type": "string",
+						"description": "Search for datasets with a specific key hash"
 					},
 					"showDeleted": {
 						"type": "boolean",

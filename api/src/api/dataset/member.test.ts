@@ -2,7 +2,7 @@ import anyTest, { TestFn } from 'ava';
 import app from 'src/app';
 import { Server } from 'http';
 
-const test = anyTest as TestFn<{ server: Server, port: number, privateKey: KeyObject }>;
+const test = anyTest as TestFn<{ server: Server, port: number, keys: KeyObject[] }>;
 import client from '#lib/client';
 import getPort from '@ava/get-port';
 import crypto from '#crypto';
@@ -31,11 +31,11 @@ test.before(async t => {
   });
 
   const data = new Blob(["test data"]);
-  await api.uploadBlob("test.txt", data);
+  await api.uploadBlob("membership.txt", data, "member_test");
 
   t.context = {
     server,
-    privateKey,
+    keys: [privateKey, privateKey2],
     port,
   };
 })
@@ -44,3 +44,21 @@ test.after.always(t => {
   t.context.server.close();
 })
 
+test('add member', async t => {
+  const api = client(t.context.port, "test_user");
+
+  const { response, data } = await api.dataset.search({
+    name: "member_test",
+    fileName: "membership.txt",
+  });
+  t.is(response.status, 200);
+  if (!data || data.count !== 1) {
+    t.fail();
+    return;
+  }
+  const dataset = data.datasets[0];
+  const { mnemonic } = dataset;
+  console.log(dataset);
+
+
+})

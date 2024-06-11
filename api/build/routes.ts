@@ -142,7 +142,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Mnemonic": {
         "dataType": "refAlias",
-        "type": {"dataType":"string","validators":{"pattern":{"value":"^[a-z]+_[a-z]+$"}}},
+        "type": {"dataType":"string","validators":{"pattern":{"value":"^[a-z_]+$"}}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Chunk": {
@@ -294,6 +294,10 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "query": {"dataType":"string"},
+            "fileName": {"dataType":"string"},
+            "name": {"dataType":"string"},
+            "mnemonic": {"dataType":"string"},
+            "hash": {"dataType":"string"},
             "showDeleted": {"dataType":"boolean"},
             "showAll": {"dataType":"boolean"},
             "skip": {"dataType":"integer"},

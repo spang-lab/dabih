@@ -10,7 +10,7 @@ import { SearchRequestBody, User } from "../types";
 export default async function search(user: User, body: SearchRequestBody) {
   const { sub, isAdmin } = user;
 
-  const { query, showDeleted } = body;
+  const { query, showDeleted, fileName, name, mnemonic, hash } = body;
   const showAll = body.showAll && isAdmin;
 
   const where = {
@@ -19,6 +19,10 @@ export default async function search(user: User, body: SearchRequestBody) {
       { name: { contains: query } },
       { mnemonic: { contains: query } },
     ] : undefined,
+    fileName: fileName ? { contains: fileName } : undefined,
+    name: name ? { contains: name } : undefined,
+    mnemonic: mnemonic ? { contains: mnemonic } : undefined,
+    hash: hash ? { contains: hash } : undefined,
     deletedAt: showDeleted ? undefined : null,
     members: showAll ? undefined : {
       some: {
