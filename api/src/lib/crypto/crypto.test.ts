@@ -6,6 +6,7 @@ import base64url from './base64url';
 import aesKey from './aesKey';
 import random from './random';
 import stream from './stream';
+import hash from './hash';
 
 import { Readable } from 'stream';
 import { text } from 'node:stream/consumers';
@@ -120,5 +121,21 @@ test('validate stream', async t => {
   t.is(hash, 'pZGm1Av0IEBKARczz7exkNYsZb8LzaMrV7J32a2fFG4');
   t.is(byteCount, 11);
   t.is(data, data2);
+});
+
+test('hash blob', async t => {
+  const data = new Blob(['Hello World']);
+  const h = await hash.blob(data);
+  t.is(h, 'pZGm1Av0IEBKARczz7exkNYsZb8LzaMrV7J32a2fFG4');
+});
+
+test('hash hashes', async t => {
+  const data = new Blob(['test data']);
+  const h = await hash.blob(data);
+
+  const hasher = hash.create();
+  hasher.update(h, 'base64url');
+  const h2 = hasher.digest('base64url');
+  t.is(h2, 'gkl57elZ_v5TCCvBRQL4vwQdU5l_-2XLvjreWAP3-3Y');
 });
 

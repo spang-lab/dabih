@@ -60,7 +60,7 @@ test('use access token', async t => {
     return t.fail()
   }
   const { value } = token;
-  const { data: info } = await api.GET('/token/info', {
+  const { data: info } = await api.client.GET('/token/info', {
     headers: {
       Authorization: `Bearer ${value}`
     },
@@ -68,7 +68,7 @@ test('use access token', async t => {
   t.truthy(info);
   t.deepEqual(info?.scopes, scopes)
 
-  const { data: token2 } = await api.POST('/token/add', {
+  const { data: token2 } = await api.client.POST('/token/add', {
     headers: {
       Authorization: `Bearer ${value}`
     },
@@ -97,7 +97,7 @@ test('expire token', async t => {
     return t.fail()
   }
   const { value } = token;
-  const { response, data: info } = await api.GET('/token/info', {
+  const { response, data: info } = await api.client.GET('/token/info', {
     headers: {
       Authorization: `Bearer ${value}`
     },

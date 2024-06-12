@@ -16,7 +16,7 @@
     "dev:migrate": "dotenv -e .env.dev -- prisma migrate dev",
     "test:startdb": "docker run -d --name pg-dabih-test -p 15432:5432 --env-file .env.test postgres:16-alpine",
     "test:stopdb": "docker stop pg-dabih-test && docker rm pg-dabih-test",
-    "test:clean": "source .env.test && rm -rf $TEST_FOLDER/*",
+    "test:clean": "rm -rf ./data/__test__/",
     "test:prepare": "dotenv -e .env.test prisma migrate deploy",
     "test:api": "dotenv -e .env.test ava --serial",
     "test": "npm run test:clean && npm run test:startdb && sleep 3 && npm run test:prepare && npm run test:api ; npm run test:stopdb"

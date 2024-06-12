@@ -56,6 +56,25 @@ test('add invalid key', async t => {
   t.is(response.status, 500);
 });
 
+test('check key hash', async t => {
+  const api = client(t.context.port, "test_hash");
+  const privateKey = await crypto.privateKey.generate();
+  const publicKey = crypto.privateKey.toPublicKey(privateKey);
+  const jwk = crypto.publicKey.toJwk(publicKey);
+  const hash = crypto.publicKey.toHash(publicKey);
+  const { response, data: user } = await api.user.add({
+    name: "test",
+    email: "test",
+    key: jwk,
+  });
+  t.is(response.status, 201);
+  if (!user) {
+    t.fail('No data');
+    return;
+  }
+  t.is(user.keys[0].hash, hash);
+});
+
 test('add user with two keys', async t => {
   const api = client(t.context.port);
   const { publicKey } = await crypto.privateKey.generatePair();

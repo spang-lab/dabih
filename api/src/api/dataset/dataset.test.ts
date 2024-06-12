@@ -7,7 +7,6 @@ import client from '#lib/client';
 import getPort from '@ava/get-port';
 import crypto from '#crypto';
 import { KeyObject, createHash } from 'crypto';
-import { blob } from 'stream/consumers';
 
 test.before(async t => {
   const port = await getPort();
@@ -23,11 +22,11 @@ test.before(async t => {
   });
 
   const data = new Blob(["test data"]);
-  await api.uploadBlob("test.txt", data, "test_tag");
-  await api.uploadBlob("test2.txt", data);
-  await api.uploadBlob("test3.txt", data);
-  await api.uploadBlob("test_aXd7de.txt", data);
-  const { data: dataset } = await api.uploadBlob("test_bXd7de.txt", data);
+  await api.upload.blob({ fileName: "test.txt", data, name: "test_tag" });
+  await api.upload.blob({ fileName: "test2.txt", data, name: "test_tag" });
+  await api.upload.blob({ fileName: "test3.txt", data, name: "test_tag" });
+  await api.upload.blob({ fileName: "test_aXd7de.txt", data, name: "test_tag" });
+  const { data: dataset } = await api.upload.blob({ fileName: "test_deleted.txt", data, name: "test_tag" });
   await api.dataset.remove(dataset!.mnemonic);
 
   t.context = {
@@ -99,6 +98,7 @@ test('search sort', async t => {
   const api = client(t.context.port, "test_user");
   const { response, data } = await api.dataset.search({
     query: "test",
+    name: "test_tag",
     sortBy: "fileName",
     sortDir: "asc",
   });
@@ -151,6 +151,7 @@ test('search deleted', async t => {
   const api = client(t.context.port, "test_user");
   const { response, data } = await api.dataset.search({
     query: "test",
+    name: "test_tag",
     showDeleted: true,
   });
   if (!data) {
@@ -173,8 +174,8 @@ test('search by name', async t => {
     return;
   }
   const { count, datasets } = data;
-  t.is(count, 1);
-  t.is(datasets.length, 1);
+  t.is(count, 4);
+  t.is(datasets.length, count);
   t.is(response.status, 200);
 });
 

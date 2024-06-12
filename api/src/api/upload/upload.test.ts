@@ -113,7 +113,7 @@ test('full upload', async t => {
 test('upload duplicate', async t => {
   const api = client(t.context.port);
   const data = new Blob(['duplicate']);
-  const { data: dataset } = await api.uploadBlob('test.txt', data);
+  const { data: dataset } = await api.upload.blob({ fileName: 'test.txt', data });
   if (!dataset) {
     t.fail('No dataset');
     return;
@@ -144,9 +144,24 @@ test('upload duplicate', async t => {
 test('upload blob', async t => {
   const api = client(t.context.port);
   const data = new Blob(['test']);
-  const { data: dataset, error } = await api.uploadBlob('test.txt', data);
+  const { data: dataset, error } = await api.upload.blob({ fileName: 'test.txt', data });
   t.truthy(dataset);
   t.falsy(error);
+});
+
+test('upload blob, multiple chunks', async t => {
+  const api = client(t.context.port);
+  const data = new Blob(['test data']);
+  const { data: dataset } = await api.upload.blob({ fileName: 'test.txt', data },
+    { chunkSize: 4 });
+  if (!dataset) {
+    t.fail('No dataset');
+    return;
+  }
+  const { mnemonic } = dataset;
+  const { response, data: info } = await api.dataset.get(mnemonic);
+  t.is(response.status, 200);
+  t.is(info?.chunks.length, 3);
 });
 
 

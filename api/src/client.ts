@@ -10,7 +10,7 @@ const NULL = ts.factory.createLiteralTypeNode(ts.factory.createNull());
 
 const build = async () => {
   const specFile = 'build/spec.json';
-  const typesFile = 'build/api.d.ts';
+  const typesFile = 'build/schema.d.ts';
   const specStr = await readFile(specFile, 'utf8');
   const spec = JSON.parse(specStr) as OpenAPI3;
   const types = await openapiTS(spec, {
