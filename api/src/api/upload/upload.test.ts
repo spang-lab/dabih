@@ -180,6 +180,7 @@ test('digest parsing', t => {
 test('content range parsing', t => {
   t.deepEqual(parseContentRange('bytes 0-3/4'), { start: 0, end: 3, size: 4 });
   t.deepEqual(parseContentRange('bytes 0-3/*'), { start: 0, end: 3 });
+  t.deepEqual(parseContentRange('bytes 0-3/16'), { start: 0, end: 3, size: 16 });
   t.throws(() => parseContentRange('bytes 0-3'));
   t.throws(() => parseContentRange('bytes 0-3/'));
   t.throws(() => parseContentRange('bytes 0-3/4/5'));

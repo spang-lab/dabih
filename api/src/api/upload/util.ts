@@ -12,10 +12,10 @@ export const parseDigest = (digest: string) => {
 
 
 export const parseContentRange = (contentRange: string) => {
-  const regex = /^bytes (\d+)-(\d+)\/([*\d+])$/;
+  const regex = /^bytes (\d+)-(\d+)\/(\d+|\*)$/;
   const match = contentRange.match(regex);
   if (!match) {
-    throw new RequestError('Invalid Content-Range header, needs to be "bytes {start}-{end}/{size | *}"');
+    throw new RequestError(`Invalid Content-Range header, needs to be "bytes {start}-{end}/{size | *}", got "${contentRange}"`);
   }
   const start = parseInt(match[1], 10);
   const end = parseInt(match[2], 10);

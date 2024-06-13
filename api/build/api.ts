@@ -94,7 +94,10 @@ const init = (baseUrl: string) => {
   const download = {
     decrypt: (mnemonic: string, key: string) => c.POST('/download/{mnemonic}/decrypt', { params: { path: { mnemonic } }, body: { key } }),
     mnemonic: (mnemonic: string) => c.GET('/download/{mnemonic}', { params: { path: { mnemonic } } }),
-    chunk: (mnemonic: string, hash: string) => c.GET('/download/{mnemonic}/chunk/{hash}', { params: { path: { mnemonic, hash } } }),
+    chunk: (mnemonic: string, hash: string) => c.GET('/download/{mnemonic}/chunk/{hash}', {
+      parseAs: 'stream',
+      params: { path: { mnemonic, hash } }
+    }),
   };
 
   const uploadBlob = async (info: Upload, options?: UploadOptions) => {

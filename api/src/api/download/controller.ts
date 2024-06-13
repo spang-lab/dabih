@@ -9,6 +9,7 @@ import {
   Security,
   OperationId,
   Path,
+  Produces
 } from "@tsoa/runtime";
 
 import { Mnemonic, AESKey, RequestWithUser } from "../types";
@@ -51,10 +52,12 @@ export class DownloadController extends Controller {
 
   @Get("{mnemonic}/chunk/{hash}")
   @OperationId("downloadChunk")
+  @Produces('application/octet-stream')
   public chunk(
     @Path() mnemonic: Mnemonic,
     @Path() hash: string,
   ): Promise<Readable> {
+    this.setHeader("Content-Type", "application/octet-stream");
     return chunk(mnemonic, hash);
   }
 }

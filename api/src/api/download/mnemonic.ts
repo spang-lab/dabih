@@ -38,7 +38,7 @@ export default async function mnemonic(user: User, mnemonic: string) {
     const { hash, iv } = chunk;
     const stream = await get(mnemonic, hash);
     const decrypt = crypto.aesKey.decrypt(key, iv);
-    const isLast = chunk.end === size;
+    const isLast = chunk.end + 1 === size;
     stream.pipe(decrypt).pipe(pStream, { end: isLast });
   }
   return {

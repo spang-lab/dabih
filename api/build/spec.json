@@ -1744,7 +1744,7 @@
 					"200": {
 						"description": "Ok",
 						"content": {
-							"application/json": {
+							"application/octet-stream": {
 								"schema": {
 									"type": "string",
 									"format": "byte"
