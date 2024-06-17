@@ -20,37 +20,40 @@ import download from "./mnemonic";
 import { Readable } from "stream";
 
 
+import { TokenResponse } from "../types";
 
 @Route("download")
 @Tags("Download")
-@Security("api_key", ['dabih:api'])
-@Security("jwt", ['dabi:api'])
 export class DownloadController extends Controller {
   @Post("{mnemonic}/decrypt")
+  @Security("api_key", ['dabih:api'])
+  @Security("jwt", ['dabih:api'])
   @OperationId("decryptDataset")
   public decrypt(
     @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithUser,
     @Body() body: { key: AESKey },
-  ): Promise<void> {
+  ): Promise<TokenResponse> {
     const { user } = request;
     const { key } = body;
     return decrypt(user, mnemonic, key);
   }
-  @Get("{mnemonic}")
+  @Get("/")
+  @Security("api_key")
   @OperationId("downloadDataset")
   public async download(
-    @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithUser,
   ): Promise<Readable> {
     const { user } = request;
-    const { stream, fileName, size } = await download(user, mnemonic);
+    const { stream, fileName, size } = await download(user);
     this.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
     this.setHeader("Content-Length", size.toString());
     return stream;
   }
 
   @Get("{mnemonic}/chunk/{hash}")
+  @Security("api_key", ['dabih:api'])
+  @Security("jwt", ['dabih:api'])
   @OperationId("downloadChunk")
   @Produces('application/octet-stream')
   public chunk(

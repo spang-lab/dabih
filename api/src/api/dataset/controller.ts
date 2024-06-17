@@ -27,7 +27,7 @@ import setAccess from "./setAccess";
 @Route("dataset")
 @Tags("Dataset")
 @Security("api_key", ['dabih:api'])
-@Security("jwt", ['dapib:api'])
+@Security("jwt", ['dabih:api'])
 export class DatasetController extends Controller {
   @Get("{mnemonic}")
   @OperationId("datasetInfo")

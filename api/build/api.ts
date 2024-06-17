@@ -93,7 +93,12 @@ const init = (baseUrl: string) => {
 
   const download = {
     decrypt: (mnemonic: string, key: string) => c.POST('/download/{mnemonic}/decrypt', { params: { path: { mnemonic } }, body: { key } }),
-    mnemonic: (mnemonic: string) => c.GET('/download/{mnemonic}', { params: { path: { mnemonic } } }),
+    get: (token: string) => c.GET('/download', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      parseAs: 'stream',
+    }),
     chunk: (mnemonic: string, hash: string) => c.GET('/download/{mnemonic}/chunk/{hash}', {
       parseAs: 'stream',
       params: { path: { mnemonic, hash } }

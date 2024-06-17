@@ -8,7 +8,9 @@ import client from '#lib/client';
 import getPort from '@ava/get-port';
 import crypto from '#crypto';
 import { Readable, PassThrough } from 'stream';
+import { ReadableStream } from 'node:stream/web';
 import { text } from 'node:stream/consumers';
+import { join } from 'path';
 
 test.before(async t => {
   const port = await getPort();
@@ -75,9 +77,62 @@ test('download', async t => {
     }
     const decrypt = crypto.aesKey.decrypt(aesKey, iv);
     const isLast = chunk.end + 1 === dataset.size;
-    Readable.fromWeb(stream)
+    Readable.fromWeb(stream as ReadableStream<Uint8Array>)
       .pipe(decrypt).pipe(pStream, { end: isLast });
   }
   const result = await text(pStream);
+  t.is(result, payload);
+});
+
+
+test('reject jwt on download endpoint', async t => {
+  const api = client(t.context.port, "download_user");
+  const { response } = await api.client.GET("/download");
+  t.is(response.status, 401);
+});
+
+
+
+test('server decrypt', async t => {
+  const api = client(t.context.port, "download_user");
+  const payload = "Test data for server decrypt";
+  const { data: upload } = await api.upload.blob({
+    fileName: "test.txt",
+    data: new Blob([payload]),
+    name: "test_download"
+  }, { chunkSize: 5 });
+  if (!upload) {
+    t.fail();
+    return;
+  }
+  const { mnemonic } = upload;
+  const { data: dataset } = await api.dataset.get(mnemonic);
+  if (!dataset) {
+    t.fail();
+    return;
+  }
+  const { privateKey } = t.context;
+  const publicKey = crypto.privateKey.toPublicKey(privateKey);
+  const keyHash = crypto.publicKey.toHash(publicKey);
+  const { keys } = dataset;
+  const encryptedKey = keys.find(k => k.publicKeyHash === keyHash);
+  if (!encryptedKey) {
+    t.fail();
+    return;
+  }
+  const aesKey = crypto.privateKey.decrypt(privateKey, encryptedKey.key);
+  const { response, data: token } = await api.download.decrypt(mnemonic, aesKey);
+  t.is(response.status, 200);
+  if (!token) {
+    t.fail();
+    return;
+  }
+  const { response: response2, data: stream } = await api.download.get(token.value);
+  t.is(response2.status, 200);
+  if (!stream) {
+    t.fail();
+    return;
+  }
+  const result = await text(stream as ReadableStream<Uint8Array>);
   t.is(result, payload);
 });

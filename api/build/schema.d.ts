@@ -255,7 +255,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/download/{mnemonic}": {
+    "/download": {
         parameters: {
             query?: never;
             header?: never;
@@ -1203,12 +1203,14 @@ export interface operations {
             };
         };
         responses: {
-            /** @description No content */
-            204: {
+            /** @description Ok */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
             };
         };
     };
@@ -1216,9 +1218,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                mnemonic: components["schemas"]["Mnemonic"];
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;

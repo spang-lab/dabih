@@ -1,14 +1,30 @@
 import { User } from '../types';
 import { readKey } from '#lib/keyv';
 import db from '#lib/db';
-import { RequestError } from '../errors';
+import { AuthorizationError, RequestError } from '../errors';
 import { get } from '#lib/fs';
 import crypto from '#lib/crypto/index';
 import { PassThrough } from 'stream';
 
+const parseScope = (scopes: string[]) => {
+  if (scopes.length !== 1) {
+    throw new AuthorizationError(`Expected a token with a single download scope, got ${scopes.join(' ')}`);
+  }
+  const [scope] = scopes;
+  const regex = /^dabih:download:(\w+)$/;
+  const match = scope.match(regex);
+  if (!match) {
+    throw new AuthorizationError(`Invalid scope ${scope} expected dabih:download:<mnemonic>`);
+  }
+  const [, mnemonic] = match;
+  return mnemonic;
+};
 
-export default async function mnemonic(user: User, mnemonic: string) {
-  const { sub } = user;
+
+
+export default async function mnemonic(user: User) {
+  const { sub, scopes } = user;
+  const mnemonic = parseScope(scopes);
   const key = await readKey(sub, mnemonic);
   if (!key) {
     throw new RequestError(`AES key not found, it needs to be stored by calling /download/${mnemonic}/decrypt first`);

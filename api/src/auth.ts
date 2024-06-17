@@ -22,11 +22,14 @@ const parseHeader = (request: Request): string => {
   throw new AuthenticationError('Invalid Authorization header, needs to be "Bearer <token>"');
 };
 
+type AuthType = 'jwt' | 'api_key';
 
-const verifyToken = async (request: Request): Promise<User> => {
+const verifyToken = async (request: Request, type: AuthType): Promise<User> => {
   const tokenStr = parseHeader(request);
-
-  if (isToken(tokenStr)) {
+  if (type === 'api_key') {
+    if (!isToken(tokenStr)) {
+      throw new AuthenticationError('Expected an api key in the form dabih_at_<value>');
+    }
     const result = await db.token.findUnique({
       where: {
         value: tokenStr,
@@ -78,7 +81,7 @@ const verifyToken = async (request: Request): Promise<User> => {
 
 export async function koaAuthentication(request: Request, name: string, scopes?: string[]): Promise<User> {
   if (name === 'jwt' || name === 'api_key') {
-    const decoded = await verifyToken(request);
+    const decoded = await verifyToken(request, name);
     const missing = scopes?.filter(scope => !decoded.scopes.includes(scope));
     if (missing?.length) {
       throw new AuthenticationError(`JWT does not contain the required scope: ${missing.join(', ')}`);

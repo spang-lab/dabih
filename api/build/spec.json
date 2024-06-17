@@ -1020,7 +1020,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabi:api"
+							"dabih:api"
 						]
 					},
 					{
@@ -1068,7 +1068,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabi:api"
+							"dabih:api"
 						]
 					},
 					{
@@ -1106,7 +1106,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabi:api"
+							"dabih:api"
 						]
 					},
 					{
@@ -1160,7 +1160,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabi:api"
+							"dabih:api"
 						]
 					},
 					{
@@ -1186,7 +1186,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabi:api"
+							"dabih:api"
 						]
 					},
 					{
@@ -1237,7 +1237,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabi:api"
+							"dabih:api"
 						]
 					},
 					{
@@ -1280,7 +1280,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabi:api"
+							"dabih:api"
 						]
 					},
 					{
@@ -1316,7 +1316,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabi:api"
+							"dabih:api"
 						]
 					},
 					{
@@ -1364,17 +1364,7 @@
 					},
 					{
 						"api_key": [
-							"dabi:upload"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					},
-					{
-						"api_key": [
-							"dabih:api"
+							"dabih:upload"
 						]
 					}
 				],
@@ -1410,17 +1400,7 @@
 					},
 					{
 						"api_key": [
-							"dabi:upload"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					},
-					{
-						"api_key": [
-							"dabih:api"
+							"dabih:upload"
 						]
 					}
 				],
@@ -1462,17 +1442,7 @@
 					},
 					{
 						"api_key": [
-							"dabi:upload"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					},
-					{
-						"api_key": [
-							"dabih:api"
+							"dabih:upload"
 						]
 					}
 				],
@@ -1645,8 +1615,15 @@
 			"post": {
 				"operationId": "decryptDataset",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TokenResponse"
+								}
+							}
+						}
 					}
 				},
 				"tags": [
@@ -1660,7 +1637,7 @@
 					},
 					{
 						"jwt": [
-							"dabi:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -1694,7 +1671,7 @@
 				}
 			}
 		},
-		"/download/{mnemonic}": {
+		"/download": {
 			"get": {
 				"operationId": "downloadDataset",
 				"responses": {
@@ -1715,26 +1692,10 @@
 				],
 				"security": [
 					{
-						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
-							"dabi:api"
-						]
+						"api_key": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "mnemonic",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/Mnemonic"
-						}
-					}
-				]
+				"parameters": []
 			}
 		},
 		"/download/{mnemonic}/chunk/{hash}": {
@@ -1764,7 +1725,7 @@
 					},
 					{
 						"jwt": [
-							"dabi:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -1814,7 +1775,7 @@
 					},
 					{
 						"jwt": [
-							"dapib:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -1856,7 +1817,7 @@
 					},
 					{
 						"jwt": [
-							"dapib:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -1892,7 +1853,7 @@
 					},
 					{
 						"jwt": [
-							"dapib:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -1937,7 +1898,7 @@
 					},
 					{
 						"jwt": [
-							"dapib:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -1982,7 +1943,7 @@
 					},
 					{
 						"jwt": [
-							"dapib:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -2035,7 +1996,7 @@
 					},
 					{
 						"jwt": [
-							"dapib:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -2070,7 +2031,7 @@
 					},
 					{
 						"jwt": [
-							"dapib:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -2105,7 +2066,7 @@
 					},
 					{
 						"jwt": [
-							"dapib:api"
+							"dabih:api"
 						]
 					}
 				],
@@ -2165,17 +2126,7 @@
 					},
 					{
 						"api_key": [
-							"dabi:upload"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					},
-					{
-						"api_key": [
-							"dabih:api"
+							"dabih:upload"
 						]
 					}
 				],

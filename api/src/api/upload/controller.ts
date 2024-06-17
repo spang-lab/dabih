@@ -31,9 +31,7 @@ import { parseDigest, parseContentRange } from "./util";
 @Route("upload")
 @Tags("Upload")
 @Security("jwt", ["dabih:upload"])
-@Security("api_key", ['dabi:upload'])
-@Security("jwt", ["dabih:api"])
-@Security("api_key", ["dabih:api"])
+@Security("api_key", ['dabih:upload'])
 export class UploadController extends Controller {
   @Post("start")
   @SuccessResponse("201", "Created")
