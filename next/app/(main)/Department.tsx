@@ -3,7 +3,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 
 export default async function Department() {
-  const info = await api.info();
+  const { data: info } = await api.util.info();
   const department = info?.branding?.department;
   if (!department) {
     return null;

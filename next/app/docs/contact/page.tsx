@@ -2,7 +2,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 
 export default async function Contact() {
-  const info = await api.info();
+  const { data: info } = await api.util.info();
 
   const contact = info?.branding?.contact;
   if (!contact) {

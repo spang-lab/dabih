@@ -24,7 +24,7 @@ export default function DemoProvider(): Provider {
         .replace(/\s+/, '_')
         .replace(/[^a-zA-Z0-9_]/g, '')
         .toLowerCase();
-      const scopes = 'upload download user dataset token admin'.split(' ');
+      const scopes = 'dabih:api dabih:upload dabih:admin'.split(' ');
       return {
         id,
         sub: id,

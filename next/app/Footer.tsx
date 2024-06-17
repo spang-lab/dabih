@@ -3,7 +3,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 
 export default async function Footer() {
-  const info = await api.info();
+  const { data: info } = await api.util.info();
 
   const branding = info?.branding;
   const department = branding?.department;

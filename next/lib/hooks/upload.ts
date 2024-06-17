@@ -5,23 +5,23 @@ import useSession from '@/app/session';
 import api from '../api';
 import crypto from '../crypto';
 
-type Dataset = {
+interface Dataset {
   mnemonic: string,
   fileName: string,
   chunks: Chunk[],
   hash: string,
   size: number,
   duplicate?: string,
-};
+}
 
-type Chunk = {
+interface Chunk {
   hash: string,
   start: number
   end: number
   size: number
-};
+}
 
-type UploadState = {
+interface UploadState {
   status:
   'loading' |
   'ready' |
@@ -38,7 +38,7 @@ type UploadState = {
   name?: string,
   dataset?: Dataset,
   error?: string,
-};
+}
 
 const oneMiB = 1024 * 1024;
 const chunkSize = 2 * oneMiB;

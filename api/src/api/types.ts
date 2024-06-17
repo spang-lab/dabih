@@ -181,6 +181,9 @@ export type UploadStartResponse = Omit<Dataset, "members" | "chunks" | "keys"> &
 
 export type UploadFinishResponse = Omit<Dataset, "members" | "chunks" | "keys">;
 
+export type UnfinishedUpload = Omit<Dataset, "members" | "keys">;
+
+
 
 export interface Token {
   id: number;
@@ -417,4 +420,35 @@ export interface SetAccessBody {
     */
   permission: "read" | "write" | "none";
 }
+
+export interface DabihInfo {
+  version: string;
+  branding: {
+    admin: {
+      name: string;
+      email: string;
+    };
+    contact: {
+      name: string;
+      email: string;
+      street: string;
+      zip: string;
+      city: string;
+      state: string;
+      country: string;
+      phone: string;
+    };
+    department: {
+      name: string;
+      url: string;
+      logo: string;
+    };
+    organization: {
+      name: string;
+      url: string;
+      logo: string;
+    };
+  }
+};
+
 

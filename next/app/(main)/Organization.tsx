@@ -3,7 +3,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 
 export default async function Organization() {
-  const info = await api.info();
+  const { data: info } = await api.util.info();
   const organization = info?.branding?.organization;
   if (!organization) {
     return null;

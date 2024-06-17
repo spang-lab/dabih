@@ -1,8 +1,30 @@
 import jwt from 'jsonwebtoken';
 import { getEnv, requireEnv } from './env';
 import createClient from 'build/api';
+import type { components } from 'build/schema';
+type schemas = components["schemas"];
 import { createHash } from 'crypto';
 import { Middleware } from 'openapi-fetch';
+
+
+type Upload = schemas["UploadStartBody"] & {
+  data: Blob;
+};
+interface UploadOptions {
+  /**
+    * The size of each chunk in bytes
+    */
+  chunkSize: number;
+};
+
+const hashBlob = async (data: Blob) => {
+  const hash = createHash('sha256');
+  const buffer = Buffer.from(await data.arrayBuffer());
+  hash.update(buffer);
+  return hash.digest('base64url');
+}
+
+
 
 const init = (port?: number, sub?: string) => {
   const p = port?.toString() ?? getEnv('PORT', '3001');
@@ -27,44 +49,65 @@ const init = (port?: number, sub?: string) => {
   const api = createClient(baseUrl);
   api.client.use(tokenMiddleware);
 
-  const uploadBlob = async (fileName: string, data: Blob, name?: string) => {
-    const { data: dataset, response, error } = await api.upload.start({ fileName, name });
+  const { upload } = api;
+
+  const uploadBlob = async (info: Upload, options?: UploadOptions) => {
+    const oneMiB = 1024 * 1024;
+    const chunkSize = options?.chunkSize ?? 2 * oneMiB;
+
+    const uploadInfo = {
+      ...info,
+      data: undefined,
+    };
+
+    const { data: dataset, response, error } = await upload.start(uploadInfo);
     if (error) {
       console.error(error);
       return { response, error };
     }
-    if (!dataset) {
-      return { response, error: { message: "No dataset" } };
-    }
+    const { data } = info;
     const { mnemonic } = dataset;
-    const hash = createHash('sha256');
-    const buffer = Buffer.from(await data.arrayBuffer());
-    hash.update(buffer);
-
-    const chunk = {
-      mnemonic,
-      start: 0,
-      end: data.size - 1,
-      size: data.size,
-      hash: hash.digest('base64url'),
-      data,
+    let cursor = 0;
+    const hasher = createHash('sha256');
+    while (cursor < data.size) {
+      const chunkData = data.slice(cursor, cursor + chunkSize);
+      const chunk = {
+        mnemonic,
+        start: cursor,
+        end: cursor + chunkData.size - 1,
+        size: data.size,
+        hash: await hashBlob(chunkData),
+        data: chunkData,
+      }
+      hasher.update(chunk.hash, 'base64url');
+      const { response, error } = await upload.chunk(chunk);
+      if (error) {
+        console.error(error);
+        return { response, error };
+      }
+      cursor += chunkSize;
     }
-    const { response: response2, error: error2 } = await api.upload.chunk(chunk);
+    const hash = hasher.digest('base64url');
+    const { data: result, response: response2, error: error2 } = await upload.finish(mnemonic);
     if (error2) {
       console.error(error2);
       return { response: response2, error: error2 };
     }
-    const { response: response3, error: error3, data: result } = await api.upload.finish(mnemonic);
-    if (error3) {
-      console.error(error3);
-      return { response: response3, error: error3 };
+    if (result.hash !== hash) {
+      console.error("Hash mismatch", result.hash, hash);
+      return { response: response2, error: { message: "Hash mismatch" } };
     }
     return {
       data: result,
     }
-  }
-
-  return api;
+  };
+  return {
+    ...api,
+    upload: {
+      ...upload,
+      blob: uploadBlob,
+    },
+  };
 }
 
 

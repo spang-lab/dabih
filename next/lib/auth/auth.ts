@@ -1,12 +1,13 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 
 import DemoProvider from "./demo";
+import initApi from './api';
 
 
 declare module "next-auth" {
   interface User {
     sub: string,
-    scopes?: string[]
+    scopes: string[]
   }
 
   interface Session {
@@ -54,7 +55,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
-    session: ({ session, token }) => {
+    session: async ({ session, token }) => {
+      const api = initApi(token);
+      const { data: userinfo } = await api.user.me();
+      console.log("userinfo", userinfo);
+
       session.user.scopes = token.scopes;
       session.user.sub = token.sub;
       return session;

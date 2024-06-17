@@ -8,6 +8,8 @@ import {
   Security,
   SuccessResponse,
   Put,
+  Get,
+  OperationId,
   Path,
   Header,
 } from "@tsoa/runtime";
@@ -18,10 +20,17 @@ import start from "./start";
 import cancel from "./cancel";
 import chunk from "./chunk";
 import finish from "./finish";
+import unfinished from "./unfinished";
 
 import {
-  Mnemonic, UploadStartBody, UploadStartResponse,
-  RequestWithUser, Chunk, RequestWithHeaders, UploadFinishResponse
+  Mnemonic,
+  UploadStartBody,
+  UploadStartResponse,
+  RequestWithUser,
+  Chunk,
+  RequestWithHeaders,
+  UploadFinishResponse,
+  UnfinishedUpload,
 } from '../types';
 import { parseDigest, parseContentRange } from "./util";
 
@@ -34,6 +43,7 @@ import { parseDigest, parseContentRange } from "./util";
 @Security("api_key", ['dabih:upload'])
 export class UploadController extends Controller {
   @Post("start")
+  @OperationId("startUpload")
   @SuccessResponse("201", "Created")
   public async start(
     @Request() request: RequestWithUser,
@@ -46,6 +56,7 @@ export class UploadController extends Controller {
   }
 
   @Post("{mnemonic}/cancel")
+  @OperationId("cancelUpload")
   public async cancel(
     @Request() request: RequestWithUser,
     @Path() mnemonic: Mnemonic,
@@ -55,6 +66,7 @@ export class UploadController extends Controller {
   }
 
   @Put("{mnemonic}/chunk")
+  @OperationId("chunkUpload")
   @SuccessResponse("201", "Created")
   public async chunk(
     @Path() mnemonic: Mnemonic,
@@ -80,12 +92,22 @@ export class UploadController extends Controller {
   }
 
   @Post("{mnemonic}/finish")
+  @OperationId("finishUpload")
   public async finish(
     @Request() request: RequestWithUser,
     @Path() mnemonic: Mnemonic,
   ): Promise<UploadFinishResponse> {
     const { user } = request;
     return finish(user, mnemonic);
+  }
+
+  @Get("unfinished")
+  @OperationId("unfinishedUploads")
+  public async unfinished(
+    @Request() request: RequestWithUser,
+  ): Promise<UnfinishedUpload[]> {
+    const { user } = request;
+    return unfinished(user);
   }
 
 }
