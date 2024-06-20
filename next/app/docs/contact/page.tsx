@@ -1,8 +1,9 @@
+'use client';
 import Link from 'next/link';
-import api from '@/lib/api';
+import useInfo from '@/lib/hooks/info';
 
-export default async function Contact() {
-  const { data: info } = await api.util.info();
+export default function Contact() {
+  const info = useInfo();
 
   const contact = info?.branding?.contact;
   if (!contact) {

@@ -1,12 +1,15 @@
 
 
-import { ChunkAddBody, RequestWithHeaders } from '../types';
+import { ChunkAddBody, RequestWithUser } from '../types';
 import { readKey } from "#lib/keyv";
 import { RequestError } from "../errors";
 import crypto from "#crypto";
 import db from "#lib/db";
 import { head, store } from "#lib/fs";
 import Busboy, { BusboyHeaders } from "@fastify/busboy";
+
+import { Request } from "koa";
+export type RequestWithHeaders = Request & RequestWithUser;
 
 
 export default async function chunk(

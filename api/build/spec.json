@@ -1065,13 +1065,6 @@
 				],
 				"description": "Exclude from T those types that are assignable to U"
 			},
-			"Prisma.SortOrder": {
-				"type": "string",
-				"enum": [
-					"asc",
-					"desc"
-				]
-			},
 			"SearchRequestBody": {
 				"properties": {
 					"query": {
@@ -1117,7 +1110,11 @@
 						"description": "The field to sort the results by"
 					},
 					"sortDir": {
-						"$ref": "#/components/schemas/Prisma.SortOrder",
+						"type": "string",
+						"enum": [
+							"asc",
+							"desc"
+						],
 						"description": "The direction to sort the results by"
 					}
 				},

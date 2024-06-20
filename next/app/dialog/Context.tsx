@@ -9,7 +9,7 @@ import React, {
   useContext,
   Fragment,
 } from 'react';
-import { Transition, Dialog } from '@headlessui/react';
+import { Transition, TransitionChild, Dialog } from '@headlessui/react';
 
 import Rename from './Rename';
 import Error from './Error';
@@ -32,9 +32,9 @@ interface DialogContextType {
 const DialogContext = createContext<DialogContextType>({
   dialog: null,
   ctx: null,
-  closeDialog: () => {},
-  openDialog: () => {},
-  error: () => {},
+  closeDialog: () => { },
+  openDialog: () => { },
+  error: () => { },
 });
 export const useDialog = () => useContext(DialogContext);
 
@@ -56,7 +56,7 @@ function DialogHelper({ children }) {
   return (
     <Transition appear show={!!dialog} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -66,10 +66,10 @@ function DialogHelper({ children }) {
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-gray-900 bg-opacity-75" />
-        </Transition.Child>
+        </TransitionChild>
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-full p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as="div"
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -81,7 +81,7 @@ function DialogHelper({ children }) {
               <div className={shakeClass}>
                 {children}
               </div>
-            </Transition.Child>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

@@ -911,8 +911,6 @@ export interface components {
          * @enum {string}
          */
         "Exclude_keyofSearchDataset.members_": "id" | "mnemonic" | "fileName" | "createdBy" | "keyHash" | "name" | "path" | "hash" | "size" | "createdAt" | "updatedAt" | "deletedAt";
-        /** @enum {string} */
-        "Prisma.SortOrder": "asc" | "desc";
         SearchRequestBody: {
             /** @description The search query */
             query?: string;
@@ -941,8 +939,11 @@ export interface components {
             take?: number;
             /** @description The field to sort the results by */
             sortBy?: components["schemas"]["Exclude_keyofSearchDataset.members_"];
-            /** @description The direction to sort the results by */
-            sortDir?: components["schemas"]["Prisma.SortOrder"];
+            /**
+             * @description The direction to sort the results by
+             * @enum {string}
+             */
+            sortDir?: "asc" | "desc";
         };
         MemberAddBody: {
             /** @description The user to add to the dataset */

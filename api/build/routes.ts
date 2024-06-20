@@ -311,11 +311,6 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["id"]},{"dataType":"enum","enums":["mnemonic"]},{"dataType":"enum","enums":["fileName"]},{"dataType":"enum","enums":["createdBy"]},{"dataType":"enum","enums":["keyHash"]},{"dataType":"enum","enums":["name"]},{"dataType":"enum","enums":["path"]},{"dataType":"enum","enums":["hash"]},{"dataType":"enum","enums":["size"]},{"dataType":"enum","enums":["createdAt"]},{"dataType":"enum","enums":["updatedAt"]},{"dataType":"enum","enums":["deletedAt"]}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Prisma.SortOrder": {
-        "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SearchRequestBody": {
         "dataType": "refObject",
         "properties": {
@@ -329,7 +324,7 @@ const models: TsoaRoute.Models = {
             "skip": {"dataType":"integer"},
             "take": {"dataType":"integer"},
             "sortBy": {"ref":"Exclude_keyofSearchDataset.members_"},
-            "sortDir": {"ref":"Prisma.SortOrder"},
+            "sortDir": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
         },
         "additionalProperties": false,
     },

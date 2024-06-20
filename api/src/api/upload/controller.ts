@@ -18,7 +18,7 @@ import {
 
 import start from "./start";
 import cancel from "./cancel";
-import chunk from "./chunk";
+import { default as chunk, RequestWithHeaders } from "./chunk";
 import finish from "./finish";
 import unfinished from "./unfinished";
 
@@ -28,7 +28,6 @@ import {
   UploadStartResponse,
   RequestWithUser,
   Chunk,
-  RequestWithHeaders,
   UploadFinishResponse,
   UnfinishedUpload,
 } from '../types';

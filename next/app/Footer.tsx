@@ -1,9 +1,11 @@
+'use client';
 import React from 'react';
 import Link from 'next/link';
-import api from '@/lib/api';
+import useInfo from '@/lib/hooks/info';
 
-export default async function Footer() {
-  const { data: info } = await api.util.info();
+
+export default function Footer() {
+  const info = useInfo();
 
   const branding = info?.branding;
   const department = branding?.department;
@@ -12,11 +14,11 @@ export default async function Footer() {
   return (
     <div className="p-5 text-center text-gray-400 border-t">
       <p>
-        <Link href={department?.url || '#'}>{department?.name}</Link>
+        <Link href={department?.url ?? '#'}>{department?.name}</Link>
         {' '}
         -
         {' '}
-        <Link href={organization?.url || '#'}>{organization?.name}</Link>
+        <Link href={organization?.url ?? '#'}>{organization?.name}</Link>
       </p>
       <p>
         ©

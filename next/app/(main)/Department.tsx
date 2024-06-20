@@ -1,9 +1,10 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import api from '@/lib/api';
+import useInfo from '@/lib/hooks/info';
 
-export default async function Department() {
-  const { data: info } = await api.util.info();
+export default function Department() {
+  const info = useInfo();
   const department = info?.branding?.department;
   if (!department) {
     return null;

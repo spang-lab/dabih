@@ -7,32 +7,38 @@ import useDialog from '@/app/dialog';
 import useSession from '@/app/session';
 import Token from './Token';
 
+import { TokenResponse } from '@/lib/api/types';
+
 export default function Tokens() {
-  const [tokens, setTokens] = useState<any[]>([]);
+  const [tokens, setTokens] = useState<TokenResponse[]>([]);
   const dialog = useDialog();
   const { status } = useSession();
 
   const fetchTokens = useCallback(async () => {
-    const result = await api.token.list();
-    if (!result || result.error) {
+    const { data, error } = await api.token.list();
+    if (!data || error) {
+      console.error(error);
       return;
     }
-    setTokens(result);
+    setTokens(data);
   }, []);
 
-  const createToken = async () => {
+  const createToken = () => {
     dialog.openDialog('create_token', {
       onSubmit: async (scopes: string[], lifetime: number | null) => {
-        const token = await api.token.add(scopes, lifetime);
-        if (token.error) {
-          dialog.error(token.error);
+        const { data: token, error } = await api.token.add({
+          scopes,
+          lifetime,
+        });
+        if (error) {
+          dialog.error(error);
           return;
         }
         dialog.openDialog('show_token', {
           shake: true,
           token,
-          onSubmit: () => {
-            fetchTokens();
+          onSubmit: async () => {
+            await fetchTokens();
           },
         });
       },
@@ -47,7 +53,7 @@ export default function Tokens() {
     if (status !== 'authenticated') {
       return;
     }
-    fetchTokens();
+    fetchTokens().catch(console.error);
   }, [status, fetchTokens]);
 
   return (

@@ -1,9 +1,10 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import api from '@/lib/api';
+import useInfo from '@/lib/hooks/info';
 
-export default async function Organization() {
-  const { data: info } = await api.util.info();
+export default function Organization() {
+  const info = useInfo();
   const organization = info?.branding?.organization;
   if (!organization) {
     return null;

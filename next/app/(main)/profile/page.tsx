@@ -1,5 +1,3 @@
-'use client';
-
 import Tokens from './Tokens';
 import User from './User';
 import PublicKeys from './PublicKeys';

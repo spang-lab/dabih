@@ -8,6 +8,7 @@ import useSession from '@/app/session';
 import { Dropzone } from '@/app/util';
 import crypto from '@/lib/crypto';
 
+
 export default function CreateKey() {
   const dialog = useDialog();
   const {
@@ -20,12 +21,13 @@ export default function CreateKey() {
     }
     const { name, email } = user;
     const key = await crypto.publicKey.toJWK(publicKey);
-    await api.key.add({
-      isRootKey: false,
-      key,
-      name,
-      email,
-    });
+    await api.user.add(
+      {
+        name,
+        email,
+        key: { ...key }
+      },
+    );
     update();
   };
 
@@ -34,8 +36,12 @@ export default function CreateKey() {
       const text = await file.text();
       const publicKey = await crypto.publicKey.fromFile(text);
       await uploadKey(publicKey);
-    } catch (err: any) {
-      dialog.error(err.toString());
+    } catch (err) {
+      if (err instanceof Error) {
+        dialog.error(err.toString());
+        return;
+      }
+      dialog.error('Failed to read public key file');
     }
   };
 

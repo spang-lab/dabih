@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "client": "cp ../api/build/api.ts ../api/build/schema.d.ts ./lib/api/",
+    "client": "cp ../api/build/api.ts ../api/build/schema.d.ts ../api/src/api/types.ts ./lib/api/",
     "start": "npm run client && next dev",
     "test": "ava",
     "prod": "NODE_ENV=production next start",
@@ -16,8 +16,6 @@
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
     "@next/mdx": "^14.2.4",
-    "@types/jsonwebtoken": "^9.0.6",
-    "@types/mdx": "^2.0.13",
     "ava": "^6.1.3",
     "highlight.js": "^11.9.0",
     "jose": "^5.4.0",
@@ -34,13 +32,16 @@
     "react-to-print": "^2.15.1",
     "rehype-highlight": "^7.0.0",
     "remark-frontmatter": "^5.0.0",
-    "tsx": "^4.15.6"
+    "tsx": "^4.15.6",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^15.0.7",
     "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/ldapjs": "^3.0.6",
+    "@types/mdx": "^2.0.13",
     "@types/qrcode": "^1.5.5",
     "@types/react": "18.3.3",
     "@typescript-eslint/eslint-plugin": "^7.13.0",

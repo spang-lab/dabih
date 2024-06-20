@@ -22,7 +22,7 @@ function CryptoKey() {
         return;
       }
       setHash(await crypto.privateKey.toHash(key));
-    })();
+    })().catch(console.error);
   }, [key]);
 
   if (!key) {

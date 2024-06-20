@@ -1,7 +1,6 @@
 
 import { Codesandbox } from 'react-feather';
-import { Provider } from '@/lib/auth/auth';
-import { signIn } from '@/lib/auth/auth';
+import { Provider, signIn } from '@/lib/auth/auth';
 
 export default function DemoProvider({ provider }: { provider: Provider }) {
   return (

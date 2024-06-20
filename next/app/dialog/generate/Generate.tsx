@@ -13,14 +13,14 @@ import { Spinner } from '@/app/util';
 import QRCode from 'qrcode';
 import Key from './Key';
 
-type KeyData = {
+interface KeyData {
   privateKey: CryptoKey,
   publicKey: CryptoKey,
   hexData: string[],
   pemUrl: string,
   qrCode: string,
   isSaved: boolean,
-};
+}
 
 export default function GenerateKey({ ctx, closeDialog }) {
   const { onSubmit } = ctx;
@@ -31,7 +31,7 @@ export default function GenerateKey({ ctx, closeDialog }) {
   const print = useReactToPrint({
     pageStyle:
       '@page { size: auto; margin: 10mm } @media print { body { -webkit-print-color-adjust: exact; } }',
-    content: () => keyRef.current || null,
+    content: () => keyRef.current ?? null,
   });
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function GenerateKey({ ctx, closeDialog }) {
         pemUrl,
         isSaved: false,
       });
-    })();
+    })().catch((err) => console.error(err));
   }, []);
 
   const getContent = () => {

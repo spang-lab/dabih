@@ -1,7 +1,7 @@
 import db from "#lib/db";
 
 export default async function get(sub: string) {
-  return await db.user.findUnique({
+  const result = await db.user.findUnique({
     where: {
       sub,
     },
@@ -9,5 +9,6 @@ export default async function get(sub: string) {
       keys: true,
     }
   });
+  return result;
 }
 

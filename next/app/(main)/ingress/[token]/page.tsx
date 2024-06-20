@@ -25,7 +25,7 @@ export default function Upload() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const u = await api.token.get();
+      const { data: u } = await api.token.info();
       setUser(u);
     };
     fetchUser();

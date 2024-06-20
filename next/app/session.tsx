@@ -12,6 +12,7 @@ import {
 import storage from '@/lib/storage';
 import api from '@/lib/api';
 import crypto from '@/lib/crypto';
+import { Session as AuthSession } from 'next-auth';
 
 type KeyStatus =
   'unauthenticated' |
@@ -25,12 +26,6 @@ interface KeyState {
   status: KeyStatus,
   data?: CryptoKey,
 }
-interface User {
-  scopes: string[],
-  sub: string,
-  name: string,
-  email: string
-}
 
 interface Session {
   status:
@@ -38,7 +33,7 @@ interface Session {
   'loading' |
   'authenticated',
   keyStatus: KeyStatus,
-  user?: User,
+  user?: AuthSession['user'],
   isAdmin: boolean,
   key?: CryptoKey,
   expires?: string,
@@ -50,12 +45,11 @@ const SessionContext = createContext<Session>({
   status: 'loading',
   keyStatus: 'loading',
   isAdmin: false,
-  update: () => { },
+  update: () => { console.error('Session not ready yet'); },
 });
 
 function SessionProvider({ children }) {
   const { data, status } = useAuthSession();
-  console.log(data, status);
   const [key, setKey] = useState<KeyState>({
     status: 'loading',
   });
@@ -67,39 +61,51 @@ function SessionProvider({ children }) {
       });
       return;
     }
+    const { data: user, response } = await api.user.me();
+    if (response.status === 204 || !user) {
+      setKey({
+        status: 'unregistered',
+      });
+      return;
+    }
+    const { keys } = user;
     const storedKey = await storage.readKey();
     if (!storedKey) {
-      const result = await api.key.check();
-      if (result.status === 'unregistered' || result.status === 'unloaded') {
-        setKey({ status: result.status });
+      if (keys.length > 0) {
+        setKey({
+          status: 'unloaded',
+        });
+        return;
       } else {
-        throw new Error(`Got unexpected key state ${result.status}`);
+        setKey({
+          status: 'unregistered',
+        });
+        return;
       }
-      return;
     }
     const hash = await crypto.privateKey.toHash(storedKey);
-    const result = await api.key.check(hash);
-    if (result.status === 'invalid') {
+    const match = keys.find((k) => k.hash === hash);
+    if (!match) {
       await storage.deleteKey();
-      checkKey();
+      setKey({
+        status: 'unloaded',
+      });
       return;
     }
-    if (result.status === 'disabled') {
-      setKey({ status: 'disabled' });
-      return;
-    }
-    if (result.status === 'active') {
+    if (match.enabled) {
       setKey({
         status: 'active',
         data: storedKey,
       });
       return;
     }
-    throw new Error(`Got unexpected key state ${result.status}`);
+    setKey({
+      status: 'disabled',
+    });
   }, [status]);
 
   useEffect(() => {
-    checkKey();
+    checkKey().catch(console.error);
   }, [status, checkKey]);
 
   const value = useMemo(() => ({
@@ -107,7 +113,7 @@ function SessionProvider({ children }) {
     keyStatus: key.status,
     key: key.data,
     user: data?.user,
-    isAdmin: data?.user.scopes.includes('admin') || false,
+    isAdmin: data?.user.scopes.includes('admin') ?? false,
     expires: data?.expires,
     update: checkKey,
   }), [data, key, status, checkKey]);

@@ -2,13 +2,30 @@ import { NextRequest } from 'next/server';
 import path from 'path';
 import { requireEnv } from '@/lib/config';
 import { auth } from '@/lib/auth/auth';
-import { signJWT } from '@/lib/auth/api';
+import { SignJWT } from 'jose';
+import { User } from 'next-auth';
 
+export const signJWT = async (user: User) => {
+  const { sub, scopes } = user;
+  const host = requireEnv('API_URL');
+  const tokenSecret = requireEnv("TOKEN_SECRET");
+
+  const payload = {
+    sub,
+    scope: scopes.join(' '),
+  };
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+    .setIssuedAt()
+    .setIssuer('dabih')
+    .setExpirationTime('1m')
+    .setAudience(host)
+    .sign(new TextEncoder().encode(tokenSecret));
+};
 
 const handler = async (request: NextRequest, { params }: { params: { route: string } }) => {
   const baseUrl = requireEnv('API_URL');
   const url = path.join(baseUrl, 'api', 'v1', ...params.route);
-  console.log("Handler", url);
 
   const { headers, method, body } = request;
   const existingToken = headers.get('Authorization');

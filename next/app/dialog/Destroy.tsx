@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog } from '@headlessui/react';
+import { DialogTitle, DialogPanel } from '@headlessui/react';
 
 export default function Destroy({ ctx, closeDialog }) {
   const { onSubmit, type, name } = ctx;
@@ -13,8 +13,8 @@ export default function Destroy({ ctx, closeDialog }) {
   };
 
   return (
-    <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle shadow-xl transform rounded-2xl transition-all border bg-gray-50 border-gray-300">
-      <Dialog.Title
+    <DialogPanel className="w-full max-w-md p-6 overflow-hidden text-left align-middle shadow-xl transform rounded-2xl transition-all border bg-gray-50 border-gray-300">
+      <DialogTitle
         as="h2"
         className="text-2xl font-extrabold text-gray-800 leading-6"
       >
@@ -22,7 +22,7 @@ export default function Destroy({ ctx, closeDialog }) {
         <span className="pl-2 text-red">
           Destroy
         </span>
-      </Dialog.Title>
+      </DialogTitle>
       <div className="pt-2">
         Are you sure you want to destroy the
         {' '}
@@ -51,6 +51,6 @@ export default function Destroy({ ctx, closeDialog }) {
           Cancel
         </button>
       </div>
-    </Dialog.Panel>
+    </DialogPanel>
   );
 }

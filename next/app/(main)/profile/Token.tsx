@@ -1,29 +1,31 @@
-'use client';
 
 import React from 'react';
 import {
   Trash2, Terminal,
 } from 'react-feather';
 import { LocalDate } from '@/app/util';
+import { TokenResponse } from '@/lib/api/types';
 
-export default function Token({ data, onRemove }) {
+
+export default function Token({ data, onRemove }: { data: TokenResponse, onRemove: () => void }) {
   const {
-    value, exp, isExpired, scopes,
+    value, exp, scopes, expired
   } = data;
 
   const getExpired = () => {
     if (!exp) {
-      return 'never';
+      return null;
     }
-    if (isExpired) {
+    if (expired) {
       return (
         <span className="bg-red rounded-full px-2 py-1 text-white font-bold">
-          Expired
+          Expired {expired}
         </span>
       );
     }
     return (
-      <span className="text-sm">
+      <span className="text-xs">
+        Expires:
         <LocalDate value={exp} />
       </span>
 
@@ -40,8 +42,6 @@ export default function Token({ data, onRemove }) {
         {value}
       </div>
       <div>
-        Expires:
-        {' '}
         {getExpired()}
       </div>
       <div>

@@ -7,9 +7,10 @@ import { Switch } from '@/app/util';
 import useDialog from '@/app/dialog';
 import useSession from '@/app/session';
 import PublicKey from './PublicKey';
+import { UserResponse } from '@/lib/api/types';
 
 export default function PublicKeys() {
-  const [publicKeys, setPublicKeys] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserResponse[]>([]);
   const [rootOnly, setRootOnly] = useState<boolean>(false);
   const dialog = useDialog();
 
@@ -18,49 +19,51 @@ export default function PublicKeys() {
   } = useSession();
 
   const fetchKeys = useCallback(async () => {
-    const data = await api.key.list();
-    if (data.error) {
+    const { data, error } = await api.user.list();
+    if (error) {
       return;
     }
-
-    setPublicKeys(data);
+    setUsers(data);
   }, []);
 
-  const enableKey = async (id: number, enabled: boolean) => {
-    await api.key.enable(id, enabled);
+  const enableKey = async (hash: string, enabled: boolean) => {
+    if (!user) {
+      return;
+    }
+    await api.user.enableKey({
+      sub: user.sub,
+      hash,
+      enabled,
+    });
     await fetchKeys();
   };
 
-  const removeKey = async (id: number) => {
-    await api.key.remove(id);
+  const removeKey = async (hash: string) => {
+    if (!user) {
+      return;
+    }
+    await api.user.removeKey({
+      sub: user.sub,
+      hash,
+    });
     await fetchKeys();
     update();
   };
 
-  const addKey = async (key: any) => {
-    if (status !== 'authenticated' || !user) {
-      return;
-    }
-    const { name, email } = user;
-    const keyData = {
-      key,
-      isRootKey: true,
-      name,
-      email,
-    };
-    await api.key.add(keyData);
-    await fetchKeys();
-  };
-
-  const createKey = async () => {
+  const createKey = () => {
     dialog.openDialog('generate', {
       shake: true,
-      onSubmit: (key: any) => {
-        if (key.error) {
-          dialog.error(key.error);
+      onSubmit: async (key: JsonWebKey) => {
+        if (status !== 'authenticated' || !user) {
           return;
         }
-        addKey(key);
+        const { sub } = user;
+        await api.user.addKey({
+          sub,
+          data: { ...key },
+          isRootKey: true,
+        });
+        await fetchKeys();
       },
     });
   };
@@ -89,8 +92,11 @@ export default function PublicKeys() {
     if (status !== 'authenticated') {
       return;
     }
-    fetchKeys();
+    fetchKeys().catch(console.error);
   }, [status, fetchKeys]);
+
+  const publicKeys = users.flatMap((u) => u.keys)
+    .filter((k) => !rootOnly || k.isRootKey);
 
   return (
     <div className="py-2">
@@ -99,17 +105,15 @@ export default function PublicKeys() {
         <span className="px-2 font-bold">
           Show only root keys
         </span>
-
       </div>
       <div className="max-h-96 overflow-scroll">
         {publicKeys
-          .filter((k) => !rootOnly || k.isRootKey)
           .map((k) => (
             <PublicKey
-              key={k.id}
+              key={k.hash}
               data={k}
-              onRemove={() => removeKey(k.id)}
-              onEnable={(e: boolean) => enableKey(k.id, e)}
+              onRemove={() => removeKey(k.hash)}
+              onEnable={(e: boolean) => enableKey(k.hash, e)}
             />
           ))}
       </div>
