@@ -113,7 +113,7 @@ function SessionProvider({ children }) {
     keyStatus: key.status,
     key: key.data,
     user: data?.user,
-    isAdmin: data?.user.scopes.includes('admin') ?? false,
+    isAdmin: data?.user.scopes.includes('dabih:admin') ?? false,
     expires: data?.expires,
     update: checkKey,
   }), [data, key, status, checkKey]);

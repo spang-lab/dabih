@@ -1,18 +1,30 @@
-'use client';
-
 import React from 'react';
 import { Trash2, Key } from 'react-feather';
 import { Switch, LocalDate } from '@/app/util';
 import useDialog from '@/app/dialog';
 import useSession from '@/app/session';
 
-export default function PublicKey({ data, onRemove, onEnable }) {
-  const {
-    name, sub, email, hash, enabled, createdAt, isRootKey,
-  } = data;
+import type { PublicKey, UserResponse } from '@/lib/api/types';
+
+
+export default function PublicKey({ publicKey, user, show, onRemove, onEnable }:
+  {
+    user: UserResponse,
+    publicKey: PublicKey,
+    show: boolean,
+    onRemove: (hash: string) => void,
+    onEnable: (enabled: boolean) => void
+  }
+) {
+  const { name, sub, email } = user;
+  const { hash, enabled, createdAt, isRootKey } = publicKey;
   const { openDialog } = useDialog();
   const isEnabled = !!enabled || isRootKey;
   const { isAdmin } = useSession();
+
+  if (!show) {
+    return null;
+  }
 
   const getState = () => {
     if (isEnabled || isRootKey) {
@@ -28,7 +40,7 @@ export default function PublicKey({ data, onRemove, onEnable }) {
 
     return (
       <div className="flex flex-row items-center px-1 mx-1">
-        <Switch enabled={enabled} onChange={() => onEnable(!isEnabled)} />
+        <Switch enabled={enabled !== null} onChange={() => onEnable(!isEnabled)} />
       </div>
     );
   };

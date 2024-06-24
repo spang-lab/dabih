@@ -15,17 +15,16 @@ export default function CreateKey() {
     user, status, update,
   } = useSession();
 
-  const uploadKey = async (publicKey: CryptoKey) => {
+  const uploadKey = async (publicKey: JsonWebKey) => {
     if (status !== 'authenticated' || !user) {
       return;
     }
     const { name, email } = user;
-    const key = await crypto.publicKey.toJWK(publicKey);
     await api.user.add(
       {
         name,
         email,
-        key: { ...key }
+        key: { ...publicKey }
       },
     );
     update();
@@ -35,7 +34,8 @@ export default function CreateKey() {
     try {
       const text = await file.text();
       const publicKey = await crypto.publicKey.fromFile(text);
-      await uploadKey(publicKey);
+      const jwk = await crypto.publicKey.toJWK(publicKey);
+      await uploadKey(jwk);
     } catch (err) {
       if (err instanceof Error) {
         dialog.error(err.toString());

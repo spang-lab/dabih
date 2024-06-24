@@ -7,7 +7,7 @@ import { useReactToPrint } from 'react-to-print';
 import { Download, Printer } from 'react-feather';
 
 import crypto from '@/lib/crypto';
-import { Dialog } from '@headlessui/react';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { Spinner } from '@/app/util';
 
 import QRCode from 'qrcode';
@@ -15,7 +15,7 @@ import Key from './Key';
 
 interface KeyData {
   privateKey: CryptoKey,
-  publicKey: CryptoKey,
+  publicKey: JsonWebKey,
   hexData: string[],
   pemUrl: string,
   qrCode: string,
@@ -38,6 +38,7 @@ export default function GenerateKey({ ctx, closeDialog }) {
     (async () => {
       const privateKey = await crypto.privateKey.generate();
       const publicKey = await crypto.privateKey.toPublicKey(privateKey);
+      const publicJWK = await crypto.privateKey.toJWK(publicKey);
       const pemData = await crypto.privateKey.toPEM(privateKey);
       const pemFile = new Blob([pemData], { type: 'text/plain' });
       const pemUrl = window.URL.createObjectURL(pemFile);
@@ -49,7 +50,7 @@ export default function GenerateKey({ ctx, closeDialog }) {
       });
       setKeyData({
         privateKey,
-        publicKey,
+        publicKey: publicJWK,
         hexData,
         qrCode,
         pemUrl,
@@ -123,15 +124,15 @@ export default function GenerateKey({ ctx, closeDialog }) {
   };
 
   return (
-    <Dialog.Panel
+    <DialogPanel
       className=" w-full max-w-5xl p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all"
     >
-      <Dialog.Title
+      <DialogTitle
         as="h2"
         className="text-2xl font-extrabold text-gray-800 leading-6"
       >
         Generate a new keypair
-      </Dialog.Title>
+      </DialogTitle>
       <div className="mt-2">
         <p className="text-sm text-gray-400">
           You
@@ -166,6 +167,6 @@ export default function GenerateKey({ ctx, closeDialog }) {
           Cancel
         </button>
       </div>
-    </Dialog.Panel>
+    </DialogPanel>
   );
 }

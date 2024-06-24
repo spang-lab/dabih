@@ -69,7 +69,7 @@ export default function PublicKeys() {
   };
 
   const getButton = () => {
-    if (isAdmin) {
+    if (!isAdmin) {
       return null;
     }
     return (
@@ -95,7 +95,8 @@ export default function PublicKeys() {
     fetchKeys().catch(console.error);
   }, [status, fetchKeys]);
 
-  const publicKeys = users.flatMap((u) => u.keys)
+  const publicKeys = users.flatMap((u) => u.keys
+    .map((k) => ({ ...k, name: u.name, email: u.email, sub: u.sub })))
     .filter((k) => !rootOnly || k.isRootKey);
 
   return (
@@ -107,15 +108,18 @@ export default function PublicKeys() {
         </span>
       </div>
       <div className="max-h-96 overflow-scroll">
-        {publicKeys
-          .map((k) => (
+        {users.flatMap((u) => (
+          u.keys.map((k) => (
             <PublicKey
               key={k.hash}
-              data={k}
+              publicKey={k}
+              user={u}
+              show={!rootOnly || k.isRootKey}
               onRemove={() => removeKey(k.hash)}
               onEnable={(e: boolean) => enableKey(k.hash, e)}
             />
-          ))}
+          )))
+        )}
       </div>
       {getButton()}
     </div>

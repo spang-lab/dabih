@@ -63,7 +63,7 @@ function CryptoKey() {
           type="button"
           className="bg-blue text-white py-1 px-2 rounded-md inline-flex items-center"
           onClick={() => {
-            storage.deleteKey();
+            storage.deleteKey().catch(console.error);
             update();
           }}
         >
@@ -95,7 +95,7 @@ export default function Account() {
           Account
         </div>
         <div>
-          <span className="text-lg font-bold">
+          <span className="text-lg font-bold pl-2">
             {name}
           </span>
           <a className="text-blue px-2 font-bold" href={`mailto:${email}`}>
