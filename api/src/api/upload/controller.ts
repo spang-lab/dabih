@@ -25,11 +25,9 @@ import unfinished from "./unfinished";
 import {
   Mnemonic,
   UploadStartBody,
-  UploadStartResponse,
+  File,
   RequestWithUser,
   Chunk,
-  UploadFinishResponse,
-  UnfinishedUpload,
 } from '../types';
 import { parseDigest, parseContentRange } from "./util";
 
@@ -47,7 +45,7 @@ export class UploadController extends Controller {
   public async start(
     @Request() request: RequestWithUser,
     @Body() requestBody: UploadStartBody,
-  ): Promise<UploadStartResponse> {
+  ): Promise<File> {
     const { user } = request;
     const response = await start(user, requestBody);
     this.setStatus(201);
@@ -95,7 +93,7 @@ export class UploadController extends Controller {
   public async finish(
     @Request() request: RequestWithUser,
     @Path() mnemonic: Mnemonic,
-  ): Promise<UploadFinishResponse> {
+  ): Promise<File> {
     const { user } = request;
     return finish(user, mnemonic);
   }
@@ -104,7 +102,7 @@ export class UploadController extends Controller {
   @OperationId("unfinishedUploads")
   public async unfinished(
     @Request() request: RequestWithUser,
-  ): Promise<UnfinishedUpload[]> {
+  ): Promise<File[]> {
     const { user } = request;
     return unfinished(user);
   }

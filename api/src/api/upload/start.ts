@@ -1,21 +1,20 @@
 
 import db from "#lib/db";
-import mnemonicGen from "#lib/mnemonic";
 import crypto from "#crypto";
 import { storeKey } from "#lib/keyv";
 import { addKeys } from "#lib/database/keys";
 import { Permission } from "#lib/database/member";
+import { InodeType, getDirectory } from "#lib/database/inode";
 import { createBucket } from "#lib/fs";
 
-import { User, UploadStartBody, UploadStartResponse } from "../types";
+import { User, UploadStartBody, File } from "../types";
 import { RequestError } from "../errors";
+import { generateMnemonic, generateDataUid } from "#lib/database/inode";
 
 
 
-export default async function start(user: User, body: UploadStartBody): Promise<UploadStartResponse> {
-  const mnemonic = mnemonicGen.generate();
+export default async function start(user: User, body: UploadStartBody): Promise<File> {
   const { sub } = user;
-
   const hasPublicKey = await db.user.findFirst({
     where: {
       sub,
@@ -38,60 +37,63 @@ export default async function start(user: User, body: UploadStartBody): Promise<
 
 
   const {
-    name, fileName, size, path, chunkHash,
+    fileName, directory, filePath, size, tag,
   } = body;
 
-  let duplicate = null;
-  if (chunkHash && size) {
-    duplicate = await db.dataset.findFirst({
-      where: {
-        createdBy: sub,
-        fileName,
-        size,
-        hash: {
-          not: null
-        },
-        deletedAt: null,
-        chunks: {
-          some: {
-            start: 0,
-            hash: chunkHash,
-          },
-        },
-      },
-      include: {
-        chunks: true
-      }
-    });
-  }
 
+  let parent = undefined;
+  if (directory) {
+    const dir = await getDirectory(directory);
+    if (!dir) {
+      throw new RequestError(`No directory found for mnemonic ${directory}`);
+    }
+    parent = {
+      connect: {
+        id: dir.id
+      }
+    };
+  }
+  const mnemonic = await generateMnemonic();
+  const uid = await generateDataUid();
   const key = await crypto.aesKey.generate();
   const keyHash = crypto.aesKey.toHash(key);
 
-
-  const dataset = await db.dataset.create({
+  const data = await db.fileData.create({
+    data: {
+      uid,
+      fileName,
+      filePath,
+      keyHash,
+      size,
+      createdBy: sub,
+    }
+  });
+  const inode = await db.inode.create({
     data: {
       mnemonic,
-      name,
-      fileName,
-      size,
-      keyHash,
-      path,
-      createdBy: sub,
+      tag,
+      type: InodeType.FILE,
+      parent,
+      name: fileName,
+      data: {
+        connect: {
+          id: data.id
+        }
+      },
       members: {
         create: {
           sub,
           permission: Permission.WRITE,
         }
       }
-    }
+    },
   });
   await storeKey(sub, mnemonic, key);
   await addKeys(mnemonic, key);
-  await createBucket(mnemonic);
+  await createBucket(uid);
   return {
-    ...dataset,
-    duplicate: duplicate?.hash ?? null
+    ...inode,
+    data,
   };
 }
 

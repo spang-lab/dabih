@@ -2,6 +2,7 @@
 import db from "#lib/db";
 import { Permission, getMembers } from "./member";
 import crypto from "#crypto";
+import { getFile } from "./inode";
 
 
 export const getPublicKeys = async (mnemonic: string) => {
@@ -37,10 +38,11 @@ export const getPublicKeys = async (mnemonic: string) => {
 
 export const getMissingKeys = async (mnemonic: string) => {
   const publicKeys = await getPublicKeys(mnemonic);
-
-  const dataset = await db.dataset.findFirst({
+  const file = await getFile(mnemonic);
+  const { uid } = file.data;
+  const data = await db.fileData.findUnique({
     where: {
-      mnemonic,
+      uid,
     },
     include: {
       keys: {
@@ -52,20 +54,21 @@ export const getMissingKeys = async (mnemonic: string) => {
       }
     }
   });
-  if (!dataset) {
-    throw new Error(`Dataset ${mnemonic} not found`);
+  if (!data) {
+    throw new Error(`Data ${uid} not found`);
   }
-  const existingHashes = new Set(dataset.keys.map(k => k.publicKeyHash));
+  const existingHashes = new Set(data.keys.map(k => k.publicKeyHash));
   const missing = publicKeys.filter(p => !existingHashes.has(p.hash));
   return missing;
 }
 
 export const getSurplusKeys = async (mnemonic: string) => {
   const publicKeys = await getPublicKeys(mnemonic);
-
-  const dataset = await db.dataset.findFirst({
+  const file = await getFile(mnemonic);
+  const { uid } = file.data;
+  const data = await db.fileData.findUnique({
     where: {
-      mnemonic,
+      uid,
     },
     include: {
       keys: {
@@ -77,10 +80,10 @@ export const getSurplusKeys = async (mnemonic: string) => {
       }
     }
   });
-  if (!dataset) {
-    throw new Error(`Dataset ${mnemonic} not found`);
+  if (!data) {
+    throw new Error(`Data ${uid} not found`);
   }
-  return dataset.keys;
+  return data.keys;
 }
 
 
@@ -94,9 +97,11 @@ export const addKeys = async (mnemonic: string, aesKey: string) => {
       key: encrypted,
     };
   });
-  await db.dataset.update({
+  const file = await getFile(mnemonic);
+  const { uid } = file.data;
+  await db.fileData.update({
     where: {
-      mnemonic,
+      uid,
     },
     data: {
       keys: {
@@ -113,9 +118,11 @@ export const addKeys = async (mnemonic: string, aesKey: string) => {
 
 export const removeKeys = async (mnemonic: string) => {
   const surplusKeys = await getSurplusKeys(mnemonic);
-  await db.dataset.update({
+  const file = await getFile(mnemonic);
+  const { uid } = file.data;
+  await db.fileData.update({
     where: {
-      mnemonic,
+      uid,
     },
     data: {
       keys: {
@@ -127,5 +134,4 @@ export const removeKeys = async (mnemonic: string) => {
       }
     }
   });
-
 }

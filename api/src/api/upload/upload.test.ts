@@ -107,37 +107,7 @@ test('full upload', async t => {
   t.is(response2.status, 201);
   const { response: response3, data: fullDataset } = await api.upload.finish(mnemonic);
   t.is(response3.status, 200);
-  t.is(fullDataset?.hash, 'lU1aSf1w2bi82zXSUiZ4KZV_fvf6bHT4hBm9xegiCfQ');
-});
-
-test('upload duplicate', async t => {
-  const api = client(t.context.port);
-  const data = new Blob(['duplicate']);
-  const { data: dataset } = await api.upload.blob({ fileName: 'test.txt', data });
-  if (!dataset) {
-    t.fail('No dataset');
-    return;
-  }
-  const { mnemonic } = dataset;
-  const { response, data: info } = await api.dataset.get(mnemonic);
-  t.is(response.status, 200);
-  const chunkHash = info?.chunks[0].hash;
-  if (!chunkHash) {
-    t.fail('No chunk hash');
-    return;
-  }
-  const { response: response2, data: dataset2 } = await api.upload.start({
-    fileName: "test.txt",
-    size: 9,
-    chunkHash,
-  });
-  t.is(response2.status, 201);
-  if (!dataset2) {
-    t.fail('No dataset2');
-    return;
-  }
-  const { duplicate } = dataset2;
-  t.is(duplicate, dataset.hash);
+  t.is(fullDataset?.data.hash, 'lU1aSf1w2bi82zXSUiZ4KZV_fvf6bHT4hBm9xegiCfQ');
 });
 
 
@@ -159,9 +129,9 @@ test('upload blob, multiple chunks', async t => {
     return;
   }
   const { mnemonic } = dataset;
-  const { response, data: info } = await api.dataset.get(mnemonic);
+  const { response, data: info } = await api.fs.file(mnemonic);
   t.is(response.status, 200);
-  t.is(info?.chunks.length, 3);
+  t.is(info?.data.chunks.length, 3);
 });
 
 

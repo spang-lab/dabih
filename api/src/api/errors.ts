@@ -22,3 +22,11 @@ export class RequestError extends Error {
     this.name = 'RequestError';
   }
 }
+
+export class NotFoundError extends Error {
+  public code = 404;
+  constructor(message: string) {
+    super(message);
+    this.name = 'NotFoundError';
+  }
+}

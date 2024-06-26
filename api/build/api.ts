@@ -1,6 +1,7 @@
 import createClient from "openapi-fetch";
 
 import type { components, paths } from './schema';
+import mnemonic from "src/api/download/mnemonic";
 type schemas = components["schemas"];
 
 interface Chunk {
@@ -69,6 +70,9 @@ const init = (baseUrl: string) => {
     addMember: (mnemonic: string, body: schemas["MemberAddBody"]) => c.POST('/dataset/{mnemonic}/addMember', { params: { path: { mnemonic } }, body }),
     setAccess: (mnemonic: string, body: schemas["SetAccessBody"]) => c.POST('/dataset/{mnemonic}/setAccess', { params: { path: { mnemonic } }, body }),
   }
+  const fs = {
+    file: (mnemonic: string) => c.GET('/fs/file/{mnemonic}', { params: { path: { mnemonic } } }),
+  };
 
   const download = {
     decrypt: (mnemonic: string, key: string) => c.POST('/download/{mnemonic}/decrypt', { params: { path: { mnemonic } }, body: { key } }),
@@ -94,6 +98,7 @@ const init = (baseUrl: string) => {
     client: c,
     token,
     user,
+    fs,
     upload,
     dataset,
     download,

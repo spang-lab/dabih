@@ -10,7 +10,6 @@ import crypto from '#crypto';
 import { Readable, PassThrough } from 'stream';
 import { ReadableStream } from 'node:stream/web';
 import { text } from 'node:stream/consumers';
-import { join } from 'path';
 
 test.before(async t => {
   const port = await getPort();
@@ -42,14 +41,14 @@ test('download', async t => {
   const { data: upload } = await api.upload.blob({
     fileName: "test.txt",
     data: new Blob([payload]),
-    name: "test_download"
+    tag: "test_download"
   }, { chunkSize: 5 });
   if (!upload) {
     t.fail();
     return;
   }
   const { mnemonic } = upload;
-  const { data: dataset } = await api.dataset.get(mnemonic);
+  const { data: dataset } = await api.fs.file(mnemonic);
   if (!dataset) {
     t.fail();
     return;
@@ -57,7 +56,7 @@ test('download', async t => {
   const { privateKey } = t.context;
   const publicKey = crypto.privateKey.toPublicKey(privateKey);
   const keyHash = crypto.publicKey.toHash(publicKey);
-  const { keys, chunks } = dataset;
+  const { keys, chunks } = dataset.data;
   const encryptedKey = keys.find(k => k.publicKeyHash === keyHash);
   if (!encryptedKey) {
     t.fail();
@@ -65,7 +64,7 @@ test('download', async t => {
   }
   const aesKey = crypto.privateKey.decrypt(privateKey, encryptedKey.key);
   const aesKeyHash = crypto.aesKey.toHash(aesKey);
-  t.is(aesKeyHash, dataset.keyHash);
+  t.is(aesKeyHash, dataset.data.keyHash);
 
   const pStream = new PassThrough();
   for (const chunk of chunks) {
@@ -76,7 +75,7 @@ test('download', async t => {
       return;
     }
     const decrypt = crypto.aesKey.decrypt(aesKey, iv);
-    const isLast = chunk.end + 1 === dataset.size;
+    const isLast = chunk.end + 1 === dataset.data.size;
     Readable.fromWeb(stream as ReadableStream<Uint8Array>)
       .pipe(decrypt).pipe(pStream, { end: isLast });
   }
@@ -99,14 +98,14 @@ test('server decrypt', async t => {
   const { data: upload } = await api.upload.blob({
     fileName: "test.txt",
     data: new Blob([payload]),
-    name: "test_download"
+    tag: "test_download"
   }, { chunkSize: 5 });
   if (!upload) {
     t.fail();
     return;
   }
   const { mnemonic } = upload;
-  const { data: dataset } = await api.dataset.get(mnemonic);
+  const { data: dataset } = await api.fs.file(mnemonic);
   if (!dataset) {
     t.fail();
     return;
@@ -114,7 +113,7 @@ test('server decrypt', async t => {
   const { privateKey } = t.context;
   const publicKey = crypto.privateKey.toPublicKey(privateKey);
   const keyHash = crypto.publicKey.toHash(publicKey);
-  const { keys } = dataset;
+  const { keys } = dataset.data;
   const encryptedKey = keys.find(k => k.publicKeyHash === keyHash);
   if (!encryptedKey) {
     t.fail();

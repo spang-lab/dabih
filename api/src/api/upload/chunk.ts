@@ -9,6 +9,7 @@ import { head, store } from "#lib/fs";
 import Busboy, { BusboyHeaders } from "@fastify/busboy";
 
 import { Request } from "koa";
+import { getFile } from '#lib/database/inode';
 export type RequestWithHeaders = Request & RequestWithUser;
 
 
@@ -20,11 +21,17 @@ export default async function chunk(
   const { user } = request;
   const { sub } = user;
 
-  const existing = await head(mnemonic, body.hash);
+  const file = await getFile(mnemonic);
+  if (!file) {
+    throw new RequestError(`No file found for mnemonic ${mnemonic}`);
+  }
+  const { uid } = file.data;
+  const existing = await head(uid, body.hash);
+
   if (existing) {
-    const dataset = await db.dataset.findUnique({
+    const fileData = await db.fileData.findUnique({
       where: {
-        mnemonic,
+        uid,
         createdBy: sub,
       },
       include: {
@@ -35,7 +42,7 @@ export default async function chunk(
         }
       }
     });
-    const chunk = dataset?.chunks[0];
+    const chunk = fileData?.chunks[0];
     if (chunk) {
       return chunk;
     }
@@ -47,11 +54,10 @@ export default async function chunk(
   }
   const iv = await crypto.aesKey.generateIv();
 
-  const writeStream = await store(mnemonic, body.hash);
+  const writeStream = await store(uid, body.hash);
   const validateStream = crypto.stream.validate();
   const encryptStream = crypto.aesKey.encrypt(aesKey, iv);
   const crcStream = crypto.stream.crc32();
-
   const busboy = new Busboy({ headers: request.header as BusboyHeaders });
 
   const { crc32, hash, byteCount } = await new Promise<{ crc32: string, hash: string, byteCount: number }>((resolve, reject) => {
@@ -66,7 +72,6 @@ export default async function chunk(
         .pipe(crcStream)
         .pipe(writeStream);
     });
-    //busboy.on('finish', () => { });
     busboy.on('error', reject);
     request.req.pipe(busboy);
   });
@@ -78,9 +83,9 @@ export default async function chunk(
     throw new RequestError(`Byte count mismatch: Data: ${byteCount} !== Header: ${end - start + 1}`);
   }
 
-  const dataset = await db.dataset.update({
+  const dataset = await db.fileData.update({
     where: {
-      mnemonic,
+      uid,
       createdBy: sub,
     },
     data: {
@@ -95,7 +100,11 @@ export default async function chunk(
       }
     },
     include: {
-      chunks: true,
+      chunks: {
+        where: {
+          hash,
+        }
+      }
     }
   });
   if (!dataset) {

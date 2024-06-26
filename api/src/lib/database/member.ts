@@ -1,5 +1,7 @@
 import db from "#lib/db";
+import { Member } from "@prisma/client";
 
+import { NotFoundError } from "src/api/errors";
 
 export enum Permission {
   NONE = 0,
@@ -20,10 +22,13 @@ export const parsePermission = (permission: string): Permission => {
   }
 }
 
-export const getMembers = async (mnemonic: string, hasPermission: Permission) => {
-  const dataset = await db.dataset.findFirst({
+const getMembersRecursive = async (inodeId: number | null, hasPermission: Permission): Promise<Member[]> => {
+  if (!inodeId) {
+    return [];
+  }
+  const inode = await db.inode.findUnique({
     where: {
-      mnemonic,
+      id: inodeId,
     },
     include: {
       members: {
@@ -35,16 +40,33 @@ export const getMembers = async (mnemonic: string, hasPermission: Permission) =>
       }
     }
   });
-  if (!dataset) {
-    throw new Error(`Dataset ${mnemonic} not found`);
+  if (!inode) {
+    throw new NotFoundError(`Inode ${inodeId} not found`);
   }
-  return dataset.members;
+  const parentMembers = await getMembersRecursive(inode.parentId, hasPermission);
+  return [...parentMembers, ...inode.members];
 }
 
-export const getPermission = async (mnemonic: string, sub: string) => {
-  const dataset = await db.dataset.findUnique({
+
+export const getMembers = async (mnemonic: string, hasPermission: Permission) => {
+  const inode = await db.inode.findUnique({
     where: {
       mnemonic,
+    },
+  });
+  if (!inode) {
+    throw new NotFoundError(`Inode ${mnemonic} not found`);
+  }
+  return getMembersRecursive(inode.id, hasPermission);
+}
+
+const getPermissionRecursive = async (inodeId: number | null, sub: string): Promise<Permission> => {
+  if (!inodeId) {
+    return Permission.NONE;
+  }
+  const inode = await db.inode.findUnique({
+    where: {
+      id: inodeId,
     },
     include: {
       members: {
@@ -54,9 +76,24 @@ export const getPermission = async (mnemonic: string, sub: string) => {
       }
     }
   });
-  if (!dataset) {
-    throw new Error(`Dataset ${mnemonic} not found`);
+  if (!inode) {
+    throw new NotFoundError(`Inode ${inodeId} not found`);
   }
-  const member = dataset.members[0];
-  return member?.permission as Permission || Permission.NONE;
+  const member = inode.members[0];
+  if (member) {
+    return member.permission;
+  }
+  return getPermissionRecursive(inode.parentId, sub);
+}
+
+export const getPermission = async (mnemonic: string, sub: string) => {
+  const inode = await db.inode.findUnique({
+    where: {
+      mnemonic,
+    },
+  });
+  if (!inode) {
+    throw new NotFoundError(`Inode ${mnemonic} not found`);
+  }
+  return getPermissionRecursive(inode.id, sub);
 }

@@ -5,6 +5,7 @@ import { AuthorizationError, RequestError } from '../errors';
 import { get } from '#lib/fs';
 import crypto from '#lib/crypto/index';
 import { PassThrough } from 'stream';
+import { getFile } from '#lib/database/inode';
 
 const parseScope = (scopes: string[]) => {
   if (scopes.length !== 1) {
@@ -20,8 +21,6 @@ const parseScope = (scopes: string[]) => {
   return mnemonic;
 };
 
-
-
 export default async function mnemonic(user: User) {
   const { sub, scopes } = user;
   const mnemonic = parseScope(scopes);
@@ -29,30 +28,27 @@ export default async function mnemonic(user: User) {
   if (!key) {
     throw new RequestError(`AES key not found, it needs to be stored by calling /download/${mnemonic}/decrypt first`);
   }
-
-  const dataset = await db.dataset.findUnique({
+  const file = await getFile(mnemonic);
+  const uid = file.data.uid;
+  const fileData = await db.fileData.findUnique({
     where: {
-      mnemonic,
-      deletedAt: null,
+      uid,
     },
     include: {
       chunks: true,
     },
   });
-  if (!dataset) {
+  if (!fileData) {
     throw new RequestError(`Dataset not found for mnemonic ${mnemonic}`);
   }
-  const { chunks, fileName, size } = dataset;
+  const { chunks, fileName, size } = fileData;
   if (size === null) {
     throw new RequestError(`Dataset size is not set for ${mnemonic}, maybe it's not fully uploaded yet`);
   }
-
-
-
   const pStream = new PassThrough();
   for (const chunk of chunks) {
     const { hash, iv } = chunk;
-    const stream = await get(mnemonic, hash);
+    const stream = await get(uid, hash);
     const decrypt = crypto.aesKey.decrypt(key, iv);
     const isLast = chunk.end + 1 === size;
     stream.pipe(decrypt).pipe(pStream, { end: isLast });

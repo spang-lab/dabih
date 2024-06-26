@@ -22,11 +22,11 @@ test.before(async t => {
   });
 
   const data = new Blob(["test data"]);
-  await api.upload.blob({ fileName: "test.txt", data, name: "test_tag" });
-  await api.upload.blob({ fileName: "test2.txt", data, name: "test_tag" });
-  await api.upload.blob({ fileName: "test3.txt", data, name: "test_tag" });
-  await api.upload.blob({ fileName: "test_aXd7de.txt", data, name: "test_tag" });
-  const { data: dataset } = await api.upload.blob({ fileName: "test_deleted.txt", data, name: "test_tag" });
+  await api.upload.blob({ fileName: "test.txt", data, tag: "test_tag" });
+  await api.upload.blob({ fileName: "test2.txt", data, tag: "test_tag" });
+  await api.upload.blob({ fileName: "test3.txt", data, tag: "test_tag" });
+  await api.upload.blob({ fileName: "test_aXd7de.txt", data, tag: "test_tag" });
+  const { data: dataset } = await api.upload.blob({ fileName: "test_deleted.txt", data, tag: "test_tag" });
   await api.dataset.remove(dataset!.mnemonic);
 
   t.context = {

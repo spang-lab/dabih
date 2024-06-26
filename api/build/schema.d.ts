@@ -287,6 +287,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fs/file/{mnemonic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fileInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/download/{mnemonic}/decrypt": {
         parameters: {
             query?: never;
@@ -604,71 +620,53 @@ export interface components {
             /** @description The hash of the key */
             hash: string;
         };
-        /** @description From T, pick a set of properties whose keys are in the union K */
-        "Pick_Dataset.Exclude_keyofDataset.members-or-chunks-or-keys__": {
-            /**
-             * Format: int32
-             * @description The database id of the dataset
-             */
-            id: number;
-            mnemonic: string;
-            /**
-             * @description The name of the file the dataset was created from
-             * @example file.txt
-             */
-            fileName: string;
-            /**
-             * @description The user that uploaded the dataset
-             * @example admin
-             */
-            createdBy: string;
-            /** @description The hash of the AES-256 encryption key base64url encoded */
-            keyHash: string;
-            /** @description A custom non unique name of the dataset */
-            name: string;
-            /** @description The original path of the dataset */
-            path: string;
-            /** @description The hash of the entire dataset base64url encoded */
-            hash: string;
-            /**
-             * Format: int32
-             * @description The size of the dataset in bytes
-             */
-            size: number;
-            /** Format: date-time */
-            createdAt: Date;
-            /** Format: date-time */
-            updatedAt: Date;
-            /** Format: date-time */
-            deletedAt: Date;
-        };
-        /** @description Construct a type with the properties of T except for those in type K. */
-        "Omit_Dataset.members-or-chunks-or-keys_": components["schemas"]["Pick_Dataset.Exclude_keyofDataset.members-or-chunks-or-keys__"];
-        UploadStartResponse: components["schemas"]["Omit_Dataset.members-or-chunks-or-keys_"] & {
-            /** @description The hash of the duplicate dataset or null if there is no duplicate */
-            duplicate: string | null;
-        };
-        UploadStartBody: {
-            /** @description The name of the file to upload */
-            fileName: string;
-            /**
-             * Format: int32
-             * @description The total size of the file in bytes, if known
-             */
-            size?: number;
-            /** @description A custom name for the dataset */
-            name?: string;
-            /** @description The original path of the file */
-            path?: string;
-            /** @description The hash of the first 2MiB chunk of the file */
-            chunkHash?: string;
-        };
         /**
          * @description mnemonics are human readable unique identifiers for datasets
          *     mnemonics have the form <random adjective>_<random first name>
          * @example happy_jane
          */
         Mnemonic: string;
+        FileData: {
+            uid: string;
+            createdBy: string;
+            fileName: string;
+            filePath: string | null;
+            hash: string | null;
+            /** Format: double */
+            size: number | null;
+            keyHash: string;
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+        };
+        File: {
+            mnemonic: components["schemas"]["Mnemonic"];
+            name: string;
+            tag: string | null;
+            data: components["schemas"]["FileData"];
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+            /** Format: date-time */
+            deletedAt: Date | null;
+        };
+        UploadStartBody: {
+            /** @description The name of the file to upload */
+            fileName: string;
+            /** @description The mnemonic of the directory to upload the file to */
+            directory?: components["schemas"]["Mnemonic"];
+            /** @description The original path of the file */
+            filePath?: string;
+            /**
+             * Format: int32
+             * @description The size of the file in bytes
+             */
+            size?: number;
+            /** @description A custom serchable tag for the file */
+            tag?: string;
+        };
         Chunk: {
             /**
              * Format: int32
@@ -702,50 +700,6 @@ export interface components {
              */
             updatedAt: Date;
         };
-        UploadFinishResponse: components["schemas"]["Omit_Dataset.members-or-chunks-or-keys_"];
-        /** @description From T, pick a set of properties whose keys are in the union K */
-        "Pick_Dataset.Exclude_keyofDataset.members-or-keys__": {
-            /** @description The list of chunks that make up the dataset */
-            chunks: components["schemas"]["Chunk"][];
-            /**
-             * Format: int32
-             * @description The database id of the dataset
-             */
-            id: number;
-            mnemonic: string;
-            /**
-             * @description The name of the file the dataset was created from
-             * @example file.txt
-             */
-            fileName: string;
-            /**
-             * @description The user that uploaded the dataset
-             * @example admin
-             */
-            createdBy: string;
-            /** @description The hash of the AES-256 encryption key base64url encoded */
-            keyHash: string;
-            /** @description A custom non unique name of the dataset */
-            name: string;
-            /** @description The original path of the dataset */
-            path: string;
-            /** @description The hash of the entire dataset base64url encoded */
-            hash: string;
-            /**
-             * Format: int32
-             * @description The size of the dataset in bytes
-             */
-            size: number;
-            /** Format: date-time */
-            createdAt: Date;
-            /** Format: date-time */
-            updatedAt: Date;
-            /** Format: date-time */
-            deletedAt: Date;
-        };
-        /** @description Construct a type with the properties of T except for those in type K. */
-        "Omit_Dataset.members-or-keys_": components["schemas"]["Pick_Dataset.Exclude_keyofDataset.members-or-keys__"];
-        UnfinishedUpload: components["schemas"]["Omit_Dataset.members-or-keys_"];
         User: {
             sub: string;
             scopes: string[];
@@ -781,22 +735,6 @@ export interface components {
              */
             lifetime: number | null;
         };
-        /** @description The AES-256 encryption key used to encrypt and decrypt datasets.
-         *     base64url encoded */
-        AESKey: string;
-        Member: {
-            /** Format: double */
-            id: number;
-            sub: string;
-            /** Format: double */
-            datasetId: number;
-            /** Format: double */
-            permission: number;
-            /** Format: date-time */
-            createdAt: Date;
-            /** Format: date-time */
-            updatedAt: Date;
-        };
         Key: {
             /** Format: double */
             id: number;
@@ -809,6 +747,30 @@ export interface components {
             /** Format: date-time */
             updatedAt: Date;
         };
+        DownloadData: components["schemas"]["FileData"] & {
+            keys: components["schemas"]["Key"][];
+            chunks: components["schemas"]["Chunk"][];
+        };
+        Member: {
+            /** Format: double */
+            id: number;
+            sub: string;
+            /** Format: double */
+            inodeId: number;
+            /** Format: double */
+            permission: number;
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+        };
+        FileResponse: components["schemas"]["File"] & {
+            members: components["schemas"]["Member"][];
+            data: components["schemas"]["DownloadData"];
+        };
+        /** @description The AES-256 encryption key used to encrypt and decrypt datasets.
+         *     base64url encoded */
+        AESKey: string;
         /** @description A dataset is a file uploaded to dabih.
          *     It is a collection of chunks that are encrypted with the same keyHash */
         Dataset: {
@@ -854,10 +816,7 @@ export interface components {
             /** Format: date-time */
             deletedAt: Date | null;
         };
-        /** @description From T, pick a set of properties whose keys are in the union K */
-        "Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__": {
-            /** @description The list of members that have access to the dataset */
-            members: components["schemas"]["Member"][];
+        "Omit_Dataset.chunks-or-keys_": {
             /**
              * Format: int32
              * @description The database id of the dataset
@@ -887,6 +846,8 @@ export interface components {
              * @description The size of the dataset in bytes
              */
             size: number;
+            /** @description The list of members that have access to the dataset */
+            members: components["schemas"]["Member"][];
             /** Format: date-time */
             createdAt: Date;
             /** Format: date-time */
@@ -894,8 +855,6 @@ export interface components {
             /** Format: date-time */
             deletedAt: Date;
         };
-        /** @description Construct a type with the properties of T except for those in type K. */
-        "Omit_Dataset.chunks-or-keys_": components["schemas"]["Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__"];
         SearchDataset: components["schemas"]["Omit_Dataset.chunks-or-keys_"];
         SearchResponseBody: {
             /**
@@ -1213,7 +1172,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UploadStartResponse"];
+                    "application/json": components["schemas"]["File"];
                 };
             };
         };
@@ -1255,7 +1214,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UploadFinishResponse"];
+                    "application/json": components["schemas"]["File"];
                 };
             };
         };
@@ -1275,7 +1234,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UnfinishedUpload"][];
+                    "application/json": components["schemas"]["File"][];
                 };
             };
         };
@@ -1366,6 +1325,28 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    fileInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: components["schemas"]["Mnemonic"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileResponse"];
+                };
             };
         };
     };

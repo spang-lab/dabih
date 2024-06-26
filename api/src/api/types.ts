@@ -1,3 +1,4 @@
+import { Omit } from "@prisma/client/runtime/library";
 import { JsonWebKey } from "crypto";
 
 /**
@@ -67,7 +68,7 @@ export interface Chunk {
 export interface Member {
   id: number;
   sub: string;
-  datasetId: number;
+  inodeId: number;
   permission: number;
   createdAt: Date;
   updatedAt: Date;
@@ -141,6 +142,47 @@ export interface Dataset {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+};
+
+export interface FileData {
+  uid: string;
+  createdBy: string;
+  fileName: string;
+  filePath: string | null;
+  hash: string | null;
+  size: number | null;
+  keyHash: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+export type DownloadData = FileData & {
+  chunks: Chunk[];
+  keys: Key[];
+};
+
+export interface File {
+  mnemonic: Mnemonic;
+  name: string;
+  tag: string | null;
+  data: FileData;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}
+
+export type FileResponse = File & {
+  data: DownloadData;
+  members: Member[];
+};
+
+
+
+export interface Directory {
+  mnemonic: Mnemonic;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 }
 
 export interface UploadStartBody {
@@ -149,35 +191,23 @@ export interface UploadStartBody {
     */
   fileName: string;
   /**
-    * The total size of the file in bytes, if known
+    * The mnemonic of the directory to upload the file to
+    */
+  directory?: Mnemonic;
+  /**
+    * The original path of the file
+    */
+  filePath?: string;
+  /**
+    * The size of the file in bytes
     * @isInt
     */
   size?: number;
   /**
-    * A custom name for the dataset
+    * A custom serchable tag for the file
     */
-  name?: string;
-  /**
-    * The original path of the file
-    */
-  path?: string;
-  /**
-    * The hash of the first 2MiB chunk of the file
-    */
-  chunkHash?: string;
+  tag?: string;
 }
-export type UploadStartResponse = Omit<Dataset, "members" | "chunks" | "keys"> & {
-  /**
-    * The hash of the duplicate dataset or null if there is no duplicate
-    */
-  duplicate: string | null;
-}
-
-export type UploadFinishResponse = Omit<Dataset, "members" | "chunks" | "keys">;
-
-export type UnfinishedUpload = Omit<Dataset, "members" | "keys">;
-
-
 
 export interface Token {
   id: number;

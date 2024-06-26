@@ -33,7 +33,7 @@ test.before(async t => {
   });
 
   const data = new Blob(["test data"]);
-  const { data: dataset } = await api.upload.blob({ fileName: "membership.txt", data, name: "member_test" });
+  const { data: dataset } = await api.upload.blob({ fileName: "membership.txt", data, tag: "member_test" });
   const mnemonic = dataset!.mnemonic;
 
   t.context = {
@@ -51,23 +51,23 @@ test.after.always(t => {
 test('add member', async t => {
   const api = client(t.context.port, "test_uploader");
   const { mnemonic } = t.context;
-  const { data: dataset, response } = await api.dataset.get(mnemonic);
+  const { data: file, response } = await api.fs.file(mnemonic);
   const privateKey = t.context.keys[0];
   const publicKey = crypto.privateKey.toPublicKey(privateKey);
   const keyHash = crypto.publicKey.toHash(publicKey);
   t.is(response.status, 200);
-  if (!dataset) {
+  if (!file) {
     t.fail();
     return;
   }
-  const encryptedKey = dataset.keys.find(k => k.publicKeyHash === keyHash);
+  const encryptedKey = file.data.keys.find(k => k.publicKeyHash === keyHash);
   if (!encryptedKey) {
     t.fail();
     return;
   }
   const aesKey = crypto.privateKey.decrypt(privateKey, encryptedKey.key);
   const aesHash = crypto.aesKey.toHash(aesKey);
-  t.is(aesHash, dataset.keyHash);
+  t.is(aesHash, file.data.keyHash);
 
   const { response: response2 } = await api.dataset.addMember(mnemonic, {
     sub: "test_member",
@@ -75,7 +75,7 @@ test('add member', async t => {
   });
   t.is(response2.status, 204);
   const api2 = client(t.context.port, "test_member");
-  const { data: dataset2 } = await api2.dataset.get(mnemonic);
+  const { data: dataset2 } = await api2.fs.file(mnemonic);
   if (!dataset2) {
     t.fail();
     return;
@@ -83,7 +83,7 @@ test('add member', async t => {
   const privateKey2 = t.context.keys[1];
   const publicKey2 = crypto.privateKey.toPublicKey(privateKey2);
   const keyHash2 = crypto.publicKey.toHash(publicKey2);
-  const encryptedKey2 = dataset2.keys.find(k => k.publicKeyHash === keyHash2);
+  const encryptedKey2 = dataset2.data.keys.find(k => k.publicKeyHash === keyHash2);
   if (!encryptedKey2) {
     t.fail();
     return;

@@ -33,53 +33,68 @@ model PublicKey {
   updatedAt DateTime  @updatedAt
 }
 
-model Dataset {
-  id        Int       @id @default(autoincrement())
-  mnemonic  String    @unique
-  fileName  String
+model FileData {
+  id        Int      @id @default(autoincrement())
+  uid       String   @unique
   createdBy String
-  keyHash   String
-  name      String?
-  path      String?
+  fileName  String
+  filePath  String?
   hash      String?
   size      Int?
+  keyHash   String
   chunks    Chunk[]
-  members   Member[]
   keys      Key[]
+  inodes    Inode[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Chunk {
+  id         Int      @id @default(autoincrement())
+  fileData   FileData @relation(fields: [fileDataId], references: [id])
+  fileDataId Int
+  hash       String
+  iv         String
+  start      Int
+  end        Int
+  crc        String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Inode {
+  id        Int       @id @default(autoincrement())
+  mnemonic  String    @unique
+  type      Int
+  name      String
+  tag       String?
+  data      FileData? @relation(fields: [dataId], references: [id])
+  dataId    Int?
+  parent    Inode?    @relation("InodeTree", fields: [parentId], references: [id])
+  parentId  Int?
+  children  Inode[]   @relation("InodeTree")
+  members   Member[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
-model Chunk {
-  id        Int      @id @default(autoincrement())
-  dataset   Dataset  @relation(fields: [datasetId], references: [id])
-  datasetId Int
-  hash      String
-  iv        String
-  start     Int
-  end       Int
-  crc       String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Member {
   id         Int      @id @default(autoincrement())
   sub        String
-  dataset    Dataset  @relation(fields: [datasetId], references: [id])
-  datasetId  Int
+  Inode      Inode    @relation(fields: [inodeId], references: [id])
+  inodeId    Int
   permission Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@unique([sub, datasetId])
+  @@unique([sub, inodeId])
 }
 
 model Key {
   id            Int      @id @default(autoincrement())
-  dataset       Dataset  @relation(fields: [datasetId], references: [id])
-  datasetId     Int
+  fileData      FileData @relation(fields: [fileDataId], references: [id])
+  fileDataId    Int
   publicKeyHash String
   key           String
   createdAt     DateTime @default(now())

@@ -363,46 +363,76 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_Dataset.Exclude_keyofDataset.members-or-chunks-or-keys__": {
+			"Mnemonic": {
+				"type": "string",
+				"example": "happy_jane",
+				"description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
+				"pattern": "^[a-z_]+$"
+			},
+			"FileData": {
 				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The database id of the dataset"
+					"uid": {
+						"type": "string"
 					},
-					"mnemonic": {
+					"createdBy": {
 						"type": "string"
 					},
 					"fileName": {
-						"type": "string",
-						"description": "The name of the file the dataset was created from",
-						"example": "file.txt"
+						"type": "string"
 					},
-					"createdBy": {
+					"filePath": {
 						"type": "string",
-						"description": "The user that uploaded the dataset",
-						"example": "admin"
-					},
-					"keyHash": {
-						"type": "string",
-						"description": "The hash of the AES-256 encryption key base64url encoded"
-					},
-					"name": {
-						"type": "string",
-						"description": "A custom non unique name of the dataset"
-					},
-					"path": {
-						"type": "string",
-						"description": "The original path of the dataset"
+						"nullable": true
 					},
 					"hash": {
 						"type": "string",
-						"description": "The hash of the entire dataset base64url encoded"
+						"nullable": true
 					},
 					"size": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The size of the dataset in bytes"
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"keyHash": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"uid",
+					"createdBy",
+					"fileName",
+					"filePath",
+					"hash",
+					"size",
+					"keyHash",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"File": {
+				"properties": {
+					"mnemonic": {
+						"$ref": "#/components/schemas/Mnemonic"
+					},
+					"name": {
+						"type": "string"
+					},
+					"tag": {
+						"type": "string",
+						"nullable": true
+					},
+					"data": {
+						"$ref": "#/components/schemas/FileData"
 					},
 					"createdAt": {
 						"type": "string",
@@ -414,49 +444,21 @@
 					},
 					"deletedAt": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"nullable": true
 					}
 				},
 				"required": [
-					"id",
 					"mnemonic",
-					"fileName",
-					"createdBy",
-					"keyHash",
 					"name",
-					"path",
-					"hash",
-					"size",
+					"tag",
+					"data",
 					"createdAt",
 					"updatedAt",
 					"deletedAt"
 				],
 				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Omit_Dataset.members-or-chunks-or-keys_": {
-				"$ref": "#/components/schemas/Pick_Dataset.Exclude_keyofDataset.members-or-chunks-or-keys__",
-				"description": "Construct a type with the properties of T except for those in type K."
-			},
-			"UploadStartResponse": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/Omit_Dataset.members-or-chunks-or-keys_"
-					},
-					{
-						"properties": {
-							"duplicate": {
-								"type": "string",
-								"nullable": true,
-								"description": "The hash of the duplicate dataset or null if there is no duplicate"
-							}
-						},
-						"required": [
-							"duplicate"
-						],
-						"type": "object"
-					}
-				]
+				"additionalProperties": false
 			},
 			"UploadStartBody": {
 				"properties": {
@@ -464,22 +466,22 @@
 						"type": "string",
 						"description": "The name of the file to upload"
 					},
-					"size": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The total size of the file in bytes, if known"
+					"directory": {
+						"$ref": "#/components/schemas/Mnemonic",
+						"description": "The mnemonic of the directory to upload the file to"
 					},
-					"name": {
-						"type": "string",
-						"description": "A custom name for the dataset"
-					},
-					"path": {
+					"filePath": {
 						"type": "string",
 						"description": "The original path of the file"
 					},
-					"chunkHash": {
+					"size": {
+						"type": "integer",
+						"format": "int32",
+						"description": "The size of the file in bytes"
+					},
+					"tag": {
 						"type": "string",
-						"description": "The hash of the first 2MiB chunk of the file"
+						"description": "A custom serchable tag for the file"
 					}
 				},
 				"required": [
@@ -487,12 +489,6 @@
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"Mnemonic": {
-				"type": "string",
-				"example": "happy_jane",
-				"description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
-				"pattern": "^[a-z_]+$"
 			},
 			"Chunk": {
 				"properties": {
@@ -547,95 +543,6 @@
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"UploadFinishResponse": {
-				"$ref": "#/components/schemas/Omit_Dataset.members-or-chunks-or-keys_"
-			},
-			"Pick_Dataset.Exclude_keyofDataset.members-or-keys__": {
-				"properties": {
-					"chunks": {
-						"items": {
-							"$ref": "#/components/schemas/Chunk"
-						},
-						"type": "array",
-						"description": "The list of chunks that make up the dataset"
-					},
-					"id": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The database id of the dataset"
-					},
-					"mnemonic": {
-						"type": "string"
-					},
-					"fileName": {
-						"type": "string",
-						"description": "The name of the file the dataset was created from",
-						"example": "file.txt"
-					},
-					"createdBy": {
-						"type": "string",
-						"description": "The user that uploaded the dataset",
-						"example": "admin"
-					},
-					"keyHash": {
-						"type": "string",
-						"description": "The hash of the AES-256 encryption key base64url encoded"
-					},
-					"name": {
-						"type": "string",
-						"description": "A custom non unique name of the dataset"
-					},
-					"path": {
-						"type": "string",
-						"description": "The original path of the dataset"
-					},
-					"hash": {
-						"type": "string",
-						"description": "The hash of the entire dataset base64url encoded"
-					},
-					"size": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The size of the dataset in bytes"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"chunks",
-					"id",
-					"mnemonic",
-					"fileName",
-					"createdBy",
-					"keyHash",
-					"name",
-					"path",
-					"hash",
-					"size",
-					"createdAt",
-					"updatedAt",
-					"deletedAt"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Omit_Dataset.members-or-keys_": {
-				"$ref": "#/components/schemas/Pick_Dataset.Exclude_keyofDataset.members-or-keys__",
-				"description": "Construct a type with the properties of T except for those in type K."
-			},
-			"UnfinishedUpload": {
-				"$ref": "#/components/schemas/Omit_Dataset.members-or-keys_"
 			},
 			"User": {
 				"properties": {
@@ -761,47 +668,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AESKey": {
-				"type": "string",
-				"description": "The AES-256 encryption key used to encrypt and decrypt datasets.\nbase64url encoded"
-			},
-			"Member": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"sub": {
-						"type": "string"
-					},
-					"datasetId": {
-						"type": "number",
-						"format": "double"
-					},
-					"permission": {
-						"type": "number",
-						"format": "double"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"sub",
-					"datasetId",
-					"permission",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"Key": {
 				"properties": {
 					"id": {
@@ -837,6 +703,100 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"DownloadData": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/FileData"
+					},
+					{
+						"properties": {
+							"keys": {
+								"items": {
+									"$ref": "#/components/schemas/Key"
+								},
+								"type": "array"
+							},
+							"chunks": {
+								"items": {
+									"$ref": "#/components/schemas/Chunk"
+								},
+								"type": "array"
+							}
+						},
+						"required": [
+							"keys",
+							"chunks"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"Member": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"sub": {
+						"type": "string"
+					},
+					"inodeId": {
+						"type": "number",
+						"format": "double"
+					},
+					"permission": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"sub",
+					"inodeId",
+					"permission",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FileResponse": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/File"
+					},
+					{
+						"properties": {
+							"members": {
+								"items": {
+									"$ref": "#/components/schemas/Member"
+								},
+								"type": "array"
+							},
+							"data": {
+								"$ref": "#/components/schemas/DownloadData"
+							}
+						},
+						"required": [
+							"members",
+							"data"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"AESKey": {
+				"type": "string",
+				"description": "The AES-256 encryption key used to encrypt and decrypt datasets.\nbase64url encoded"
 			},
 			"Dataset": {
 				"description": "A dataset is a file uploaded to dabih.\nIt is a collection of chunks that are encrypted with the same keyHash",
@@ -939,15 +899,8 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__": {
+			"Omit_Dataset.chunks-or-keys_": {
 				"properties": {
-					"members": {
-						"items": {
-							"$ref": "#/components/schemas/Member"
-						},
-						"type": "array",
-						"description": "The list of members that have access to the dataset"
-					},
 					"id": {
 						"type": "integer",
 						"format": "int32",
@@ -987,6 +940,13 @@
 						"format": "int32",
 						"description": "The size of the dataset in bytes"
 					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/Member"
+						},
+						"type": "array",
+						"description": "The list of members that have access to the dataset"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -1001,7 +961,6 @@
 					}
 				},
 				"required": [
-					"members",
 					"id",
 					"mnemonic",
 					"fileName",
@@ -1011,16 +970,12 @@
 					"path",
 					"hash",
 					"size",
+					"members",
 					"createdAt",
 					"updatedAt",
 					"deletedAt"
 				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Omit_Dataset.chunks-or-keys_": {
-				"$ref": "#/components/schemas/Pick_Dataset.Exclude_keyofDataset.chunks-or-keys__",
-				"description": "Construct a type with the properties of T except for those in type K."
+				"type": "object"
 			},
 			"SearchDataset": {
 				"$ref": "#/components/schemas/Omit_Dataset.chunks-or-keys_"
@@ -1598,7 +1553,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UploadStartResponse"
+									"$ref": "#/components/schemas/File"
 								}
 							}
 						}
@@ -1676,7 +1631,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UploadFinishResponse"
+									"$ref": "#/components/schemas/File"
 								}
 							}
 						}
@@ -1719,7 +1674,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/UnfinishedUpload"
+										"$ref": "#/components/schemas/File"
 									},
 									"type": "array"
 								}
@@ -1896,6 +1851,48 @@
 						}
 					}
 				}
+			}
+		},
+		"/fs/file/{mnemonic}": {
+			"get": {
+				"operationId": "fileInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FileResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Mnemonic"
+						}
+					}
+				]
 			}
 		},
 		"/download/{mnemonic}/decrypt": {

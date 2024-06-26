@@ -15,14 +15,25 @@ export default function LoadKey() {
   const { update } = useSession();
   const dialog = useDialog();
 
-  const saveKey = async (key: CryptoKey) => {
-    const hash = await crypto.privateKey.toHash(key);
-    const result = await api.key.check(hash);
-    if (result.error) {
-      dialog.error(result.error);
+  const saveKey = async (privateKey: CryptoKey) => {
+    const hash = await crypto.privateKey.toHash(privateKey);
+
+    const { data: user, error } = await api.user.me();
+    if (!user || error) {
+      dialog.error(error ?? 'Could not load user data');
       return;
     }
-    await storage.storeKey(key);
+    const { keys } = user;
+    const key = keys.find((k) => k.hash === hash);
+    if (!key) {
+      dialog.error(`Key with hash ${hash} does not belong to user ${user.name}`);
+      return;
+    }
+    if (!key.enabled) {
+      dialog.error('This key need to be enabled first');
+      return;
+    }
+    await storage.storeKey(privateKey);
     update();
   };
 
@@ -31,8 +42,12 @@ export default function LoadKey() {
       const text = await file.text();
       const key = await crypto.privateKey.fromPEM(text);
       await saveKey(key);
-    } catch (err: any) {
-      dialog.error(err.toString());
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        dialog.error(err.toString());
+        return;
+      }
+      dialog.error('Failed to read private key file');
     }
   };
 
@@ -40,8 +55,12 @@ export default function LoadKey() {
     try {
       const key = await crypto.privateKey.fromJSON(data);
       await saveKey(key);
-    } catch (err: any) {
-      dialog.error(err.toString());
+    } catch (err) {
+      if (err instanceof Error) {
+        dialog.error(err.toString());
+        return;
+      }
+      dialog.error('Failed to read private key from QR Code');
     }
   };
 

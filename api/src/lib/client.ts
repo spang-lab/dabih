@@ -39,11 +39,11 @@ const init = (port?: number, sub?: string) => {
   }, tokenSecret);
 
   const tokenMiddleware: Middleware = {
-    onRequest(req) {
-      if (!req.headers.has('Authorization')) {
-        req.headers.set('Authorization', `Bearer ${token}`);
+    onRequest({ request }) {
+      if (!request.headers.has('Authorization')) {
+        request.headers.set('Authorization', `Bearer ${token}`);
       }
-      return req;
+      return request;
     },
   };
   const api = createClient(baseUrl);
@@ -93,8 +93,8 @@ const init = (port?: number, sub?: string) => {
       console.error(error2);
       return { response: response2, error: error2 };
     }
-    if (result.hash !== hash) {
-      console.error("Hash mismatch", result.hash, hash);
+    if (result.data.hash !== hash) {
+      console.error("Hash mismatch", result.data.hash, hash);
       return { response: response2, error: { message: "Hash mismatch" } };
     }
     return {
