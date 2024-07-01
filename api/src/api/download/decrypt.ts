@@ -1,24 +1,37 @@
 import { AESKey, User } from "../types";
 
-import { RequestError, AuthorizationError } from "../errors";
-import { Permission, getPermission } from "#lib/database/member";
+import { NotFoundError, RequestError } from "../errors";
 import db from "#lib/db";
 import crypto from "#lib/crypto/index";
 import { convertToken, generateValue } from "#lib/database/token";
 import { storeKey } from "#lib/keyv";
-import { getFile } from "#lib/database/inode";
+import { InodeType } from "#lib/database/inode";
 
 export default async function decrypt(user: User, mnemonic: string, key: AESKey) {
-  const { sub, isAdmin } = user;
-  const file = await getFile(mnemonic);
-  const permission = await getPermission(mnemonic, sub);
-
-  if (permission !== Permission.READ && !isAdmin) {
-    throw new AuthorizationError(`User ${user.sub} does not have permission to decrypt file ${mnemonic}`);
+  const { sub } = user;
+  const file = await db.inode.findUnique({
+    where: {
+      mnemonic,
+      type: InodeType.FILE,
+    },
+    include: {
+      data: true,
+    },
+  });
+  if (!file) {
+    throw new NotFoundError(`No file found for mnemonic ${mnemonic}`);
   }
+  if (file.deletedAt) {
+    throw new RequestError(`File ${mnemonic} has been deleted`);
+  }
+  const { data } = file;
+  if (!data) {
+    throw new Error(`Inode ${mnemonic} has type FILE but no data`);
+  }
+
   const keyHash = crypto.aesKey.toHash(key);
-  if (file.data.keyHash !== keyHash) {
-    throw new RequestError(`Invalid key for dataset ${mnemonic}, hash mismatch ${file.data.keyHash} !== ${keyHash}`);
+  if (data.keyHash !== keyHash) {
+    throw new RequestError(`Invalid key for dataset ${mnemonic}, hash mismatch ${data.keyHash} !== ${keyHash}`);
   }
   await storeKey(sub, mnemonic, key);
   const scope = `dabih:download:${mnemonic}`;

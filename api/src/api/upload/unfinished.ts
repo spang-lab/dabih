@@ -1,44 +1,45 @@
 
-import { UnfinishedUpload, User } from "../types";
+import { User } from "../types";
 import db from "#lib/db";
 import { readKey } from "#lib/keyv";
+import { InodeType } from "#lib/database/inode";
 
 export default async function unfinished(user: User) {
   const { sub } = user;
-  const unfinished = await db.fileData.findMany({
+
+  const unfinished = await db.inode.findMany({
     where: {
-      createdBy: sub,
-      hash: null,
+      type: InodeType.UPLOAD,
     },
     include: {
-      inodes: true,
-      chunks: {
-        orderBy: {
-          start: 'asc',
-        }
+      data: {
+        where: {
+          createdBy: sub,
+          hash: null,
+        },
+        include: {
+          chunks: {
+            orderBy: {
+              start: 'asc',
+            }
+          },
+        },
       },
-    }
+    },
   });
-  const promises = unfinished.map(async (fileData) => {
-    const { inodes } = fileData;
-    if (inodes.length === 0) {
-      throw new Error(`FileData ${fileData.uid} has no inodes`);
-    }
-    if (inodes.length > 1) {
-      throw new Error(`FileData ${fileData.uid} has more than one inode`);
-    }
-    const [inode] = inodes;
-    const { mnemonic } = inode;
-    const key = await readKey(sub, mnemonic);
-    if (!key) {
+
+  const promises = unfinished.map(async (file) => {
+    const { data, mnemonic } = file;
+    const key = await readKey(sub, mnemonic)
+    if (!data || !key) {
       return null;
     }
     return {
-      ...inode,
-      fileData,
+      ...file,
+      data,
     };
   });
   const results = (await Promise.all(promises))
-    .filter((dataset) => dataset !== null) as UnfinishedUpload[];
+    .filter((f) => f !== null);
   return results;
 }

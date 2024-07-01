@@ -26,15 +26,19 @@ const hashBlob = async (data: Blob) => {
 
 
 
-const init = (port?: number, sub?: string) => {
+const init = (port: number, sub: string, admin?: boolean) => {
   const p = port?.toString() ?? getEnv('PORT', '3001');
   const host = `http://localhost:${p}`;
   const baseUrl = `${host}/api/v1`;
 
+  let scope = "dabih:upload dabih:api";
+  if (admin) {
+    scope += " dabih:admin";
+  }
   const tokenSecret = requireEnv("TOKEN_SECRET");
   const token = jwt.sign({
     sub: sub ?? "admin",
-    scope: "dabih:upload dabih:api dabih:admin",
+    scope,
     aud: host,
   }, tokenSecret);
 

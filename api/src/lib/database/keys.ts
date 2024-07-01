@@ -2,11 +2,29 @@
 import db from "#lib/db";
 import { Permission, getMembers } from "./member";
 import crypto from "#crypto";
-import { getFile } from "./inode";
+import { InodeType } from "./inode";
+import { FileKeys } from "src/api/types";
+
+
+export const getUserKeys = async (sub: string) => {
+  const result = await db.user.findUnique({
+    where: { sub },
+    include: {
+      keys: {
+        where: {
+          enabled: {
+            not: null
+          }
+        }
+      }
+    }
+  });
+  return result?.keys ?? [];
+};
 
 
 export const getPublicKeys = async (mnemonic: string) => {
-  const members = await getMembers(mnemonic, Permission.READ);
+  const { members } = await getMembers(mnemonic, Permission.READ);
   const users = await db.user.findMany({
     where: {
       sub: {
@@ -38,52 +56,93 @@ export const getPublicKeys = async (mnemonic: string) => {
 
 export const getMissingKeys = async (mnemonic: string) => {
   const publicKeys = await getPublicKeys(mnemonic);
-  const file = await getFile(mnemonic);
-  const { uid } = file.data;
-  const data = await db.fileData.findUnique({
+  const file = await db.inode.findUnique({
     where: {
-      uid,
+      mnemonic,
     },
     include: {
-      keys: {
-        where: {
-          publicKeyHash: {
-            in: publicKeys.map(p => p.hash)
+      data: {
+        include: {
+          keys: {
+            where: {
+              hash: {
+                in: publicKeys.map(p => p.hash)
+              }
+            }
           }
         }
-      }
-    }
+      },
+    },
   });
-  if (!data) {
-    throw new Error(`Data ${uid} not found`);
+  if (!file || !file.data) {
+    throw new Error(`${mnemonic} not found`);
   }
-  const existingHashes = new Set(data.keys.map(k => k.publicKeyHash));
+  const { keys } = file.data;
+  const existingHashes = new Set(keys.map(k => k.hash));
   const missing = publicKeys.filter(p => !existingHashes.has(p.hash));
   return missing;
 }
 
 export const getSurplusKeys = async (mnemonic: string) => {
   const publicKeys = await getPublicKeys(mnemonic);
-  const file = await getFile(mnemonic);
-  const { uid } = file.data;
-  const data = await db.fileData.findUnique({
+  const file = await db.inode.findUnique({
     where: {
-      uid,
+      mnemonic,
     },
     include: {
-      keys: {
-        where: {
-          publicKeyHash: {
-            notIn: publicKeys.map(p => p.hash)
+      data: {
+        include: {
+          keys: {
+            where: {
+              hash: {
+                notIn: publicKeys.map(p => p.hash)
+              }
+            }
           }
         }
-      }
-    }
+      },
+    },
   });
-  if (!data) {
-    throw new Error(`Data ${uid} not found`);
+  if (!file?.data) {
+    throw new Error(`${mnemonic} not found`);
   }
-  return data.keys;
+  return file.data.keys;
+}
+
+export const listKeys = async (mnemonic: string, hashes: string[]): Promise<FileKeys[]> => {
+  const inode = await db.inode.findUnique({
+    where: {
+      mnemonic,
+      deletedAt: null,
+    },
+    include: {
+      children: true,
+      data: {
+        include: {
+          keys: {
+            where: {
+              hash: {
+                in: hashes,
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!inode) {
+    return [];
+  }
+  const type = inode.type as InodeType;
+  if (type === InodeType.UPLOAD) {
+    return [];
+  }
+  if (type === InodeType.FILE) {
+    return [inode as FileKeys];
+  }
+  const promises = inode.children.map(child => listKeys(child.mnemonic, hashes));
+  const childLists = await Promise.all(promises);
+  return childLists.flat();
 }
 
 
@@ -93,43 +152,58 @@ export const addKeys = async (mnemonic: string, aesKey: string) => {
     const pubKey = crypto.publicKey.fromString(publicKey.data);
     const encrypted = crypto.publicKey.encrypt(pubKey, aesKey);
     return {
-      publicKeyHash: publicKey.hash,
+      hash: publicKey.hash,
       key: encrypted,
     };
   });
-  const file = await getFile(mnemonic);
-  const { uid } = file.data;
-  await db.fileData.update({
+  await db.inode.update({
     where: {
-      uid,
+      mnemonic,
     },
     data: {
-      keys: {
-        createMany: {
-          data: keys
+      data: {
+        update: {
+          keys: {
+            createMany: {
+              data: keys
+            }
+          }
         }
       }
     },
     include: {
-      keys: true
+      data: {
+        include: {
+          keys: true
+        }
+      }
     }
   });
 }
 
 export const removeKeys = async (mnemonic: string) => {
   const surplusKeys = await getSurplusKeys(mnemonic);
-  const file = await getFile(mnemonic);
-  const { uid } = file.data;
-  await db.fileData.update({
+  await db.inode.update({
     where: {
-      uid,
+      mnemonic,
     },
     data: {
-      keys: {
-        deleteMany: {
-          publicKeyHash: {
-            in: surplusKeys.map(k => k.publicKeyHash)
+      data: {
+        update: {
+          keys: {
+            deleteMany: {
+              hash: {
+                in: surplusKeys.map(k => k.hash)
+              }
+            }
           }
+        }
+      }
+    },
+    include: {
+      data: {
+        include: {
+          keys: true
         }
       }
     }

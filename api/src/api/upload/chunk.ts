@@ -2,14 +2,14 @@
 
 import { ChunkAddBody, RequestWithUser } from '../types';
 import { readKey } from "#lib/keyv";
-import { RequestError } from "../errors";
+import { NotFoundError, RequestError } from "../errors";
 import crypto from "#crypto";
 import db from "#lib/db";
 import { head, store } from "#lib/fs";
 import Busboy, { BusboyHeaders } from "@fastify/busboy";
 
 import { Request } from "koa";
-import { getFile } from '#lib/database/inode';
+import { InodeType } from '#lib/database/inode';
 export type RequestWithHeaders = Request & RequestWithUser;
 
 
@@ -21,33 +21,37 @@ export default async function chunk(
   const { user } = request;
   const { sub } = user;
 
-  const file = await getFile(mnemonic);
-  if (!file) {
-    throw new RequestError(`No file found for mnemonic ${mnemonic}`);
-  }
-  const { uid } = file.data;
-  const existing = await head(uid, body.hash);
-
-  if (existing) {
-    const fileData = await db.fileData.findUnique({
-      where: {
-        uid,
-        createdBy: sub,
+  const file = await db.inode.findUnique({
+    where: {
+      mnemonic,
+      type: InodeType.UPLOAD,
+    },
+    include: {
+      data: {
+        include: {
+          chunks: true,
+        },
       },
-      include: {
-        chunks: {
-          where: {
-            hash: body.hash,
-          }
-        }
-      }
-    });
-    const chunk = fileData?.chunks[0];
+    }
+  });
+  if (!file) {
+    throw new NotFoundError(`No upload found for mnemonic ${mnemonic}`);
+  }
+  if (file.deletedAt) {
+    throw new RequestError(`Upload ${mnemonic} has been deleted`);
+  }
+  const { data } = file;
+  if (!data) {
+    throw new Error(`Inode ${mnemonic} has type UPLOAD but no data`);
+  }
+  const { uid, chunks } = data;
+  const existing = await head(uid, body.hash);
+  if (existing) {
+    const chunk = chunks.find(c => c.hash === body.hash);
     if (chunk) {
       return chunk;
     }
   }
-
   const aesKey = await readKey(sub, mnemonic);
   if (!aesKey) {
     throw new RequestError(`No encryption key for ${mnemonic} in ephemeral storage.`);

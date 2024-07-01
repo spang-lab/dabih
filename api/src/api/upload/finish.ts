@@ -1,10 +1,10 @@
 import db from '#lib/db';
 import { Chunk } from '@prisma/client';
-import { RequestError } from '../errors';
-import { User } from '../types';
+import { NotFoundError, RequestError } from '../errors';
+import { File, User } from '../types';
 import { createHash } from 'crypto';
 import { deleteKey } from '#lib/keyv';
-import { getFile } from '#lib/database/inode';
+import { InodeType } from '#lib/database/inode';
 
 type ChunkRange = Pick<Chunk, 'start' | 'end'>;
 
@@ -22,52 +22,66 @@ const hashChunks = (chunks: { hash: string }[]) => {
   for (const chunk of chunks) {
     hash.update(chunk.hash, 'base64url');
   }
+
   return hash.digest('base64url');
 };
 
 export default async function finish(user: User, mnemonic: string) {
   const { sub } = user;
-  const file = await getFile(mnemonic);
-  const { uid } = file.data;
-  const fileData = await db.fileData.findUnique({
+  const file = await db.inode.findUnique({
     where: {
-      uid,
-      createdBy: sub,
+      mnemonic,
+      type: InodeType.UPLOAD,
     },
     include: {
-      chunks: {
-        orderBy: {
-          start: 'asc',
-        }
+      data: {
+        where: {
+          createdBy: sub,
+        },
+        include: {
+          chunks: {
+            orderBy: {
+              start: 'asc',
+            }
+          }
+        },
       },
     }
   });
-  if (!fileData) {
-    throw new RequestError(`No fileData found for mnemonic ${mnemonic} and user ${sub}`);
+  if (!file) {
+    throw new NotFoundError(`No upload found for mnemonic ${mnemonic}`);
   }
-  const { chunks } = fileData;
+  const { data } = file;
+  if (!data) {
+    throw new Error(`Inode ${mnemonic} has type UPLOAD but no data`);
+  }
+  const { chunks, size } = data;
   const end = validChunkEnd(chunks);
   if (end === -1) {
     throw new RequestError(`Chunks are not complete for dataset ${mnemonic}`);
   }
-  if (fileData.size && fileData.size !== end + 1) {
-    throw new RequestError(`Dataset size: ${fileData.size} does not match chunks end: ${end + 1} for dataset ${mnemonic}`);
+  if (size && size !== end + 1) {
+    throw new RequestError(`Dataset size: ${size} does not match chunks end: ${end + 1} for dataset ${mnemonic}`);
   }
   const hash = hashChunks(chunks);
-
-  const result = await db.fileData.update({
+  const result = await db.inode.update({
     where: {
-      uid,
-      createdBy: sub,
+      mnemonic,
+      type: InodeType.UPLOAD,
     },
     data: {
-      hash,
-      size: end + 1,
+      type: InodeType.FILE,
+      data: {
+        update: {
+          hash,
+          size: end + 1,
+        }
+      }
+    },
+    include: {
+      data: true,
     }
   });
   await deleteKey(sub, mnemonic);
-  return {
-    ...file,
-    data: result,
-  };
+  return result as File;
 }

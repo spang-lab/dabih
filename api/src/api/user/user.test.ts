@@ -20,7 +20,7 @@ test.after.always(t => {
 })
 
 test('add user', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_user", true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 
@@ -41,7 +41,7 @@ test('add user', async t => {
 });
 
 test('add invalid key', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_user", true);
   const { error, response } = await api.user.add({
     sub: "testuser",
     name: "test",
@@ -57,7 +57,7 @@ test('add invalid key', async t => {
 });
 
 test('check key hash', async t => {
-  const api = client(t.context.port, "test_hash");
+  const api = client(t.context.port, "test_hash", true);
   const privateKey = await crypto.privateKey.generate();
   const publicKey = crypto.privateKey.toPublicKey(privateKey);
   const jwk = crypto.publicKey.toJwk(publicKey);
@@ -76,7 +76,7 @@ test('check key hash', async t => {
 });
 
 test('add user with two keys', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_user", true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 
@@ -109,7 +109,7 @@ test('add user with two keys', async t => {
 });
 
 test('add the same key twice', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_user", true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 
@@ -136,7 +136,7 @@ test('add the same key twice', async t => {
 });
 
 test('remove key', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_user", true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 
@@ -164,7 +164,7 @@ test('remove key', async t => {
 
 
 test('disable/enable key', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_user", true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 

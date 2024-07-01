@@ -1,11 +1,11 @@
 import { User } from '../types';
 import { readKey } from '#lib/keyv';
 import db from '#lib/db';
-import { AuthorizationError, RequestError } from '../errors';
+import { AuthorizationError, NotFoundError, RequestError } from '../errors';
 import { get } from '#lib/fs';
 import crypto from '#lib/crypto/index';
 import { PassThrough } from 'stream';
-import { getFile } from '#lib/database/inode';
+import { InodeType } from '#lib/database/inode';
 
 const parseScope = (scopes: string[]) => {
   if (scopes.length !== 1) {
@@ -28,20 +28,27 @@ export default async function mnemonic(user: User) {
   if (!key) {
     throw new RequestError(`AES key not found, it needs to be stored by calling /download/${mnemonic}/decrypt first`);
   }
-  const file = await getFile(mnemonic);
-  const uid = file.data.uid;
-  const fileData = await db.fileData.findUnique({
+  const file = await db.inode.findUnique({
     where: {
-      uid,
+      mnemonic,
+      type: InodeType.FILE,
     },
     include: {
-      chunks: true,
+      data: {
+        include: {
+          chunks: true,
+        }
+      },
     },
   });
-  if (!fileData) {
-    throw new RequestError(`Dataset not found for mnemonic ${mnemonic}`);
+  if (!file) {
+    throw new NotFoundError(`No file found for mnemonic ${mnemonic}`);
   }
-  const { chunks, fileName, size } = fileData;
+  const { data } = file;
+  if (!data) {
+    throw new Error(`Inode ${mnemonic} has no data`);
+  }
+  const { chunks, fileName, size, uid } = data;
   if (size === null) {
     throw new RequestError(`Dataset size is not set for ${mnemonic}, maybe it's not fully uploaded yet`);
   }

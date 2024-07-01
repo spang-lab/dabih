@@ -2,9 +2,9 @@
 import db from "#lib/db";
 import crypto from "#crypto";
 import { storeKey } from "#lib/keyv";
-import { addKeys } from "#lib/database/keys";
+import { addKeys, getUserKeys } from "#lib/database/keys";
 import { Permission } from "#lib/database/member";
-import { InodeType, getDirectory } from "#lib/database/inode";
+import { InodeType } from "#lib/database/inode";
 import { createBucket } from "#lib/fs";
 
 import { User, UploadStartBody, File } from "../types";
@@ -15,26 +15,10 @@ import { generateMnemonic, generateDataUid } from "#lib/database/inode";
 
 export default async function start(user: User, body: UploadStartBody): Promise<File> {
   const { sub } = user;
-  const hasPublicKey = await db.user.findFirst({
-    where: {
-      sub,
-      keys: {
-        some: {
-          enabled: {
-            not: null
-          }
-        }
-      }
-    },
-    include: {
-      keys: true
-    }
-  });
-  if (!hasPublicKey) {
+  const publicKeys = await getUserKeys(sub);
+  if (publicKeys.length === 0) {
     throw new RequestError(`User ${sub} has no public keys for encryption`);
   }
-
-
 
   const {
     fileName, directory, filePath, size, tag,
@@ -43,9 +27,17 @@ export default async function start(user: User, body: UploadStartBody): Promise<
 
   let parent = undefined;
   if (directory) {
-    const dir = await getDirectory(directory);
+    const dir = await db.inode.findUnique({
+      where: {
+        mnemonic: directory,
+        type: InodeType.DIRECTORY,
+      },
+    });
     if (!dir) {
       throw new RequestError(`No directory found for mnemonic ${directory}`);
+    }
+    if (dir.deletedAt) {
+      throw new RequestError(`Directory ${directory} has been deleted`);
     }
     parent = {
       connect: {
@@ -72,7 +64,7 @@ export default async function start(user: User, body: UploadStartBody): Promise<
     data: {
       mnemonic,
       tag,
-      type: InodeType.FILE,
+      type: InodeType.UPLOAD,
       parent,
       name: fileName,
       data: {

@@ -21,14 +21,18 @@ test.after.always(t => {
 })
 
 test('valid access token', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "admin", true);
   const { data } = await api.token.info();
   t.truthy(data);
   t.truthy(data!.isAdmin);
+  const api2 = client(t.context.port, "not_admin");
+  const { data: data2 } = await api2.token.info();
+  t.truthy(data2);
+  t.falsy(data2!.isAdmin);
 })
 
 test('create a dabih access_token', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_token");
   const { data } = await api.token.add({
     scopes: ["dabih:upload"],
     lifetime: null,
@@ -41,7 +45,7 @@ test('create a dabih access_token', async t => {
 })
 
 test('invalid scope', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_token");
   const { response } = await api.token.add({
     scopes: ["upload"],
     lifetime: null,
@@ -50,7 +54,7 @@ test('invalid scope', async t => {
 });
 
 test('use access token', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_token");
   const scopes = ["dabih:api"];
   const { data: token } = await api.token.add({
     scopes,
@@ -87,7 +91,7 @@ test('use access token', async t => {
 
 
 test('expire token', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_token");
   const scopes = ["dabih:api"];
   const { data: token } = await api.token.add({
     scopes,
@@ -108,7 +112,7 @@ test('expire token', async t => {
 });
 
 test('list tokens', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_token");
   const { data: token } = await api.token.add({
     scopes: [],
     lifetime: null,

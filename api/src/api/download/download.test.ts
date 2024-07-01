@@ -14,7 +14,7 @@ import { text } from 'node:stream/consumers';
 test.before(async t => {
   const port = await getPort();
   const server = await app(port);
-  const api = client(port, "download_user");
+  const api = client(port, "download_user", true);
   const privateKey = await crypto.privateKey.generate();
   const publicKey = crypto.privateKey.toPublicKey(privateKey);
   const jwk = crypto.publicKey.toJwk(publicKey);
@@ -56,8 +56,8 @@ test('download', async t => {
   const { privateKey } = t.context;
   const publicKey = crypto.privateKey.toPublicKey(privateKey);
   const keyHash = crypto.publicKey.toHash(publicKey);
-  const { keys, chunks } = dataset.data;
-  const encryptedKey = keys.find(k => k.publicKeyHash === keyHash);
+  const { keys, chunks, uid } = dataset.data;
+  const encryptedKey = keys.find(k => k.hash === keyHash);
   if (!encryptedKey) {
     t.fail();
     return;
@@ -69,7 +69,7 @@ test('download', async t => {
   const pStream = new PassThrough();
   for (const chunk of chunks) {
     const { hash, iv } = chunk;
-    const { data: stream } = await api.download.chunk(mnemonic, hash);
+    const { data: stream } = await api.download.chunk(uid, hash);
     if (!stream) {
       t.fail();
       return;
@@ -114,7 +114,7 @@ test('server decrypt', async t => {
   const publicKey = crypto.privateKey.toPublicKey(privateKey);
   const keyHash = crypto.publicKey.toHash(publicKey);
   const { keys } = dataset.data;
-  const encryptedKey = keys.find(k => k.publicKeyHash === keyHash);
+  const encryptedKey = keys.find(k => k.hash === keyHash);
   if (!encryptedKey) {
     t.fail();
     return;

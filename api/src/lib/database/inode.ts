@@ -1,11 +1,11 @@
 import db from "#lib/db";
 import crypto from "#crypto";
-
-import { NotFoundError, RequestError } from "src/api/errors";
+import { File } from "src/api/types";
 
 export enum InodeType {
   FILE = 0,
   DIRECTORY = 1,
+  UPLOAD = 2,
 }
 
 export const generateDataUid = async () => {
@@ -41,46 +41,30 @@ export const generateMnemonic = async () => {
   throw new Error("Failed to generate unique mnemonic");
 };
 
-
-
-export const getFile = async (mnemonic: string) => {
+export const listFiles = async (mnemonic: string): Promise<File[]> => {
   const inode = await db.inode.findUnique({
     where: {
       mnemonic,
-      type: InodeType.FILE,
+      deletedAt: null,
     },
     include: {
+      children: true,
       data: true,
     },
   });
   if (!inode) {
-    throw new NotFoundError(`No file found for mnemonic ${mnemonic}`);
+    return [];
   }
-  if (inode.deletedAt) {
-    throw new RequestError(`File ${mnemonic} has been deleted`);
+  const type = inode.type as InodeType;
+  if (type === InodeType.UPLOAD) {
+    return [];
   }
-  const { data } = inode;
-  if (!data) {
-    throw new Error(`Inode ${mnemonic} has type FILE but no data`);
+  if (type === InodeType.FILE) {
+    return [inode as File];
   }
-  return {
-    ...inode,
-    data,
-  };
-};
-
-export const getDirectory = async (mnemonic: string) => {
-  const inode = await db.inode.findUnique({
-    where: {
-      mnemonic,
-      type: InodeType.DIRECTORY,
-    },
-  });
-  if (!inode) {
-    throw new NotFoundError(`No directory found for mnemonic ${mnemonic}`);
-  }
-  return inode;
+  const promises = inode.children.map(child => listFiles(child.mnemonic));
+  const childLists = await Promise.all(promises);
+  return childLists.flat();
 }
-
 
 

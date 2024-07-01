@@ -2,6 +2,9 @@ import createClient from "openapi-fetch";
 
 import type { components, paths } from './schema';
 import mnemonic from "src/api/download/mnemonic";
+import addMember from "src/api/dataset/addMember";
+import addDirectory from "src/api/fs/addDirectory";
+import unfinished from "src/api/upload/unfinished";
 type schemas = components["schemas"];
 
 interface Chunk {
@@ -58,20 +61,16 @@ const init = (baseUrl: string) => {
     },
     cancel: (mnemonic: string) => c.POST('/upload/{mnemonic}/cancel', { params: { path: { mnemonic } } }),
     finish: (mnemonic: string) => c.POST('/upload/{mnemonic}/finish', { params: { path: { mnemonic } } }),
+    unfinished: () => c.GET('/upload/unfinished'),
   }
 
-  const dataset = {
-    get: (mnemonic: string) => c.GET('/dataset/{mnemonic}', { params: { path: { mnemonic } } }),
-    search: (body: schemas["SearchRequestBody"]) => c.POST('/dataset/search', { body }),
-    rename: (mnemonic: string, name: string) => c.POST('/dataset/{mnemonic}/rename', { params: { path: { mnemonic } }, body: { name } }),
-    remove: (mnemonic: string) => c.POST('/dataset/{mnemonic}/remove', { params: { path: { mnemonic } } }),
-    restore: (mnemonic: string) => c.POST('/dataset/{mnemonic}/restore', { params: { path: { mnemonic } } }),
-    destroy: (mnemonic: string, force?: boolean) => c.POST('/dataset/{mnemonic}/destroy', { params: { path: { mnemonic } }, body: { force: force ?? false } }),
-    addMember: (mnemonic: string, body: schemas["MemberAddBody"]) => c.POST('/dataset/{mnemonic}/addMember', { params: { path: { mnemonic } }, body }),
-    setAccess: (mnemonic: string, body: schemas["SetAccessBody"]) => c.POST('/dataset/{mnemonic}/setAccess', { params: { path: { mnemonic } }, body }),
-  }
   const fs = {
-    file: (mnemonic: string) => c.GET('/fs/file/{mnemonic}', { params: { path: { mnemonic } } }),
+    file: (mnemonic: string) => c.GET('/fs/{mnemonic}/file', { params: { path: { mnemonic } } }),
+    listMembers: (mnemonic: string) => c.GET('/fs/{mnemonic}/member/list', { params: { path: { mnemonic } } }),
+    listFiles: (mnemonic: string) => c.GET('/fs/{mnemonic}/file/list', { params: { path: { mnemonic } } }),
+    removeFile: (mnemonic: string) => c.POST('/fs/{mnemonic}/file/remove', { params: { path: { mnemonic } } }),
+    addMember: (mnemonic: string, body: schemas["MemberAddBody"]) => c.POST('/fs/{mnemonic}/member/add', { params: { path: { mnemonic } }, body }),
+    addDirectory: (name: string, parent?: string) => c.POST('/fs/directory/add', { body: { name, parent } }),
   };
 
   const download = {
@@ -82,9 +81,9 @@ const init = (baseUrl: string) => {
       },
       parseAs: 'stream',
     }),
-    chunk: (mnemonic: string, hash: string) => c.GET('/download/{mnemonic}/chunk/{hash}', {
+    chunk: (uid: string, hash: string) => c.GET('/download/{uid}/chunk/{hash}', {
       parseAs: 'stream',
-      params: { path: { mnemonic, hash } }
+      params: { path: { uid, hash } }
     }),
   };
   const util = {
@@ -100,7 +99,6 @@ const init = (baseUrl: string) => {
     user,
     fs,
     upload,
-    dataset,
     download,
     util,
   };

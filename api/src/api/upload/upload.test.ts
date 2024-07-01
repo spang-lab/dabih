@@ -9,19 +9,23 @@ import crypto from '#crypto';
 import { parseDigest, parseContentRange } from './util';
 import { KeyObject } from 'crypto';
 import { validChunkEnd } from './finish';
+import { join } from 'path';
 
 test.before(async t => {
   const port = await getPort();
   const server = await app(port);
-  const api = client(port);
+  const api = client(port, "test_uploader", true);
   const privateKey = await crypto.privateKey.generate();
   const publicKey = crypto.privateKey.toPublicKey(privateKey);
   const jwk = crypto.publicKey.toJwk(publicKey);
-  await api.user.add({
+  const { response } = await api.user.add({
     name: "test_user",
     email: "test_user@test.com",
     key: jwk,
   });
+  t.is(response.status, 201);
+
+
   t.context = {
     server,
     privateKey,
@@ -30,7 +34,7 @@ test.before(async t => {
 })
 
 test.after.always(async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_uploader");
   const { data: user } = await api.user.me();
   if (!user) {
     t.fail('No user');
@@ -41,22 +45,28 @@ test.after.always(async t => {
 })
 
 test('upload start', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_uploader");
   const { response, data: dataset } = await api.upload.start({
     fileName: "test.txt",
+    tag: "unfinished",
   });
   t.is(response.status, 201);
   if (!dataset) {
     t.fail('No dataset');
     return;
   }
-  const { response: response2 } = await api.upload.cancel(dataset.mnemonic);
-  t.is(response2.status, 204);
+  const { response: response2, data: unfinished } = await api.upload.unfinished();
+  const match = unfinished?.find(d => d.mnemonic === dataset.mnemonic);
+  t.truthy(match);
+  t.is(response2.status, 200);
+
+  const { response: response3 } = await api.upload.cancel(dataset.mnemonic);
+  t.is(response3.status, 204);
 });
 
 
 test('upload chunk', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_uploader");
   const { response: response, data: dataset } = await api.upload.start({
     fileName: "test.txt",
   });
@@ -83,7 +93,7 @@ test('upload chunk', async t => {
 
 
 test('full upload', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_uploader");
   const { response: response, data: dataset } = await api.upload.start({
     fileName: "test_ok.txt",
     size: 4,
@@ -112,15 +122,31 @@ test('full upload', async t => {
 
 
 test('upload blob', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_uploader");
   const data = new Blob(['test']);
   const { data: dataset, error } = await api.upload.blob({ fileName: 'test.txt', data });
   t.truthy(dataset);
   t.falsy(error);
 });
 
+test('upload blob into directory', async t => {
+  const api = client(t.context.port, "test_uploader");
+  const { data: directory } = await api.fs.addDirectory("test_dir");
+  if (!directory) {
+    t.fail('No directory');
+    return;
+  }
+  const data = new Blob(['test']);
+  const { data: dataset, error } = await api.upload.blob({
+    fileName: 'test.txt',
+    data, directory: directory.mnemonic
+  });
+  t.truthy(dataset);
+  t.falsy(error);
+});
+
 test('upload blob, multiple chunks', async t => {
-  const api = client(t.context.port);
+  const api = client(t.context.port, "test_uploader");
   const data = new Blob(['test data']);
   const { data: dataset } = await api.upload.blob({ fileName: 'test.txt', data },
     { chunkSize: 4 });

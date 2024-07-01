@@ -497,6 +497,11 @@
 						"format": "int32",
 						"description": "The database id of the chunk"
 					},
+					"dataId": {
+						"type": "number",
+						"format": "double",
+						"description": "The id of the data the chunk belongs to"
+					},
 					"hash": {
 						"type": "string",
 						"description": "The SHA-256 hash of the unencrypted chunk data base64url encoded"
@@ -533,6 +538,7 @@
 				},
 				"required": [
 					"id",
+					"dataId",
 					"hash",
 					"iv",
 					"start",
@@ -674,11 +680,11 @@
 						"type": "number",
 						"format": "double"
 					},
-					"datasetId": {
+					"dataId": {
 						"type": "number",
 						"format": "double"
 					},
-					"publicKeyHash": {
+					"hash": {
 						"type": "string"
 					},
 					"key": {
@@ -695,8 +701,8 @@
 				},
 				"required": [
 					"id",
-					"datasetId",
-					"publicKeyHash",
+					"dataId",
+					"hash",
 					"key",
 					"createdAt",
 					"updatedAt"
@@ -704,7 +710,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"DownloadData": {
+			"KeyData": {
 				"allOf": [
 					{
 						"$ref": "#/components/schemas/FileData"
@@ -716,7 +722,22 @@
 									"$ref": "#/components/schemas/Key"
 								},
 								"type": "array"
-							},
+							}
+						},
+						"required": [
+							"keys"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"DownloadData": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/KeyData"
+					},
+					{
+						"properties": {
 							"chunks": {
 								"items": {
 									"$ref": "#/components/schemas/Chunk"
@@ -725,11 +746,54 @@
 							}
 						},
 						"required": [
-							"keys",
 							"chunks"
 						],
 						"type": "object"
 					}
+				]
+			},
+			"FileDownload": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/File"
+					},
+					{
+						"properties": {
+							"data": {
+								"$ref": "#/components/schemas/DownloadData"
+							}
+						},
+						"required": [
+							"data"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"FileKeys": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/File"
+					},
+					{
+						"properties": {
+							"data": {
+								"$ref": "#/components/schemas/KeyData"
+							}
+						},
+						"required": [
+							"data"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"PermissionString": {
+				"type": "string",
+				"enum": [
+					"none",
+					"read",
+					"write"
 				]
 			},
 			"Member": {
@@ -745,9 +809,15 @@
 						"type": "number",
 						"format": "double"
 					},
+					"mnemonic": {
+						"$ref": "#/components/schemas/Mnemonic"
+					},
 					"permission": {
 						"type": "number",
 						"format": "double"
+					},
+					"permissionString": {
+						"$ref": "#/components/schemas/PermissionString"
 					},
 					"createdAt": {
 						"type": "string",
@@ -762,108 +832,66 @@
 					"id",
 					"sub",
 					"inodeId",
+					"mnemonic",
 					"permission",
+					"permissionString",
 					"createdAt",
 					"updatedAt"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FileResponse": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/File"
-					},
-					{
-						"properties": {
-							"members": {
-								"items": {
-									"$ref": "#/components/schemas/Member"
-								},
-								"type": "array"
-							},
-							"data": {
-								"$ref": "#/components/schemas/DownloadData"
-							}
-						},
-						"required": [
-							"members",
-							"data"
-						],
-						"type": "object"
-					}
-				]
-			},
 			"AESKey": {
 				"type": "string",
 				"description": "The AES-256 encryption key used to encrypt and decrypt datasets.\nbase64url encoded"
 			},
-			"Dataset": {
-				"description": "A dataset is a file uploaded to dabih.\nIt is a collection of chunks that are encrypted with the same keyHash",
+			"FileDecryptionKey": {
 				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The database id of the dataset"
-					},
 					"mnemonic": {
 						"$ref": "#/components/schemas/Mnemonic"
 					},
-					"fileName": {
-						"type": "string",
-						"description": "The name of the file the dataset was created from",
-						"example": "file.txt"
-					},
-					"createdBy": {
-						"type": "string",
-						"description": "The user that uploaded the dataset",
-						"example": "admin"
-					},
-					"keyHash": {
-						"type": "string",
-						"description": "The hash of the AES-256 encryption key base64url encoded"
-					},
-					"name": {
-						"type": "string",
-						"nullable": true,
-						"description": "A custom non unique name of the dataset"
-					},
-					"path": {
-						"type": "string",
-						"nullable": true,
-						"description": "The original path of the dataset"
-					},
-					"hash": {
-						"type": "string",
-						"nullable": true,
-						"description": "The hash of the entire dataset base64url encoded"
-					},
-					"size": {
-						"type": "integer",
-						"format": "int32",
-						"nullable": true,
-						"description": "The size of the dataset in bytes"
-					},
-					"chunks": {
+					"key": {
+						"$ref": "#/components/schemas/AESKey"
+					}
+				},
+				"required": [
+					"mnemonic",
+					"key"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MemberAddBody": {
+				"properties": {
+					"subs": {
 						"items": {
-							"$ref": "#/components/schemas/Chunk"
+							"type": "string"
 						},
 						"type": "array",
-						"description": "The list of chunks that make up the dataset"
-					},
-					"members": {
-						"items": {
-							"$ref": "#/components/schemas/Member"
-						},
-						"type": "array",
-						"description": "The list of members that have access to the dataset"
+						"description": "The users to add to the dataset"
 					},
 					"keys": {
 						"items": {
-							"$ref": "#/components/schemas/Key"
+							"$ref": "#/components/schemas/FileDecryptionKey"
 						},
 						"type": "array",
-						"description": "A list of encrypted keys for the dataset"
+						"description": "The list of AES-256 keys required to decrypt all child datasets"
+					}
+				},
+				"required": [
+					"subs",
+					"keys"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Directory": {
+				"properties": {
+					"mnemonic": {
+						"$ref": "#/components/schemas/Mnemonic"
+					},
+					"name": {
+						"type": "string"
 					},
 					"createdAt": {
 						"type": "string",
@@ -880,18 +908,8 @@
 					}
 				},
 				"required": [
-					"id",
 					"mnemonic",
-					"fileName",
-					"createdBy",
-					"keyHash",
 					"name",
-					"path",
-					"hash",
-					"size",
-					"chunks",
-					"members",
-					"keys",
 					"createdAt",
 					"updatedAt",
 					"deletedAt"
@@ -899,219 +917,23 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Omit_Dataset.chunks-or-keys_": {
+			"AddDirectoryBody": {
 				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The database id of the dataset"
-					},
-					"mnemonic": {
-						"type": "string"
-					},
-					"fileName": {
-						"type": "string",
-						"description": "The name of the file the dataset was created from",
-						"example": "file.txt"
-					},
-					"createdBy": {
-						"type": "string",
-						"description": "The user that uploaded the dataset",
-						"example": "admin"
-					},
-					"keyHash": {
-						"type": "string",
-						"description": "The hash of the AES-256 encryption key base64url encoded"
-					},
 					"name": {
 						"type": "string",
-						"description": "A custom non unique name of the dataset"
+						"description": "The name of the directory"
 					},
-					"path": {
+					"parent": {
+						"$ref": "#/components/schemas/Mnemonic",
+						"description": "The mnemonic of the parent directory"
+					},
+					"tag": {
 						"type": "string",
-						"description": "The original path of the dataset"
-					},
-					"hash": {
-						"type": "string",
-						"description": "The hash of the entire dataset base64url encoded"
-					},
-					"size": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The size of the dataset in bytes"
-					},
-					"members": {
-						"items": {
-							"$ref": "#/components/schemas/Member"
-						},
-						"type": "array",
-						"description": "The list of members that have access to the dataset"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time"
+						"description": "A custom serchable tag for the directory"
 					}
 				},
 				"required": [
-					"id",
-					"mnemonic",
-					"fileName",
-					"createdBy",
-					"keyHash",
-					"name",
-					"path",
-					"hash",
-					"size",
-					"members",
-					"createdAt",
-					"updatedAt",
-					"deletedAt"
-				],
-				"type": "object"
-			},
-			"SearchDataset": {
-				"$ref": "#/components/schemas/Omit_Dataset.chunks-or-keys_"
-			},
-			"SearchResponseBody": {
-				"properties": {
-					"count": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The total number of datasets that match the search query"
-					},
-					"datasets": {
-						"items": {
-							"$ref": "#/components/schemas/SearchDataset"
-						},
-						"type": "array",
-						"description": "The datasets that match the search query, paginated"
-					}
-				},
-				"required": [
-					"count",
-					"datasets"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Exclude_keyofSearchDataset.members_": {
-				"type": "string",
-				"enum": [
-					"id",
-					"mnemonic",
-					"fileName",
-					"createdBy",
-					"keyHash",
-					"name",
-					"path",
-					"hash",
-					"size",
-					"createdAt",
-					"updatedAt",
-					"deletedAt"
-				],
-				"description": "Exclude from T those types that are assignable to U"
-			},
-			"SearchRequestBody": {
-				"properties": {
-					"query": {
-						"type": "string",
-						"description": "The search query"
-					},
-					"fileName": {
-						"type": "string",
-						"description": "Search for datasets with a specific file name"
-					},
-					"name": {
-						"type": "string",
-						"description": "Search for datasets with a specific custom name"
-					},
-					"mnemonic": {
-						"type": "string",
-						"description": "Search for datasets with a specific mnemonic"
-					},
-					"hash": {
-						"type": "string",
-						"description": "Search for datasets with a specific key hash"
-					},
-					"showDeleted": {
-						"type": "boolean",
-						"description": "Also show deleted datasets"
-					},
-					"showAll": {
-						"type": "boolean",
-						"description": "Also show datasets the user does not have access to\nThis is ignored if the user is not an admin"
-					},
-					"skip": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The number of datasets to skip before returning results."
-					},
-					"take": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The maximum number of results to return"
-					},
-					"sortBy": {
-						"$ref": "#/components/schemas/Exclude_keyofSearchDataset.members_",
-						"description": "The field to sort the results by"
-					},
-					"sortDir": {
-						"type": "string",
-						"enum": [
-							"asc",
-							"desc"
-						],
-						"description": "The direction to sort the results by"
-					}
-				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"MemberAddBody": {
-				"properties": {
-					"sub": {
-						"type": "string",
-						"description": "The user to add to the dataset"
-					},
-					"key": {
-						"$ref": "#/components/schemas/AESKey"
-					}
-				},
-				"required": [
-					"sub",
-					"key"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SetAccessBody": {
-				"properties": {
-					"sub": {
-						"type": "string",
-						"description": "The user to set the permission for"
-					},
-					"permission": {
-						"type": "string",
-						"enum": [
-							"read",
-							"write",
-							"none"
-						],
-						"description": "The permission to set"
-					}
-				},
-				"required": [
-					"sub",
-					"permission"
+					"name"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1853,7 +1675,7 @@
 				}
 			}
 		},
-		"/fs/file/{mnemonic}": {
+		"/fs/{mnemonic}/file": {
 			"get": {
 				"operationId": "fileInfo",
 				"responses": {
@@ -1862,7 +1684,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FileResponse"
+									"$ref": "#/components/schemas/FileDownload"
 								}
 							}
 						}
@@ -1893,6 +1715,219 @@
 						}
 					}
 				]
+			}
+		},
+		"/fs/{mnemonic}/file/list": {
+			"get": {
+				"operationId": "listFiles",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/FileKeys"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Mnemonic"
+						}
+					}
+				]
+			}
+		},
+		"/fs/{mnemonic}/file/remove": {
+			"post": {
+				"operationId": "removeFile",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Mnemonic"
+						}
+					}
+				]
+			}
+		},
+		"/fs/{mnemonic}/member/list": {
+			"get": {
+				"operationId": "listMembers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Member"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Mnemonic"
+						}
+					}
+				]
+			}
+		},
+		"/fs/{mnemonic}/member/add": {
+			"post": {
+				"operationId": "addMembers",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Mnemonic"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MemberAddBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/fs/directory/add": {
+			"post": {
+				"operationId": "addDirectory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Directory"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AddDirectoryBody"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/download/{mnemonic}/decrypt": {
@@ -1982,7 +2017,7 @@
 				"parameters": []
 			}
 		},
-		"/download/{mnemonic}/chunk/{hash}": {
+		"/download/{uid}/chunk/{hash}": {
 			"get": {
 				"operationId": "downloadChunk",
 				"responses": {
@@ -2016,10 +2051,10 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "mnemonic",
+						"name": "uid",
 						"required": true,
 						"schema": {
-							"$ref": "#/components/schemas/Mnemonic"
+							"type": "string"
 						}
 					},
 					{
@@ -2031,357 +2066,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/dataset/{mnemonic}": {
-			"get": {
-				"operationId": "datasetInfo",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Dataset"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Dataset"
-				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "mnemonic",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/Mnemonic"
-						}
-					}
-				]
-			}
-		},
-		"/dataset/search": {
-			"post": {
-				"operationId": "searchDatasets",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SearchResponseBody"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Dataset"
-				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SearchRequestBody"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/dataset/{mnemonic}/addMember": {
-			"post": {
-				"operationId": "addMember",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Dataset"
-				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "mnemonic",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/Mnemonic"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/MemberAddBody"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/dataset/{mnemonic}/setAccess": {
-			"post": {
-				"operationId": "setAccess",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Dataset"
-				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "mnemonic",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/Mnemonic"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SetAccessBody"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/dataset/{mnemonic}/rename": {
-			"post": {
-				"operationId": "renameDataset",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Dataset"
-				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "mnemonic",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/Mnemonic"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"name": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"name"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/dataset/{mnemonic}/remove": {
-			"post": {
-				"operationId": "removeDataset",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Dataset"
-				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "mnemonic",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/Mnemonic"
-						}
-					}
-				]
-			}
-		},
-		"/dataset/{mnemonic}/restore": {
-			"post": {
-				"operationId": "restoreDataset",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Dataset"
-				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "mnemonic",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/Mnemonic"
-						}
-					}
-				]
-			}
-		},
-		"/dataset/{mnemonic}/destroy": {
-			"post": {
-				"operationId": "destroyDataset",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Dataset"
-				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "mnemonic",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/Mnemonic"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"force": {
-										"type": "boolean"
-									}
-								},
-								"required": [
-									"force"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/upload/{mnemonic}/chunk": {

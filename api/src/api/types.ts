@@ -15,6 +15,11 @@ export type Mnemonic = string;
   */
 export type AESKey = string;
 
+export interface FileDecryptionKey {
+  mnemonic: Mnemonic;
+  key: AESKey;
+};
+
 export interface User {
   sub: string;
   scopes: string[];
@@ -33,6 +38,10 @@ export interface Chunk {
     * @isInt
     */
   id: number;
+  /**
+    * The id of the data the chunk belongs to
+    */
+  dataId: number;
   /**
     * The SHA-256 hash of the unencrypted chunk data base64url encoded
     */
@@ -65,19 +74,23 @@ export interface Chunk {
   updatedAt: Date;
 }
 
+export type PermissionString = "none" | "read" | "write";
+
 export interface Member {
   id: number;
   sub: string;
   inodeId: number;
+  mnemonic: Mnemonic;
   permission: number;
+  permissionString: PermissionString;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface Key {
   id: number;
-  datasetId: number;
-  publicKeyHash: string;
+  dataId: number;
+  hash: string;
   key: string;
   createdAt: Date;
   updatedAt: Date;
@@ -155,9 +168,11 @@ export interface FileData {
   createdAt: Date;
   updatedAt: Date;
 }
-export type DownloadData = FileData & {
-  chunks: Chunk[];
+export type KeyData = FileData & {
   keys: Key[];
+};
+export type DownloadData = KeyData & {
+  chunks: Chunk[];
 };
 
 export interface File {
@@ -169,10 +184,11 @@ export interface File {
   updatedAt: Date;
   deletedAt: Date | null;
 }
-
-export type FileResponse = File & {
+export type FileKeys = File & {
+  data: KeyData;
+};
+export type FileDownload = File & {
   data: DownloadData;
-  members: Member[];
 };
 
 
@@ -184,6 +200,24 @@ export interface Directory {
   updatedAt: Date;
   deletedAt: Date | null;
 }
+
+
+export interface AddDirectoryBody {
+  /**
+    * The name of the directory
+    */
+  name: string;
+  /**
+    * The mnemonic of the parent directory
+    */
+  parent?: Mnemonic;
+  /**
+    * A custom serchable tag for the directory
+    */
+  tag?: string;
+}
+
+
 
 export interface UploadStartBody {
   /**
@@ -218,6 +252,8 @@ export interface Token {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
 
 export interface TokenAddBody {
   /**
@@ -426,12 +462,17 @@ export interface SearchResponseBody {
   datasets: SearchDataset[];
 }
 
+
+
 export interface MemberAddBody {
   /**
-    * The user to add to the dataset
+    * The users to add to the dataset
     */
-  sub: string;
-  key: AESKey;
+  subs: string[];
+  /**
+    * The list of AES-256 keys required to decrypt all child datasets
+    */
+  keys: FileDecryptionKey[];
 }
 
 export interface SetAccessBody {

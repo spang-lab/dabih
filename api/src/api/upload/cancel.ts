@@ -1,5 +1,4 @@
 
-import { getFile } from '#lib/database/inode';
 import { Permission, getPermission } from '#lib/database/member';
 import db from '#lib/db';
 import { removeBucket } from '#lib/fs';
@@ -10,27 +9,32 @@ export default async function cancel(user: User, mnemonic: string) {
   if (!user.isAdmin) {
     const permission = await getPermission(mnemonic, user.sub);
     if (permission !== Permission.WRITE) {
-      throw new AuthorizationError('Not authorized to cancel this dataset');
+      throw new AuthorizationError('Not authorized to cancel this upload');
     }
   }
-  const file = await getFile(mnemonic);
-  const { uid } = file.data;
-
-  await db.fileData.update({
+  const file = await db.inode.update({
     where: {
-      uid,
+      mnemonic,
     },
     data: {
-      keys: {
-        deleteMany: {}
-      },
-      chunks: {
-        deleteMany: {}
-      },
+      data: {
+        update: {
+          keys: {
+            deleteMany: {}
+          },
+          chunks: {
+            deleteMany: {}
+          }
+        }
+      }
     },
     include: {
-      keys: true,
-      chunks: true,
+      data: {
+        include: {
+          keys: true,
+          chunks: true,
+        },
+      }
     }
   });
   await db.inode.update({
@@ -51,5 +55,10 @@ export default async function cancel(user: User, mnemonic: string) {
       mnemonic,
     }
   });
-  await removeBucket(uid);
+
+  const { data } = file;
+  if (!data) {
+    throw new Error(`Inode ${mnemonic} has type UPLOAD but no data`);
+  }
+  await removeBucket(data.uid);
 }

@@ -1,53 +1,46 @@
-import { User } from "../types";
+import { FileDownload, User } from "../types";
 import db from "#lib/db";
-import { getMembers, Permission } from "#lib/database/member";
 
-import { AuthorizationError } from "../errors";
-import { getFile } from "#lib/database/inode";
+import { AuthorizationError, NotFoundError } from "../errors";
+import { InodeType } from "#lib/database/inode";
+import { getUserKeys } from "#lib/database/keys";
 
 export default async function file(user: User, mnemonic: string) {
-  const { sub, isAdmin } = user;
-  const file = await getFile(mnemonic);
-  const members = await getMembers(mnemonic, Permission.READ);
-  if (!isAdmin && !members.some(m => m.sub === sub)) {
-    throw new AuthorizationError(`User ${sub} does not have permission to access file ${mnemonic}`);
-  }
-  const result = await db.user.findUnique({
-    where: { sub },
-    include: {
-      keys: {
-        where: {
-          enabled: {
-            not: null
-          }
-        }
-      }
-    }
-  });
-  const keys = result?.keys ?? [];
-  const hashes = keys.map(k => k.hash);
-  const { uid } = file.data;
-  const data = await db.fileData.findUnique({
+  const { isAdmin, sub } = user;
+  const publicKeys = await getUserKeys(sub);
+  const file = await db.inode.findUnique({
     where: {
-      uid,
+      mnemonic,
+      type: InodeType.FILE,
     },
     include: {
-      chunks: true,
-      keys: {
-        where: {
-          publicKeyHash: {
-            in: hashes
+      data: {
+        include: {
+          chunks: true,
+          keys: {
+            where: {
+              hash: {
+                in: publicKeys.map(k => k.hash)
+              }
+            }
           }
         }
-      }
-    }
+      },
+    },
   });
-  if (!data) {
-    throw new Error(`Data ${uid} not found`);
+  if (!file) {
+    throw new NotFoundError(`No file found for mnemonic ${mnemonic}`);
   }
-  return {
-    ...file,
-    data,
-    members,
-  };
+  if (file.deletedAt) {
+    throw new Error(`File ${mnemonic} has been deleted`);
+  }
+  const { data } = file;
+  if (!data) {
+    throw new Error(`Inode ${mnemonic} has type FILE but no data`);
+  }
+  const { keys } = data;
+  if (keys.length === 0 && !isAdmin) {
+    throw new AuthorizationError(`User keys do not match file keys for file ${mnemonic}`);
+  }
+  return file as FileDownload;
 }

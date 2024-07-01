@@ -51,16 +51,16 @@ export class DownloadController extends Controller {
     return stream;
   }
 
-  @Get("{mnemonic}/chunk/{hash}")
+  @Get("{uid}/chunk/{hash}")
   @Security("api_key", ['dabih:api'])
   @Security("jwt", ['dabih:api'])
   @OperationId("downloadChunk")
   @Produces('application/octet-stream')
   public chunk(
-    @Path() mnemonic: Mnemonic,
+    @Path() uid: string,
     @Path() hash: string,
   ): Promise<Readable> {
     this.setHeader("Content-Type", "application/octet-stream");
-    return chunk(mnemonic, hash);
+    return chunk(uid, hash);
   }
 }
