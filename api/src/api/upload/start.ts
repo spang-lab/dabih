@@ -19,7 +19,6 @@ export default async function start(user: User, body: UploadStartBody): Promise<
   if (publicKeys.length === 0) {
     throw new RequestError(`User ${sub} has no public keys for encryption`);
   }
-
   const {
     fileName, directory, filePath, size, tag,
   } = body;
@@ -81,7 +80,7 @@ export default async function start(user: User, body: UploadStartBody): Promise<
     },
   });
   await storeKey(sub, mnemonic, key);
-  await addKeys(mnemonic, key);
+  await addKeys(mnemonic, [{ mnemonic, key }], publicKeys);
   await createBucket(uid);
   return {
     ...inode,

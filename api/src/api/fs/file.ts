@@ -16,7 +16,11 @@ export default async function file(user: User, mnemonic: string) {
     include: {
       data: {
         include: {
-          chunks: true,
+          chunks: {
+            orderBy: {
+              start: 'asc'
+            },
+          },
           keys: {
             where: {
               hash: {

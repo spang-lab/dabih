@@ -71,6 +71,7 @@
   "imports": {
     "#lib/*": "./src/lib/*.ts",
     "#util/*": "./src/lib/util/*.ts",
-    "#crypto": "./src/lib/crypto/index.ts"
+    "#crypto": "./src/lib/crypto/index.ts",
+    "#ava": "./src/lib/ava.ts"
   }
 }

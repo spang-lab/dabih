@@ -212,12 +212,33 @@ export interface AddDirectoryBody {
     */
   parent?: Mnemonic;
   /**
-    * A custom serchable tag for the directory
+    * A custom searchable tag for the directory
     */
   tag?: string;
 }
 
-
+export interface MoveInodeBody {
+  /**
+    * The mnemonic of the inode to move
+    */
+  mnemonic: Mnemonic;
+  /**
+    * Optional: The mnemonic of the new parent directory
+    */
+  parent?: Mnemonic;
+  /**
+    * The list of AES-256 keys required to decrypt all child datasets
+    */
+  keys?: FileDecryptionKey[];
+  /**
+    * Optional: The new name of the inode
+    */
+  name?: string;
+  /**
+    * Optional: The new tag of the inode
+    */
+  tag?: string;
+}
 
 export interface UploadStartBody {
   /**
@@ -238,7 +259,7 @@ export interface UploadStartBody {
     */
   size?: number;
   /**
-    * A custom serchable tag for the file
+    * A custom searchable tag for the file
     */
   tag?: string;
 }

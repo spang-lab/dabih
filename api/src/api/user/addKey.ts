@@ -10,7 +10,12 @@ export default async function addKey(user: User, body: KeyAddBody) {
   if (!isAdmin && user.sub !== body.sub) {
     throw new AuthorizationError('Not authorized to this user');
   }
-  const key = convertKey(user, body.data, body.isRootKey);
+  const isRootKey = body.isRootKey ?? false;
+  if (isRootKey && !isAdmin) {
+    throw new AuthorizationError('Not authorized to add root key');
+  }
+
+  const key = convertKey(user, body.data, isRootKey);
 
   const result = await db.user.update({
     where: {

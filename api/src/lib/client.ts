@@ -3,8 +3,8 @@ import { getEnv, requireEnv } from './env';
 import createClient from 'build/api';
 import type { components } from 'build/schema';
 type schemas = components["schemas"];
-import { createHash } from 'crypto';
 import { Middleware } from 'openapi-fetch';
+import crypto from '#crypto';
 
 
 type Upload = schemas["UploadStartBody"] & {
@@ -18,7 +18,7 @@ interface UploadOptions {
 };
 
 const hashBlob = async (data: Blob) => {
-  const hash = createHash('sha256');
+  const hash = crypto.hash.create();
   const buffer = Buffer.from(await data.arrayBuffer());
   hash.update(buffer);
   return hash.digest('base64url');
@@ -72,7 +72,7 @@ const init = (port: number, sub: string, admin?: boolean) => {
     const { data } = info;
     const { mnemonic } = dataset;
     let cursor = 0;
-    const hasher = createHash('sha256');
+    const hasher = crypto.hash.create();
     while (cursor < data.size) {
       const chunkData = data.slice(cursor, cursor + chunkSize);
       const chunk = {
@@ -105,6 +105,10 @@ const init = (port: number, sub: string, admin?: boolean) => {
       data: result,
     }
   };
+
+
+
+
   return {
     ...api,
     upload: {

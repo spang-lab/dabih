@@ -20,6 +20,15 @@ test.before(async t => {
     email: "test_fs@test.com",
     key: jwk,
   });
+  const privateKey2 = await crypto.privateKey.generate();
+  const publicKey2 = crypto.privateKey.toPublicKey(privateKey2);
+  const jwk2 = crypto.publicKey.toJwk(publicKey2);
+  await api.user.add({
+    sub: "test_fs2",
+    name: "test_fs2",
+    email: "test_fs@test.com",
+    key: jwk2,
+  });
 
   const data = new Blob(["test data"]);
   await api.upload.blob({ fileName: "test.txt", data, tag: "test_tag" });
@@ -68,6 +77,35 @@ test('invalid mnemonic', async t => {
   const { response } = await api.fs.file("invalid_mnemonic");
   t.is(response.status, 404);
 })
+
+test('mv file', async t => {
+  const api = client(t.context.port, "test_fs");
+  const { data: file } = await api.upload.blob({
+    fileName: "mv.txt",
+    data: new Blob(["test data"]),
+    tag: "file_test",
+  });
+  if (!file) {
+    t.fail();
+    return;
+  }
+  const { data: directory } = await api.fs.addDirectory("test_dir");
+  if (!directory) {
+    t.fail();
+    return;
+  }
+  const { response } = await api.fs.addMember(directory.mnemonic, {
+    subs: ["test_fs2"],
+    keys: [],
+  });
+  t.is(response.status, 204);
+
+  const { response: response2 } = await api.fs.move({
+    mnemonic: file.mnemonic,
+    parent: directory.mnemonic,
+  });
+  t.is(response2.status, 204);
+});
 
 
 test('file list', async t => {

@@ -18,8 +18,9 @@ import listFiles from "./listFiles";
 import removeFile from "./removeFile";
 import addMembers from "./addMembers";
 import addDirectory from "./addDirectory";
+import move from "./move";
 
-import { AddDirectoryBody, Directory, FileDownload, FileKeys, Member, MemberAddBody, Mnemonic, RequestWithUser, } from "../types";
+import { AddDirectoryBody, Directory, FileDownload, FileKeys, Member, MemberAddBody, Mnemonic, MoveInodeBody, RequestWithUser, } from "../types";
 
 @Route("fs")
 @Tags("Filesystem")
@@ -74,7 +75,15 @@ export class FilesystemController extends Controller {
     return addMembers(user, mnemonic, body);
   }
 
-
+  @Post("move")
+  @OperationId("moveInode")
+  public async move(
+    @Body() body: MoveInodeBody,
+    @Request() request: RequestWithUser,
+  ): Promise<void> {
+    const { user } = request;
+    return move(user, body);
+  }
 
   @Post("directory/add")
   @OperationId("addDirectory")

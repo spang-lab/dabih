@@ -367,6 +367,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fs/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["moveInode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/fs/directory/add": {
         parameters: {
             query?: never;
@@ -616,7 +632,7 @@ export interface components {
              * @description The size of the file in bytes
              */
             size?: number;
-            /** @description A custom serchable tag for the file */
+            /** @description A custom searchable tag for the file */
             tag?: string;
         };
         Chunk: {
@@ -746,6 +762,18 @@ export interface components {
             /** @description The list of AES-256 keys required to decrypt all child datasets */
             keys: components["schemas"]["FileDecryptionKey"][];
         };
+        MoveInodeBody: {
+            /** @description The mnemonic of the inode to move */
+            mnemonic: components["schemas"]["Mnemonic"];
+            /** @description Optional: The mnemonic of the new parent directory */
+            parent?: components["schemas"]["Mnemonic"];
+            /** @description The list of AES-256 keys required to decrypt all child datasets */
+            keys?: components["schemas"]["FileDecryptionKey"][];
+            /** @description Optional: The new name of the inode */
+            name?: string;
+            /** @description Optional: The new tag of the inode */
+            tag?: string;
+        };
         Directory: {
             mnemonic: components["schemas"]["Mnemonic"];
             name: string;
@@ -761,7 +789,7 @@ export interface components {
             name: string;
             /** @description The mnemonic of the parent directory */
             parent?: components["schemas"]["Mnemonic"];
-            /** @description A custom serchable tag for the directory */
+            /** @description A custom searchable tag for the directory */
             tag?: string;
         };
     };
@@ -1272,6 +1300,28 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["MemberAddBody"];
+            };
+        };
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    moveInode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MoveInodeBody"];
             };
         };
         responses: {

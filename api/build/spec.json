@@ -481,7 +481,7 @@
 					},
 					"tag": {
 						"type": "string",
-						"description": "A custom serchable tag for the file"
+						"description": "A custom searchable tag for the file"
 					}
 				},
 				"required": [
@@ -885,6 +885,38 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"MoveInodeBody": {
+				"properties": {
+					"mnemonic": {
+						"$ref": "#/components/schemas/Mnemonic",
+						"description": "The mnemonic of the inode to move"
+					},
+					"parent": {
+						"$ref": "#/components/schemas/Mnemonic",
+						"description": "Optional: The mnemonic of the new parent directory"
+					},
+					"keys": {
+						"items": {
+							"$ref": "#/components/schemas/FileDecryptionKey"
+						},
+						"type": "array",
+						"description": "The list of AES-256 keys required to decrypt all child datasets"
+					},
+					"name": {
+						"type": "string",
+						"description": "Optional: The new name of the inode"
+					},
+					"tag": {
+						"type": "string",
+						"description": "Optional: The new tag of the inode"
+					}
+				},
+				"required": [
+					"mnemonic"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Directory": {
 				"properties": {
 					"mnemonic": {
@@ -929,7 +961,7 @@
 					},
 					"tag": {
 						"type": "string",
-						"description": "A custom serchable tag for the directory"
+						"description": "A custom searchable tag for the directory"
 					}
 				},
 				"required": [
@@ -1881,6 +1913,42 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/MemberAddBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/fs/move": {
+			"post": {
+				"operationId": "moveInode",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MoveInodeBody"
 							}
 						}
 					}

@@ -71,6 +71,7 @@ const init = (baseUrl: string) => {
     removeFile: (mnemonic: string) => c.POST('/fs/{mnemonic}/file/remove', { params: { path: { mnemonic } } }),
     addMember: (mnemonic: string, body: schemas["MemberAddBody"]) => c.POST('/fs/{mnemonic}/member/add', { params: { path: { mnemonic } }, body }),
     addDirectory: (name: string, parent?: string) => c.POST('/fs/directory/add', { body: { name, parent } }),
+    move: (body: schemas["MoveInodeBody"]) => c.POST('/fs/move', { body }),
   };
 
   const download = {
