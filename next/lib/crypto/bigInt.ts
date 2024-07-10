@@ -1,6 +1,6 @@
 /* global BigInt */
 
-function GCD(a: bigint, b: bigint) {
+function GCD(a: bigint, b: bigint): [bigint, bigint, bigint] {
   if (b === BigInt(0)) {
     return [BigInt(1), BigInt(0), a];
   }

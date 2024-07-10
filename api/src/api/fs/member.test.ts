@@ -54,22 +54,12 @@ test('add member', async t => {
   const api = client(t, "test_owner");
   const mnemonic = t.context.files.test_file;
   const privateKey = t.context.users.test_owner;
-  const { data: file, response } = await api.fs.file(mnemonic);
-  const publicKey = crypto.privateKey.toPublicKey(privateKey);
-  const keyHash = crypto.publicKey.toHash(publicKey);
-  t.is(response.status, 200);
+  const { data: file } = await api.fs.file(mnemonic);
   if (!file) {
     t.fail();
     return;
   }
-  const encryptedKey = file.data.keys.find(k => k.hash === keyHash);
-  if (!encryptedKey) {
-    t.fail();
-    return;
-  }
-  const aesKey = crypto.privateKey.decrypt(privateKey, encryptedKey.key);
-  const aesHash = crypto.aesKey.toHash(aesKey);
-  t.is(aesHash, file.data.keyHash);
+  const aesKey = crypto.fileData.decryptKey(privateKey, file.data);
 
   const { response: response2 } = await api.fs.addMember(mnemonic, {
     subs: ["test_member"],
@@ -80,22 +70,14 @@ test('add member', async t => {
   });
   t.is(response2.status, 204);
   const api2 = client(t, "test_member");
-  const { data: dataset2 } = await api2.fs.file(mnemonic);
-  if (!dataset2) {
+  const { data: file2 } = await api2.fs.file(mnemonic);
+  if (!file2) {
     t.fail();
     return;
   }
   const privateKey2 = t.context.users.test_member;
-  const publicKey2 = crypto.privateKey.toPublicKey(privateKey2);
-  const keyHash2 = crypto.publicKey.toHash(publicKey2);
-  const encryptedKey2 = dataset2.data.keys.find(k => k.hash === keyHash2);
-  if (!encryptedKey2) {
-    t.fail();
-    return;
-  }
-  const aesKey2 = crypto.privateKey.decrypt(privateKey2, encryptedKey2.key);
-  const aesHash2 = crypto.aesKey.toHash(aesKey2);
-  t.is(aesHash, aesHash2);
+  const aesKey2 = crypto.fileData.decryptKey(privateKey2, file2.data);
+  t.is(aesKey, aesKey2);
 })
 
 

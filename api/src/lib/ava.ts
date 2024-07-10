@@ -28,15 +28,6 @@ export interface Upload {
   chunkSize?: number;
 }
 
-const hashBlob = async (data: Blob) => {
-  const hash = crypto.hash.create();
-  const buffer = Buffer.from(await data.arrayBuffer());
-  hash.update(buffer);
-  return hash.digest('base64url');
-}
-
-
-
 export const client = (t: Test, sub: string, admin?: boolean) => {
   const { port } = t.context;
   const host = `http://localhost:${port}`;
@@ -92,7 +83,7 @@ export const client = (t: Test, sub: string, admin?: boolean) => {
         start: cursor,
         end: cursor + chunkData.size - 1,
         size: data.size,
-        hash: await hashBlob(chunkData),
+        hash: await crypto.hash.blob(chunkData),
         data: chunkData,
       }
       hasher.update(chunk.hash, 'base64url');

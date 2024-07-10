@@ -86,23 +86,31 @@ const fromPEM = async (pemString: string) => {
   const keyString = base64url.fromBase64(match[1]);
   return fromBase64(keyString);
 };
+
+type SmallJWK = Pick<JsonWebKey, 'p' | 'q' | 'd' | 'e'>;
+
 const toJSON = async (privateKey: CryptoKey) => {
-  const {
-    p, q, e, d,
-  } = await toJWK(privateKey);
+  const jwk = await toJWK(privateKey);
+  if (jwk.kty !== 'RSA') {
+    throw new Error(`Invalid JWK type, ${jwk.kty} needs to be RSA`);
+  }
+  const { p, q, e, d } = jwk;
+  if (!p || !q || !d || !e) {
+    throw new Error('Invalid JWK');
+  }
   return JSON.stringify({
     p, q, e, d,
   });
 };
 
 const fromJSON = async (json: string) => {
-  const rJWK = JSON.parse(json);
+  const rJWK = JSON.parse(json) as SmallJWK;
   const {
-    p, q, d,
+    p, q, d, e,
   } = rJWK;
-  const na = new Uint8Array(p.length + q.length);
-  na.set(p, 0);
-  na.set(q, p.length);
+  if (!p || !q || !d) {
+    throw new Error('Invalid JWK');
+  }
   const pi = base64url.toBigInt(p);
   const qi = base64url.toBigInt(q);
   const ni = pi * qi;
@@ -118,7 +126,7 @@ const fromJSON = async (json: string) => {
     dp: base64url.fromBigInt(dpi),
     dq: base64url.fromBigInt(dqi),
     qi: base64url.fromBigInt(qqi),
-    ...rJWK,
+    e,
   };
   return fromJWK(jwkData);
 };

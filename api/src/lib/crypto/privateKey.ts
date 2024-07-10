@@ -4,6 +4,7 @@ import {
   createPublicKey,
   privateDecrypt,
   constants,
+  createHash,
 } from 'node:crypto';
 
 import { promisify } from 'util';
@@ -46,6 +47,15 @@ const toPublicKey = (key: KeyObject) => {
   });
   return publicKey;
 }
+const toHash = (key: KeyObject) => {
+  const publicKey = toPublicKey(key);
+  const buffer = publicKey.export(
+    { type: 'spki', format: 'der' }
+  );
+  const hasher = createHash('sha256');
+  hasher.update(buffer);
+  return hasher.digest('base64url');
+}
 
 const decrypt = (key: KeyObject, base64: string) => {
   const buffer = base64url.toUint8(base64);
@@ -57,12 +67,12 @@ const decrypt = (key: KeyObject, base64: string) => {
   return base64url.fromUint8(result);
 }
 
-
 const privateKey = {
   generatePair,
   generate,
   decrypt,
   toJwk,
   toPublicKey,
+  toHash,
 };
 export default privateKey;
