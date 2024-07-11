@@ -1,7 +1,7 @@
-import db from "#lib/db";
-import { Member, PermissionString } from "src/api/types";
+import db from '#lib/db'
+import { Member, PermissionString } from 'src/api/types'
 
-import { NotFoundError } from "src/api/errors";
+import { NotFoundError } from 'src/api/errors'
 
 export enum Permission {
   NONE = 0,
@@ -13,31 +13,36 @@ export const parsePermission = (permission: string): Permission => {
   switch (permission.toLowerCase()) {
     case 'r':
     case 'read':
-      return Permission.READ;
+      return Permission.READ
     case 'w':
     case 'write':
-      return Permission.WRITE;
+      return Permission.WRITE
     case 'n':
     case 'none':
-      return Permission.NONE;
+      return Permission.NONE
     default:
-      throw new Error(`Invalid permission string ${permission}`);
+      throw new Error(`Invalid permission string ${permission}`)
   }
 }
-export const toPermissionString = (permission: Permission): PermissionString => {
+export const toPermissionString = (
+  permission: Permission,
+): PermissionString => {
   switch (permission) {
     case Permission.READ:
-      return 'read';
+      return 'read'
     case Permission.WRITE:
-      return 'write';
+      return 'write'
     case Permission.NONE:
-      return 'none';
+      return 'none'
   }
 }
 
-const getMembersRecursive = async (inodeId: number | null, hasPermission: Permission): Promise<Member[]> => {
+const getMembersRecursive = async (
+  inodeId: number | null,
+  hasPermission: Permission,
+): Promise<Member[]> => {
   if (!inodeId) {
-    return [];
+    return []
   }
   const inode = await db.inode.findUnique({
     where: {
@@ -49,25 +54,27 @@ const getMembersRecursive = async (inodeId: number | null, hasPermission: Permis
           permission: {
             gte: hasPermission,
           },
-        }
-      }
-    }
-  });
+        },
+      },
+    },
+  })
   if (!inode) {
-    throw new NotFoundError(`Inode ${inodeId} not found`);
+    throw new NotFoundError(`Inode ${inodeId} not found`)
   }
-  const members = inode.members.map(m => ({
+  const members = inode.members.map((m) => ({
     ...m,
     permissionString: toPermissionString(m.permission),
     mnemonic: inode.mnemonic,
-  }));
+  }))
 
-  const parentMembers = await getMembersRecursive(inode.parentId, hasPermission);
-  return [...members, ...parentMembers];
+  const parentMembers = await getMembersRecursive(inode.parentId, hasPermission)
+  return [...members, ...parentMembers]
 }
 
-
-export const getMembers = async (mnemonic: string, hasPermission: Permission) => {
+export const getMembers = async (
+  mnemonic: string,
+  hasPermission: Permission,
+) => {
   const inode = await db.inode.findUnique({
     where: {
       mnemonic,
@@ -78,29 +85,31 @@ export const getMembers = async (mnemonic: string, hasPermission: Permission) =>
           permission: {
             gte: hasPermission,
           },
-        }
-      }
-    }
-  });
+        },
+      },
+    },
+  })
   if (!inode) {
-    throw new NotFoundError(`Inode ${mnemonic} not found`);
+    throw new NotFoundError(`Inode ${mnemonic} not found`)
   }
-  const members = inode.members.map(m => ({
+  const members = inode.members.map((m) => ({
     ...m,
     permissionString: toPermissionString(m.permission),
     mnemonic,
-  }));
-  const pMembers = await getMembersRecursive(inode.parentId, hasPermission);
+  }))
+  const pMembers = await getMembersRecursive(inode.parentId, hasPermission)
   return {
     ...inode,
     members: [...members, ...pMembers],
-  };
-
+  }
 }
 
-const getPermissionRecursive = async (inodeId: number | null, sub: string): Promise<Permission> => {
+const getPermissionRecursive = async (
+  inodeId: number | null,
+  sub: string,
+): Promise<Permission> => {
   if (!inodeId) {
-    return Permission.NONE;
+    return Permission.NONE
   }
   const inode = await db.inode.findUnique({
     where: {
@@ -110,18 +119,18 @@ const getPermissionRecursive = async (inodeId: number | null, sub: string): Prom
       members: {
         where: {
           sub,
-        }
-      }
-    }
-  });
+        },
+      },
+    },
+  })
   if (!inode) {
-    throw new NotFoundError(`Inode ${inodeId} not found`);
+    throw new NotFoundError(`Inode ${inodeId} not found`)
   }
-  const member = inode.members[0];
+  const member = inode.members[0]
   if (member) {
-    return member.permission as Permission;
+    return member.permission as Permission
   }
-  return getPermissionRecursive(inode.parentId, sub);
+  return getPermissionRecursive(inode.parentId, sub)
 }
 
 export const getPermission = async (mnemonic: string, sub: string) => {
@@ -133,16 +142,16 @@ export const getPermission = async (mnemonic: string, sub: string) => {
       members: {
         where: {
           sub,
-        }
-      }
-    }
-  });
+        },
+      },
+    },
+  })
   if (!inode) {
-    throw new NotFoundError(`Inode ${mnemonic} not found`);
+    throw new NotFoundError(`Inode ${mnemonic} not found`)
   }
-  const member = inode.members[0];
+  const member = inode.members[0]
   if (member) {
-    return member.permission as Permission;
+    return member.permission as Permission
   }
-  return getPermissionRecursive(inode.parentId, sub);
+  return getPermissionRecursive(inode.parentId, sub)
 }

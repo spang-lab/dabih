@@ -1,28 +1,28 @@
+import db from '#lib/db';
+import crypto from '#crypto';
+import { storeKey } from '#lib/keyv';
+import { addKeys } from '#lib/database/keys';
+import publicKey from '#lib/database/publicKey';
+import { Permission } from '#lib/database/member';
+import { InodeType } from '#lib/database/inode';
+import { createBucket } from '#lib/fs';
 
-import db from "#lib/db";
-import crypto from "#crypto";
-import { storeKey } from "#lib/keyv";
-import { addKeys, getUserKeys } from "#lib/database/keys";
-import { Permission } from "#lib/database/member";
-import { InodeType } from "#lib/database/inode";
-import { createBucket } from "#lib/fs";
+import { User, UploadStartBody, File } from '../types';
+import { RequestError } from '../errors';
+import { generateMnemonic, generateDataUid } from '#lib/database/inode';
 
-import { User, UploadStartBody, File } from "../types";
-import { RequestError } from "../errors";
-import { generateMnemonic, generateDataUid } from "#lib/database/inode";
-
-
-
-export default async function start(user: User, body: UploadStartBody): Promise<File> {
+export default async function start(
+  user: User,
+  body: UploadStartBody,
+): Promise<File> {
   const { sub } = user;
-  const publicKeys = await getUserKeys(sub);
+  const userKeys = await publicKey.listUser(sub);
+  const rootKeys = await publicKey.listRoot();
+  const publicKeys = userKeys.concat(rootKeys);
   if (publicKeys.length === 0) {
     throw new RequestError(`User ${sub} has no public keys for encryption`);
   }
-  const {
-    fileName, directory, filePath, size, tag,
-  } = body;
-
+  const { fileName, directory, filePath, size, tag } = body;
 
   let parent = undefined;
   if (directory) {
@@ -40,8 +40,8 @@ export default async function start(user: User, body: UploadStartBody): Promise<
     }
     parent = {
       connect: {
-        id: dir.id
-      }
+        id: dir.id,
+      },
     };
   }
   const mnemonic = await generateMnemonic();
@@ -57,7 +57,7 @@ export default async function start(user: User, body: UploadStartBody): Promise<
       keyHash,
       size,
       createdBy: sub,
-    }
+    },
   });
   const inode = await db.inode.create({
     data: {
@@ -68,15 +68,15 @@ export default async function start(user: User, body: UploadStartBody): Promise<
       name: fileName,
       data: {
         connect: {
-          id: data.id
-        }
+          id: data.id,
+        },
       },
       members: {
         create: {
           sub,
           permission: Permission.WRITE,
-        }
-      }
+        },
+      },
     },
   });
   await storeKey(sub, mnemonic, key);
@@ -87,5 +87,3 @@ export default async function start(user: User, body: UploadStartBody): Promise<
     data,
   };
 }
-
-

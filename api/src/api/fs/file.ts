@@ -1,13 +1,17 @@
-import { FileDownload, User } from "../types";
-import db from "#lib/db";
+import { FileDownload, User } from '../types';
+import db from '#lib/db';
 
-import { AuthorizationError, NotFoundError } from "../errors";
-import { InodeType } from "#lib/database/inode";
-import { getUserKeys } from "#lib/database/keys";
+import { AuthorizationError, NotFoundError } from '../errors';
+import { InodeType } from '#lib/database/inode';
+import publicKey from '#lib/database/publicKey';
 
 export default async function file(user: User, mnemonic: string) {
   const { isAdmin, sub } = user;
-  const publicKeys = await getUserKeys(sub);
+  let publicKeys = await publicKey.listUser(sub);
+  if (isAdmin) {
+    const rootKeys = await publicKey.listRoot();
+    publicKeys = publicKeys.concat(rootKeys);
+  }
   const file = await db.inode.findUnique({
     where: {
       mnemonic,
@@ -18,17 +22,17 @@ export default async function file(user: User, mnemonic: string) {
         include: {
           chunks: {
             orderBy: {
-              start: 'asc'
+              start: 'asc',
             },
           },
-          keys: {
-            where: {
-              hash: {
-                in: publicKeys.map(k => k.hash)
-              }
-            }
-          }
-        }
+        },
+      },
+      keys: {
+        where: {
+          hash: {
+            in: publicKeys.map((k) => k.hash),
+          },
+        },
       },
     },
   });
@@ -42,9 +46,11 @@ export default async function file(user: User, mnemonic: string) {
   if (!data) {
     throw new Error(`Inode ${mnemonic} has type FILE but no data`);
   }
-  const { keys } = data;
+  const { keys } = file;
   if (keys.length === 0 && !isAdmin) {
-    throw new AuthorizationError(`User keys do not match file keys for file ${mnemonic}`);
+    throw new AuthorizationError(
+      `User keys do not match file keys for file ${mnemonic}`,
+    );
   }
   return file as FileDownload;
 }

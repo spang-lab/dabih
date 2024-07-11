@@ -594,6 +594,19 @@ export interface components {
          * @example happy_jane
          */
         Mnemonic: string;
+        FileNode: {
+            /** Format: double */
+            id: number;
+            mnemonic: components["schemas"]["Mnemonic"];
+            name: string;
+            tag: string | null;
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+            /** Format: date-time */
+            deletedAt: Date | null;
+        };
         FileData: {
             uid: string;
             createdBy: string;
@@ -608,17 +621,8 @@ export interface components {
             /** Format: date-time */
             updatedAt: Date;
         };
-        File: {
-            mnemonic: components["schemas"]["Mnemonic"];
-            name: string;
-            tag: string | null;
+        File: components["schemas"]["FileNode"] & {
             data: components["schemas"]["FileData"];
-            /** Format: date-time */
-            createdAt: Date;
-            /** Format: date-time */
-            updatedAt: Date;
-            /** Format: date-time */
-            deletedAt: Date | null;
         };
         UploadStartBody: {
             /** @description The name of the file to upload */
@@ -708,11 +712,14 @@ export interface components {
              */
             lifetime: number | null;
         };
+        DownloadData: components["schemas"]["FileData"] & {
+            chunks: components["schemas"]["Chunk"][];
+        };
         Key: {
             /** Format: double */
             id: number;
             /** Format: double */
-            dataId: number;
+            inodeId: number;
             hash: string;
             key: string;
             /** Format: date-time */
@@ -720,17 +727,12 @@ export interface components {
             /** Format: date-time */
             updatedAt: Date;
         };
-        KeyData: components["schemas"]["FileData"] & {
-            keys: components["schemas"]["Key"][];
-        };
-        DownloadData: components["schemas"]["KeyData"] & {
-            chunks: components["schemas"]["Chunk"][];
-        };
         FileDownload: components["schemas"]["File"] & {
+            keys: components["schemas"]["Key"][];
             data: components["schemas"]["DownloadData"];
         };
         FileKeys: components["schemas"]["File"] & {
-            data: components["schemas"]["KeyData"];
+            keys: components["schemas"]["Key"][];
         };
         /** @enum {string} */
         PermissionString: "none" | "read" | "write";

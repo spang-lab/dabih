@@ -106,7 +106,7 @@ const toJSON = async (privateKey: CryptoKey) => {
 const fromJSON = async (json: string) => {
   const rJWK = JSON.parse(json) as SmallJWK;
   const {
-    p, q, d, e,
+    p, q, d,
   } = rJWK;
   if (!p || !q || !d) {
     throw new Error('Invalid JWK');
@@ -126,7 +126,7 @@ const fromJSON = async (json: string) => {
     dp: base64url.fromBigInt(dpi),
     dq: base64url.fromBigInt(dqi),
     qi: base64url.fromBigInt(qqi),
-    e,
+    ...rJWK,
   };
   return fromJWK(jwkData);
 };

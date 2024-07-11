@@ -1,4 +1,3 @@
-
 import { Permission, getPermission } from '#lib/database/member';
 import db from '#lib/db';
 import { removeBucket } from '#lib/fs';
@@ -19,23 +18,23 @@ export default async function cancel(user: User, mnemonic: string) {
     data: {
       data: {
         update: {
-          keys: {
-            deleteMany: {}
-          },
           chunks: {
-            deleteMany: {}
-          }
-        }
-      }
+            deleteMany: {},
+          },
+        },
+      },
+      keys: {
+        deleteMany: {},
+      },
     },
     include: {
       data: {
         include: {
-          keys: true,
           chunks: true,
         },
-      }
-    }
+      },
+      keys: true,
+    },
   });
   await db.inode.update({
     where: {
@@ -43,17 +42,17 @@ export default async function cancel(user: User, mnemonic: string) {
     },
     data: {
       members: {
-        deleteMany: {}
+        deleteMany: {},
       },
       data: {
         delete: true,
-      }
-    }
+      },
+    },
   });
   await db.inode.delete({
     where: {
       mnemonic,
-    }
+    },
   });
 
   const { data } = file;

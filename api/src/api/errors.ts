@@ -1,32 +1,31 @@
-
 export class AuthenticationError extends Error {
-  public code = 401;
+  public code = 401
   constructor(message: string) {
-    super(message);
-    this.name = 'AuthenticationError';
+    super(message)
+    this.name = 'AuthenticationError'
   }
 }
 
 export class AuthorizationError extends Error {
-  public code = 403;
+  public code = 403
   constructor(message: string) {
-    super(message);
-    this.name = 'AuthorizationError';
+    super(message)
+    this.name = 'AuthorizationError'
   }
 }
 
 export class RequestError extends Error {
-  public code = 400;
+  public code = 400
   constructor(message: string) {
-    super(message);
-    this.name = 'RequestError';
+    super(message)
+    this.name = 'RequestError'
   }
 }
 
 export class NotFoundError extends Error {
-  public code = 404;
+  public code = 404
   constructor(message: string) {
-    super(message);
-    this.name = 'NotFoundError';
+    super(message)
+    this.name = 'NotFoundError'
   }
 }

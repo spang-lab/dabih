@@ -8,9 +8,6 @@ import { Server } from 'http';
 import avaTest, { ExecutionContext, TestFn } from 'ava';
 import { KeyObject } from 'crypto';
 
-
-
-
 interface TestContext {
   server: Server;
   port: number;

@@ -43,8 +43,8 @@ model FileData {
   size      Int?
   keyHash   String
   chunks    Chunk[]
-  keys      Key[]
   inodes    Inode[]
+  isDirty   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -77,6 +77,7 @@ model Inode {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+  keys      Key[]
 }
 
 model Member {
@@ -93,8 +94,8 @@ model Member {
 
 model Key {
   id        Int      @id @default(autoincrement())
-  data      FileData @relation(fields: [dataId], references: [id])
-  dataId    Int
+  inode     Inode    @relation(fields: [inodeId], references: [id])
+  inodeId   Int
   hash      String
   key       String
   createdAt DateTime @default(now())

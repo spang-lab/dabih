@@ -369,6 +369,48 @@
 				"description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
 				"pattern": "^[a-z_]+$"
 			},
+			"FileNode": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"mnemonic": {
+						"$ref": "#/components/schemas/Mnemonic"
+					},
+					"name": {
+						"type": "string"
+					},
+					"tag": {
+						"type": "string",
+						"nullable": true
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"id",
+					"mnemonic",
+					"name",
+					"tag",
+					"createdAt",
+					"updatedAt",
+					"deletedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"FileData": {
 				"properties": {
 					"uid": {
@@ -420,45 +462,22 @@
 				"additionalProperties": false
 			},
 			"File": {
-				"properties": {
-					"mnemonic": {
-						"$ref": "#/components/schemas/Mnemonic"
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/FileNode"
 					},
-					"name": {
-						"type": "string"
-					},
-					"tag": {
-						"type": "string",
-						"nullable": true
-					},
-					"data": {
-						"$ref": "#/components/schemas/FileData"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time",
-						"nullable": true
+					{
+						"properties": {
+							"data": {
+								"$ref": "#/components/schemas/FileData"
+							}
+						},
+						"required": [
+							"data"
+						],
+						"type": "object"
 					}
-				},
-				"required": [
-					"mnemonic",
-					"name",
-					"tag",
-					"data",
-					"createdAt",
-					"updatedAt",
-					"deletedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
+				]
 			},
 			"UploadStartBody": {
 				"properties": {
@@ -674,13 +693,34 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"DownloadData": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/FileData"
+					},
+					{
+						"properties": {
+							"chunks": {
+								"items": {
+									"$ref": "#/components/schemas/Chunk"
+								},
+								"type": "array"
+							}
+						},
+						"required": [
+							"chunks"
+						],
+						"type": "object"
+					}
+				]
+			},
 			"Key": {
 				"properties": {
 					"id": {
 						"type": "number",
 						"format": "double"
 					},
-					"dataId": {
+					"inodeId": {
 						"type": "number",
 						"format": "double"
 					},
@@ -701,7 +741,7 @@
 				},
 				"required": [
 					"id",
-					"dataId",
+					"inodeId",
 					"hash",
 					"key",
 					"createdAt",
@@ -710,10 +750,10 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"KeyData": {
+			"FileDownload": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/FileData"
+						"$ref": "#/components/schemas/File"
 					},
 					{
 						"properties": {
@@ -722,48 +762,13 @@
 									"$ref": "#/components/schemas/Key"
 								},
 								"type": "array"
-							}
-						},
-						"required": [
-							"keys"
-						],
-						"type": "object"
-					}
-				]
-			},
-			"DownloadData": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/KeyData"
-					},
-					{
-						"properties": {
-							"chunks": {
-								"items": {
-									"$ref": "#/components/schemas/Chunk"
-								},
-								"type": "array"
-							}
-						},
-						"required": [
-							"chunks"
-						],
-						"type": "object"
-					}
-				]
-			},
-			"FileDownload": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/File"
-					},
-					{
-						"properties": {
+							},
 							"data": {
 								"$ref": "#/components/schemas/DownloadData"
 							}
 						},
 						"required": [
+							"keys",
 							"data"
 						],
 						"type": "object"
@@ -777,12 +782,15 @@
 					},
 					{
 						"properties": {
-							"data": {
-								"$ref": "#/components/schemas/KeyData"
+							"keys": {
+								"items": {
+									"$ref": "#/components/schemas/Key"
+								},
+								"type": "array"
 							}
 						},
 						"required": [
-							"data"
+							"keys"
 						],
 						"type": "object"
 					}

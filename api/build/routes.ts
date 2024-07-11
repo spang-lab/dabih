@@ -129,6 +129,20 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"string","validators":{"pattern":{"value":"^[a-z_]+$"}}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "FileNode": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "mnemonic": {"ref":"Mnemonic","required":true},
+            "name": {"dataType":"string","required":true},
+            "tag": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileData": {
         "dataType": "refObject",
         "properties": {
@@ -146,17 +160,8 @@ const models: TsoaRoute.Models = {
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "File": {
-        "dataType": "refObject",
-        "properties": {
-            "mnemonic": {"ref":"Mnemonic","required":true},
-            "name": {"dataType":"string","required":true},
-            "tag": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
-            "data": {"ref":"FileData","required":true},
-            "createdAt": {"dataType":"datetime","required":true},
-            "updatedAt": {"dataType":"datetime","required":true},
-            "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
-        },
-        "additionalProperties": false,
+        "dataType": "refAlias",
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"FileNode"},{"dataType":"nestedObjectLiteral","nestedProperties":{"data":{"ref":"FileData","required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UploadStartBody": {
@@ -225,11 +230,16 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DownloadData": {
+        "dataType": "refAlias",
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"FileData"},{"dataType":"nestedObjectLiteral","nestedProperties":{"chunks":{"dataType":"array","array":{"dataType":"refObject","ref":"Chunk"},"required":true}}}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Key": {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"double","required":true},
-            "dataId": {"dataType":"double","required":true},
+            "inodeId": {"dataType":"double","required":true},
             "hash": {"dataType":"string","required":true},
             "key": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
@@ -238,24 +248,14 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "KeyData": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"FileData"},{"dataType":"nestedObjectLiteral","nestedProperties":{"keys":{"dataType":"array","array":{"dataType":"refObject","ref":"Key"},"required":true}}}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "DownloadData": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"KeyData"},{"dataType":"nestedObjectLiteral","nestedProperties":{"chunks":{"dataType":"array","array":{"dataType":"refObject","ref":"Chunk"},"required":true}}}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileDownload": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"File"},{"dataType":"nestedObjectLiteral","nestedProperties":{"data":{"ref":"DownloadData","required":true}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"File"},{"dataType":"nestedObjectLiteral","nestedProperties":{"keys":{"dataType":"array","array":{"dataType":"refObject","ref":"Key"},"required":true},"data":{"ref":"DownloadData","required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileKeys": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"File"},{"dataType":"nestedObjectLiteral","nestedProperties":{"data":{"ref":"KeyData","required":true}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"File"},{"dataType":"nestedObjectLiteral","nestedProperties":{"keys":{"dataType":"array","array":{"dataType":"refObject","ref":"Key"},"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PermissionString": {
