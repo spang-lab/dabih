@@ -2,6 +2,7 @@ import app from 'src/app';
 import getPort from '@ava/get-port';
 import { test, client } from '#ava';
 import crypto from '#crypto';
+import { InodeType } from '../types';
 
 test.before(async (t) => {
   const port = await getPort();
@@ -21,6 +22,7 @@ test.before(async (t) => {
   await api.test.addDirectory('test_dir');
   await api.test.addDirectory('test_dir_A', t.context.directories.test_dir);
   await api.test.addDirectory('test_dir_B', t.context.directories.test_dir);
+  await api.test.addDirectory('test_dir_rm');
 
   await api.fs.addMember(t.context.directories.test_dir_A, {
     subs: ['member_A'],
@@ -45,6 +47,9 @@ test.before(async (t) => {
   });
   await api.test.addFile('File_D', {
     directory: t.context.directories.test_dir,
+  });
+  await api.test.addFile('File_E', {
+    directory: t.context.directories.test_dir_rm,
   });
 });
 
@@ -117,11 +122,45 @@ test('duplicate', async (t) => {
     t.fail(error);
     return;
   }
-  const { data: tree } = await api.fs.tree(mnemonic);
-  t.log(tree);
+  const { data: files } = await api.fs.listFiles(mnemonic);
+  const { data: files2 } = await api.fs.listFiles(dir.mnemonic);
+  if (!files || !files2) {
+    t.fail();
+    return;
+  }
+  t.is(files.length, files2.length);
+  const sorted = files.sort((a, b) => a.name.localeCompare(b.name));
+  const sorted2 = files2.sort((a, b) => a.name.localeCompare(b.name));
+  for (let i = 0; i < files.length; i++) {
+    t.is(sorted[i].name, sorted2[i].name);
+  }
+});
 
-  const { data: tree2 } = await api.fs.tree(dir.mnemonic);
-  t.log(tree2);
+test('remove', async (t) => {
+  const api = client(t, 'owner');
+  const mnemonic = t.context.files.File_E;
+  const { response } = await api.fs.remove(mnemonic);
+  t.is(response.status, 204);
+
+  const { response: response2 } = await api.fs.remove(mnemonic);
+  t.is(response2.status, 400);
+
+  const { data: inodes } = await api.fs.list(null);
+  if (!inodes) {
+    t.fail();
+    return;
+  }
+  const trash = inodes.find((inode) => inode.type === InodeType.TRASH);
+  if (!trash) {
+    t.fail('Trash not found');
+    return;
+  }
+  const { data: files } = await api.fs.listFiles(trash.mnemonic);
+  if (!files) {
+    t.fail();
+    return;
+  }
+  t.true(files.some((file) => file.mnemonic === mnemonic));
 });
 
 test('file list', async (t) => {

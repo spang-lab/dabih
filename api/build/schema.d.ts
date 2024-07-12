@@ -319,22 +319,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/fs/{mnemonic}/file/remove": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["removeFile"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/fs/{mnemonic}/member/list": {
         parameters: {
             query?: never;
@@ -383,6 +367,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fs/{mnemonic}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["removeInode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/fs/{mnemonic}/tree": {
         parameters: {
             query?: never;
@@ -409,6 +409,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["moveInode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/fs/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listRoot"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/fs/{mnemonic}/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listInodes"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -620,8 +652,15 @@ export interface components {
             /** @description The hash of the key */
             hash: string;
         };
-        /** @enum {number} */
-        InodeType: 0 | 1 | 2;
+        /**
+         * @description InodeType is used to represent the type of an Inode.
+         *     FILE: a file
+         *     DIRECTORY: a directory
+         *     UPLOAD: a file that is being uploaded
+         *     TRASH: the special directory that holds deleted files
+         * @enum {number}
+         */
+        InodeType: 0 | 1 | 2 | 10;
         FileData: {
             /** Format: double */
             id: number;
@@ -652,8 +691,6 @@ export interface components {
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
-            /** Format: date-time */
-            deletedAt: Date | null;
         };
         File: components["schemas"]["Inode"] & {
             data: components["schemas"]["FileData"];
@@ -717,9 +754,21 @@ export interface components {
              */
             updatedAt: Date;
         };
+        /** @description User is the type that represents a user in the system. */
         User: {
+            /**
+             * @description The subject of the user, a unique identifier
+             * @example mhuttner
+             */
             sub: string;
+            /**
+             * @description The scopes the user has
+             * @example [
+             *       "dabih:api"
+             *     ]
+             */
             scopes: string[];
+            /** @description Does the user have the dabih:admin scope */
             isAdmin: boolean;
         };
         Token: {
@@ -787,6 +836,15 @@ export interface components {
             /** Format: date-time */
             updatedAt: Date;
         };
+        /**
+         * @description PermissionString is a string representation of the Permission enum.
+         * @enum {string}
+         */
+        PermissionString: "none" | "read" | "write";
+        ApiMember: components["schemas"]["Member"] & {
+            permissionString: components["schemas"]["PermissionString"];
+            mnemonic: components["schemas"]["Mnemonic"];
+        };
         /** @description The AES-256 encryption key used to encrypt and decrypt datasets.
          *     base64url encoded */
         AESKey: string;
@@ -826,8 +884,6 @@ export interface components {
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
-            /** Format: date-time */
-            deletedAt: Date | null;
         };
         AddDirectoryBody: {
             /** @description The name of the directory */
@@ -1291,26 +1347,6 @@ export interface operations {
             };
         };
     };
-    removeFile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                mnemonic: components["schemas"]["Mnemonic"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     listMembers: {
         parameters: {
             query?: never;
@@ -1328,7 +1364,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Member"][];
+                    "application/json": components["schemas"]["ApiMember"][];
                 };
             };
         };
@@ -1379,6 +1415,26 @@ export interface operations {
             };
         };
     };
+    removeInode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: components["schemas"]["Mnemonic"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     inodeTree: {
         parameters: {
             query?: never;
@@ -1420,6 +1476,48 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    listRoot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InodeMembers"][];
+                };
+            };
+        };
+    };
+    listInodes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: components["schemas"]["Mnemonic"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InodeMembers"][];
+                };
             };
         };
     };

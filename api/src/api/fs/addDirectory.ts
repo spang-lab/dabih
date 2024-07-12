@@ -1,4 +1,4 @@
-import { AddDirectoryBody, User, InodeType, Permission } from '#types';
+import { AddDirectoryBody, User, InodeType, Permission } from '../types';
 import db from '#lib/db';
 import { generateMnemonic } from '#lib/database/inode';
 import { getPermission } from '#lib/database/member';

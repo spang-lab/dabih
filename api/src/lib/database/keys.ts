@@ -26,7 +26,6 @@ export const listKeys = async (
   const inode = await db.inode.findUnique({
     where: {
       mnemonic,
-      deletedAt: null,
     },
     include: {
       children: true,
@@ -115,7 +114,6 @@ const removeKeysRecursive = async (
   const inode = await db.inode.findUnique({
     where: {
       mnemonic,
-      deletedAt: null,
     },
     include: {
       children: true,

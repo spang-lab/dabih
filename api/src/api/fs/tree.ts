@@ -1,4 +1,4 @@
-import { User, Permission } from '#types';
+import { User, Permission } from '../types';
 import { AuthorizationError } from '../errors';
 import { getPermission } from '#lib/database/member';
 import { listTree } from '#lib/database/inode';

@@ -1,6 +1,6 @@
 import { getMembers, toPermissionString } from '#lib/database/member';
 import { AuthorizationError } from '../errors';
-import { User, Permission } from '#types';
+import { User, Permission } from '../types';
 
 export default async function listMembers(user: User, mnemonic: string) {
   const { sub, isAdmin } = user;

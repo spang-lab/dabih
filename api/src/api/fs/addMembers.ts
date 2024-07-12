@@ -1,6 +1,6 @@
 import { getMembers } from '#lib/database/member';
 
-import { MemberAddBody, User, Permission } from '#types';
+import { MemberAddBody, User, Permission } from '../types';
 import { AuthorizationError } from '../errors';
 import { addKeys } from '#lib/database/keys';
 import publicKey from '#lib/database/publicKey';

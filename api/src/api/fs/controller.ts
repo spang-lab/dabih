@@ -20,6 +20,7 @@ import addDirectory from './addDirectory';
 import move from './move';
 import duplicate from './duplicate';
 import tree from './tree';
+import list from './list';
 
 import {
   AddDirectoryBody,
@@ -33,7 +34,8 @@ import {
   Inode,
   InodeTree,
   ApiMember,
-} from '#types';
+  InodeMembers,
+} from '../types';
 
 @Route('fs')
 @Tags('Filesystem')
@@ -115,6 +117,25 @@ export class FilesystemController extends Controller {
   ): Promise<void> {
     const { user } = request;
     return move(user, body);
+  }
+
+  @Get('list')
+  @OperationId('listRoot')
+  public async listRoot(
+    @Request() request: RequestWithUser,
+  ): Promise<InodeMembers[]> {
+    const { user } = request;
+    return list(user);
+  }
+
+  @Get('{mnemonic}/list')
+  @OperationId('listInodes')
+  public async listInodes(
+    @Request() request: RequestWithUser,
+    @Path() mnemonic?: Mnemonic,
+  ): Promise<InodeMembers[]> {
+    const { user } = request;
+    return list(user, mnemonic);
   }
 
   @Post('directory/add')

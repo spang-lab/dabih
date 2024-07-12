@@ -1,8 +1,10 @@
 import { getPermission } from '#lib/database/member';
 
-import { User, Permission, InodeType } from '#types';
-import { AuthorizationError } from '../errors';
+import { User, Permission } from '../types';
+import { AuthorizationError, RequestError } from '../errors';
 import db from '#lib/db';
+import { getTrash, isChildOf } from '#lib/database/inode';
+import { removeKeys } from '#lib/database/keys';
 
 export default async function remove(user: User, mnemonic: string) {
   const { sub, isAdmin } = user;
@@ -14,14 +16,22 @@ export default async function remove(user: User, mnemonic: string) {
       );
     }
   }
+  const trash = await getTrash(sub);
+  if (trash.mnemonic === mnemonic) {
+    throw new RequestError(`Cannot move ${mnemonic} into itself`);
+  }
+  if (await isChildOf(mnemonic, trash.mnemonic)) {
+    throw new RequestError(`${mnemonic} already is in trash`);
+  }
   await db.inode.update({
-    where: {
-      mnemonic,
-      type: InodeType.FILE,
-      deletedAt: null,
-    },
+    where: { mnemonic },
     data: {
-      deletedAt: new Date(),
+      parent: {
+        connect: {
+          id: trash.id,
+        },
+      },
     },
   });
+  await removeKeys(mnemonic);
 }

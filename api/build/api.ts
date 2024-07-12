@@ -1,7 +1,6 @@
 import createClient from 'openapi-fetch';
 
 import type { components, paths } from './schema';
-import tree from 'src/api/fs/tree';
 type schemas = components['schemas'];
 
 interface Chunk {
@@ -73,8 +72,6 @@ const init = (baseUrl: string) => {
       c.GET('/fs/{mnemonic}/member/list', { params: { path: { mnemonic } } }),
     listFiles: (mnemonic: string) =>
       c.GET('/fs/{mnemonic}/file/list', { params: { path: { mnemonic } } }),
-    removeFile: (mnemonic: string) =>
-      c.POST('/fs/{mnemonic}/file/remove', { params: { path: { mnemonic } } }),
     addMember: (mnemonic: string, body: schemas['MemberAddBody']) =>
       c.POST('/fs/{mnemonic}/member/add', {
         params: { path: { mnemonic } },
@@ -83,10 +80,18 @@ const init = (baseUrl: string) => {
     addDirectory: (name: string, parent?: string) =>
       c.POST('/fs/directory/add', { body: { name, parent } }),
     move: (body: schemas['MoveInodeBody']) => c.POST('/fs/move', { body }),
+    remove: (mnemonic: string) =>
+      c.POST('/fs/{mnemonic}/remove', { params: { path: { mnemonic } } }),
     duplicate: (mnemonic: string) =>
       c.POST('/fs/{mnemonic}/duplicate', { params: { path: { mnemonic } } }),
     tree: (mnemonic: string) =>
       c.GET('/fs/{mnemonic}/tree', { params: { path: { mnemonic } } }),
+    list: (mnemonic: string | null) => {
+      if (!mnemonic) {
+        return c.GET('/fs/list');
+      }
+      return c.GET('/fs/{mnemonic}/list', { params: { path: { mnemonic } } });
+    },
   };
 
   const download = {

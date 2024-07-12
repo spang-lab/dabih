@@ -1,4 +1,4 @@
-import { FileDownload, User, InodeType } from '#types';
+import { FileDownload, User, InodeType } from '../types';
 import db from '#lib/db';
 
 import { AuthorizationError, NotFoundError } from '../errors';

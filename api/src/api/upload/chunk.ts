@@ -33,9 +33,6 @@ export default async function chunk(
   if (!file) {
     throw new NotFoundError(`No upload found for mnemonic ${mnemonic}`);
   }
-  if (file.deletedAt) {
-    throw new RequestError(`Upload ${mnemonic} has been deleted`);
-  }
   const { data } = file;
   if (!data) {
     throw new Error(`Inode ${mnemonic} has type UPLOAD but no data`);

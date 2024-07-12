@@ -33,9 +33,6 @@ export default async function start(
     if (!dir) {
       throw new RequestError(`No directory found for mnemonic ${directory}`);
     }
-    if (dir.deletedAt) {
-      throw new RequestError(`Directory ${directory} has been deleted`);
-    }
     parent = {
       connect: {
         id: dir.id,
