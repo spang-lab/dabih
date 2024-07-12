@@ -1,7 +1,6 @@
-import { MoveInodeBody, User } from '../types';
+import { MoveInodeBody, User, InodeType, Permission } from '../types';
 import { AuthorizationError, RequestError } from '../errors';
-import { getMembers, Permission } from '#lib/database/member';
-import { InodeType } from '#lib/database/inode';
+import { getMembers } from '#lib/database/member';
 import { addKeys, removeKeys } from '#lib/database/keys';
 import publicKey from '#lib/database/publicKey';
 import db from '#lib/db';

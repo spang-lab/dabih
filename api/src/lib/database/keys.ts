@@ -1,9 +1,14 @@
 import db from '#lib/db';
 import crypto from '#crypto';
-import { InodeType } from './inode';
-import { FileDecryptionKey, FileKeys, PublicKey } from 'src/api/types';
+import {
+  FileDecryptionKey,
+  FileKeys,
+  PublicKey,
+  InodeType,
+  Permission,
+} from 'src/api/types';
 import { RequestError } from 'src/api/errors';
-import { getMembers, Permission } from './member';
+import { getMembers } from './member';
 import publicKey from './publicKey';
 
 export const listKeys = async (

@@ -4,12 +4,8 @@ import { test, client } from '#ava';
 
 import crypto from '#crypto';
 
-import {
-  Permission,
-  parsePermission,
-  toPermissionString,
-} from '#lib/database/member';
-import { PermissionString } from '../types';
+import { parsePermission, toPermissionString } from '#lib/database/member';
+import { Permission, PermissionString } from '../types';
 
 test.before(async (t) => {
   const port = await getPort();

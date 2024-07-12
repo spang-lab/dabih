@@ -3,11 +3,9 @@ import crypto from '#crypto';
 import { storeKey } from '#lib/keyv';
 import { addKeys } from '#lib/database/keys';
 import publicKey from '#lib/database/publicKey';
-import { Permission } from '#lib/database/member';
-import { InodeType } from '#lib/database/inode';
 import { createBucket } from '#lib/fs';
 
-import { User, UploadStartBody, File } from '../types';
+import { Permission, InodeType, User, UploadStartBody, File } from '../types';
 import { RequestError } from '../errors';
 import { generateMnemonic, generateDataUid } from '#lib/database/inode';
 

@@ -1,8 +1,8 @@
-import { AddDirectoryBody, User } from "../types";
-import db from "#lib/db";
-import { generateMnemonic, InodeType } from "#lib/database/inode";
-import { getPermission, Permission } from "#lib/database/member";
-import { RequestError, AuthorizationError } from "../errors";
+import { AddDirectoryBody, User, InodeType, Permission } from '../types';
+import db from '#lib/db';
+import { generateMnemonic } from '#lib/database/inode';
+import { getPermission } from '#lib/database/member';
+import { RequestError, AuthorizationError } from '../errors';
 
 export default async function addDirectory(user: User, body: AddDirectoryBody) {
   const { sub, isAdmin } = user;
@@ -11,7 +11,9 @@ export default async function addDirectory(user: User, body: AddDirectoryBody) {
   if (body.parent) {
     const permission = await getPermission(body.parent, user.sub);
     if (permission !== Permission.WRITE && !isAdmin) {
-      throw new AuthorizationError(`Not authorized to add directory to ${body.parent}`);
+      throw new AuthorizationError(
+        `Not authorized to add directory to ${body.parent}`,
+      );
     }
     const dir = await db.inode.findUnique({
       where: {
@@ -27,8 +29,8 @@ export default async function addDirectory(user: User, body: AddDirectoryBody) {
     }
     parent = {
       connect: {
-        id: dir.id
-      }
+        id: dir.id,
+      },
     };
   }
 
@@ -44,9 +46,9 @@ export default async function addDirectory(user: User, body: AddDirectoryBody) {
         create: {
           sub,
           permission: Permission.WRITE,
-        }
-      }
-    }
+        },
+      },
+    },
   });
   return directory;
 }

@@ -1,12 +1,6 @@
-import db from "#lib/db";
-import crypto from "#crypto";
-import { File } from "src/api/types";
-
-export enum InodeType {
-  FILE = 0,
-  DIRECTORY = 1,
-  UPLOAD = 2,
-}
+import db from '#lib/db';
+import crypto from '#crypto';
+import { File, Inode, InodeMembers, InodeTree, InodeType } from 'src/api/types';
 
 export const generateDataUid = async () => {
   const maxAttempts = 3;
@@ -21,9 +15,8 @@ export const generateDataUid = async () => {
       return uid;
     }
   }
-  throw new Error("Failed to generate unique uid");
-}
-
+  throw new Error('Failed to generate unique uid');
+};
 
 export const generateMnemonic = async () => {
   const maxAttempts = 3;
@@ -38,7 +31,7 @@ export const generateMnemonic = async () => {
       return mnemonic;
     }
   }
-  throw new Error("Failed to generate unique mnemonic");
+  throw new Error('Failed to generate unique mnemonic');
 };
 
 export const listFiles = async (mnemonic: string): Promise<File[]> => {
@@ -62,9 +55,45 @@ export const listFiles = async (mnemonic: string): Promise<File[]> => {
   if (type === InodeType.FILE) {
     return [inode as File];
   }
-  const promises = inode.children.map(child => listFiles(child.mnemonic));
+  const promises = inode.children.map((child) => listFiles(child.mnemonic));
   const childLists = await Promise.all(promises);
   return childLists.flat();
-}
+};
 
+const getInodesRecursive = async (inode: InodeTree): Promise<InodeTree> => {
+  const children = await db.inode.findMany({
+    where: {
+      parentId: inode.id,
+    },
+    include: {
+      data: true,
+      members: true,
+      keys: true,
+    },
+  });
+  const childrenPromises = children.map(async (child) =>
+    getInodesRecursive(child),
+  );
+  const newChildren = await Promise.all(childrenPromises);
+  return {
+    ...inode,
+    children: newChildren.length > 0 ? newChildren : undefined,
+  };
+};
 
+export const listTree = async (mnemonic: string) => {
+  const root = await db.inode.findUnique({
+    where: {
+      mnemonic,
+    },
+    include: {
+      data: true,
+      members: true,
+      keys: true,
+    },
+  });
+  if (!root) {
+    throw new Error(`Inode ${mnemonic} not found`);
+  }
+  return getInodesRecursive(root);
+};

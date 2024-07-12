@@ -367,6 +367,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fs/{mnemonic}/duplicate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["duplicateInode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/fs/{mnemonic}/tree": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["inodeTree"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/fs/move": {
         parameters: {
             query?: never;
@@ -588,26 +620,11 @@ export interface components {
             /** @description The hash of the key */
             hash: string;
         };
-        /**
-         * @description mnemonics are human readable unique identifiers for datasets
-         *     mnemonics have the form <random adjective>_<random first name>
-         * @example happy_jane
-         */
-        Mnemonic: string;
-        FileNode: {
+        /** @enum {number} */
+        InodeType: 0 | 1 | 2;
+        FileData: {
             /** Format: double */
             id: number;
-            mnemonic: components["schemas"]["Mnemonic"];
-            name: string;
-            tag: string | null;
-            /** Format: date-time */
-            createdAt: Date;
-            /** Format: date-time */
-            updatedAt: Date;
-            /** Format: date-time */
-            deletedAt: Date | null;
-        };
-        FileData: {
             uid: string;
             createdBy: string;
             fileName: string;
@@ -621,9 +638,32 @@ export interface components {
             /** Format: date-time */
             updatedAt: Date;
         };
-        File: components["schemas"]["FileNode"] & {
+        Inode: {
+            /** Format: double */
+            id: number;
+            mnemonic: string;
+            type: components["schemas"]["InodeType"];
+            name: string;
+            tag: string | null;
+            data: components["schemas"]["FileData"] | null;
+            /** Format: double */
+            parentId: number | null;
+            /** Format: date-time */
+            createdAt: Date;
+            /** Format: date-time */
+            updatedAt: Date;
+            /** Format: date-time */
+            deletedAt: Date | null;
+        };
+        File: components["schemas"]["Inode"] & {
             data: components["schemas"]["FileData"];
         };
+        /**
+         * @description mnemonics are human readable unique identifiers for datasets
+         *     mnemonics have the form <random adjective>_<random first name>
+         * @example happy_jane
+         */
+        Mnemonic: string;
         UploadStartBody: {
             /** @description The name of the file to upload */
             fileName: string;
@@ -734,18 +774,14 @@ export interface components {
         FileKeys: components["schemas"]["File"] & {
             keys: components["schemas"]["Key"][];
         };
-        /** @enum {string} */
-        PermissionString: "none" | "read" | "write";
         Member: {
             /** Format: double */
             id: number;
             sub: string;
             /** Format: double */
             inodeId: number;
-            mnemonic: components["schemas"]["Mnemonic"];
             /** Format: double */
             permission: number;
-            permissionString: components["schemas"]["PermissionString"];
             /** Format: date-time */
             createdAt: Date;
             /** Format: date-time */
@@ -763,6 +799,13 @@ export interface components {
             subs: string[];
             /** @description The list of AES-256 keys required to decrypt all child datasets */
             keys: components["schemas"]["FileDecryptionKey"][];
+        };
+        InodeMembers: components["schemas"]["Inode"] & {
+            members: components["schemas"]["Member"][];
+        };
+        InodeTree: components["schemas"]["InodeMembers"] & {
+            keys: components["schemas"]["Key"][];
+            children?: components["schemas"]["InodeTree"][];
         };
         MoveInodeBody: {
             /** @description The mnemonic of the inode to move */
@@ -1311,6 +1354,50 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    duplicateInode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: components["schemas"]["Mnemonic"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Inode"];
+                };
+            };
+        };
+    };
+    inodeTree: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: components["schemas"]["Mnemonic"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InodeTree"];
+                };
             };
         };
     };

@@ -1,8 +1,8 @@
 import { listKeys } from '#lib/database/keys';
 import publicKey from '#lib/database/publicKey';
-import { Permission, getPermission } from '#lib/database/member';
+import { getPermission } from '#lib/database/member';
 import { AuthorizationError } from '../errors';
-import { User } from '../types';
+import { User, Permission } from '../types';
 
 export default async function listFiles(user: User, mnemonic: string) {
   const { sub, isAdmin } = user;

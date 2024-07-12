@@ -44,7 +44,6 @@ model FileData {
   keyHash   String
   chunks    Chunk[]
   inodes    Inode[]
-  isDirty   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

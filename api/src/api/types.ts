@@ -10,6 +10,19 @@ import { type } from 'os';
  */
 export type Mnemonic = string;
 
+export enum Permission {
+  NONE = 0,
+  READ = 1,
+  WRITE = 2,
+}
+export type PermissionString = 'none' | 'read' | 'write';
+
+export enum InodeType {
+  FILE = 0,
+  DIRECTORY = 1,
+  UPLOAD = 2,
+}
+
 /**
  * The AES-256 encryption key used to encrypt and decrypt datasets.
  * base64url encoded
@@ -73,18 +86,18 @@ export interface Chunk {
   updatedAt: Date;
 }
 
-export type PermissionString = 'none' | 'read' | 'write';
-
 export interface Member {
   id: number;
   sub: string;
   inodeId: number;
-  mnemonic: Mnemonic;
   permission: number;
-  permissionString: PermissionString;
   createdAt: Date;
   updatedAt: Date;
 }
+export type EMember = Member & {
+  mnemonic: Mnemonic;
+  permissionString: PermissionString;
+};
 
 export interface Key {
   id: number;
@@ -156,6 +169,7 @@ export interface Dataset {
 }
 
 export interface FileData {
+  id: number;
   uid: string;
   createdBy: string;
   fileName: string;
@@ -170,16 +184,30 @@ export interface FileData {
 export type DownloadData = FileData & {
   chunks: Chunk[];
 };
-export interface FileNode {
+
+export interface Inode {
   id: number;
-  mnemonic: Mnemonic;
+  mnemonic: string;
+  type: InodeType;
   name: string;
   tag: string | null;
+  data: FileData | null;
+  parentId: number | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
 }
-export type File = FileNode & {
+
+export type InodeMembers = Inode & {
+  members: Member[];
+};
+
+export type InodeTree = InodeMembers & {
+  children?: InodeTree[];
+  keys: Key[];
+};
+
+export type File = Inode & {
   data: FileData;
 };
 

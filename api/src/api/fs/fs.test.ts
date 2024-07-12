@@ -18,8 +18,9 @@ test.before(async (t) => {
   await api.test.addUser('member_A');
   await api.test.addUser('member_B');
 
-  await api.test.addDirectory('test_dir_A');
-  await api.test.addDirectory('test_dir_B');
+  await api.test.addDirectory('test_dir');
+  await api.test.addDirectory('test_dir_A', t.context.directories.test_dir);
+  await api.test.addDirectory('test_dir_B', t.context.directories.test_dir);
 
   await api.fs.addMember(t.context.directories.test_dir_A, {
     subs: ['member_A'],
@@ -41,6 +42,9 @@ test.before(async (t) => {
   });
   await api.test.addFile('File_C', {
     directory: t.context.directories.test_dir_A,
+  });
+  await api.test.addFile('File_D', {
+    directory: t.context.directories.test_dir,
   });
 });
 
@@ -102,6 +106,22 @@ test('mv file invalid', async (t) => {
     name: 'new_name',
   });
   t.is(response.status, 404);
+});
+
+test('duplicate', async (t) => {
+  const api = client(t, 'owner');
+  const mnemonic = t.context.directories.test_dir;
+  const { response, error, data: dir } = await api.fs.duplicate(mnemonic);
+  t.is(response.status, 200);
+  if (error ?? !dir) {
+    t.fail(error);
+    return;
+  }
+  const { data: tree } = await api.fs.tree(mnemonic);
+  t.log(tree);
+
+  const { data: tree2 } = await api.fs.tree(dir.mnemonic);
+  t.log(tree2);
 });
 
 test('file list', async (t) => {

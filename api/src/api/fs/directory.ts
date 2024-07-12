@@ -1,8 +1,7 @@
-import { User } from "../types";
-import db from "#lib/db";
-import { getPermission, Permission } from "#lib/database/member";
-import { AuthorizationError } from "../errors";
-import { InodeType } from "#lib/database/inode";
+import { User, Permission, InodeType } from '../types';
+import db from '#lib/db';
+import { getPermission } from '#lib/database/member';
+import { AuthorizationError } from '../errors';
 
 export default async function directory(user: User, mnemonic: string) {
   const { sub, isAdmin } = user;
@@ -10,7 +9,9 @@ export default async function directory(user: User, mnemonic: string) {
   if (!isAdmin) {
     const permission = await getPermission(mnemonic, sub);
     if (permission === Permission.NONE) {
-      throw new AuthorizationError(`Not authorized to view directory ${mnemonic}`);
+      throw new AuthorizationError(
+        `Not authorized to view directory ${mnemonic}`,
+      );
     }
   }
   const folder = await db.inode.findUnique({

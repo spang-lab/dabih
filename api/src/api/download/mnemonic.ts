@@ -1,21 +1,24 @@
-import { User } from '../types';
+import { User, InodeType } from '../types';
 import { readKey } from '#lib/keyv';
 import db from '#lib/db';
 import { AuthorizationError, NotFoundError, RequestError } from '../errors';
 import { get } from '#lib/fs';
 import crypto from '#lib/crypto/index';
 import { PassThrough } from 'stream';
-import { InodeType } from '#lib/database/inode';
 
 const parseScope = (scopes: string[]) => {
   if (scopes.length !== 1) {
-    throw new AuthorizationError(`Expected a token with a single download scope, got ${scopes.join(' ')}`);
+    throw new AuthorizationError(
+      `Expected a token with a single download scope, got ${scopes.join(' ')}`,
+    );
   }
   const [scope] = scopes;
   const regex = /^dabih:download:(\w+)$/;
   const match = scope.match(regex);
   if (!match) {
-    throw new AuthorizationError(`Invalid scope ${scope} expected dabih:download:<mnemonic>`);
+    throw new AuthorizationError(
+      `Invalid scope ${scope} expected dabih:download:<mnemonic>`,
+    );
   }
   const [, mnemonic] = match;
   return mnemonic;
@@ -26,7 +29,9 @@ export default async function mnemonic(user: User) {
   const mnemonic = parseScope(scopes);
   const key = await readKey(sub, mnemonic);
   if (!key) {
-    throw new RequestError(`AES key not found, it needs to be stored by calling /download/${mnemonic}/decrypt first`);
+    throw new RequestError(
+      `AES key not found, it needs to be stored by calling /download/${mnemonic}/decrypt first`,
+    );
   }
   const file = await db.inode.findUnique({
     where: {
@@ -37,7 +42,7 @@ export default async function mnemonic(user: User) {
       data: {
         include: {
           chunks: true,
-        }
+        },
       },
     },
   });
@@ -50,7 +55,9 @@ export default async function mnemonic(user: User) {
   }
   const { chunks, fileName, size, uid } = data;
   if (size === null) {
-    throw new RequestError(`Dataset size is not set for ${mnemonic}, maybe it's not fully uploaded yet`);
+    throw new RequestError(
+      `Dataset size is not set for ${mnemonic}, maybe it's not fully uploaded yet`,
+    );
   }
   const pStream = new PassThrough();
   for (const chunk of chunks) {

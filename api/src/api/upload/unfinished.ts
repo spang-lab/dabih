@@ -1,8 +1,6 @@
-
-import { User } from "../types";
-import db from "#lib/db";
-import { readKey } from "#lib/keyv";
-import { InodeType } from "#lib/database/inode";
+import { User, InodeType } from '../types';
+import db from '#lib/db';
+import { readKey } from '#lib/keyv';
 
 export default async function unfinished(user: User) {
   const { sub } = user;
@@ -21,7 +19,7 @@ export default async function unfinished(user: User) {
           chunks: {
             orderBy: {
               start: 'asc',
-            }
+            },
           },
         },
       },
@@ -30,7 +28,7 @@ export default async function unfinished(user: User) {
 
   const promises = unfinished.map(async (file) => {
     const { data, mnemonic } = file;
-    const key = await readKey(sub, mnemonic)
+    const key = await readKey(sub, mnemonic);
     if (!data || !key) {
       return null;
     }
@@ -39,7 +37,6 @@ export default async function unfinished(user: User) {
       data,
     };
   });
-  const results = (await Promise.all(promises))
-    .filter((f) => f !== null);
+  const results = (await Promise.all(promises)).filter((f) => f !== null);
   return results;
 }

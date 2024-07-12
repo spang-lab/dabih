@@ -1,10 +1,9 @@
 import db from '#lib/db';
 import { Chunk } from '@prisma/client';
 import { NotFoundError, RequestError } from '../errors';
-import { File, User } from '../types';
+import { File, User, InodeType } from '../types';
 import { createHash } from 'crypto';
 import { deleteKey } from '#lib/keyv';
-import { InodeType } from '#lib/database/inode';
 
 type ChunkRange = Pick<Chunk, 'start' | 'end'>;
 
@@ -42,11 +41,11 @@ export default async function finish(user: User, mnemonic: string) {
           chunks: {
             orderBy: {
               start: 'asc',
-            }
-          }
+            },
+          },
         },
       },
-    }
+    },
   });
   if (!file) {
     throw new NotFoundError(`No upload found for mnemonic ${mnemonic}`);
@@ -61,7 +60,9 @@ export default async function finish(user: User, mnemonic: string) {
     throw new RequestError(`Chunks are not complete for dataset ${mnemonic}`);
   }
   if (size && size !== end + 1) {
-    throw new RequestError(`Dataset size: ${size} does not match chunks end: ${end + 1} for dataset ${mnemonic}`);
+    throw new RequestError(
+      `Dataset size: ${size} does not match chunks end: ${end + 1} for dataset ${mnemonic}`,
+    );
   }
   const hash = hashChunks(chunks);
   const result = await db.inode.update({
@@ -75,12 +76,12 @@ export default async function finish(user: User, mnemonic: string) {
         update: {
           hash,
           size: end + 1,
-        }
-      }
+        },
+      },
     },
     include: {
       data: true,
-    }
+    },
   });
   await deleteKey(sub, mnemonic);
   return result as File;

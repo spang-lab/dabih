@@ -1,8 +1,7 @@
-import { FileDownload, User } from '../types';
+import { FileDownload, User, InodeType } from '../types';
 import db from '#lib/db';
 
 import { AuthorizationError, NotFoundError } from '../errors';
-import { InodeType } from '#lib/database/inode';
 import publicKey from '#lib/database/publicKey';
 
 export default async function file(user: User, mnemonic: string) {

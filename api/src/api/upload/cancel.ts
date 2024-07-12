@@ -1,8 +1,8 @@
-import { Permission, getPermission } from '#lib/database/member';
+import { getPermission } from '#lib/database/member';
 import db from '#lib/db';
 import { removeBucket } from '#lib/fs';
 import { AuthorizationError } from '../errors';
-import { User } from '../types';
+import { User, Permission } from '../types';
 
 export default async function cancel(user: User, mnemonic: string) {
   if (!user.isAdmin) {

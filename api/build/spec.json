@@ -363,56 +363,20 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Mnemonic": {
-				"type": "string",
-				"example": "happy_jane",
-				"description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
-				"pattern": "^[a-z_]+$"
+			"InodeType": {
+				"enum": [
+					0,
+					1,
+					2
+				],
+				"type": "number"
 			},
-			"FileNode": {
+			"FileData": {
 				"properties": {
 					"id": {
 						"type": "number",
 						"format": "double"
 					},
-					"mnemonic": {
-						"$ref": "#/components/schemas/Mnemonic"
-					},
-					"name": {
-						"type": "string"
-					},
-					"tag": {
-						"type": "string",
-						"nullable": true
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time",
-						"nullable": true
-					}
-				},
-				"required": [
-					"id",
-					"mnemonic",
-					"name",
-					"tag",
-					"createdAt",
-					"updatedAt",
-					"deletedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"FileData": {
-				"properties": {
 					"uid": {
 						"type": "string"
 					},
@@ -448,6 +412,7 @@
 					}
 				},
 				"required": [
+					"id",
 					"uid",
 					"createdBy",
 					"fileName",
@@ -461,10 +426,71 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Inode": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"mnemonic": {
+						"type": "string"
+					},
+					"type": {
+						"$ref": "#/components/schemas/InodeType"
+					},
+					"name": {
+						"type": "string"
+					},
+					"tag": {
+						"type": "string",
+						"nullable": true
+					},
+					"data": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/FileData"
+							}
+						],
+						"nullable": true
+					},
+					"parentId": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"id",
+					"mnemonic",
+					"type",
+					"name",
+					"tag",
+					"data",
+					"parentId",
+					"createdAt",
+					"updatedAt",
+					"deletedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"File": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/FileNode"
+						"$ref": "#/components/schemas/Inode"
 					},
 					{
 						"properties": {
@@ -478,6 +504,12 @@
 						"type": "object"
 					}
 				]
+			},
+			"Mnemonic": {
+				"type": "string",
+				"example": "happy_jane",
+				"description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
+				"pattern": "^[a-z_]+$"
 			},
 			"UploadStartBody": {
 				"properties": {
@@ -796,14 +828,6 @@
 					}
 				]
 			},
-			"PermissionString": {
-				"type": "string",
-				"enum": [
-					"none",
-					"read",
-					"write"
-				]
-			},
 			"Member": {
 				"properties": {
 					"id": {
@@ -817,15 +841,9 @@
 						"type": "number",
 						"format": "double"
 					},
-					"mnemonic": {
-						"$ref": "#/components/schemas/Mnemonic"
-					},
 					"permission": {
 						"type": "number",
 						"format": "double"
-					},
-					"permissionString": {
-						"$ref": "#/components/schemas/PermissionString"
 					},
 					"createdAt": {
 						"type": "string",
@@ -840,9 +858,7 @@
 					"id",
 					"sub",
 					"inodeId",
-					"mnemonic",
 					"permission",
-					"permissionString",
 					"createdAt",
 					"updatedAt"
 				],
@@ -892,6 +908,54 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"InodeMembers": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Inode"
+					},
+					{
+						"properties": {
+							"members": {
+								"items": {
+									"$ref": "#/components/schemas/Member"
+								},
+								"type": "array"
+							}
+						},
+						"required": [
+							"members"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"InodeTree": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/InodeMembers"
+					},
+					{
+						"properties": {
+							"keys": {
+								"items": {
+									"$ref": "#/components/schemas/Key"
+								},
+								"type": "array"
+							},
+							"children": {
+								"items": {
+									"$ref": "#/components/schemas/InodeTree"
+								},
+								"type": "array"
+							}
+						},
+						"required": [
+							"keys"
+						],
+						"type": "object"
+					}
+				]
 			},
 			"MoveInodeBody": {
 				"properties": {
@@ -1925,6 +1989,90 @@
 						}
 					}
 				}
+			}
+		},
+		"/fs/{mnemonic}/duplicate": {
+			"post": {
+				"operationId": "duplicateInode",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Inode"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Mnemonic"
+						}
+					}
+				]
+			}
+		},
+		"/fs/{mnemonic}/tree": {
+			"get": {
+				"operationId": "inodeTree",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InodeTree"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Mnemonic"
+						}
+					}
+				]
 			}
 		},
 		"/fs/move": {
