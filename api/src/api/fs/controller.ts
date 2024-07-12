@@ -14,7 +14,7 @@ import {
 import file from './file';
 import listMembers from './listMembers';
 import listFiles from './listFiles';
-import removeFile from './removeFile';
+import remove from './remove';
 import addMembers from './addMembers';
 import addDirectory from './addDirectory';
 import move from './move';
@@ -26,14 +26,14 @@ import {
   Directory,
   FileDownload,
   FileKeys,
-  Member,
   MemberAddBody,
   Mnemonic,
   MoveInodeBody,
   RequestWithUser,
   Inode,
   InodeTree,
-} from '../types';
+  ApiMember,
+} from '#types';
 
 @Route('fs')
 @Tags('Filesystem')
@@ -58,22 +58,13 @@ export class FilesystemController extends Controller {
     const { user } = request;
     return listFiles(user, mnemonic);
   }
-  @Post('{mnemonic}/file/remove')
-  @OperationId('removeFile')
-  public async removeFile(
-    @Path() mnemonic: Mnemonic,
-    @Request() request: RequestWithUser,
-  ): Promise<void> {
-    const { user } = request;
-    return removeFile(user, mnemonic);
-  }
 
   @Get('{mnemonic}/member/list')
   @OperationId('listMembers')
   public async listMembers(
     @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithUser,
-  ): Promise<Member[]> {
+  ): Promise<ApiMember[]> {
     const { user } = request;
     return listMembers(user, mnemonic);
   }
@@ -96,6 +87,16 @@ export class FilesystemController extends Controller {
     const { user } = request;
     return duplicate(user, mnemonic);
   }
+  @Post('{mnemonic}/remove')
+  @OperationId('removeInode')
+  public async remove(
+    @Path() mnemonic: Mnemonic,
+    @Request() request: RequestWithUser,
+  ): Promise<void> {
+    const { user } = request;
+    return remove(user, mnemonic);
+  }
+
   @Get('{mnemonic}/tree')
   @OperationId('inodeTree')
   public async tree(

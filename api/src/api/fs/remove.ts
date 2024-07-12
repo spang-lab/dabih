@@ -1,6 +1,6 @@
 import { getPermission } from '#lib/database/member';
 
-import { User, Permission, InodeType } from '../types';
+import { User, Permission, InodeType } from '#types';
 import { AuthorizationError } from '../errors';
 import db from '#lib/db';
 
@@ -10,7 +10,7 @@ export default async function remove(user: User, mnemonic: string) {
     const permission = await getPermission(mnemonic, sub);
     if (permission !== Permission.WRITE) {
       throw new AuthorizationError(
-        `User ${sub} does not have permission to remove dataset ${mnemonic}`,
+        `User ${sub} does not have permission to remove ${mnemonic}`,
       );
     }
   }

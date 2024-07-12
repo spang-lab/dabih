@@ -1,4 +1,4 @@
-import { User, Permission, InodeMembers } from '../types';
+import { User, Permission, InodeMembers } from '#types';
 import { AuthorizationError, NotFoundError } from '../errors';
 import { getPermission } from '#lib/database/member';
 import { generateMnemonic } from '#lib/database/inode';

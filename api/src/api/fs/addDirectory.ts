@@ -1,4 +1,4 @@
-import { AddDirectoryBody, User, InodeType, Permission } from '../types';
+import { AddDirectoryBody, User, InodeType, Permission } from '#types';
 import db from '#lib/db';
 import { generateMnemonic } from '#lib/database/inode';
 import { getPermission } from '#lib/database/member';
@@ -23,9 +23,6 @@ export default async function addDirectory(user: User, body: AddDirectoryBody) {
     });
     if (!dir) {
       throw new RequestError(`No directory found for mnemonic ${body.parent}`);
-    }
-    if (dir.deletedAt) {
-      throw new RequestError(`Directory ${body.parent} has been deleted`);
     }
     parent = {
       connect: {

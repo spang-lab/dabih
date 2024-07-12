@@ -1,4 +1,4 @@
-import { MoveInodeBody, User, InodeType, Permission } from '../types';
+import { MoveInodeBody, User, InodeType, Permission } from '#types';
 import { AuthorizationError, RequestError } from '../errors';
 import { getMembers } from '#lib/database/member';
 import { addKeys, removeKeys } from '#lib/database/keys';

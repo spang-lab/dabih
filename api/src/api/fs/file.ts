@@ -1,4 +1,4 @@
-import { FileDownload, User, InodeType } from '../types';
+import { FileDownload, User, InodeType } from '#types';
 import db from '#lib/db';
 
 import { AuthorizationError, NotFoundError } from '../errors';
@@ -37,9 +37,6 @@ export default async function file(user: User, mnemonic: string) {
   });
   if (!file) {
     throw new NotFoundError(`No file found for mnemonic ${mnemonic}`);
-  }
-  if (file.deletedAt) {
-    throw new Error(`File ${mnemonic} has been deleted`);
   }
   const { data } = file;
   if (!data) {

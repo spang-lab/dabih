@@ -1,6 +1,6 @@
-import { getMembers } from '#lib/database/member';
+import { getMembers, toPermissionString } from '#lib/database/member';
 import { AuthorizationError } from '../errors';
-import { User, Permission } from '../types';
+import { User, Permission } from '#types';
 
 export default async function listMembers(user: User, mnemonic: string) {
   const { sub, isAdmin } = user;
@@ -12,5 +12,9 @@ export default async function listMembers(user: User, mnemonic: string) {
       `Not authorized to view members for ${mnemonic}`,
     );
   }
-  return members;
+  return members.map((m) => ({
+    ...m,
+    permissionString: toPermissionString(m.permission),
+    mnemonic,
+  }));
 }

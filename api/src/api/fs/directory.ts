@@ -1,4 +1,4 @@
-import { User, Permission, InodeType } from '../types';
+import { User, Permission, InodeType } from '#types';
 import db from '#lib/db';
 import { getPermission } from '#lib/database/member';
 import { AuthorizationError } from '../errors';

@@ -73,10 +73,9 @@ model Inode {
   parentId  Int?
   children  Inode[]   @relation("InodeTree")
   members   Member[]
+  keys      Key[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  keys      Key[]
 }
 
 model Member {
