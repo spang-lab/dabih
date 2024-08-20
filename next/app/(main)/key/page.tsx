@@ -1,9 +1,15 @@
-'use client';
-
-import useSession from '@/app/session';
+import { auth } from '@/lib/auth/auth';
 import Key from './Key';
+import { redirect } from 'next/navigation';
 
-export default function ManageKey() {
+export default async function ManageKey() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/signin');
+  }
+  const { user } = session;
+
   return (
     <div>
       <h1 className="text-4xl font-extrabold pb-4 tracking-tight sm:text-5xl md:text-6xl">
@@ -43,7 +49,7 @@ export default function ManageKey() {
           </li>
         </ul>
       </div>
-      <Key />
+      <Key user={user} />
     </div>
   );
 }

@@ -615,6 +615,7 @@ export interface components {
             qi?: string;
             x?: string;
             y?: string;
+        } & {
             [key: string]: unknown;
         };
         UserAddBody: {
@@ -660,7 +661,7 @@ export interface components {
          *     TRASH: the special directory that holds deleted files
          * @enum {number}
          */
-        InodeType: 0 | 1 | 2 | 10;
+        InodeType: 0 | 1 | 2 | 10 | 11;
         FileData: {
             /** Format: double */
             id: number;

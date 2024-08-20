@@ -4,18 +4,21 @@ import { useState, useCallback, useEffect } from 'react';
 import api from '@/lib/api';
 import { Plus } from 'react-feather';
 import { Switch } from '@/app/util';
-import useDialog from '@/app/dialog';
 import useSession from '@/app/session';
-import PublicKey from './PublicKey';
+
 import { UserResponse } from '@/lib/api/types';
+import DeleteDialog from '@/app/dialog/Delete';
+import { KeyRemoveBody } from '@/lib/api/types';
+import PublicKey from './PublicKey';
+
 
 export default function PublicKeys() {
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [rootOnly, setRootOnly] = useState<boolean>(false);
-  const dialog = useDialog();
+  const [toRemove, setToRemove] = useState<KeyRemoveBody | null>(null);
 
   const {
-    user, status, isAdmin, update,
+    status, isAdmin, update,
   } = useSession();
 
   const fetchKeys = useCallback(async () => {
@@ -26,46 +29,38 @@ export default function PublicKeys() {
     setUsers(data);
   }, []);
 
-  const enableKey = async (hash: string, enabled: boolean) => {
-    if (!user) {
-      return;
-    }
+  const enableKey = async (sub: string, hash: string, enabled: boolean) => {
     await api.user.enableKey({
-      sub: user.sub,
+      sub,
       hash,
       enabled,
     });
     await fetchKeys();
   };
 
-  const removeKey = async (hash: string) => {
-    if (!user) {
-      return;
-    }
-    await api.user.removeKey({
-      sub: user.sub,
-      hash,
-    });
+  const removeKey = async (req: KeyRemoveBody) => {
+    await api.user.removeKey(req);
     await fetchKeys();
     update();
   };
 
   const createKey = () => {
-    dialog.openDialog('generate', {
-      shake: true,
-      onSubmit: async (key: JsonWebKey) => {
-        if (status !== 'authenticated' || !user) {
-          return;
-        }
-        const { sub } = user;
-        await api.user.addKey({
-          sub,
-          data: { ...key },
-          isRootKey: true,
-        });
-        await fetchKeys();
-      },
-    });
+    throw new Error('Not implemented');
+    // dialog.openDialog('generate', {
+    //   shake: true,
+    //   onSubmit: async (key: JsonWebKey) => {
+    //     if (status !== 'authenticated' || !user) {
+    //       return;
+    //     }
+    //     const { sub } = user;
+    //     await api.user.addKey({
+    //       sub,
+    //       data: { ...key },
+    //       isRootKey: true,
+    //     });
+    //     await fetchKeys();
+    //   },
+    // });
   };
 
   const getButton = () => {
@@ -95,12 +90,17 @@ export default function PublicKeys() {
     fetchKeys().catch(console.error);
   }, [status, fetchKeys]);
 
-  const publicKeys = users.flatMap((u) => u.keys
-    .map((k) => ({ ...k, name: u.name, email: u.email, sub: u.sub })))
-    .filter((k) => !rootOnly || k.isRootKey);
+
 
   return (
     <div className="py-2">
+      <DeleteDialog
+        type="public key"
+        name={toRemove?.hash ?? ''}
+        show={!!toRemove}
+        onSubmit={() => removeKey(toRemove!)}
+        onClose={() => setToRemove(null)}
+      />
       <div className="inline-flex items-center">
         <Switch enabled={rootOnly} onChange={() => setRootOnly(!rootOnly)} />
         <span className="px-2 font-bold">
@@ -115,8 +115,8 @@ export default function PublicKeys() {
               publicKey={k}
               user={u}
               show={!rootOnly || k.isRootKey}
-              onRemove={() => removeKey(k.hash)}
-              onEnable={(e: boolean) => enableKey(k.hash, e)}
+              onRemove={() => setToRemove({ sub: u.sub, hash: k.hash })}
+              onEnable={(e: boolean) => enableKey(u.sub, k.hash, e)}
             />
           )))
         )}

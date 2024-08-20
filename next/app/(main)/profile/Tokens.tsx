@@ -3,16 +3,22 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Plus } from 'react-feather';
 import api from '@/lib/api';
-import useDialog from '@/app/dialog';
-import useSession from '@/app/session';
 import Token from './Token';
 
-import { TokenResponse } from '@/lib/api/types';
+import { TokenAddBody, TokenResponse } from '@/lib/api/types';
+import { User } from 'next-auth';
+import CreateTokenDialog from '@/app/dialog/CreateToken';
+import ShowTokenDialog from '@/app/dialog/ShowToken';
 
-export default function Tokens() {
+
+
+
+export default function Tokens({ user }:
+  { user: User }) {
   const [tokens, setTokens] = useState<TokenResponse[]>([]);
-  const dialog = useDialog();
-  const { status } = useSession();
+  const [showCreateToken, setShowCreateToken] = useState(false);
+  const [tokenValue, setTokenValue] = useState<string | null>(null);
+
 
   const fetchTokens = useCallback(async () => {
     const { data, error } = await api.token.list();
@@ -23,41 +29,38 @@ export default function Tokens() {
     setTokens(data);
   }, []);
 
-  const createToken = () => {
-    dialog.openDialog('create_token', {
-      onSubmit: async (scopes: string[], lifetime: number | null) => {
-        const { data: token, error } = await api.token.add({
-          scopes,
-          lifetime,
-        });
-        if (error) {
-          dialog.error(error);
-          return;
-        }
-        dialog.openDialog('show_token', {
-          shake: true,
-          token,
-          onSubmit: async () => {
-            await fetchTokens();
-          },
-        });
-      },
-    });
-  };
+  const addToken = async (req: TokenAddBody) => {
+    const { data: token, error } = await api.token.add(req);
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setTokenValue(token.value);
+    await fetchTokens();
+  }
+
   const removeToken = async (tokenId: number) => {
     await api.token.remove(tokenId);
     await fetchTokens();
   };
 
   useEffect(() => {
-    if (status !== 'authenticated') {
-      return;
-    }
     fetchTokens().catch(console.error);
-  }, [status, fetchTokens]);
+  }, [fetchTokens]);
 
   return (
     <div>
+      <CreateTokenDialog
+        show={showCreateToken}
+        scopes={user.scopes}
+        onClose={() => setShowCreateToken(false)}
+        onSubmit={addToken}
+      />
+      <ShowTokenDialog
+        token={tokenValue}
+        onClose={() => setTokenValue(null)}
+      />
+
       {tokens.map((t) => (
         <Token data={t} key={t.value} onRemove={() => removeToken(t.id)} />
       ))}
@@ -67,7 +70,7 @@ export default function Tokens() {
       <button
         className="m-1 rounded text-white font-semibold bg-blue px-2 py-1 inline-flex items-center"
         type="button"
-        onClick={() => createToken()}
+        onClick={() => setShowCreateToken(true)}
       >
         <Plus size={24} className="mr-1" />
         Generate an new Token

@@ -1,8 +1,17 @@
 import Tokens from './Tokens';
 import User from './User';
 import PublicKeys from './PublicKeys';
+import { auth } from '@/lib/auth/auth';
 
-export default function Profile() {
+export default async function Profile() {
+  const session = await auth();
+  if (!session) {
+    return null;
+  }
+  const { user } = session;
+
+
+
   return (
     <div>
       <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
@@ -29,7 +38,7 @@ export default function Profile() {
         {' '}
         <span className="text-blue font-bold">dabih</span>
       </p>
-      <Tokens />
+      <Tokens user={user} />
       <h2 className="text-xl pt-5 font-extrabold tracking-tight sm:text-2xl md:text-3xl">
         <span className="text-blue">Public </span>
         Keys

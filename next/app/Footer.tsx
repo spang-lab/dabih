@@ -1,11 +1,10 @@
-'use client';
 import React from 'react';
 import Link from 'next/link';
-import useInfo from '@/lib/hooks/info';
+import api from '@/lib/api';
 
 
-export default function Footer() {
-  const info = useInfo();
+export default async function Footer() {
+  const { data: info } = await api.util.info();
 
   const branding = info?.branding;
   const department = branding?.department;

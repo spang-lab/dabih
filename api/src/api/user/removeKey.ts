@@ -1,8 +1,7 @@
-import { KeyRemoveBody, User } from "../types";
+import { KeyRemoveBody, User } from '../types';
 
-import { AuthorizationError } from "../errors";
-import db from "#lib/db";
-
+import { AuthorizationError } from '../errors';
+import db from '#lib/db';
 
 export default async function removeKey(user: User, body: KeyRemoveBody) {
   if (!user.isAdmin && user.sub !== body.sub) {
@@ -22,9 +21,8 @@ export default async function removeKey(user: User, body: KeyRemoveBody) {
     },
     include: {
       keys: true,
-    }
+    },
   });
+  console.log('removeKey', result);
   return result;
 }
-
-

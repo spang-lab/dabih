@@ -9,15 +9,16 @@ import {
   UploadCloud,
   Share2,
   Home,
-  User,
+  User as UserIcon,
   LogOut,
   Settings,
 } from 'react-feather';
 import Image from 'next/image';
 import { signOut, signIn } from 'next-auth/react';
 
-import useSession from '@/app/session';
 import NavItem from './NavItem';
+import { User } from 'next-auth';
+import useKey from '@/lib/hooks/key';
 
 function NavLine() {
   return <div className="flex-auto mx-3 h-6 border-t-2 border-gray-300" />;
@@ -29,46 +30,24 @@ const usePage = () => {
   return page;
 };
 
-export default function Header() {
-  const {
-    status,
-    keyStatus,
-  } = useSession();
-
+export default function Header({ user }: { user?: User }) {
   const page = usePage();
+  const key = useKey();
+  const isActive = (key.status === 'active');
 
-  const getState = () => {
-    const getKeyState = () => {
-      switch (keyStatus) {
-        case 'unauthenticated':
-        case 'loading':
-          return 'disabled';
-        case 'unregistered':
-        case 'unloaded':
-        case 'disabled':
-          return 'enabled';
-        case 'active':
-          return 'complete';
-        default:
-          throw new Error(`Unexpected key status ${keyStatus}`);
-      }
-    };
-    const state = {
-      start: 'complete',
-      signin: (status === 'authenticated') ? 'complete' : 'enabled',
-      key: getKeyState(),
-      upload: (keyStatus === 'active') ? 'enabled' : 'disabled',
-      manage: (keyStatus === 'active') ? 'enabled' : 'disabled',
-      profile: (status === 'authenticated') ? 'enabled' : 'disabled',
-    };
-    state[page] = 'active';
-    return state;
+  const state = {
+    start: 'complete',
+    signin: (user) ? 'complete' : 'enabled',
+    key: (user) ? (isActive) ? 'complete' : 'enabled' : 'disabled',
+    upload: (isActive) ? 'enabled' : 'disabled',
+    manage: (isActive) ? 'enabled' : 'disabled',
+    profile: (user) ? 'enabled' : 'disabled',
   };
+  state[page] = 'active';
 
-  const state = getState();
 
   const getSignIn = () => {
-    if (status === 'authenticated') {
+    if (user) {
       return (
         <>
           <NavLine />
@@ -85,7 +64,7 @@ export default function Header() {
         <NavLine />
         <button onClick={() => signIn()} type="button">
           <NavItem href="" state="enabled" label="Sign In">
-            <User size={24} />
+            <UserIcon size={24} />
           </NavItem>
         </button>
       </>

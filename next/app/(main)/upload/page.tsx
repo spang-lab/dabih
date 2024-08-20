@@ -1,20 +1,23 @@
 'use client';
 
-import useDialog from '@/app/dialog';
+import { useState } from 'react';
+import ErrorDialog from '@/app/dialog/Error';
 import { Dropzone } from '@/app/util';
 import useUpload from '@/lib/hooks/upload';
 import { FilePlus } from 'react-feather';
 
 export default function Upload() {
-  const dialog = useDialog();
   const upload = useUpload();
+  const [error, setError] = useState<string | null>(null);
 
-  const onFile = async (file: File) => {
+
+  const onFile = (file: File) => {
     upload.start(file);
   };
 
   return (
     <div>
+      <ErrorDialog message={error} onClose={() => setError(null)} />
       <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
         Upload
         {' '}
@@ -24,7 +27,7 @@ export default function Upload() {
       <div className="h-80 px-20 mt-5">
         <Dropzone
           onFile={onFile}
-          onError={(e: string) => dialog.error(e)}
+          onError={(e: string) => setError(e)}
         >
           <div>
             <div className="flex justify-center mt-9">

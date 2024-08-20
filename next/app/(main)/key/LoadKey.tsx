@@ -1,36 +1,39 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Camera, File, Key } from 'react-feather';
 import Image from 'next/image';
 import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
-import useDialog from '@/app/dialog';
 import api from '@/lib/api';
 import { Dropzone } from '@/app/util';
 import useSession from '@/app/session';
+import ErrorDialog from '@/app/dialog/Error';
+import WebcamDialog from '@/app/dialog/Webcam';
 
 export default function LoadKey() {
   const { update } = useSession();
-  const dialog = useDialog();
+  const [error, setError] = useState<string | null>(null);
+  const [showWebcam, setShowWebcam] = useState(false);
+
 
   const saveKey = async (privateKey: CryptoKey) => {
     const hash = await crypto.privateKey.toHash(privateKey);
 
     const { data: user, error } = await api.user.me();
     if (!user || error) {
-      dialog.error(error ?? 'Could not load user data');
+      setError(error ?? 'Could not load user data');
       return;
     }
     const { keys } = user;
     const key = keys.find((k) => k.hash === hash);
     if (!key) {
-      dialog.error(`Key with hash ${hash} does not belong to user ${user.name}`);
+      setError(`Key with hash ${hash} does not belong to user ${user.name}`);
       return;
     }
     if (!key.enabled) {
-      dialog.error('This key need to be enabled first');
+      setError('This key needs to be enabled first');
       return;
     }
     await storage.storeKey(privateKey);
@@ -44,10 +47,10 @@ export default function LoadKey() {
       await saveKey(key);
     } catch (err: unknown) {
       if (err instanceof Error) {
-        dialog.error(err.toString());
+        setError(err.toString());
         return;
       }
-      dialog.error('Failed to read private key file');
+      setError('Failed to read private key file');
     }
   };
 
@@ -57,17 +60,23 @@ export default function LoadKey() {
       await saveKey(key);
     } catch (err) {
       if (err instanceof Error) {
-        dialog.error(err.toString());
+        setError(err.toString());
         return;
       }
-      dialog.error('Failed to read private key from QR Code');
+      setError('Failed to read private key from QR Code');
     }
   };
 
-  const onError = (error: string) => dialog.error(error);
 
   return (
     <div className="py-12">
+      <ErrorDialog message={error} onClose={() => setError(null)} />
+      <WebcamDialog
+        show={showWebcam}
+        onSubmit={onScan}
+        onError={(e: string) => setError(e)}
+        onClose={() => setShowWebcam(false)}
+      />
       <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
         Load your existing key
       </h2>
@@ -82,9 +91,7 @@ export default function LoadKey() {
           <button
             className="px-4 rounded-xl text-2xl py-3 text-white bg-blue"
             type="button"
-            onClick={() => dialog.openDialog('webcam', {
-              onSubmit: onScan,
-            })}
+            onClick={() => setShowWebcam(true)}
           >
             <span className="whitespace-nowrap">
               <Camera className="inline-block mx-3 mb-1" size={24} />
@@ -100,7 +107,7 @@ export default function LoadKey() {
         <div className="m-2 h-80 sm:h-64">
           <Dropzone
             onFile={onFile}
-            onError={onError}
+            onError={(e: string) => setError(e)}
             maxSize={100 * 1024}
           >
             <div className="text-center">

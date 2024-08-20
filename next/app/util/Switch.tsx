@@ -1,11 +1,13 @@
-'use client';
 
 import { Switch } from '@headlessui/react';
 
 type ChangeHandler = (checked: boolean) => void;
 
-export default function ToggleSwitch({ enabled, onChange }:
-{ enabled: boolean, onChange: ChangeHandler }) {
+export default function ToggleSwitch({ show = true, enabled, onChange }:
+  { show?: boolean, enabled: boolean, onChange: ChangeHandler }) {
+  if (!show) {
+    return null;
+  }
   return (
     <Switch
       checked={enabled}

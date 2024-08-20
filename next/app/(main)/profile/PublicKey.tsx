@@ -1,7 +1,6 @@
 import React from 'react';
 import { Trash2, Key } from 'react-feather';
 import { Switch, LocalDate } from '@/app/util';
-import useDialog from '@/app/dialog';
 import useSession from '@/app/session';
 
 import type { PublicKey, UserResponse } from '@/lib/api/types';
@@ -18,7 +17,6 @@ export default function PublicKey({ publicKey, user, show, onRemove, onEnable }:
 ) {
   const { name, sub, email } = user;
   const { hash, enabled, createdAt, isRootKey } = publicKey;
-  const { openDialog } = useDialog();
   const isEnabled = !!enabled || isRootKey;
   const { isAdmin } = useSession();
 
@@ -32,35 +30,6 @@ export default function PublicKey({ publicKey, user, show, onRemove, onEnable }:
     }
     return <div className="px-2 font-bold text-gray-500">Disabled</div>;
   };
-
-  const getSwitch = () => {
-    if (isRootKey || !isAdmin) {
-      return null;
-    }
-
-    return (
-      <div className="flex flex-row items-center px-1 mx-1">
-        <Switch enabled={enabled !== null} onChange={() => onEnable(!isEnabled)} />
-      </div>
-    );
-  };
-
-  const getModal = () => (
-    <button
-      type="button"
-      className="py-1 px-1 bg-red text-white rounded-md inline-flex items-center"
-      onClick={() => openDialog('delete', {
-        type: 'Public Key',
-        name,
-        onSubmit: onRemove,
-      })}
-    >
-      <Trash2 size={24} className="pr-1" />
-      <div className="text-xs font-bold">
-        Delete
-      </div>
-    </button>
-  );
 
   const getIcon = () => {
     if (isRootKey) {
@@ -101,9 +70,20 @@ export default function PublicKey({ publicKey, user, show, onRemove, onEnable }:
       </div>
       <div className="text-gray-400 break-words text-xs">{hash}</div>
       <div className="flex flex-row items-center grow justify-end">
-        {getSwitch()}
+        <div className="flex flex-row items-center px-1 mx-1">
+          <Switch show={isAdmin && !isRootKey} enabled={enabled !== null} onChange={() => onEnable(!isEnabled)} />
+        </div>
         {getState()}
-        {getModal()}
+        <button
+          type="button"
+          className="py-1 px-1 bg-red text-white rounded-md inline-flex items-center"
+          onClick={() => onRemove(hash)}
+        >
+          <Trash2 size={24} className="pr-1" />
+          <div className="text-xs font-bold">
+            Delete
+          </div>
+        </button>
       </div>
     </div>
   );

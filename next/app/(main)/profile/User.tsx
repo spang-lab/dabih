@@ -1,90 +1,21 @@
-'use client';
-
-import { signOut } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
 import {
-  LogOut, User, Key, XCircle,
+  User, Key
 } from 'react-feather';
-import storage from '@/lib/storage';
-import crypto from '@/lib/crypto';
-import Link from 'next/link';
 import { LocalDate } from '@/app/util';
-import useSession from '@/app/session';
 
-function CryptoKey() {
-  const { key, update } = useSession();
-  const [hash, setHash] = useState<string | null>(null);
+import LocalKey from './LocalKey';
+import { auth } from '@/lib/auth/auth';
 
-  useEffect(() => {
-    (async () => {
-      if (!key) {
-        setHash(null);
-        return;
-      }
-      setHash(await crypto.privateKey.toHash(key));
-    })().catch(console.error);
-  }, [key]);
 
-  if (!key) {
-    return (
-      <div className="flex grow flex-row flex-wrap items-center">
-        <div className="bg-gray-700 text-white font-extrabold rounded-full px-2 py-1 mx-3">
-          not loaded
-        </div>
-        <div className="text-lg inline-flex items-center mx-3">
-          Go to the
-          <Link
-            className="text-blue hover:underline inline-flex items-center mx-2"
-            href="/key"
-          >
-            <Key className="mr-1" />
-            Key page
-          </Link>
-          to load a private key.
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="flex grow flex-row flex-wrap justify-between items-center">
-      <div className="bg-green text-white font-extrabold rounded-full px-2 py-1 mx-3">
-        loaded
-      </div>
-      <div>
-        <span>Fingerprint:</span>
-        {' '}
-        <span className="text-sm font-mono">{hash}</span>
-      </div>
-      <div className="text-gray-500">
-        Saved in browser local storage
-      </div>
-      <div>
-        <button
-          type="button"
-          className="bg-blue text-white py-1 px-2 rounded-md inline-flex items-center"
-          onClick={() => {
-            storage.deleteKey().catch(console.error);
-            update();
-          }}
-        >
-          <XCircle className="mr-2" />
-          Unload
-        </button>
-      </div>
-    </div>
-  );
-}
-
-export default function Account() {
-  const {
-    user, status, isAdmin, expires,
-  } = useSession();
-
-  if (status !== 'authenticated' || !user) {
+export default async function Account() {
+  const session = await auth();
+  if (!session?.user) {
     return null;
   }
+  const { user, expires } = session;
+
   const {
-    sub, name, email, scopes,
+    sub, name, email, scopes, isAdmin,
   } = user;
 
   return (
@@ -128,16 +59,6 @@ export default function Account() {
             </span>
           ))}
         </div>
-        <div className="grow flex justify-end">
-          <button
-            type="button"
-            className="bg-blue text-white py-1 px-2 rounded-md inline-flex items-center"
-            onClick={() => signOut()}
-          >
-            <LogOut className="mr-2" />
-            Sign Out
-          </button>
-        </div>
       </div>
 
       <div className="border rounded-xl border-gray-400 m-2 p-2 flex flex-row flex-wrap items-center">
@@ -145,7 +66,7 @@ export default function Account() {
           <Key className="text-blue mx-3" size={34} />
           RSA Private Key
         </div>
-        <CryptoKey />
+        <LocalKey />
       </div>
     </div>
   );

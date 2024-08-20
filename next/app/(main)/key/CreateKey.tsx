@@ -1,33 +1,42 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Cpu, File, Lock } from 'react-feather';
 import api from '@/lib/api';
-import useDialog from '@/app/dialog';
-import useSession from '@/app/session';
 import { Dropzone } from '@/app/util';
 import crypto from '@/lib/crypto';
+import ErrorDialog from '@/app/dialog/Error';
+import CreateKeyDialog from '@/app/dialog/CreateKey';
+import { User } from 'next-auth';
+import storage from '@/lib/storage';
 
 
-export default function CreateKey() {
-  const dialog = useDialog();
-  const {
-    user, status, update,
-  } = useSession();
+export default function CreateKey({ user, status }: {
+  status: 'unregistered' | 'no_key',
+  user: User,
+}) {
+  const [error, setError] = useState<string | null>(null);
+  const [showGenerate, setShowGenerate] = useState(false);
 
   const uploadKey = async (publicKey: JsonWebKey) => {
-    if (status !== 'authenticated' || !user) {
-      return;
+    if (status === 'unregistered') {
+      const { name, email } = user;
+      await api.user.add(
+        {
+          name: name ?? '',
+          email: email ?? '',
+          key: { ...publicKey }
+        },
+      );
     }
-    const { name, email } = user;
-    await api.user.add(
-      {
-        name,
-        email,
-        key: { ...publicKey }
-      },
-    );
-    update();
+    if (status === 'no_key') {
+      await api.user.addKey({
+        sub: user.sub,
+        data: { ...publicKey },
+        isRootKey: false,
+      });
+    }
+    storage.update();
   };
 
   const onFile = async (file: File) => {
@@ -38,20 +47,20 @@ export default function CreateKey() {
       await uploadKey(jwk);
     } catch (err) {
       if (err instanceof Error) {
-        dialog.error(err.toString());
+        setError(err.toString());
         return;
       }
-      dialog.error('Failed to read public key file');
+      setError('Failed to read public key file');
     }
   };
 
-  const onError = (error: string) => dialog.error(error);
-  if (status !== 'authenticated') {
-    return null;
-  }
-
   return (
     <div className="w-full">
+      <ErrorDialog message={error} onClose={() => setError(null)} />
+      <CreateKeyDialog
+        show={showGenerate}
+        onClose={() => setShowGenerate(false)}
+        onSubmit={uploadKey} />
       <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
         Add a
         <span className="text-blue"> new </span>
@@ -62,10 +71,7 @@ export default function CreateKey() {
           <button
             className="px-8 py-4 text-2xl bg-blue text-white rounded-xl"
             type="button"
-            onClick={() => dialog.openDialog('generate', {
-              shake: true,
-              onSubmit: uploadKey,
-            })}
+            onClick={() => setShowGenerate(true)}
           >
             <span className="whitespace-nowrap">
               <Cpu className="inline-block mx-3 mb-1" size={24} />
@@ -81,7 +87,7 @@ export default function CreateKey() {
         <div className="m-2 h-80 sm:h-64">
           <Dropzone
             onFile={onFile}
-            onError={onError}
+            onError={(e: string) => setError(e)}
             maxSize={100 * 1024}
           >
             <div className="text-center">

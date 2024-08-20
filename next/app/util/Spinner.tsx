@@ -1,4 +1,7 @@
-export default function Spinner({ small = false, white = false }) {
+export default function Spinner({ loading = true, small = false, white = false }) {
+  if (!loading) {
+    return null;
+  }
   if (small) {
     if (white) {
       return (

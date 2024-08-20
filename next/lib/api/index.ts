@@ -1,6 +1,4 @@
-'use client';
-
-import createClient from './api';
+import createClient from "./api";
 let host = process.env.BASE_URL;
 if (process.browser) {
   host = window.location.origin;

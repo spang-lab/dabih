@@ -126,7 +126,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeType": {
         "dataType": "refEnum",
-        "enums": [0,1,2,10],
+        "enums": [0,1,2,10,11],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileData": {
@@ -360,11 +360,15 @@ const templateService = new KoaTemplateService(models, {"noImplicitAdditionalPro
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
+
 export function RegisterRoutes(router: KoaRouter) {
+
     // ###########################################################################################################
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
+
+
         router.get('/healthy',
             ...(fetchMiddlewares<Middleware>(UtilController)),
             ...(fetchMiddlewares<Middleware>(UtilController.prototype.healthy)),

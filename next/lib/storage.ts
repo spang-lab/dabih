@@ -1,10 +1,10 @@
-import crypto from './crypto';
+import crypto from "./crypto";
 
 const isAvailable = () => {
   try {
     const storage = window.localStorage;
-    const testKey = '__storage_test__';
-    const testData = '__storage_test__';
+    const testKey = "__storage_test__";
+    const testData = "__storage_test__";
     storage.setItem(testKey, testData);
     storage.removeItem(testKey);
     return true;
@@ -13,13 +13,14 @@ const isAvailable = () => {
   }
 };
 
-const storageKey = 'dabihPrivateKey';
+const storageKey = "dabihPrivateKey";
+const EVENT_NAME = "storage";
 
 const storeKey = async (key: CryptoKey) => {
   const storage = window.localStorage;
   const base64 = await crypto.privateKey.toBase64(key);
   storage.setItem(storageKey, base64);
-  window.dispatchEvent(new Event('storage'));
+  window.dispatchEvent(new Event(EVENT_NAME));
 };
 
 const readKey = async () => {
@@ -32,10 +33,14 @@ const readKey = async () => {
   return key;
 };
 
-const deleteKey = async () => {
+const deleteKey = () => {
   const storage = window.localStorage;
   storage.removeItem(storageKey);
-  window.dispatchEvent(new Event('storage'));
+  window.dispatchEvent(new Event(EVENT_NAME));
+};
+
+const update = () => {
+  window.dispatchEvent(new Event(EVENT_NAME));
 };
 
 const storage = {
@@ -43,5 +48,7 @@ const storage = {
   storeKey,
   readKey,
   deleteKey,
+  EVENT_NAME,
+  update,
 };
 export default storage;

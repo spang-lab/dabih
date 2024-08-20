@@ -9,27 +9,33 @@ import {
   Security,
   OperationId,
   SuccessResponse,
-} from "@tsoa/runtime";
+} from '@tsoa/runtime';
 
+import {
+  RequestWithUser,
+  UserAddBody,
+  UserResponse,
+  KeyAddBody,
+  KeyEnableBody,
+  KeyRemoveBody,
+  PublicKey,
+} from '../types';
+import get from './get';
+import add from './add';
+import list from './list';
+import remove from './remove';
+import addKey from './addKey';
+import enableKey from './enableKey';
+import removeKey from './removeKey';
 
-import { RequestWithUser, UserAddBody, UserResponse, KeyAddBody, KeyEnableBody, KeyRemoveBody, PublicKey } from "../types";
-import get from "./get";
-import add from "./add";
-import list from "./list";
-import remove from "./remove";
-import addKey from "./addKey";
-import enableKey from "./enableKey";
-import removeKey from "./removeKey";
-
-
-@Route("user")
-@Tags("User")
-@Security("api_key", ["dabih:api"])
-@Security("jwt", ["dabih:api"])
+@Route('user')
+@Tags('User')
+@Security('api_key', ['dabih:api'])
+@Security('jwt', ['dabih:api'])
 export class UserController extends Controller {
-  @Post("add")
-  @OperationId("addUser")
-  @SuccessResponse("201", "Created")
+  @Post('add')
+  @OperationId('addUser')
+  @SuccessResponse('201', 'Created')
   public async add(
     @Request() request: RequestWithUser,
     @Body() requestBody: UserAddBody,
@@ -39,8 +45,10 @@ export class UserController extends Controller {
     this.setStatus(201);
     return response;
   }
-  @Get("me")
-  @OperationId("me")
+  @Security('api_key', ['dabih:api'])
+  @Security('jwt', ['dabih:api'])
+  @Get('me')
+  @OperationId('me')
   public async me(
     @Request() request: RequestWithUser,
   ): Promise<UserResponse | null> {
@@ -48,21 +56,21 @@ export class UserController extends Controller {
     return get(user.sub);
   }
 
-  @Post("find")
-  @OperationId("findUser")
+  @Post('find')
+  @OperationId('findUser')
   public async get(
     @Body() { sub }: { sub: string },
   ): Promise<UserResponse | null> {
     return get(sub);
   }
 
-  @Get("list")
-  @OperationId("listUsers")
+  @Get('list')
+  @OperationId('listUsers')
   public async list(): Promise<UserResponse[]> {
     return list();
   }
-  @Post("remove")
-  @OperationId("removeUser")
+  @Post('remove')
+  @OperationId('removeUser')
   public async remove(
     @Request() request: RequestWithUser,
     @Body() { sub }: { sub: string },
@@ -71,9 +79,9 @@ export class UserController extends Controller {
     await remove(user, sub);
   }
 
-  @Post("key/add")
-  @OperationId("addKey")
-  @SuccessResponse("201", "Created")
+  @Post('key/add')
+  @OperationId('addKey')
+  @SuccessResponse('201', 'Created')
   public async addKey(
     @Request() request: RequestWithUser,
     @Body() body: KeyAddBody,
@@ -84,8 +92,8 @@ export class UserController extends Controller {
     return key;
   }
 
-  @Post("key/enable")
-  @OperationId("enableKey")
+  @Post('key/enable')
+  @OperationId('enableKey')
   public async enableKey(
     @Request() request: RequestWithUser,
     @Body() body: KeyEnableBody,
@@ -93,8 +101,8 @@ export class UserController extends Controller {
     const { user } = request;
     return enableKey(user, body);
   }
-  @Post("key/remove")
-  @OperationId("removeKey")
+  @Post('key/remove')
+  @OperationId('removeKey')
   public async removeKey(
     @Request() request: RequestWithUser,
     @Body() body: KeyRemoveBody,
@@ -102,6 +110,4 @@ export class UserController extends Controller {
     const { user } = request;
     await removeKey(user, body);
   }
-
-
 }

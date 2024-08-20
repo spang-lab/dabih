@@ -1,8 +1,5 @@
 'use client';
 
-import {
-  DialogWrapper,
-} from './dialog/Context';
 
 import {
   SessionWrapper,
@@ -11,9 +8,7 @@ import {
 export default function Providers({ children }) {
   return (
     <SessionWrapper>
-      <DialogWrapper>
-        {children}
-      </DialogWrapper>
+      {children}
     </SessionWrapper>
   );
 }

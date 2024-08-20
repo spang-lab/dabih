@@ -5,19 +5,17 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 import useDownload from '@/lib/hooks/download';
-import useDialog from '@/app/dialog';
 import Progress from './Progress';
 
 export default function Download() {
   const { mnemonic } = useParams<{ mnemonic: string }>();
   const download = useDownload();
-  const dialog = useDialog();
 
   useEffect(() => {
     if (download.state === 'ready') {
       download.start(mnemonic);
     }
-  }, [download, dialog, mnemonic]);
+  }, [download, mnemonic]);
 
   if (download.state === 'error') {
     return (

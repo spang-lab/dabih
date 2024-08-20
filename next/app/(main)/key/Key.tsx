@@ -6,28 +6,25 @@ import {
   Spinner,
 } from '@/app/util';
 import { useRouter } from 'next/navigation';
-import useSession from '@/app/session';
 import Link from 'next/link';
 import LoadKey from './LoadKey';
 import CreateKey from './CreateKey';
+import useKey from '@/lib/hooks/key';
+import { User } from 'next-auth';
 
-export default function Key() {
+export default function Key({ user }: { user: User }) {
   const router = useRouter();
-  const {
-    keyStatus,
-  } = useSession();
+  const key = useKey();
+  const { status } = key;
 
   useEffect(() => {
-    if (keyStatus === 'active') {
+    if (status === 'active') {
       router.push('/manage');
       return;
     }
-    if (keyStatus === 'unauthenticated') {
-      router.push('/signin');
-    }
-  }, [keyStatus, router]);
+  }, [status, router]);
 
-  if (keyStatus === 'disabled') {
+  if (status === 'no_enabled_key' || status === 'disabled') {
     return (
       <div className="py-10 text-center">
         <Clock className="inline-block m-2 text-blue" size={80} />
@@ -38,7 +35,7 @@ export default function Key() {
         </h2>
         <div className="text-base text-gray-400 sm:text-lg md:text-xl">
           In order to prevent misuse each new key must be
-          <span className="text-blue"> unlocked </span>
+          <span className="text-blue"> enabled </span>
           by a dabih admin.
           <br />
           For now please contact the admin
@@ -47,21 +44,17 @@ export default function Key() {
       </div>
     );
   }
-  if (keyStatus === 'unloaded') {
+  if (status === 'unloaded') {
     return (
-      <div>
-        <LoadKey />
-
-      </div>
+      <LoadKey />
     );
   }
 
-  if (keyStatus === 'unregistered') {
+  if (status === 'unregistered' || status === 'no_key') {
     return (
-      <CreateKey />
+      <CreateKey user={user} status={status} />
     );
   }
-  // loading
   return (
     <div className="flex justify-center mt-10">
       <Spinner />

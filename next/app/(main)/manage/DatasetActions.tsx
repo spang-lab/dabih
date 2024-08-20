@@ -15,7 +15,6 @@ import {
   DownloadCloud,
 } from 'react-feather';
 import { useRouter } from 'next/navigation';
-import useDialog from '@/app/dialog';
 import useSession from '@/app/session';
 import useDatasets from './Context';
 
@@ -54,7 +53,6 @@ function Action({
 
 export default function Actions({ data }) {
   const { permission, mnemonic, deletedAt } = data;
-  const { openDialog } = useDialog();
   const router = useRouter();
   const hasWrite = permission === 'write';
   const { isAdmin } = useSession();
@@ -104,10 +102,6 @@ export default function Actions({ data }) {
                 </div>
               </Action>
               <Action
-                onClick={() => openDialog('rename', {
-                  dataset: data,
-                  onSubmit: (name: string) => dataset.rename(mnemonic, name),
-                })}
                 enabled={hasWrite}
               >
                 <Edit3 className="mx-2" size={24} />
@@ -128,10 +122,6 @@ export default function Actions({ data }) {
                   Danger
                 </span>
                 <Action
-                  onClick={() => openDialog('reencrypt', {
-                    mnemonic,
-                    onSubmit: () => dataset.reencrypt(mnemonic),
-                  })}
                   enabled={hasWrite}
                 >
                   <div className="relative w-6 h-6 mx-2">
@@ -142,11 +132,6 @@ export default function Actions({ data }) {
                 </Action>
                 <Action
                   show={!deletedAt}
-                  onClick={() => openDialog('delete', {
-                    type: 'Dataset',
-                    name: mnemonic,
-                    onSubmit: () => dataset.remove(mnemonic),
-                  })}
                   enabled={hasWrite || isAdmin}
                 >
                   <div className="text-red inline-flex items-center">
@@ -156,11 +141,6 @@ export default function Actions({ data }) {
                 </Action>
                 <Action
                   show={!!deletedAt && isAdmin}
-                  onClick={() => openDialog('destroy', {
-                    type: 'Dataset',
-                    name: mnemonic,
-                    onSubmit: () => dataset.destroy(mnemonic),
-                  })}
                   enabled={hasWrite || isAdmin}
                 >
                   <div className="text-red inline-flex items-center font-bold text-sm">

@@ -173,3 +173,22 @@ export const getTrash = async (sub: string) => {
     },
   });
 };
+
+export const createRoot = async () => {
+  const root = await db.inode.findFirst({
+    where: {
+      type: InodeType.ROOT,
+    },
+  });
+  if (root) {
+    return root;
+  }
+  const newRoot = await db.inode.create({
+    data: {
+      mnemonic: await generateMnemonic(),
+      name: '/',
+      type: InodeType.ROOT,
+    },
+  });
+  return newRoot;
+};
