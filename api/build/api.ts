@@ -3,14 +3,21 @@ import createClient from 'openapi-fetch';
 import type { components, paths } from './schema';
 type schemas = components['schemas'];
 
-interface Chunk {
+type ChunkUpload = {
   mnemonic: string;
+  hash: string;
   start: number;
   end: number;
-  size: number;
-  hash: string;
+  size?: number;
   data: Blob;
-}
+};
+
+const contentRange = (ck: ChunkUpload) => {
+  if (!ck.size) {
+    return `bytes ${ck.start}-${ck.end}/*`;
+  }
+  return `bytes ${ck.start}-${ck.end}/${ck.size}`;
+};
 
 const init = (baseUrl: string) => {
   const c = createClient<paths>({
@@ -37,12 +44,12 @@ const init = (baseUrl: string) => {
   const upload = {
     start: (body: schemas['UploadStartBody']) =>
       c.POST('/upload/start', { body }),
-    chunk: (ck: Chunk) => {
+    chunk: (ck: ChunkUpload) => {
       return c.PUT('/upload/{mnemonic}/chunk', {
         params: {
           path: { mnemonic: ck.mnemonic },
           header: {
-            'content-range': `bytes ${ck.start}-${ck.end}/${ck.size}`,
+            'content-range': contentRange(ck),
             digest: `sha-256=${ck.hash}`,
           },
         },

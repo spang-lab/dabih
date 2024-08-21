@@ -12,15 +12,13 @@ import {
   OperationId,
   Path,
   Header,
-} from "@tsoa/runtime";
+} from '@tsoa/runtime';
 
-
-
-import start from "./start";
-import cancel from "./cancel";
-import { default as chunk, RequestWithHeaders } from "./chunk";
-import finish from "./finish";
-import unfinished from "./unfinished";
+import start from './start';
+import cancel from './cancel';
+import { default as chunk, RequestWithHeaders } from './chunk';
+import finish from './finish';
+import unfinished from './unfinished';
 
 import {
   Mnemonic,
@@ -28,20 +26,20 @@ import {
   File,
   RequestWithUser,
   Chunk,
+  ExistingFileBody,
+  FileUpload,
 } from '../types';
-import { parseDigest, parseContentRange } from "./util";
+import { parseDigest, parseContentRange } from './util';
+import existing from './existing';
 
-
-
-
-@Route("upload")
-@Tags("Upload")
-@Security("jwt", ["dabih:upload"])
-@Security("api_key", ['dabih:upload'])
+@Route('upload')
+@Tags('Upload')
+@Security('jwt', ['dabih:upload'])
+@Security('api_key', ['dabih:upload'])
 export class UploadController extends Controller {
-  @Post("start")
-  @OperationId("startUpload")
-  @SuccessResponse("201", "Created")
+  @Post('start')
+  @OperationId('startUpload')
+  @SuccessResponse('201', 'Created')
   public async start(
     @Request() request: RequestWithUser,
     @Body() requestBody: UploadStartBody,
@@ -52,8 +50,8 @@ export class UploadController extends Controller {
     return response;
   }
 
-  @Post("{mnemonic}/cancel")
-  @OperationId("cancelUpload")
+  @Post('{mnemonic}/cancel')
+  @OperationId('cancelUpload')
   public async cancel(
     @Request() request: RequestWithUser,
     @Path() mnemonic: Mnemonic,
@@ -62,34 +60,37 @@ export class UploadController extends Controller {
     await cancel(user, mnemonic);
   }
 
-  @Put("{mnemonic}/chunk")
-  @OperationId("chunkUpload")
-  @SuccessResponse("201", "Created")
+  @Put('{mnemonic}/chunk')
+  @OperationId('chunkUpload')
+  @SuccessResponse('201', 'Created')
   public async chunk(
     @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithHeaders,
     /**
-      * The range of bytes in the chunk
-      * It should be in the format `bytes {start}-{end}/{size}`
-      */
-    @Header("content-range") contentRange: string,
+     * The range of bytes in the chunk
+     * It should be in the format `bytes {start}-{end}/{size?}`
+     */
+    @Header('content-range') contentRange: string,
     /**
-      * The SHA-256 hash of the chunk data encoded in base64url
-      * It should be in the format `sha-256={hash}`
-      */
-    @Header("digest") digest: string,
+     * The SHA-256 hash of the chunk data encoded in base64url
+     * It should be in the format `sha-256={hash}`
+     */
+    @Header('digest') digest: string,
   ): Promise<Chunk> {
-    const result = await chunk({
-      mnemonic,
-      ...parseContentRange(contentRange),
-      hash: parseDigest(digest),
-    }, request);
+    const result = await chunk(
+      {
+        mnemonic,
+        ...parseContentRange(contentRange),
+        hash: parseDigest(digest),
+      },
+      request,
+    );
     this.setStatus(201);
     return result;
   }
 
-  @Post("{mnemonic}/finish")
-  @OperationId("finishUpload")
+  @Post('{mnemonic}/finish')
+  @OperationId('finishUpload')
   public async finish(
     @Request() request: RequestWithUser,
     @Path() mnemonic: Mnemonic,
@@ -98,13 +99,12 @@ export class UploadController extends Controller {
     return finish(user, mnemonic);
   }
 
-  @Get("unfinished")
-  @OperationId("unfinishedUploads")
+  @Get('unfinished')
+  @OperationId('unfinishedUploads')
   public async unfinished(
     @Request() request: RequestWithUser,
-  ): Promise<File[]> {
+  ): Promise<FileUpload[]> {
     const { user } = request;
     return unfinished(user);
   }
-
 }

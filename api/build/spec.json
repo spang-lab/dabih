@@ -598,6 +598,45 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ChunkData": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/FileData"
+					},
+					{
+						"properties": {
+							"chunks": {
+								"items": {
+									"$ref": "#/components/schemas/Chunk"
+								},
+								"type": "array"
+							}
+						},
+						"required": [
+							"chunks"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"FileUpload": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/File"
+					},
+					{
+						"properties": {
+							"data": {
+								"$ref": "#/components/schemas/ChunkData"
+							}
+						},
+						"required": [
+							"data"
+						],
+						"type": "object"
+					}
+				]
+			},
 			"User": {
 				"description": "User is the type that represents a user in the system.",
 				"properties": {
@@ -730,27 +769,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"DownloadData": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/FileData"
-					},
-					{
-						"properties": {
-							"chunks": {
-								"items": {
-									"$ref": "#/components/schemas/Chunk"
-								},
-								"type": "array"
-							}
-						},
-						"required": [
-							"chunks"
-						],
-						"type": "object"
-					}
-				]
-			},
 			"Key": {
 				"properties": {
 					"id": {
@@ -801,7 +819,7 @@
 								"type": "array"
 							},
 							"data": {
-								"$ref": "#/components/schemas/DownloadData"
+								"$ref": "#/components/schemas/ChunkData"
 							}
 						},
 						"required": [
@@ -1630,7 +1648,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/File"
+										"$ref": "#/components/schemas/FileUpload"
 									},
 									"type": "array"
 								}
@@ -2443,7 +2461,7 @@
 						}
 					},
 					{
-						"description": "The range of bytes in the chunk\nIt should be in the format `bytes {start}-{end}/{size}`",
+						"description": "The range of bytes in the chunk\nIt should be in the format `bytes {start}-{end}/{size?}`",
 						"in": "header",
 						"name": "content-range",
 						"required": true,

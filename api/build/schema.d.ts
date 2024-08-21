@@ -755,6 +755,12 @@ export interface components {
              */
             updatedAt: Date;
         };
+        ChunkData: components["schemas"]["FileData"] & {
+            chunks: components["schemas"]["Chunk"][];
+        };
+        FileUpload: components["schemas"]["File"] & {
+            data: components["schemas"]["ChunkData"];
+        };
         /** @description User is the type that represents a user in the system. */
         User: {
             /**
@@ -802,9 +808,6 @@ export interface components {
              */
             lifetime: number | null;
         };
-        DownloadData: components["schemas"]["FileData"] & {
-            chunks: components["schemas"]["Chunk"][];
-        };
         Key: {
             /** Format: double */
             id: number;
@@ -819,7 +822,7 @@ export interface components {
         };
         FileDownload: components["schemas"]["File"] & {
             keys: components["schemas"]["Key"][];
-            data: components["schemas"]["DownloadData"];
+            data: components["schemas"]["ChunkData"];
         };
         FileKeys: components["schemas"]["File"] & {
             keys: components["schemas"]["Key"][];
@@ -1210,7 +1213,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["File"][];
+                    "application/json": components["schemas"]["FileUpload"][];
                 };
             };
         };
@@ -1622,7 +1625,7 @@ export interface operations {
             query?: never;
             header: {
                 /** @description The range of bytes in the chunk
-                 *     It should be in the format `bytes {start}-{end}/{size}` */
+                 *     It should be in the format `bytes {start}-{end}/{size?}` */
                 "content-range": string;
                 /** @description The SHA-256 hash of the chunk data encoded in base64url
                  *     It should be in the format `sha-256={hash}` */

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "client": "cp ../api/build/api.ts ../api/build/schema.d.ts ../api/src/api/types.ts ./lib/api/",
+    "client": "cp -r ../api/build/api.ts ../api/build/schema.d.ts ../api/src/api/types ./lib/api/",
     "start": "npm run client && next dev",
     "test": "ava",
     "prod": "NODE_ENV=production next start",
