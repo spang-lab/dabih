@@ -12,7 +12,7 @@ interface Options {
   chunkSize: number;
 }
 
-interface UploadState {
+export interface UploadState {
   status:
   | "loading"
   | "ready"
@@ -20,6 +20,7 @@ interface UploadState {
   | "preparing"
   | "uploading"
   | "finishing"
+  | "canceling"
   | "complete"
   | "error";
   file?: File;
@@ -113,8 +114,9 @@ export default function useUpload() {
           return;
         }
         const { chunks } = inode.data;
-        const cursor = chunks.at(-1)?.end ?? 0;
-        if (cursor + 1 === inode.data.size) {
+        const cursor = chunks.at(-1)?.end ?? -1;
+        const start = cursor + 1;
+        if (start === inode.data.size) {
           setState({
             inode,
             file,
@@ -125,14 +127,14 @@ export default function useUpload() {
         }
         const twoMiB = 2 * 1024 * 1024;
         const chunkSize = options?.chunkSize ?? twoMiB;
-        const blob = file.slice(cursor, cursor + chunkSize);
+        const blob = file.slice(start, start + chunkSize);
         const hash = await crypto.hash(await blob.arrayBuffer());
 
         const { data: chunk, error } = await api.upload.chunk({
           mnemonic: inode.mnemonic,
           hash,
-          start: cursor,
-          end: cursor + blob.size - 1,
+          start: start,
+          end: start + blob.size - 1,
           data: blob,
         });
         if (!chunk || error) {
@@ -192,6 +194,25 @@ export default function useUpload() {
         });
         return;
       }
+      case "canceling": {
+        if (!inode) {
+          return;
+        }
+        const { error } = await api.upload.cancel(inode.mnemonic);
+        if (error) {
+          setState({
+            status: "error",
+            options,
+            error: error ?? "Failed to cancel upload",
+          });
+          return;
+        }
+        setState({
+          status: "loading",
+          options,
+        });
+        return;
+      }
       case "complete": {
         return;
       }
@@ -208,7 +229,7 @@ export default function useUpload() {
   }, [update]);
 
   return {
-    debug: JSON.stringify(state, null, 2),
+    state,
     start: (file: File, options?: Options) => {
       const defaultOptions = {
         chunkSize: 2 * 1024 * 1024,
@@ -227,6 +248,18 @@ export default function useUpload() {
         status: "preparing",
         file,
         options: options ?? defaultOptions,
+      });
+    },
+    cancel: () => {
+      setState({
+        ...state,
+        status: "canceling",
+      });
+    },
+    clearError: () => {
+      setState({
+        status: "loading",
+        options: state.options,
       });
     },
   };

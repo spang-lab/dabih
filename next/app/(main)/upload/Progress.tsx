@@ -2,15 +2,20 @@
 
 import React from 'react';
 import { Bytes } from '@/app/util';
+import type { UploadState } from '@/lib/hooks/upload';
 
-export default function UploadProgress(props: any) {
-  const {
-    current, total, fileName, running,
-  } = props;
-  if (!current && current !== 0) {
+export default function UploadProgress({ state }: { state: UploadState }) {
+  const { inode, status } = state;
+  if (status === 'complete') {
     return null;
   }
-  if (!total && total !== 0) {
+  if (!inode) {
+    return null;
+  }
+  const { chunks, fileName } = inode.data;
+  const current = (chunks.at(-1)?.end ?? -1) + 1;
+  const total = state.file?.size ?? inode.data.size;
+  if (!total) {
     return null;
   }
 
@@ -23,17 +28,19 @@ export default function UploadProgress(props: any) {
   const offset = circumference * (1 - percent / 100);
 
   const getLoader = () => {
-    if (running) {
+    if (status === "uploading") {
       return (
         <div className="animate-upload mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded m-4  box-border" />
       );
     }
-    return (
-      <div className="text-center p-2 text-gray-500">
-        <p className="font-bold text-red">Upload has been interrupted.</p>
-        Select the file again to continue uploading.
-      </div>
-    );
+    if (status === "interrupted") {
+      return (
+        <div className="text-center p-2 text-gray-500">
+          <p className="font-bold text-red">Upload has been interrupted.</p>
+          Select the file again to continue uploading.
+        </div>
+      );
+    }
   };
 
   return (

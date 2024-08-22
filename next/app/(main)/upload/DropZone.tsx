@@ -1,13 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading  */
 
-'use client';
-
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { File, FilePlus } from 'react-feather';
 
-export default function Dropzone({ onChange, disabled }) {
+export default function Dropzone({ onChange, disabled }: {
+  onChange: (files: File[]) => void;
+  disabled: boolean;
+}) {
   const onDrop = useCallback(onChange, [onChange]);
 
   const {

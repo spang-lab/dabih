@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id        Int         @id @default(autoincrement())
+  id        BigInt      @id @default(autoincrement())
   sub       String      @unique
   name      String
   email     String
@@ -21,9 +21,9 @@ model User {
 }
 
 model PublicKey {
-  id        Int       @id @default(autoincrement())
+  id        BigInt    @id @default(autoincrement())
   user      User      @relation(fields: [userId], references: [id])
-  userId    Int
+  userId    BigInt
   hash      String    @unique
   data      String
   isRootKey Boolean
@@ -34,13 +34,13 @@ model PublicKey {
 }
 
 model FileData {
-  id        Int      @id @default(autoincrement())
+  id        BigInt   @id @default(autoincrement())
   uid       String   @unique
   createdBy String
   fileName  String
   filePath  String?
   hash      String?
-  size      Int?
+  size      BigInt?
   keyHash   String
   chunks    Chunk[]
   inodes    Inode[]
@@ -49,28 +49,28 @@ model FileData {
 }
 
 model Chunk {
-  id        Int      @id @default(autoincrement())
+  id        BigInt   @id @default(autoincrement())
   data      FileData @relation(fields: [dataId], references: [id])
-  dataId    Int
+  dataId    BigInt
   hash      String
   iv        String
-  start     Int
-  end       Int
+  start     BigInt
+  end       BigInt
   crc       String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Inode {
-  id        Int       @id @default(autoincrement())
+  id        BigInt    @id @default(autoincrement())
   mnemonic  String    @unique
-  type      Int
+  type      BigInt
   name      String
   tag       String?
   data      FileData? @relation(fields: [dataId], references: [id])
-  dataId    Int?
+  dataId    BigInt?
   parent    Inode?    @relation("InodeTree", fields: [parentId], references: [id])
-  parentId  Int?
+  parentId  BigInt?
   children  Inode[]   @relation("InodeTree")
   members   Member[]
   keys      Key[]
@@ -79,11 +79,11 @@ model Inode {
 }
 
 model Member {
-  id         Int      @id @default(autoincrement())
+  id         BigInt   @id @default(autoincrement())
   sub        String
   Inode      Inode    @relation(fields: [inodeId], references: [id])
-  inodeId    Int
-  permission Int
+  inodeId    BigInt
+  permission BigInt
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -91,9 +91,9 @@ model Member {
 }
 
 model Key {
-  id        Int      @id @default(autoincrement())
+  id        BigInt   @id @default(autoincrement())
   inode     Inode    @relation(fields: [inodeId], references: [id])
-  inodeId   Int
+  inodeId   BigInt
   hash      String
   key       String
   createdAt DateTime @default(now())
@@ -101,7 +101,7 @@ model Key {
 }
 
 model Token {
-  id        Int       @id @default(autoincrement())
+  id        BigInt    @id @default(autoincrement())
   value     String    @unique
   sub       String
   scope     String

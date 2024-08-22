@@ -28,8 +28,8 @@ export default function useKey() {
   useEffect(() => {
     const listener = async () => {
       const storedKey = await storage.readKey();
-      const { data: user } = await api.user.me();
-      if (!user) {
+      const { data: user, response } = await api.user.me();
+      if (!user || response.status === 204) {
         if (storedKey) {
           storage.deleteKey();
           return;

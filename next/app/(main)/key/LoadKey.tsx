@@ -21,8 +21,8 @@ export default function LoadKey() {
   const saveKey = async (privateKey: CryptoKey) => {
     const hash = await crypto.privateKey.toHash(privateKey);
 
-    const { data: user, error } = await api.user.me();
-    if (!user || error) {
+    const { data: user, error, response } = await api.user.me();
+    if (!user || response.status === 204 || error) {
       setError(error ?? 'Could not load user data');
       return;
     }
