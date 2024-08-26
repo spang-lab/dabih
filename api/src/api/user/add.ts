@@ -1,10 +1,9 @@
+import { User } from '../types';
+import { UserAddBody } from '../types';
+import { AuthorizationError } from '../errors';
+import db from '#lib/db';
 
-import { User } from "../types";
-import { UserAddBody } from "../types";
-import { AuthorizationError } from "../errors";
-import db from "#lib/db";
-
-import { convertKey } from "./util";
+import { convertKey } from './util';
 
 export default async function add(user: User, body: UserAddBody) {
   const { isAdmin } = user;
@@ -22,11 +21,11 @@ export default async function add(user: User, body: UserAddBody) {
       email: body.email,
       keys: {
         create: key,
-      }
+      },
     },
     include: {
       keys: true,
-    }
+    },
   });
   return result;
 }

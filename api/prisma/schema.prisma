@@ -64,7 +64,7 @@ model Chunk {
 model Inode {
   id        BigInt    @id @default(autoincrement())
   mnemonic  String    @unique
-  type      BigInt
+  type      Int
   name      String
   tag       String?
   data      FileData? @relation(fields: [dataId], references: [id])
@@ -83,7 +83,7 @@ model Member {
   sub        String
   Inode      Inode    @relation(fields: [inodeId], references: [id])
   inodeId    BigInt
-  permission BigInt
+  permission Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

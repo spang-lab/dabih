@@ -13,11 +13,16 @@ export default function UploadProgress({ state }: { state: UploadState }) {
     return null;
   }
   const { chunks, fileName } = inode.data;
-  const current = (chunks.at(-1)?.end ?? -1) + 1;
-  const total = state.file?.size ?? inode.data.size;
-  if (!total) {
+  let current = 0;
+  if (chunks.length) {
+    const { end } = chunks.at(-1)!;
+    current = parseInt(end as string, 10) + 1;
+  }
+  const size = state.file?.size ?? inode.data.size;
+  if (!size) {
     return null;
   }
+  const total = parseInt(size as string, 10);
 
   const percent = Math.round((1000 * current) / total) / 10;
 

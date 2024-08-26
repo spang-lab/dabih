@@ -14,7 +14,7 @@ const parseScope = (scopes: string[]) => {
   }
   const [scope] = scopes;
   const regex = /^dabih:download:(\w+)$/;
-  const match = scope.match(regex);
+  const match = regex.exec(scope);
   if (!match) {
     throw new AuthorizationError(
       `Invalid scope ${scope} expected dabih:download:<mnemonic>`,
@@ -64,7 +64,7 @@ export default async function mnemonic(user: User) {
     const { hash, iv } = chunk;
     const stream = await get(uid, hash);
     const decrypt = crypto.aesKey.decrypt(key, iv);
-    const isLast = chunk.end + 1 === size;
+    const isLast = chunk.end + BigInt(1) === size;
     stream.pipe(decrypt).pipe(pStream, { end: isLast });
   }
   return {

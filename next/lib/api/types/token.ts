@@ -1,5 +1,9 @@
 export interface Token {
-  id: number;
+  /**
+   * The id of the token
+   * @format bigint
+   */
+  id: unknown;
   value: string;
   sub: string;
   scope: string;

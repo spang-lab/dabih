@@ -9,11 +9,11 @@ type ChunkRange = Pick<Chunk, 'start' | 'end'>;
 
 export const validChunkEnd = (chunks: ChunkRange[]) => {
   return chunks.reduce((end, chunk) => {
-    if (chunk.start === end + 1) {
+    if (chunk.start === end + BigInt(1)) {
       return chunk.end;
     }
-    return -1;
-  }, -1);
+    return BigInt(-1);
+  }, BigInt(-1));
 };
 
 const hashChunks = (chunks: { hash: string }[]) => {
@@ -56,12 +56,12 @@ export default async function finish(user: User, mnemonic: string) {
   }
   const { chunks, size } = data;
   const end = validChunkEnd(chunks);
-  if (end === -1) {
+  if (end === BigInt(-1)) {
     throw new RequestError(`Chunks are not complete for dataset ${mnemonic}`);
   }
-  if (size && size !== end + 1) {
+  if (size && size !== end + BigInt(1)) {
     throw new RequestError(
-      `Dataset size: ${size} does not match chunks end: ${end + 1} for dataset ${mnemonic}`,
+      `Dataset size: ${size} does not match chunks end: ${end + BigInt(1)} for dataset ${mnemonic}`,
     );
   }
   const hash = hashChunks(chunks);
@@ -75,7 +75,7 @@ export default async function finish(user: User, mnemonic: string) {
       data: {
         update: {
           hash,
-          size: end + 1,
+          size: end + BigInt(1),
         },
       },
     },

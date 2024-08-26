@@ -1,18 +1,7 @@
-import {
-  open,
-  access,
-  mkdir,
-  rm,
-  constants,
-  stat,
-} from 'node:fs/promises';
-import {
-  resolve,
-  join,
-} from 'node:path';
+import { open, access, mkdir, rm, constants, stat } from 'node:fs/promises';
+import { resolve, join } from 'node:path';
 import logger from '#lib/logger';
 import { requireEnv } from '#lib/env';
-
 
 let basePath = '';
 
@@ -20,7 +9,7 @@ const exists = async (path: string) => {
   try {
     await access(path, constants.F_OK);
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 };
@@ -29,16 +18,15 @@ const isWriteable = async (path: string) => {
   try {
     await access(path, constants.W_OK);
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 };
 
-
 export const get = async (bucket: string, key: string) => {
   const path = join(basePath, bucket, key);
   try {
-    const file = await open(path, 'r')
+    const file = await open(path, 'r');
     return file.createReadStream();
   } catch (err) {
     logger.error(err);
@@ -62,24 +50,23 @@ export const head = async (bucket: string, key: string) => {
   try {
     const meta = await stat(path);
     return meta;
-  } catch (err) {
+  } catch {
     return null;
   }
 };
 
 export const removeBucket = async (bucket: string) => {
   const path = join(basePath, bucket);
-  if (!await exists(path)) {
+  if (!(await exists(path))) {
     return;
   }
   await rm(path, { recursive: true });
-}
+};
 
 export const createBucket = async (bucket: string) => {
   const path = join(basePath, bucket);
   await mkdir(path);
-}
-
+};
 
 export const initFilesystem = async () => {
   const storageUrl = requireEnv('STORAGE_URL');
@@ -91,17 +78,20 @@ export const initFilesystem = async () => {
     throw new Error('fs storage provider needs config.storage.path');
   }
   basePath = resolve(path);
-  if (!await exists(basePath)) {
-    logger.warn(`storage.path "${basePath}" does not exist, trying to create it`);
+  if (!(await exists(basePath))) {
+    logger.warn(
+      `storage.path "${basePath}" does not exist, trying to create it`,
+    );
     try {
       await mkdir(basePath, { recursive: true });
-    } catch (err) {
-      throw new Error(`storage.path "${basePath}" does not exist and could not be created`);
+    } catch {
+      throw new Error(
+        `storage.path "${basePath}" does not exist and could not be created`,
+      );
     }
   }
-  if (!await isWriteable(basePath)) {
+  if (!(await isWriteable(basePath))) {
     throw new Error(`No write permission for storage.path "${basePath}"`);
   }
   logger.info(`Writing data to ${basePath}`);
 };
-

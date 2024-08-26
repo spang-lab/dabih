@@ -1,13 +1,7 @@
-/* eslint-disable no-underscore-dangle, no-bitwise */
 import { Transform } from 'node:stream';
 
-import {
-  createHash,
-  Hash
-} from 'node:crypto';
+import { createHash, Hash } from 'node:crypto';
 import crc32 from 'crc/calculators/crc32';
-
-
 
 class ValidationStream extends Transform {
   private hash: Hash;

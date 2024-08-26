@@ -294,6 +294,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description Get all the file information required to download a single file */
         get: operations["fileInfo"];
         put?: never;
         post?: never;
@@ -310,6 +311,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description Recursively list all files in a directory */
         get: operations["listFiles"];
         put?: never;
         post?: never;
@@ -561,10 +563,16 @@ export interface components {
             };
         };
         PublicKey: {
-            /** Format: double */
-            id: number;
-            /** Format: double */
-            userId: number;
+            /**
+             * Format: bigint
+             * @description The database id of the public key
+             */
+            id: string;
+            /**
+             * Format: bigint
+             * @description The user id the key belongs to
+             */
+            userId: string;
             hash: string;
             data: string;
             isRootKey: boolean;
@@ -578,10 +586,10 @@ export interface components {
         };
         UserResponse: {
             /**
-             * Format: int32
+             * Format: bigint
              * @description The database id of the user
              */
-            id: number;
+            id: string;
             /** @description The unique user sub */
             sub: string;
             /** @description The name of the user */
@@ -663,15 +671,21 @@ export interface components {
          */
         InodeType: 0 | 1 | 2 | 10 | 11;
         FileData: {
-            /** Format: double */
-            id: number;
+            /**
+             * Format: bigint
+             * @description The database id of the file data
+             */
+            id: string;
             uid: string;
             createdBy: string;
             fileName: string;
             filePath: string | null;
             hash: string | null;
-            /** Format: double */
-            size: number | null;
+            /**
+             * Format: bigint
+             * @description The size of the file in bytes
+             */
+            size: string;
             keyHash: string;
             /** Format: date-time */
             createdAt: Date;
@@ -679,15 +693,17 @@ export interface components {
             updatedAt: Date;
         };
         Inode: {
-            /** Format: double */
-            id: number;
+            /**
+             * Format: bigint
+             * @description The database id of the inode
+             */
+            id: string;
             mnemonic: string;
             type: components["schemas"]["InodeType"];
             name: string;
             tag: string | null;
             data: components["schemas"]["FileData"] | null;
-            /** Format: double */
-            parentId: number | null;
+            parentId: unknown;
             /** Format: date-time */
             createdAt: Date;
             /** Format: date-time */
@@ -719,29 +735,29 @@ export interface components {
         };
         Chunk: {
             /**
-             * Format: int32
+             * Format: bigint
              * @description The database id of the chunk
              */
-            id: number;
+            id: string;
             /**
-             * Format: double
+             * Format: bigint
              * @description The id of the data the chunk belongs to
              */
-            dataId: number;
+            dataId: string;
             /** @description The SHA-256 hash of the unencrypted chunk data base64url encoded */
             hash: string;
             /** @description The AES-256 initialization vector base64url encoded */
             iv: string;
             /**
-             * Format: int32
+             * Format: bigint
              * @description The start of the chunk as a byte position in the file
              */
-            start: number;
+            start: string;
             /**
-             * Format: int32
+             * Format: bigint
              * @description The end of the chunk as a byte position in the file
              */
-            end: number;
+            end: string;
             /** @description The CRC32 checksum of the encrypted chunk data base64url encoded */
             crc: string | null;
             /**
@@ -779,8 +795,11 @@ export interface components {
             isAdmin: boolean;
         };
         Token: {
-            /** Format: double */
-            id: number;
+            /**
+             * Format: bigint
+             * @description The id of the token
+             */
+            id: string;
             value: string;
             sub: string;
             scope: string;
@@ -809,10 +828,16 @@ export interface components {
             lifetime: number | null;
         };
         Key: {
-            /** Format: double */
-            id: number;
-            /** Format: double */
-            inodeId: number;
+            /**
+             * Format: bigint
+             * @description The database id of the key
+             */
+            id: string;
+            /**
+             * Format: bigint
+             * @description The inode id the key belongs to
+             */
+            inodeId: string;
             hash: string;
             key: string;
             /** Format: date-time */
@@ -828,11 +853,17 @@ export interface components {
             keys: components["schemas"]["Key"][];
         };
         Member: {
-            /** Format: double */
-            id: number;
+            /**
+             * Format: bigint
+             * @description The database id of the member
+             */
+            id: string;
             sub: string;
-            /** Format: double */
-            inodeId: number;
+            /**
+             * Format: bigint
+             * @description The database id of the inode
+             */
+            inodeId: string;
             /** Format: double */
             permission: number;
             /** Format: date-time */

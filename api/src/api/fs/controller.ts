@@ -42,6 +42,9 @@ import {
 @Security('api_key', ['dabih:api'])
 @Security('jwt', ['dabih:api'])
 export class FilesystemController extends Controller {
+  /**
+   * Get all the file information required to download a single file
+   */
   @Get('{mnemonic}/file')
   @OperationId('fileInfo')
   public file(
@@ -51,6 +54,9 @@ export class FilesystemController extends Controller {
     const { user } = request;
     return file(user, mnemonic);
   }
+  /**
+   * Recursively list all files in a directory
+   */
   @Get('{mnemonic}/file/list')
   @OperationId('listFiles')
   public async listFiles(

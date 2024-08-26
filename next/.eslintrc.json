@@ -13,6 +13,12 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
+  "ignorePatterns": [
+    "node_modules",
+    ".next",
+    "public",
+    "schema.d.ts"
+  ],
   "overrides": [
     {
       "files": [

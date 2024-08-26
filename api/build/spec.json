@@ -126,12 +126,12 @@
 			"PublicKey": {
 				"properties": {
 					"id": {
-						"type": "number",
-						"format": "double"
+						"description": "The database id of the public key",
+						"format": "bigint"
 					},
 					"userId": {
-						"type": "number",
-						"format": "double"
+						"description": "The user id the key belongs to",
+						"format": "bigint"
 					},
 					"hash": {
 						"type": "string"
@@ -177,9 +177,8 @@
 			"UserResponse": {
 				"properties": {
 					"id": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The database id of the user"
+						"description": "The database id of the user",
+						"format": "bigint"
 					},
 					"sub": {
 						"type": "string",
@@ -377,8 +376,8 @@
 			"FileData": {
 				"properties": {
 					"id": {
-						"type": "number",
-						"format": "double"
+						"description": "The database id of the file data",
+						"format": "bigint"
 					},
 					"uid": {
 						"type": "string"
@@ -398,9 +397,8 @@
 						"nullable": true
 					},
 					"size": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
+						"description": "The size of the file in bytes",
+						"format": "bigint"
 					},
 					"keyHash": {
 						"type": "string"
@@ -432,8 +430,8 @@
 			"Inode": {
 				"properties": {
 					"id": {
-						"type": "number",
-						"format": "double"
+						"description": "The database id of the inode",
+						"format": "bigint"
 					},
 					"mnemonic": {
 						"type": "string"
@@ -456,11 +454,7 @@
 						],
 						"nullable": true
 					},
-					"parentId": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
+					"parentId": {},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -541,14 +535,12 @@
 			"Chunk": {
 				"properties": {
 					"id": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The database id of the chunk"
+						"description": "The database id of the chunk",
+						"format": "bigint"
 					},
 					"dataId": {
-						"type": "number",
-						"format": "double",
-						"description": "The id of the data the chunk belongs to"
+						"description": "The id of the data the chunk belongs to",
+						"format": "bigint"
 					},
 					"hash": {
 						"type": "string",
@@ -559,14 +551,12 @@
 						"description": "The AES-256 initialization vector base64url encoded"
 					},
 					"start": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The start of the chunk as a byte position in the file"
+						"description": "The start of the chunk as a byte position in the file",
+						"format": "bigint"
 					},
 					"end": {
-						"type": "integer",
-						"format": "int32",
-						"description": "The end of the chunk as a byte position in the file"
+						"description": "The end of the chunk as a byte position in the file",
+						"format": "bigint"
 					},
 					"crc": {
 						"type": "string",
@@ -671,8 +661,8 @@
 			"Token": {
 				"properties": {
 					"id": {
-						"type": "number",
-						"format": "double"
+						"description": "The id of the token",
+						"format": "bigint"
 					},
 					"value": {
 						"type": "string"
@@ -772,12 +762,12 @@
 			"Key": {
 				"properties": {
 					"id": {
-						"type": "number",
-						"format": "double"
+						"description": "The database id of the key",
+						"format": "bigint"
 					},
 					"inodeId": {
-						"type": "number",
-						"format": "double"
+						"description": "The inode id the key belongs to",
+						"format": "bigint"
 					},
 					"hash": {
 						"type": "string"
@@ -854,15 +844,15 @@
 			"Member": {
 				"properties": {
 					"id": {
-						"type": "number",
-						"format": "double"
+						"description": "The database id of the member",
+						"format": "bigint"
 					},
 					"sub": {
 						"type": "string"
 					},
 					"inodeId": {
-						"type": "number",
-						"format": "double"
+						"description": "The database id of the inode",
+						"format": "bigint"
 					},
 					"permission": {
 						"type": "number",
@@ -1842,6 +1832,7 @@
 						}
 					}
 				},
+				"description": "Get all the file information required to download a single file",
 				"tags": [
 					"Filesystem"
 				],
@@ -1887,6 +1878,7 @@
 						}
 					}
 				},
+				"description": "Recursively list all files in a directory",
 				"tags": [
 					"Filesystem"
 				],

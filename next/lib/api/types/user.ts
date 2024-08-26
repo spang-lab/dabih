@@ -1,8 +1,16 @@
 import { JsonWebKey } from 'crypto';
 
 export interface PublicKey {
-  id: number;
-  userId: number;
+  /**
+   * The database id of the public key
+   * @format bigint
+   */
+  id: unknown;
+  /**
+   * The user id the key belongs to
+   * @format bigint
+   */
+  userId: unknown;
   hash: string;
   data: string;
   isRootKey: boolean;
@@ -80,9 +88,9 @@ export interface UserAddBody {
 export interface UserResponse {
   /**
    * The database id of the user
-   * @isInt
+   * @format bigint
    */
-  id: number;
+  id: unknown;
   /**
    * The unique user sub
    */

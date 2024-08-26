@@ -1,5 +1,4 @@
-import { type } from 'os';
-import { Mnemonic, PermissionString, InodeType } from './base';
+import { Mnemonic, PermissionString, InodeType } from "./base";
 
 /**
  * The AES-256 encryption key used to encrypt and decrypt datasets.
@@ -15,13 +14,14 @@ export interface FileDecryptionKey {
 export interface Chunk {
   /**
    * The database id of the chunk
-   * @isInt
+   * @format bigint
    */
-  id: number;
+  id: unknown;
   /**
    * The id of the data the chunk belongs to
+   * @format bigint
    */
-  dataId: number;
+  dataId: unknown;
   /**
    * The SHA-256 hash of the unencrypted chunk data base64url encoded
    */
@@ -32,14 +32,14 @@ export interface Chunk {
   iv: string;
   /**
    * The start of the chunk as a byte position in the file
-   * @isInt
+   * @format bigint
    */
-  start: number;
+  start: unknown;
   /**
    * The end of the chunk as a byte position in the file
-   * @isInt
+   * @format bigint
    */
-  end: number;
+  end: unknown;
   /**
    * The CRC32 checksum of the encrypted chunk data base64url encoded
    */
@@ -55,13 +55,21 @@ export interface Chunk {
 }
 
 export interface FileData {
-  id: number;
+  /**
+   * The database id of the file data
+   * @format bigint
+   */
+  id: unknown;
   uid: string;
   createdBy: string;
   fileName: string;
   filePath: string | null;
   hash: string | null;
-  size: number | null;
+  /**
+   * The size of the file in bytes
+   * @format bigint
+   */
+  size: unknown;
   keyHash: string;
   createdAt: Date;
   updatedAt: Date;
@@ -72,13 +80,21 @@ export type ChunkData = FileData & {
 };
 
 export interface Inode {
-  id: number;
+  /**
+   * The database id of the inode
+   * @format bigint
+   */
+  id: unknown;
   mnemonic: string;
   type: InodeType;
   name: string;
   tag: string | null;
   data: FileData | null;
-  parentId: number | null;
+  /**
+   * The database id of the parent inode
+   * @format bigint
+   */
+  parentId: unknown;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -117,8 +133,16 @@ export interface Directory {
 }
 
 export interface Key {
-  id: number;
-  inodeId: number;
+  /**
+   * The database id of the key
+   * @format bigint
+   */
+  id: unknown;
+  /**
+   * The inode id the key belongs to
+   * @format bigint
+   */
+  inodeId: unknown;
   hash: string;
   key: string;
   createdAt: Date;
@@ -126,9 +150,17 @@ export interface Key {
 }
 
 export interface Member {
-  id: number;
+  /**
+   * The database id of the member
+   * @format bigint
+   */
+  id: unknown;
   sub: string;
-  inodeId: number;
+  /**
+   * The database id of the inode
+   * @format bigint
+   */
+  inodeId: unknown;
   permission: number;
   createdAt: Date;
   updatedAt: Date;
@@ -195,5 +227,5 @@ export interface SetAccessBody {
   /**
    * The permission to set
    */
-  permission: 'read' | 'write' | 'none';
+  permission: "read" | "write" | "none";
 }

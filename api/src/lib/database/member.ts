@@ -32,7 +32,7 @@ export const toPermissionString = (
 };
 
 const getMembersRecursive = async (
-  inodeId: number | null,
+  inodeId: bigint | null,
   hasPermission: Permission,
 ): Promise<Member[]> => {
   if (!inodeId) {
@@ -102,7 +102,7 @@ export const getMembers = async (
 };
 
 const getPermissionRecursive = async (
-  inodeId: number | null,
+  inodeId: bigint | null,
   sub: string,
 ): Promise<Permission> => {
   if (!inodeId) {

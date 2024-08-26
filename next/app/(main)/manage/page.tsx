@@ -1,54 +1,23 @@
-'use client';
+import Finder from "./Finder";
+import { auth } from "@/lib/auth/auth";
+import { redirect } from "next/navigation";
 
-import Link from 'next/link';
-import useDatasets, { DatasetsWrapper } from './Context';
-import SearchBar from './SearchBar';
-import Pagination from './Pagination';
-import Dataset from './Dataset';
+export default async function Manage() {
+  const session = await auth();
 
-function Manage() {
-  const { datasets, datasetCount } = useDatasets();
-
-  const getMessage = () => {
-    if (datasetCount > 0) {
-      return null;
-    }
-    return (
-      <div className="py-10 text-center">
-        <span className="text-gray-600">
-          You have no datasets yet. Uploaded datasets will appear here
-        </span>
-        <p>
-          <Link className="text-blue hover:underline" href="/upload">
-            Go to the Upload page
-          </Link>
-        </p>
-      </div>
-    );
-  };
+  if (!session?.user) {
+    redirect("/signin");
+  }
 
   return (
     <div>
-      <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+      <h1 className="text-4xl font-extrabold pb-3 tracking-tight sm:text-5xl md:text-6xl">
         Manage
-        <span className="text-blue"> your data </span>
+        <span className="text-blue"> your files</span>
       </h1>
       <div>
-        <SearchBar />
-        <Pagination />
-        {getMessage()}
-        {datasets.map((dataset) => (
-          <Dataset key={dataset.mnemonic} data={dataset} />
-        ))}
-        <Pagination />
+        <Finder />
       </div>
     </div>
   );
-}
-export default function Page() {
-  return (
-    <DatasetsWrapper>
-      <Manage />
-    </DatasetsWrapper>
-  );
-}
+} 

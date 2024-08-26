@@ -2,11 +2,17 @@ import { readFile, writeFile } from 'fs/promises';
 import openapiTS, { OpenAPI3, astToString } from 'openapi-typescript';
 import ts from 'typescript';
 
-
-const DATE = ts.factory.createIdentifier('Date')
-const BLOB = ts.factory.createIdentifier('Blob')
+const DATE = ts.factory.createTypeReferenceNode(
+  ts.factory.createIdentifier('Date'),
+);
+const BLOB = ts.factory.createTypeReferenceNode(
+  ts.factory.createIdentifier('Blob'),
+);
 const NULL = ts.factory.createLiteralTypeNode(ts.factory.createNull());
 
+const STRING = ts.factory.createTypeReferenceNode(
+  ts.factory.createIdentifier('string'),
+);
 
 const build = async () => {
   const specFile = 'build/spec.json';
@@ -14,24 +20,24 @@ const build = async () => {
   const specStr = await readFile(specFile, 'utf8');
   const spec = JSON.parse(specStr) as OpenAPI3;
   const types = await openapiTS(spec, {
-    // @ts-expect-error documented for openapi-typescript
     transform(schemaObject) {
-      if (schemaObject.format === "date-time") {
+      if (schemaObject.format === 'date-time') {
         return schemaObject.nullable
-          // @ts-expect-error documented for openapi-typescript
           ? ts.factory.createUnionTypeNode([DATE, NULL])
-          : DATE
+          : DATE;
       }
-      if (schemaObject.format === "binary") {
+      if (schemaObject.format === 'binary') {
         return schemaObject.nullable
-          // @ts-expect-error documented for openapi-typescript
           ? ts.factory.createUnionTypeNode([BLOB, NULL])
-          : BLOB
+          : BLOB;
       }
-      return;
+      if (schemaObject.format === 'bigint') {
+        return STRING;
+      }
+      return undefined;
     },
   });
   const schema = astToString(types);
   await writeFile(typesFile, schema, 'utf8');
-}
+};
 void build();

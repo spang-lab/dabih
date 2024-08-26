@@ -6,11 +6,11 @@ import db from '#lib/db';
 
 const duplicateRecursive = async (
   inode: InodeMembers,
-  parentId: number | null,
+  parentId: bigint | null,
 ): Promise<InodeMembers> => {
   const children = await db.inode.findMany({
     where: {
-      parentId: inode.id,
+      parentId: inode.id as bigint,
     },
     include: {
       data: true,
@@ -20,7 +20,7 @@ const duplicateRecursive = async (
   const data = inode.data
     ? {
       connect: {
-        id: inode.data.id,
+        id: inode.data.id as bigint,
       },
     }
     : undefined;
@@ -89,7 +89,7 @@ export default async function duplicate(user: User, mnemonic: string) {
   const newRoot = await duplicateRecursive(root, root.parentId);
   await db.inode.update({
     where: {
-      id: newRoot.id,
+      id: newRoot.id as bigint,
     },
     data: {
       name: new_name,

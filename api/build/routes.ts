@@ -36,8 +36,8 @@ const models: TsoaRoute.Models = {
     "PublicKey": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
-            "userId": {"dataType":"double","required":true},
+            "id": {"dataType":"any","required":true},
+            "userId": {"dataType":"any","required":true},
             "hash": {"dataType":"string","required":true},
             "data": {"dataType":"string","required":true},
             "isRootKey": {"dataType":"boolean","required":true},
@@ -52,7 +52,7 @@ const models: TsoaRoute.Models = {
     "UserResponse": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"integer","required":true},
+            "id": {"dataType":"any","required":true},
             "sub": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
             "email": {"dataType":"string","required":true},
@@ -132,13 +132,13 @@ const models: TsoaRoute.Models = {
     "FileData": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
+            "id": {"dataType":"any","required":true},
             "uid": {"dataType":"string","required":true},
             "createdBy": {"dataType":"string","required":true},
             "fileName": {"dataType":"string","required":true},
             "filePath": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "hash": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
-            "size": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "size": {"dataType":"any","required":true},
             "keyHash": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
@@ -149,13 +149,13 @@ const models: TsoaRoute.Models = {
     "Inode": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
+            "id": {"dataType":"any","required":true},
             "mnemonic": {"dataType":"string","required":true},
             "type": {"ref":"InodeType","required":true},
             "name": {"dataType":"string","required":true},
             "tag": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "data": {"dataType":"union","subSchemas":[{"ref":"FileData"},{"dataType":"enum","enums":[null]}],"required":true},
-            "parentId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "parentId": {"dataType":"any","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
@@ -187,12 +187,12 @@ const models: TsoaRoute.Models = {
     "Chunk": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"integer","required":true},
-            "dataId": {"dataType":"double","required":true},
+            "id": {"dataType":"any","required":true},
+            "dataId": {"dataType":"any","required":true},
             "hash": {"dataType":"string","required":true},
             "iv": {"dataType":"string","required":true},
-            "start": {"dataType":"integer","required":true},
-            "end": {"dataType":"integer","required":true},
+            "start": {"dataType":"any","required":true},
+            "end": {"dataType":"any","required":true},
             "crc": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
@@ -223,7 +223,7 @@ const models: TsoaRoute.Models = {
     "Token": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
+            "id": {"dataType":"any","required":true},
             "value": {"dataType":"string","required":true},
             "sub": {"dataType":"string","required":true},
             "scope": {"dataType":"string","required":true},
@@ -251,8 +251,8 @@ const models: TsoaRoute.Models = {
     "Key": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
-            "inodeId": {"dataType":"double","required":true},
+            "id": {"dataType":"any","required":true},
+            "inodeId": {"dataType":"any","required":true},
             "hash": {"dataType":"string","required":true},
             "key": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
@@ -274,9 +274,9 @@ const models: TsoaRoute.Models = {
     "Member": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
+            "id": {"dataType":"any","required":true},
             "sub": {"dataType":"string","required":true},
-            "inodeId": {"dataType":"double","required":true},
+            "inodeId": {"dataType":"any","required":true},
             "permission": {"dataType":"double","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},

@@ -1,5 +1,5 @@
-import logger from "#lib/logger";
-import { Context, Next } from "koa";
+import logger from '#lib/logger';
+import { Context, Next } from 'koa';
 
 const timeToString = (timeMs: number) => {
   if (timeMs < 1000) {
@@ -20,4 +20,3 @@ const log = async (ctx: Context, next: Next) => {
   logger.http(`${method} ${url} ${status} ${time}`);
 };
 export default () => log;
-

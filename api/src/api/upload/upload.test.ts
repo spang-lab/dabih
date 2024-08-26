@@ -4,7 +4,6 @@ import { test, client } from '#ava';
 
 import { parseDigest, parseContentRange } from './util';
 import { validChunkEnd } from './finish';
-import crypto from '#lib/crypto/index';
 
 test.before(async (t) => {
   const port = await getPort();

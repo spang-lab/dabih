@@ -62,7 +62,7 @@ export const listFiles = async (mnemonic: string): Promise<File[]> => {
 const getInodesRecursive = async (inode: InodeTree): Promise<InodeTree> => {
   const children = await db.inode.findMany({
     where: {
-      parentId: inode.id,
+      parentId: inode.id as bigint,
     },
     include: {
       data: true,

@@ -26,11 +26,9 @@ import {
   File,
   RequestWithUser,
   Chunk,
-  ExistingFileBody,
   FileUpload,
 } from '../types';
 import { parseDigest, parseContentRange } from './util';
-import existing from './existing';
 
 @Route('upload')
 @Tags('Upload')

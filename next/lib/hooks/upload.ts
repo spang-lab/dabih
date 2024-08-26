@@ -114,9 +114,22 @@ export default function useUpload() {
           return;
         }
         const { chunks } = inode.data;
-        const cursor = chunks.at(-1)?.end ?? -1;
-        const start = cursor + 1;
-        if (start === inode.data.size) {
+        let start = 0;
+        if (chunks.length) {
+          console.log(chunks);
+          const { end } = chunks.at(-1)!;
+          console.log(end);
+          start = parseInt(end as string) + 1;
+          if (isNaN(start)) {
+            setState({
+              status: "error",
+              options,
+              error: "Failed to parse chunk end",
+            });
+            return;
+          }
+        }
+        if (start === file.size) {
           setState({
             inode,
             file,
