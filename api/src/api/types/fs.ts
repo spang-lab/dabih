@@ -1,3 +1,4 @@
+import { type } from 'os';
 import { Mnemonic, PermissionString, InodeType } from './base';
 
 /**
@@ -89,7 +90,7 @@ export interface Inode {
   type: InodeType;
   name: string;
   tag: string | null;
-  data: FileData | null;
+  data?: FileData | null;
   parentId: unknown;
   createdAt: Date;
   updatedAt: Date;
@@ -97,6 +98,9 @@ export interface Inode {
 
 export type InodeMembers = Inode & {
   members: Member[];
+};
+export type InodeMembersParent = InodeMembers & {
+  parent: Inode | null;
 };
 
 export type InodeTree = InodeMembers & {
@@ -189,7 +193,7 @@ export interface MoveInodeBody {
   /**
    * Optional: The mnemonic of the new parent directory
    */
-  parent?: Mnemonic;
+  parent?: Mnemonic | null;
   /**
    * The list of AES-256 keys required to decrypt all child datasets
    */
@@ -224,4 +228,12 @@ export interface SetAccessBody {
    * The permission to set
    */
   permission: 'read' | 'write' | 'none';
+}
+
+export interface ListResponse {
+  node: InodeMembersParent | null;
+  /**
+   * The list of inodes
+   */
+  inodes: InodeMembers[];
 }

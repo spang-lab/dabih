@@ -368,8 +368,7 @@
 					0,
 					1,
 					2,
-					10,
-					11
+					10
 				],
 				"type": "number"
 			},
@@ -470,7 +469,6 @@
 					"type",
 					"name",
 					"tag",
-					"data",
 					"parentId",
 					"createdAt",
 					"updatedAt"
@@ -1008,7 +1006,12 @@
 						"description": "The mnemonic of the inode to move"
 					},
 					"parent": {
-						"$ref": "#/components/schemas/Mnemonic",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Mnemonic"
+							}
+						],
+						"nullable": true,
 						"description": "Optional: The mnemonic of the new parent directory"
 					},
 					"keys": {
@@ -1029,6 +1032,54 @@
 				},
 				"required": [
 					"mnemonic"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"InodeMembersParent": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/InodeMembers"
+					},
+					{
+						"properties": {
+							"parent": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/Inode"
+									}
+								],
+								"nullable": true
+							}
+						},
+						"required": [
+							"parent"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"ListResponse": {
+				"properties": {
+					"node": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/InodeMembersParent"
+							}
+						],
+						"nullable": true
+					},
+					"inodes": {
+						"items": {
+							"$ref": "#/components/schemas/InodeMembers"
+						},
+						"type": "array",
+						"description": "The list of inodes"
+					}
+				},
+				"required": [
+					"node",
+					"inodes"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -2160,10 +2211,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/InodeMembers"
-									},
-									"type": "array"
+									"$ref": "#/components/schemas/ListResponse"
 								}
 							}
 						}
@@ -2196,10 +2244,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/InodeMembers"
-									},
-									"type": "array"
+									"$ref": "#/components/schemas/ListResponse"
 								}
 							}
 						}

@@ -35,7 +35,6 @@ export enum InodeType {
   DIRECTORY = 1,
   UPLOAD = 2,
   TRASH = 10,
-  ROOT = 11,
 }
 
 /**

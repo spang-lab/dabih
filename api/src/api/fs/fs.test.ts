@@ -68,7 +68,7 @@ test('file', async (t) => {
   const { data } = info;
   t.is(data.fileName, 'test.txt');
   t.is(data.chunks.length, 2);
-  t.is(data.size, 9);
+  t.is(data.size, '9');
 });
 
 test('invalid mnemonic', async (t) => {
@@ -145,11 +145,12 @@ test('remove', async (t) => {
   const { response: response2 } = await api.fs.remove(mnemonic);
   t.is(response2.status, 400);
 
-  const { data: inodes } = await api.fs.list(null);
-  if (!inodes) {
+  const { data } = await api.fs.list(null);
+  if (!data?.inodes) {
     t.fail();
     return;
   }
+  const { inodes } = data;
   const trash = inodes.find((inode) => inode.type === InodeType.TRASH);
   if (!trash) {
     t.fail('Trash not found');

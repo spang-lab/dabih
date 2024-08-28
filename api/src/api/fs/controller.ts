@@ -35,6 +35,7 @@ import {
   InodeTree,
   ApiMember,
   InodeMembers,
+  ListResponse,
 } from '../types';
 
 @Route('fs')
@@ -129,7 +130,7 @@ export class FilesystemController extends Controller {
   @OperationId('listRoot')
   public async listRoot(
     @Request() request: RequestWithUser,
-  ): Promise<InodeMembers[]> {
+  ): Promise<ListResponse> {
     const { user } = request;
     return list(user);
   }
@@ -139,7 +140,7 @@ export class FilesystemController extends Controller {
   public async listInodes(
     @Request() request: RequestWithUser,
     @Path() mnemonic?: Mnemonic,
-  ): Promise<InodeMembers[]> {
+  ): Promise<ListResponse> {
     const { user } = request;
     return list(user, mnemonic);
   }

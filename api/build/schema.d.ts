@@ -669,7 +669,7 @@ export interface components {
          *     TRASH: the special directory that holds deleted files
          * @enum {number}
          */
-        InodeType: 0 | 1 | 2 | 10 | 11;
+        InodeType: 0 | 1 | 2 | 10;
         FileData: {
             /**
              * Format: bigint
@@ -702,7 +702,7 @@ export interface components {
             type: components["schemas"]["InodeType"];
             name: string;
             tag: string | null;
-            data: components["schemas"]["FileData"] | null;
+            data?: components["schemas"]["FileData"] | null;
             parentId: unknown;
             /** Format: date-time */
             createdAt: Date;
@@ -904,13 +904,21 @@ export interface components {
             /** @description The mnemonic of the inode to move */
             mnemonic: components["schemas"]["Mnemonic"];
             /** @description Optional: The mnemonic of the new parent directory */
-            parent?: components["schemas"]["Mnemonic"];
+            parent?: components["schemas"]["Mnemonic"] | null;
             /** @description The list of AES-256 keys required to decrypt all child datasets */
             keys?: components["schemas"]["FileDecryptionKey"][];
             /** @description Optional: The new name of the inode */
             name?: string;
             /** @description Optional: The new tag of the inode */
             tag?: string;
+        };
+        InodeMembersParent: components["schemas"]["InodeMembers"] & {
+            parent: components["schemas"]["Inode"] | null;
+        };
+        ListResponse: {
+            node: components["schemas"]["InodeMembersParent"] | null;
+            /** @description The list of inodes */
+            inodes: components["schemas"]["InodeMembers"][];
         };
         Directory: {
             mnemonic: components["schemas"]["Mnemonic"];
@@ -1529,7 +1537,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["InodeMembers"][];
+                    "application/json": components["schemas"]["ListResponse"];
                 };
             };
         };
@@ -1551,7 +1559,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["InodeMembers"][];
+                    "application/json": components["schemas"]["ListResponse"];
                 };
             };
         };

@@ -1,10 +1,11 @@
-import privateKey from './privateKey';
-import publicKey from './publicKey';
-import aesKey from './aesKey';
-import base64url from './base64url';
+import privateKey from "./privateKey";
+import publicKey from "./publicKey";
+import aesKey from "./aesKey";
+import base64url from "./base64url";
+import file from "./file";
 
 const hash = async (data: ArrayBuffer) => {
-  const buffer = await crypto.subtle.digest('SHA-256', data);
+  const buffer = await crypto.subtle.digest("SHA-256", data);
   return base64url.fromUint8(buffer);
 };
 
@@ -16,6 +17,7 @@ const cryptoLib = {
   publicKey,
   base64url,
   hash,
+  file,
   isAvailable,
 };
 export default cryptoLib;

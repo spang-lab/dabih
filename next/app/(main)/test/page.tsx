@@ -4,17 +4,23 @@
 import { Dropzone } from '@/app/util';
 
 export default function Test() {
-  const onDrop = (files) => {
-    console.log(files);
-  };
   return (
-    <Dropzone onFile={onDrop} onError={onDrop}>
-      <button
-        type="button"
-        className="px-5 py-3 text-3xl bg-blue rounded-xl text-white"
-      >
-        Upload
-      </button>
-    </Dropzone>
+    <div className='border min-h-96 bg-gray-200'>
+      <div className="flex flex-wrap">
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+        <div className="w-32 h-32 border bg-white" />
+      </div>
+    </div>
   );
 }

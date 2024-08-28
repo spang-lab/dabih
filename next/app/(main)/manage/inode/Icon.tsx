@@ -1,5 +1,8 @@
 
-import { AlignJustify, Box, Code, CreditCard, File, FileText, Film, Grid, Image as ImageIcon, Layout, Link, Map, Speaker, Triangle } from "react-feather";
+import {
+  AlignJustify, Code, File, FileText, Film, Image as ImageIcon,
+  Layout, Link, Speaker, Table, Triangle
+} from "react-feather";
 
 
 
@@ -146,7 +149,7 @@ export default function Icon({ fileName }: { fileName: string }) {
       return (
         <div className="relative">
           <File size={80} strokeWidth={1} />
-          <Grid size={24} className="text-gray-400 absolute bottom-6 left-7" />
+          <Table size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-3xl font-extrabold bottom-5 text-center font-mono text-green">
             E
           </div>

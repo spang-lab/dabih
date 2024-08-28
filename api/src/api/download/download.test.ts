@@ -53,7 +53,7 @@ test('download', async (t) => {
       return;
     }
     const decrypt = crypto.aesKey.decrypt(aesKey, iv);
-    const isLast = chunk.end + 1 === file.data.size;
+    const isLast = parseInt(chunk.end) + 1 === parseInt(file.data.size);
     Readable.fromWeb(stream as ReadableStream<Uint8Array>)
       .pipe(decrypt)
       .pipe(pStream, { end: isLast });

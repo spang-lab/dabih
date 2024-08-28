@@ -12,8 +12,8 @@ export const validChunkEnd = (chunks: ChunkRange[]) => {
     if (chunk.start === end + BigInt(1)) {
       return chunk.end;
     }
-    return BigInt(-1);
-  }, BigInt(-1));
+    return -1n;
+  }, -1n);
 };
 
 const hashChunks = (chunks: { hash: string }[]) => {
@@ -75,7 +75,7 @@ export default async function finish(user: User, mnemonic: string) {
       data: {
         update: {
           hash,
-          size: end + BigInt(1),
+          size: end + 1n,
         },
       },
     },

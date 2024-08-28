@@ -157,20 +157,20 @@ test('content range parsing', (t) => {
 });
 
 test('chunk validation', (t) => {
-  t.is(validChunkEnd([]), -1);
-  t.is(validChunkEnd([{ start: 0, end: 3 }]), 3);
+  t.is(validChunkEnd([]), -1n);
+  t.is(validChunkEnd([{ start: 0n, end: 3n }]), 3n);
   t.is(
     validChunkEnd([
-      { start: 0, end: 2 },
-      { start: 4, end: 5 },
+      { start: 0n, end: 2n },
+      { start: 4n, end: 5n },
     ]),
-    -1,
+    -1n,
   );
   t.is(
     validChunkEnd([
-      { start: 0, end: 3 },
-      { start: 4, end: 5 },
+      { start: 0n, end: 3n },
+      { start: 4n, end: 5n },
     ]),
-    5,
+    5n,
   );
 });

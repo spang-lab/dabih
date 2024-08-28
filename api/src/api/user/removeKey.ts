@@ -23,6 +23,5 @@ export default async function removeKey(user: User, body: KeyRemoveBody) {
       keys: true,
     },
   });
-  console.log('removeKey', result);
   return result;
 }

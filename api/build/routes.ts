@@ -126,7 +126,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeType": {
         "dataType": "refEnum",
-        "enums": [0,1,2,10,11],
+        "enums": [0,1,2,10],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileData": {
@@ -154,7 +154,7 @@ const models: TsoaRoute.Models = {
             "type": {"ref":"InodeType","required":true},
             "name": {"dataType":"string","required":true},
             "tag": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
-            "data": {"dataType":"union","subSchemas":[{"ref":"FileData"},{"dataType":"enum","enums":[null]}],"required":true},
+            "data": {"dataType":"union","subSchemas":[{"ref":"FileData"},{"dataType":"enum","enums":[null]}]},
             "parentId": {"dataType":"any","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
@@ -331,10 +331,24 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "mnemonic": {"ref":"Mnemonic","required":true},
-            "parent": {"ref":"Mnemonic"},
+            "parent": {"dataType":"union","subSchemas":[{"ref":"Mnemonic"},{"dataType":"enum","enums":[null]}]},
             "keys": {"dataType":"array","array":{"dataType":"refObject","ref":"FileDecryptionKey"}},
             "name": {"dataType":"string"},
             "tag": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "InodeMembersParent": {
+        "dataType": "refAlias",
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"InodeMembers"},{"dataType":"nestedObjectLiteral","nestedProperties":{"parent":{"dataType":"union","subSchemas":[{"ref":"Inode"},{"dataType":"enum","enums":[null]}],"required":true}}}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ListResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "node": {"dataType":"union","subSchemas":[{"ref":"InodeMembersParent"},{"dataType":"enum","enums":[null]}],"required":true},
+            "inodes": {"dataType":"array","array":{"dataType":"refAlias","ref":"InodeMembers"},"required":true},
         },
         "additionalProperties": false,
     },
