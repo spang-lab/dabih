@@ -1,5 +1,4 @@
-import { type } from 'os';
-import { Mnemonic, PermissionString, InodeType } from './base';
+import { Mnemonic, InodeType, Permission } from './base';
 
 /**
  * The AES-256 encryption key used to encrypt and decrypt datasets.
@@ -161,14 +160,10 @@ export interface Member {
    * @format bigint
    */
   inodeId: unknown;
-  permission: number;
+  permission: Permission;
   createdAt: Date;
   updatedAt: Date;
 }
-export type ApiMember = Member & {
-  mnemonic: Mnemonic;
-  permissionString: PermissionString;
-};
 
 export interface AddDirectoryBody {
   /**

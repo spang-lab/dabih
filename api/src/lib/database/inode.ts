@@ -1,6 +1,12 @@
 import db from '#lib/db';
 import crypto from '#crypto';
-import { File, InodeTree, InodeType, Permission } from 'src/api/types';
+import {
+  File,
+  InodeMembers,
+  InodeTree,
+  InodeType,
+  Permission,
+} from 'src/api/types';
 
 export const generateDataUid = async () => {
   const maxAttempts = 3;
@@ -95,6 +101,43 @@ export const listTree = async (mnemonic: string) => {
     throw new Error(`Inode ${mnemonic} not found`);
   }
   return getInodesRecursive(root);
+};
+
+const getParentsRecursive = async (
+  inodeId: bigint | null,
+): Promise<InodeMembers[]> => {
+  if (!inodeId) {
+    return [];
+  }
+  const inode = await db.inode.findUnique({
+    where: {
+      id: inodeId,
+    },
+    include: {
+      members: true,
+    },
+  });
+  if (!inode) {
+    throw new Error(`Inode ${inodeId} not found`);
+  }
+  const parents = await getParentsRecursive(inode.parentId);
+  return [inode, ...parents];
+};
+
+export const getParents = async (mnemonic: string): Promise<InodeMembers[]> => {
+  const inode = await db.inode.findUnique({
+    where: {
+      mnemonic,
+    },
+    include: {
+      members: true,
+    },
+  });
+  if (!inode) {
+    throw new Error(`Inode ${mnemonic} not found`);
+  }
+  const parents = await getParentsRecursive(inode.parentId);
+  return [inode, ...parents];
 };
 
 const isChildOfRecursive = async (inodeId: bigint | null, parentId: bigint) => {

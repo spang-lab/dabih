@@ -5,8 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import api from "@/lib/api";
 import Inode from "./inode/Inode";
-import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
-import { Copy, Download, Edit3, FolderPlus, Trash2 } from "react-feather";
+import Menu from "./Menu";
 
 
 import { DndContext, DragStartEvent, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
@@ -29,9 +28,8 @@ export default function Finder() {
     return acc;
   }, {});
   const [selected, setSelected] = useState<string[]>([]);
-
   const menuButton = useRef<HTMLDivElement>(null);
-  const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ left: 0, top: 0 });
 
 
   const list = useCallback(async () => {
@@ -48,13 +46,13 @@ export default function Finder() {
     await list();
   }, [cwd, list]);
 
-  const remove = useCallback(async (mnemonics: string[]) => {
-    const promises = mnemonics.map(async (mnemonic) => {
+  const remove = useCallback(async () => {
+    const promises = selected.map(async (mnemonic) => {
       await api.fs.remove(mnemonic);
     });
     await Promise.all(promises);
     await list();
-  }, [list]);
+  }, [list, selected]);
 
 
   const move = useCallback(async (mnemonics: string[], target: string) => {
@@ -93,16 +91,14 @@ export default function Finder() {
     await Promise.all(promises);
   }, [key, list]);
 
-
-
-
-  useEffect(() => {
-    list().catch(console.error);
+  const onRename = useCallback(async (mnemonic: string, name: string) => {
+    await api.fs.move({ mnemonic, name });
+    await list();
   }, [list]);
+
 
   const onDragStart = useCallback((event: DragStartEvent) => {
     const mnemonic = event.active.id as string;
-    console.log("drag start", mnemonic, selected);
     if (!selected.includes(mnemonic)) {
       setSelected([mnemonic]);
     }
@@ -126,6 +122,9 @@ export default function Finder() {
     useSensor(KeyboardSensor)
   );
 
+  useEffect(() => {
+    list().catch(console.error);
+  }, [list]);
 
 
   return (
@@ -140,59 +139,21 @@ export default function Finder() {
           onContextMenu={(e) => {
             e.preventDefault();
             setSelected([]);
-            setMenuPos({ x: e.clientX, y: e.clientY });
+            setPosition({ left: e.clientX, top: e.clientY });
             menuButton.current?.click();
           }}
         >
-          <Menu>
-            <MenuButton>
-              <div hidden ref={menuButton}>Menu</div>
-            </MenuButton>
-            <MenuItems
-              transition
-              className="w-52 z-10 absolute rounded border border-gray-300 bg-white p-1  text-sm/6 text-blue transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
-              style={{
-                top: menuPos.y,
-                left: menuPos.x,
-              }}>
-              <MenuItem>
-                <button
-                  onClick={addFolder}
-                  className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40">
-                  <FolderPlus className="text-blue" />
-                  New Folder
-                </button>
-              </MenuItem>
-              <MenuItem>
-                <button disabled={!selected.length} className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40 data-[focus]:disabled:bg-white disabled:text-blue/40">
-                  <Download />
-                  Download
-                </button>
-              </MenuItem>
-              <MenuItem>
-                <button disabled={!selected.length} className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40 data-[focus]:disabled:bg-white disabled:text-blue/40">
-                  <Edit3 />
-                  Rename
-                </button>
-              </MenuItem>
-              <MenuItem>
-                <button disabled={!selected.length} className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40 data-[focus]:disabled:bg-white disabled:text-blue/40">
-                  <Copy />
-                  Duplicate
-                </button>
-              </MenuItem>
-              <div className="my-1 h-px bg-gray-300" />
-              <MenuItem>
-                <button
-                  onClick={() => remove(selected)}
-                  disabled={!selected.length}
-                  className="group flex w-full items-center text-red gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40 data-[focus]:disabled:bg-white disabled:text-red/40">
-                  <Trash2 />
-                  Delete
-                </button>
-              </MenuItem>
-            </MenuItems>
-          </Menu>
+          <Menu
+            position={position}
+            selected={selected}
+            onAddFolder={addFolder}
+            onDownload={() => { }}
+            onRemove={remove}
+            onRename={() => { }}
+            onDuplicate={() => { }}
+            ref={menuButton}
+          />
+
           <div className="flex flex-wrap">
             <div
               className="h-fit select-none w-32"
@@ -230,7 +191,7 @@ export default function Finder() {
                   if (!selected.includes(inode.mnemonic)) {
                     setSelected([inode.mnemonic]);
                   }
-                  setMenuPos({ x: e.clientX, y: e.clientY });
+                  setPosition({ left: e.clientX, top: e.clientY });
                   menuButton.current?.click();
                 }}
               >
@@ -238,6 +199,7 @@ export default function Finder() {
                   data={inode}
                   selected={selected.includes(inode.mnemonic)}
                   draggable
+                  onRename={onRename}
                 />
               </div>
             ))}

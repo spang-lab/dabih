@@ -12,7 +12,7 @@ import {
 } from '@tsoa/runtime';
 
 import file from './file';
-import listMembers from './listMembers';
+import listParents from './listParents';
 import listFiles from './listFiles';
 import remove from './remove';
 import addMembers from './addMembers';
@@ -33,9 +33,8 @@ import {
   RequestWithUser,
   Inode,
   InodeTree,
-  ApiMember,
-  InodeMembers,
   ListResponse,
+  InodeMembers,
 } from '../types';
 
 @Route('fs')
@@ -68,14 +67,14 @@ export class FilesystemController extends Controller {
     return listFiles(user, mnemonic);
   }
 
-  @Get('{mnemonic}/member/list')
-  @OperationId('listMembers')
-  public async listMembers(
+  @Get('{mnemonic}/parent/list')
+  @OperationId('listParents')
+  public async listParents(
     @Path() mnemonic: Mnemonic,
     @Request() request: RequestWithUser,
-  ): Promise<ApiMember[]> {
+  ): Promise<InodeMembers[]> {
     const { user } = request;
-    return listMembers(user, mnemonic);
+    return listParents(user, mnemonic);
   }
   @Post('{mnemonic}/member/add')
   @OperationId('addMembers')

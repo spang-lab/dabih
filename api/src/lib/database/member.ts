@@ -58,7 +58,6 @@ const getMembersRecursive = async (
   const members = inode.members.map((m) => ({
     ...m,
     permissionString: toPermissionString(m.permission),
-    mnemonic: inode.mnemonic,
   }));
 
   const parentMembers = await getMembersRecursive(
@@ -92,7 +91,6 @@ export const getMembers = async (
   const members = inode.members.map((m) => ({
     ...m,
     permissionString: toPermissionString(m.permission),
-    mnemonic,
   }));
   const pMembers = await getMembersRecursive(inode.parentId, hasPermission);
   return {

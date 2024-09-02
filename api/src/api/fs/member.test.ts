@@ -37,15 +37,16 @@ test('member list', async (t) => {
   const api = client(t, 'test_owner');
   const mnemonic = t.context.files.test_file;
 
-  const { data: members, response } = await api.fs.listMembers(mnemonic);
+  const { data: inodes, response } = await api.fs.listParents(mnemonic);
   t.is(response.status, 200);
-  if (!members) {
+  if (!inodes || inodes.length === 0) {
     t.fail();
     return;
   }
+  const members = inodes.flatMap((inode) => inode.members);
   t.is(members.length, 1);
   const [member] = members;
-  t.is(member.permissionString, 'write');
+  t.is(member.permission, Permission.WRITE);
   t.is(member.sub, 'test_owner');
 });
 

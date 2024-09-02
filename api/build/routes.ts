@@ -271,27 +271,27 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"intersection","subSchemas":[{"ref":"File"},{"dataType":"nestedObjectLiteral","nestedProperties":{"keys":{"dataType":"array","array":{"dataType":"refObject","ref":"Key"},"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Permission": {
+        "dataType": "refEnum",
+        "enums": [0,1,2],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Member": {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"any","required":true},
             "sub": {"dataType":"string","required":true},
             "inodeId": {"dataType":"any","required":true},
-            "permission": {"dataType":"double","required":true},
+            "permission": {"ref":"Permission","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PermissionString": {
+    "InodeMembers": {
         "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["none"]},{"dataType":"enum","enums":["read"]},{"dataType":"enum","enums":["write"]}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ApiMember": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Member"},{"dataType":"nestedObjectLiteral","nestedProperties":{"permissionString":{"ref":"PermissionString","required":true},"mnemonic":{"ref":"Mnemonic","required":true}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Inode"},{"dataType":"nestedObjectLiteral","nestedProperties":{"members":{"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AESKey": {
@@ -315,11 +315,6 @@ const models: TsoaRoute.Models = {
             "keys": {"dataType":"array","array":{"dataType":"refObject","ref":"FileDecryptionKey"},"required":true},
         },
         "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "InodeMembers": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Inode"},{"dataType":"nestedObjectLiteral","nestedProperties":{"members":{"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeTree": {
@@ -1049,12 +1044,12 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        router.get('/fs/:mnemonic/member/list',
+        router.get('/fs/:mnemonic/parent/list',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
-            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listMembers)),
+            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listParents)),
 
-            async function FilesystemController_listMembers(context: Context, next: Next) {
+            async function FilesystemController_listParents(context: Context, next: Next) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
@@ -1073,7 +1068,7 @@ export function RegisterRoutes(router: KoaRouter) {
             const controller = new FilesystemController();
 
             return templateService.apiHandler({
-              methodName: 'listMembers',
+              methodName: 'listParents',
               controller,
               context,
               validatedArgs,

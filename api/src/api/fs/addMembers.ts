@@ -1,18 +1,19 @@
-import { getMembers } from '#lib/database/member';
-
 import { MemberAddBody, User, Permission } from '../types';
 import { AuthorizationError } from '../errors';
 import { addKeys } from '#lib/database/keys';
 import publicKey from '#lib/database/publicKey';
 import db from '#lib/db';
+import { getParents } from '#lib/database/inode';
 
 export default async function addMembers(
   user: User,
   mnemonic: string,
   body: MemberAddBody,
 ) {
-  const inode = await getMembers(mnemonic, Permission.NONE);
-  const { members } = inode;
+  const parents = await getParents(mnemonic);
+  const inode = parents[0];
+  const members = parents.flatMap((parent) => parent.members);
+
   const permission = members.find((m) => m.sub === user.sub)?.permission;
   if (permission !== Permission.WRITE) {
     throw new AuthorizationError(
@@ -31,7 +32,7 @@ export default async function addMembers(
     }));
   await db.inode.update({
     where: {
-      id: inode.id,
+      id: inode.id as bigint,
     },
     data: {
       members: {

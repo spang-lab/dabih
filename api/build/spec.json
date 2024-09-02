@@ -839,6 +839,15 @@
 					}
 				]
 			},
+			"Permission": {
+				"description": "The Permission type is used to represent the permissions a user has on a Inode.\nNONE: No permissions\nREAD: user may only read the file or directory\nWRITE: user can read, share, edit, and delete the file or directory",
+				"enum": [
+					0,
+					1,
+					2
+				],
+				"type": "number"
+			},
 			"Member": {
 				"properties": {
 					"id": {
@@ -853,8 +862,7 @@
 						"format": "bigint"
 					},
 					"permission": {
-						"type": "number",
-						"format": "double"
+						"$ref": "#/components/schemas/Permission"
 					},
 					"createdAt": {
 						"type": "string",
@@ -876,32 +884,22 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PermissionString": {
-				"type": "string",
-				"enum": [
-					"none",
-					"read",
-					"write"
-				],
-				"description": "PermissionString is a string representation of the Permission enum."
-			},
-			"ApiMember": {
+			"InodeMembers": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/Member"
+						"$ref": "#/components/schemas/Inode"
 					},
 					{
 						"properties": {
-							"permissionString": {
-								"$ref": "#/components/schemas/PermissionString"
-							},
-							"mnemonic": {
-								"$ref": "#/components/schemas/Mnemonic"
+							"members": {
+								"items": {
+									"$ref": "#/components/schemas/Member"
+								},
+								"type": "array"
 							}
 						},
 						"required": [
-							"permissionString",
-							"mnemonic"
+							"members"
 						],
 						"type": "object"
 					}
@@ -950,27 +948,6 @@
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"InodeMembers": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/Inode"
-					},
-					{
-						"properties": {
-							"members": {
-								"items": {
-									"$ref": "#/components/schemas/Member"
-								},
-								"type": "array"
-							}
-						},
-						"required": [
-							"members"
-						],
-						"type": "object"
-					}
-				]
 			},
 			"InodeTree": {
 				"allOf": [
@@ -1957,9 +1934,9 @@
 				]
 			}
 		},
-		"/fs/{mnemonic}/member/list": {
+		"/fs/{mnemonic}/parent/list": {
 			"get": {
-				"operationId": "listMembers",
+				"operationId": "listParents",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1967,7 +1944,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/ApiMember"
+										"$ref": "#/components/schemas/InodeMembers"
 									},
 									"type": "array"
 								}

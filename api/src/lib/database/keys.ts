@@ -8,8 +8,8 @@ import {
   Permission,
 } from 'src/api/types';
 import { RequestError } from 'src/api/errors';
-import { getMembers } from './member';
 import publicKey from './publicKey';
+import { getParents } from './inode';
 
 export const listKeys = async (
   mnemonic: string,
@@ -133,7 +133,7 @@ const removeKeysRecursive = async (
   const newSubs = inode.members
     .filter((m) => !validKeys.find((k) => k.userId === m.id))
     .map((m) => m.sub);
-  const userKeys = await publicKey.listUsers(newSubs);
+  const userKeys = (await publicKey.listUsers(newSubs)) as PublicKey[];
   const publicKeys = userKeys.concat(validKeys);
   const type = inode.type as InodeType;
   if (type === InodeType.FILE || type === InodeType.UPLOAD) {
@@ -160,8 +160,12 @@ const removeKeysRecursive = async (
 };
 
 export const removeKeys = async (mnemonic: string) => {
-  const inode = await getMembers(mnemonic, Permission.READ);
-  const subs = inode.members.map((m) => m.sub);
+  const parents = await getParents(mnemonic);
+  const subs = parents.flatMap((parent) =>
+    parent.members
+      .filter((m) => m.permission !== Permission.NONE)
+      .map((m) => m.sub),
+  );
   const publicKeys = await publicKey.listUsers(subs);
   const rootKeys = await publicKey.listRoot();
   const validKeys = publicKeys.concat(rootKeys);

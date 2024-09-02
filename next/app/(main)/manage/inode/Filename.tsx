@@ -1,5 +1,13 @@
 
-export default function FileName({ fileName }: { fileName: string }) {
+export default function FileName(
+  { hidden, fileName }:
+    {
+      hidden?: boolean,
+      fileName: string
+    }) {
+  if (hidden) {
+    return null;
+  }
   if (fileName.length <= 15) {
     return (
       <span className="text-wrap text-center break-words">{fileName}</span>
