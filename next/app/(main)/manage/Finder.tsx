@@ -42,9 +42,15 @@ export default function Finder() {
 
 
   const addFolder = useCallback(async () => {
-    await api.fs.addDirectory("untitled_folder", cwd ?? undefined);
+    let name = "untitled_folder";
+    let count = 1;
+    while (listData?.inodes.find((inode) => inode.name === name)) {
+      name = `untitled_folder_${count}`;
+      count += 1;
+    }
+    await api.fs.addDirectory(name, cwd ?? undefined);
     await list();
-  }, [cwd, list]);
+  }, [cwd, listData, list]);
 
   const remove = useCallback(async () => {
     const promises = selected.map(async (mnemonic) => {
