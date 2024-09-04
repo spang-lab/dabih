@@ -21,7 +21,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="en">
       <body>
         <Providers>
-          <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col h-screen">
             <Header user={user} />
             {children}
             <Footer />

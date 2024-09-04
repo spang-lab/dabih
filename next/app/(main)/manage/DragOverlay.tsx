@@ -1,26 +1,24 @@
 
 import { DragOverlay } from "@dnd-kit/core";
 import { File } from "react-feather";
-import Inode from "./inode/Inode";
-import { InodeMembers } from "@/lib/api/types";
+import Node from "./inode/Node";
+import useFinder from "./Context";
 
 
-export default function Overlay({ inodes }
-  : { inodes: InodeMembers[] }
-) {
-
-  if (!inodes.length) {
+export default function Overlay() {
+  const { nodes, selected } = useFinder();
+  if (!selected.length) {
     <DragOverlay />
   }
-  if (inodes.length === 1) {
-    const inode = inodes[0];
+  if (selected.length === 1) {
+    const inode = nodes.find((inode) => inode.mnemonic === selected[0]);
     return (
       <DragOverlay>
-        <Inode data={inode} selected={false} />
+        <Node inode={inode!} selected={false} />
       </DragOverlay>
     );
   }
-  if (inodes.length === 2) {
+  if (selected.length === 2) {
     return (
       <DragOverlay>
         <div className="w-32 flex flex-col border items-center">
@@ -29,7 +27,7 @@ export default function Overlay({ inodes }
             <File className="absolute bottom-2 left-2 fill-blue/20 " strokeWidth={0.5} size={80} />
           </div>
           <div className="text-center text-sm font-bold">
-            {inodes.length} items
+            {selected.length} items
           </div>
         </div>
       </DragOverlay>
@@ -45,7 +43,7 @@ export default function Overlay({ inodes }
           <File className="absolute bottom-4 left-4 fill-blue/20" strokeWidth={0.5} size={80} />
         </div>
         <div className="text-center text-sm font-bold">
-          {inodes.length} items
+          {selected.length} items
         </div>
       </div>
     </DragOverlay>

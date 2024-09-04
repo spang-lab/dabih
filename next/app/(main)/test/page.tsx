@@ -1,26 +1,18 @@
 
 'use client';
 
-import { Dropzone } from '@/app/util';
 
 export default function Test() {
+  const numbers = Array.from({ length: 100 }, (_, i) => i + 1);
   return (
-    <div className='border min-h-96 bg-gray-200'>
-      <div className="flex flex-wrap">
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-        <div className="w-32 h-32 border bg-white" />
-      </div>
+    <div>
+      {
+        numbers.map((number) => (
+          <div key={number} className="border border-gray-300">
+            {number}
+          </div>
+        ))
+      }
     </div>
   );
 }

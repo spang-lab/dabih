@@ -1,6 +1,7 @@
 import createClient from 'openapi-fetch';
 
 import type { components, paths } from './schema';
+import listParents from 'src/api/fs/listParents';
 type schemas = components['schemas'];
 
 type ChunkUpload = {
@@ -75,8 +76,8 @@ const init = (baseUrl: string) => {
   const fs = {
     file: (mnemonic: string) =>
       c.GET('/fs/{mnemonic}/file', { params: { path: { mnemonic } } }),
-    listMembers: (mnemonic: string) =>
-      c.GET('/fs/{mnemonic}/member/list', { params: { path: { mnemonic } } }),
+    listParents: (mnemonic: string) =>
+      c.GET('/fs/{mnemonic}/parent/list', { params: { path: { mnemonic } } }),
     listFiles: (mnemonic: string) =>
       c.GET('/fs/{mnemonic}/file/list', { params: { path: { mnemonic } } }),
     addMember: (mnemonic: string, body: schemas['MemberAddBody']) =>

@@ -321,14 +321,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/fs/{mnemonic}/member/list": {
+    "/fs/{mnemonic}/parent/list": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["listMembers"];
+        get: operations["listParents"];
         put?: never;
         post?: never;
         delete?: never;
@@ -852,6 +852,14 @@ export interface components {
         FileKeys: components["schemas"]["File"] & {
             keys: components["schemas"]["Key"][];
         };
+        /**
+         * @description The Permission type is used to represent the permissions a user has on a Inode.
+         *     NONE: No permissions
+         *     READ: user may only read the file or directory
+         *     WRITE: user can read, share, edit, and delete the file or directory
+         * @enum {number}
+         */
+        Permission: 0 | 1 | 2;
         Member: {
             /**
              * Format: bigint
@@ -864,21 +872,14 @@ export interface components {
              * @description The database id of the inode
              */
             inodeId: string;
-            /** Format: double */
-            permission: number;
+            permission: components["schemas"]["Permission"];
             /** Format: date-time */
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
         };
-        /**
-         * @description PermissionString is a string representation of the Permission enum.
-         * @enum {string}
-         */
-        PermissionString: "none" | "read" | "write";
-        ApiMember: components["schemas"]["Member"] & {
-            permissionString: components["schemas"]["PermissionString"];
-            mnemonic: components["schemas"]["Mnemonic"];
+        InodeMembers: components["schemas"]["Inode"] & {
+            members: components["schemas"]["Member"][];
         };
         /** @description The AES-256 encryption key used to encrypt and decrypt datasets.
          *     base64url encoded */
@@ -892,9 +893,6 @@ export interface components {
             subs: string[];
             /** @description The list of AES-256 keys required to decrypt all child datasets */
             keys: components["schemas"]["FileDecryptionKey"][];
-        };
-        InodeMembers: components["schemas"]["Inode"] & {
-            members: components["schemas"]["Member"][];
         };
         InodeTree: components["schemas"]["InodeMembers"] & {
             keys: components["schemas"]["Key"][];
@@ -912,13 +910,11 @@ export interface components {
             /** @description Optional: The new tag of the inode */
             tag?: string;
         };
-        InodeMembersParent: components["schemas"]["InodeMembers"] & {
-            parent: components["schemas"]["Inode"] | null;
-        };
         ListResponse: {
-            node: components["schemas"]["InodeMembersParent"] | null;
-            /** @description The list of inodes */
-            inodes: components["schemas"]["InodeMembers"][];
+            /** @description The list of parent directories */
+            parents: components["schemas"]["InodeMembers"][];
+            /** @description The list of inodes in the directory */
+            children: components["schemas"]["InodeMembers"][];
         };
         Directory: {
             mnemonic: components["schemas"]["Mnemonic"];
@@ -1390,7 +1386,7 @@ export interface operations {
             };
         };
     };
-    listMembers: {
+    listParents: {
         parameters: {
             query?: never;
             header?: never;
@@ -1407,7 +1403,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiMember"][];
+                    "application/json": components["schemas"]["InodeMembers"][];
                 };
             };
         };

@@ -910,13 +910,11 @@ export interface components {
             /** @description Optional: The new tag of the inode */
             tag?: string;
         };
-        InodeMembersParent: components["schemas"]["InodeMembers"] & {
-            parent: components["schemas"]["Inode"] | null;
-        };
         ListResponse: {
-            node: components["schemas"]["InodeMembersParent"] | null;
-            /** @description The list of inodes */
-            inodes: components["schemas"]["InodeMembers"][];
+            /** @description The list of parent directories */
+            parents: components["schemas"]["InodeMembers"][];
+            /** @description The list of inodes in the directory */
+            children: components["schemas"]["InodeMembers"][];
         };
         Directory: {
             mnemonic: components["schemas"]["Mnemonic"];

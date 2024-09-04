@@ -1013,50 +1013,26 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"InodeMembersParent": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/InodeMembers"
-					},
-					{
-						"properties": {
-							"parent": {
-								"allOf": [
-									{
-										"$ref": "#/components/schemas/Inode"
-									}
-								],
-								"nullable": true
-							}
-						},
-						"required": [
-							"parent"
-						],
-						"type": "object"
-					}
-				]
-			},
 			"ListResponse": {
 				"properties": {
-					"node": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/InodeMembersParent"
-							}
-						],
-						"nullable": true
-					},
-					"inodes": {
+					"parents": {
 						"items": {
 							"$ref": "#/components/schemas/InodeMembers"
 						},
 						"type": "array",
-						"description": "The list of inodes"
+						"description": "The list of parent directories"
+					},
+					"children": {
+						"items": {
+							"$ref": "#/components/schemas/InodeMembers"
+						},
+						"type": "array",
+						"description": "The list of inodes in the directory"
 					}
 				},
 				"required": [
-					"node",
-					"inodes"
+					"parents",
+					"children"
 				],
 				"type": "object",
 				"additionalProperties": false

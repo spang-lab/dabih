@@ -8,22 +8,18 @@ export default function FileName(
   if (hidden) {
     return null;
   }
-  if (fileName.length <= 15) {
-    return (
-      <span className="text-wrap text-center break-words">{fileName}</span>
-    );
+  const n = fileName.length;
+  let textSize = "text-md";
+  if (n > 15) {
+    textSize = "text-sm";
   }
-  if (fileName.length <= 25) {
-    return (
-      <span className="text-wrap text-center text-sm break-words">{fileName}</span>
-    );
+  if (n > 25) {
+    textSize = "text-xs";
   }
-  if (fileName.length <= 45) {
-    return (
-      <span className="text-wrap  text-center text-xs break-words">{fileName}</span>
-    );
+  if (n > 45) {
+    textSize = "text-[10px]";
   }
   return (
-    <span className="text-wrap text-center text-[10px] break-words">{fileName}</span>
+    <span className={"text-wrap text-center break-words " + textSize}>{fileName}</span>
   );
 }

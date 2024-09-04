@@ -226,9 +226,12 @@ export interface SetAccessBody {
 }
 
 export interface ListResponse {
-  node: InodeMembersParent | null;
   /**
-   * The list of inodes
+   * The list of parent directories
    */
-  inodes: InodeMembers[];
+  parents: InodeMembers[];
+  /**
+   * The list of inodes in the directory
+   */
+  children: InodeMembers[];
 }

@@ -1,8 +1,11 @@
 
 import {
   AlignJustify, Code, File, FileText, Film, Image as ImageIcon,
-  Layout, Link, Speaker, Table, Triangle
+  Layout, Link, Speaker, Table, Triangle, Folder, Trash2,
+  UploadCloud
 } from "react-feather";
+import { InodeMembers, InodeType } from "@/lib/api/types";
+import { Spinner } from "@/app/util";
 
 
 
@@ -74,12 +77,37 @@ const getFileType = (ext?: string): FileType => {
 
 
 
-export default function Icon({ fileName }: { fileName: string }) {
-  const ext = fileName.split(".").pop();
+export default function Icon({ inode }: { inode: InodeMembers }) {
+  const { name, type } = inode;
+  if (type === InodeType.DIRECTORY) {
+    return (
+      <Folder size={85} strokeWidth={0.5} className="fill-blue/60 " />
+    );
+  }
+  if (type === InodeType.TRASH) {
+    return (
+      <div className="relative">
+        <Folder size={80} strokeWidth={0.5} className="text-blue fill-blue/40" />
+        <Trash2 size={40} strokeWidth={1} className="absolute bottom-4 left-5 text-gray-700 fill-gray-400/50" />
+      </div>
+    );
+  }
+  if (type === InodeType.UPLOAD) {
+    return (
+      <div className="relative">
+        <File size={80} strokeWidth={1} />
+        <div className="absolute bottom-2 left-5 text-[10px] font-bold" >
+          <Spinner small />
+          Upload
+        </div>
+      </div>
+    );
+  }
 
-  const type = getFileType(ext);
 
-  switch (type) {
+  const ext = name.split(".").pop();
+  const fileType = getFileType(ext);
+  switch (fileType) {
     case "image":
       return (
         <div className="relative">

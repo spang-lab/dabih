@@ -3,33 +3,29 @@ import { InodeMembers, InodeType } from "@/lib/api/types";
 
 import Draggable from "./Draggable";
 import Droppable from "./Droppable";
-import { Folder, Trash2 } from "react-feather";
 
 import Icon from "./Icon";
 import FileName from "./Filename";
 import { useState } from "react";
+import useFinder from "../Context";
+import { Spinner } from "@/app/util";
 
 
 export default function Inode({
-  data: node,
+  inode,
   selected,
-  draggable,
-  onRename,
 }: {
-  data: InodeMembers,
-  selected: boolean
-  draggable?: boolean,
-  onRename: (mnemonic: string, name: string) => void
+  inode: InodeMembers,
+  selected: boolean,
 }) {
+  const { rename } = useFinder();
   const [name, setName] = useState<string | null>(null);
-  const { type } = node;
-
-
+  const { type, mnemonic } = inode;
 
   const getName = () => {
     if (!name) {
       return (
-        <FileName fileName={node.name} />
+        <FileName fileName={inode.name} />
       );
     }
     return (
@@ -45,22 +41,22 @@ export default function Inode({
         onKeyUp={(e) => {
           e.stopPropagation()
           if (e.key === "Enter") {
-            if (name === node.name) {
+            if (name === inode.name) {
               setName(null);
               return;
             }
-            onRename(node.mnemonic, name);
+            rename(mnemonic, name);
             setName(null);
           }
         }}
         onKeyDown={(e) => { e.stopPropagation() }}
         onBlur={(e) => {
           e.stopPropagation();
-          if (name === node.name) {
+          if (name === inode.name) {
             setName(null);
             return;
           }
-          onRename(node.mnemonic, name);
+          rename(mnemonic, name);
           setName(null);
         }}
       />
@@ -69,82 +65,55 @@ export default function Inode({
 
 
   if (type === InodeType.FILE) {
-    if (draggable) {
-      return (
-        <Draggable id={node.mnemonic}>
-          <div
-            className="flex h-fit flex-col rounded-xl text-blue items-center">
-            <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
-              <Icon fileName={node.name} />
-            </div>
-            <div
-              onDoubleClick={(e) => {
-                e.stopPropagation();
-                setName(node.name);
-              }}
-              className={`max-w-full mx-1 rounded ${(selected && !name) ? "text-white bg-blue/90" : ""}`}>
-              {getName()}
-            </div>
-          </div>
-        </Draggable>
-      );
-    }
     return (
-      <div
-        className="flex h-fit flex-col rounded-xl text-blue items-center">
-        <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
-          <Icon fileName={node.name} />
+      <Draggable id={mnemonic}>
+        <div
+          className="flex h-fit flex-col rounded-xl text-blue items-center">
+          <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
+            <Icon inode={inode} />
+          </div>
+          <div
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              setName(inode.name);
+            }}
+            className={`max-w-full px-1 rounded ${(selected && !name) ? "text-white bg-blue/90" : ""}`}>
+            {getName()}
+          </div>
         </div>
-        <div className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
-          <FileName fileName={node.name} />
-        </div>
-      </div>
+      </Draggable>
     );
   }
 
   if (type === InodeType.DIRECTORY) {
-    if (draggable) {
-      return (
-        <Draggable id={node.mnemonic}>
-          <Droppable id={node.mnemonic}>
-            <div
-              className="flex h-fit flex-col rounded-xl text-blue items-center">
-              <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
-                <Folder size={85} strokeWidth={0.5} className="fill-blue/60 " />
-              </div>
-              <div
-                onDoubleClick={(e) => {
-                  e.stopPropagation();
-                  setName(node.name);
-                }}
-                className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
-                {getName()}
-              </div>
-            </div>
-          </Droppable>
-        </Draggable>
-      );
-    }
     return (
-      <div
-        className="flex h-fit flex-col rounded-xl text-blue items-center">
-        <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
-          <Folder size={85} strokeWidth={0.5} className="fill-blue/60 " />
-        </div>
-        <div className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
-          <FileName fileName={node.name} />
-        </div>
-      </div>
+      <Draggable id={mnemonic}>
+        <Droppable id={mnemonic}>
+          <div
+            className="flex h-fit flex-col rounded-xl text-blue items-center">
+            <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
+              <Icon inode={inode} />
+            </div>
+            <div
+              onDoubleClick={(e) => {
+                e.stopPropagation();
+                setName(inode.name);
+              }}
+              className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
+              {getName()}
+            </div>
+          </div>
+        </Droppable>
+      </Draggable>
     );
   }
   if (type === InodeType.TRASH) {
     return (
-      <Droppable id={node.mnemonic}>
+      <Droppable id={mnemonic}>
         <div
           className="flex h-fit flex-col rounded-xl text-blue items-center">
           <div className={`m-1 relative rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
-            <Folder size={80} strokeWidth={0.5} className="text-blue fill-blue/40" />
-            <Trash2 size={40} strokeWidth={1} className="absolute bottom-4 left-5 text-gray-700 fill-gray-400/50" />
+            <Icon inode={inode} />
           </div>
           <div className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
             Trash
@@ -155,8 +124,14 @@ export default function Inode({
   }
 
   return (
-    <div className="border text-xs">
-      <pre>{JSON.stringify(node, null, 2)}</pre>
+    <div
+      className="flex h-fit flex-col rounded-xl text-blue/70 items-center">
+      <div className={`m-1 relative rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
+        <Icon inode={inode} />
+      </div>
+      <div className={`max-w-full px-1 text-[10px] rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
+        <FileName fileName={inode.name} />
+      </div>
     </div>
   );
 }

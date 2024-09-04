@@ -334,16 +334,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "InodeMembersParent": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"InodeMembers"},{"dataType":"nestedObjectLiteral","nestedProperties":{"parent":{"dataType":"union","subSchemas":[{"ref":"Inode"},{"dataType":"enum","enums":[null]}],"required":true}}}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ListResponse": {
         "dataType": "refObject",
         "properties": {
-            "node": {"dataType":"union","subSchemas":[{"ref":"InodeMembersParent"},{"dataType":"enum","enums":[null]}],"required":true},
-            "inodes": {"dataType":"array","array":{"dataType":"refAlias","ref":"InodeMembers"},"required":true},
+            "parents": {"dataType":"array","array":{"dataType":"refAlias","ref":"InodeMembers"},"required":true},
+            "children": {"dataType":"array","array":{"dataType":"refAlias","ref":"InodeMembers"},"required":true},
         },
         "additionalProperties": false,
     },

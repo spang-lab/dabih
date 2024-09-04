@@ -2,30 +2,17 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { Copy, Download, Edit3, FolderPlus, Trash2 } from "react-feather";
 import { ForwardedRef, forwardRef } from "react";
+import useFinder from "./Context";
 
-function OptionsMenu({
-  position,
-  selected,
-  onAddFolder,
-  onRemove,
-  onDownload,
-  onRename,
-  onDuplicate,
-}: {
-  position: { left: number; top: number };
-  selected: string[];
-  onAddFolder: () => void;
-  onDownload: () => void;
-  onRemove: () => void;
-  onRename: () => void;
-  onDuplicate: () => void;
-
-}, ref: ForwardedRef<HTMLDivElement>) {
-
+function OptionsMenu(props, ref: ForwardedRef<HTMLDivElement>) {
+  const {
+    position,
+    selected,
+    addFolder,
+    remove,
+  } = useFinder();
   const noneSelected = selected.length === 0;
   const oneSelected = selected.length === 1;
-
-
   return (
     <Menu>
       <MenuButton>
@@ -37,7 +24,7 @@ function OptionsMenu({
         style={position}>
         <MenuItem>
           <button
-            onClick={onAddFolder}
+            onClick={addFolder}
             className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40">
             <FolderPlus className="text-blue" />
             New Folder
@@ -45,7 +32,7 @@ function OptionsMenu({
         </MenuItem>
         <MenuItem>
           <button
-            onClick={onDownload}
+            //onClick={onDownload}
             disabled={noneSelected}
             className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40 data-[focus]:disabled:bg-white disabled:text-blue/40">
             <Download />
@@ -54,7 +41,7 @@ function OptionsMenu({
         </MenuItem>
         <MenuItem>
           <button
-            onClick={onRename}
+            //onClick={onRename}
             disabled={!oneSelected}
             className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40 data-[focus]:disabled:bg-white disabled:text-blue/40">
             <Edit3 />
@@ -63,7 +50,7 @@ function OptionsMenu({
         </MenuItem>
         <MenuItem>
           <button
-            onClick={onDuplicate}
+            //onClick={onDuplicate}
             disabled={!oneSelected}
             className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40 data-[focus]:disabled:bg-white disabled:text-blue/40">
             <Copy />
@@ -73,7 +60,7 @@ function OptionsMenu({
         <div className="my-1 h-px bg-gray-300" />
         <MenuItem>
           <button
-            onClick={onRemove}
+            onClick={remove}
             disabled={noneSelected}
             className="group flex w-full items-center text-red gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-blue/40 data-[focus]:disabled:bg-white disabled:text-red/40">
             <Trash2 />

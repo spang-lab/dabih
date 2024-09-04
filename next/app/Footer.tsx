@@ -11,22 +11,22 @@ export default async function Footer() {
   const organization = branding?.organization;
 
   return (
-    <div className="p-5 text-center text-gray-400 border-t">
-      <p>
+    <footer className="p-2 space-x-2 flex flex-row flex-wrap justify-center text-gray-400 border-t">
+      <div>
         <Link href={department?.url ?? '#'}>{department?.name}</Link>
         {' '}
         -
         {' '}
         <Link href={organization?.url ?? '#'}>{organization?.name}</Link>
-      </p>
-      <p>
+      </div>
+      <div>
         ©
         {new Date().getFullYear()}
         <span className="px-2"> · </span>
         Version
         {' '}
         {info?.version}
-      </p>
+      </div>
       <Link className="text-blue hover:underline" href="/docs/contact">
         Contact/Impressum
       </Link>
@@ -42,6 +42,6 @@ export default async function Footer() {
       <Link className="text-blue hover:underline" href="/docs">
         Documentation
       </Link>
-    </div>
+    </footer>
   );
 }

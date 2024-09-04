@@ -1,40 +1,31 @@
-import { getPermission } from '#lib/database/member';
 import { AuthorizationError } from '../errors';
-import { Permission, User, Mnemonic, InodeType } from '../types';
+import { Permission, User, Mnemonic, InodeMembers } from '../types';
 import db from '#lib/db';
+import { getParents } from '#lib/database/inode';
 
 export default async function list(user: User, mnemonic?: Mnemonic) {
   const { sub, isAdmin } = user;
-  let inode = null;
+  let parents: InodeMembers[] = [];
+  let parentId = null;
   if (mnemonic) {
+    parents = await getParents(mnemonic);
     if (!isAdmin) {
-      const permission = await getPermission(mnemonic, sub);
-      if (permission === Permission.NONE) {
+      const members = parents.flatMap((parent) =>
+        parent.members
+          .filter((m) => m.permission !== Permission.NONE)
+          .map((m) => m.sub),
+      );
+      if (!members.includes(sub)) {
         throw new AuthorizationError(
           `Not authorized to list directory ${mnemonic}`,
         );
       }
     }
-    inode = await db.inode.findUnique({
-      where: {
-        mnemonic,
-      },
-      include: {
-        parent: true,
-        members: true,
-      },
-    });
-    if (!inode) {
-      throw new AuthorizationError(`No such mnemonic ${mnemonic}`);
-    }
-    const type = inode.type as InodeType;
-    if (type !== InodeType.DIRECTORY && type !== InodeType.TRASH) {
-      throw new AuthorizationError(`Mnemonic ${mnemonic} is not a directory`);
-    }
+    parentId = parents[0].id as bigint;
   }
-  const inodes = await db.inode.findMany({
+  const children = await db.inode.findMany({
     where: {
-      parentId: inode?.id ?? null,
+      parentId,
       members: {
         some: {
           sub,
@@ -47,7 +38,7 @@ export default async function list(user: User, mnemonic?: Mnemonic) {
     },
   });
   return {
-    node: inode,
-    inodes,
+    parents,
+    children,
   };
 }
