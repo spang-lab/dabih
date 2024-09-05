@@ -2,7 +2,6 @@
 import {
   AlignJustify, Code, File, FileText, Film, Image as ImageIcon,
   Layout, Link, Speaker, Table, Triangle, Folder, Trash2,
-  UploadCloud
 } from "react-feather";
 import { InodeMembers, InodeType } from "@/lib/api/types";
 import { Spinner } from "@/app/util";
@@ -81,7 +80,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
   const { name, type } = inode;
   if (type === InodeType.DIRECTORY) {
     return (
-      <Folder size={85} strokeWidth={0.5} className="fill-blue/60 " />
+      <Folder size={85} strokeWidth={0.5} className="fill-blue/60 text-blue " />
     );
   }
   if (type === InodeType.TRASH) {
@@ -111,7 +110,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "image":
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <ImageIcon size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-xs bottom-2 text-center font-mono text-orange">
             {ext}
@@ -121,7 +120,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "video":
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <Film size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-xs bottom-2 text-center font-mono text-orange">
             {ext}
@@ -131,7 +130,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "audio":
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <Speaker size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-xs bottom-2 text-center font-mono text-orange">
             {ext}
@@ -141,7 +140,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "text":
       return (
         <div className="relative">
-          <FileText size={80} strokeWidth={1} />
+          <FileText size={80} strokeWidth={1} className="text-blue" />
           <div className="absolute w-[80px] text-xs bottom-2 text-center font-mono text-orange">
             {ext}
           </div>
@@ -150,7 +149,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "document":
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <AlignJustify size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-3xl font-extrabold bottom-5 text-center font-mono text-blue">
             W
@@ -163,7 +162,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "pdf":
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <AlignJustify size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-3xl font-extrabold bottom-5 text-center font-mono text-red">
             A
@@ -176,7 +175,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "spreadsheet":
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <Table size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-3xl font-extrabold bottom-5 text-center font-mono text-green">
             E
@@ -189,7 +188,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "presentation":
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <Layout size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-3xl font-extrabold bottom-5 text-center font-mono text-orange">
             P
@@ -202,7 +201,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "code":
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <Code size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-xs bottom-2 text-center font-mono text-orange">
             {ext}
@@ -212,7 +211,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     case "archive":
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <div className="absolute w-[80px] text-xs bottom-2 text-center font-mono text-orange">
             {ext}
           </div>
@@ -224,7 +223,7 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
     default:
       return (
         <div className="relative">
-          <File size={80} strokeWidth={1} />
+          <File size={80} strokeWidth={1} className="text-blue" />
           <Triangle size={24} className="text-gray-400 absolute bottom-6 left-7" />
           <div className="absolute w-[80px] text-xs bottom-2 text-center font-mono text-orange">
             {ext}

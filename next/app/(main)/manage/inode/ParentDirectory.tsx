@@ -4,7 +4,7 @@ import Droppable from "./Droppable";
 import useFinder from "../Context";
 
 export default function ParentDirectory() {
-  const { selected, parents, list } = useFinder();
+  const { parents, list } = useFinder();
   const cwd = parents[0];
   const parent = parents[1];
   if (!cwd) {

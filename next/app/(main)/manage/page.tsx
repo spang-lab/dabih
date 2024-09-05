@@ -18,12 +18,12 @@ export default async function Manage() {
         Manage
         <span className="text-blue"> your files</span>
       </h1>
-      <FinderWrapper>
+      <FinderWrapper user={session.user}>
         <div className="flex flex-row">
           <div className="grow">
             <Files />
           </div>
-          <div className="w-96">
+          <div className="w-96 shrink-0">
             <Info />
           </div>
         </div>

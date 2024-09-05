@@ -12,10 +12,11 @@ type KeyStatus =
   | "disabled" // server has a public key, but it's disabled
   | "active"; // server has a public key, and it's loaded in the browser
 
-interface KeyState {
+export interface KeyState {
   key: CryptoKey | null;
   hash: string | null;
   status: KeyStatus;
+  sub: string | null;
 }
 
 export default function useKey() {
@@ -23,6 +24,7 @@ export default function useKey() {
     key: null,
     hash: null,
     status: "loading",
+    sub: null,
   });
 
   useEffect(() => {
@@ -38,10 +40,11 @@ export default function useKey() {
           key: null,
           hash: null,
           status: "unregistered",
+          sub: null,
         });
         return;
       }
-      const { keys } = user;
+      const { keys, sub } = user;
       if (keys.length === 0) {
         if (storedKey) {
           storage.deleteKey();
@@ -51,6 +54,7 @@ export default function useKey() {
           key: null,
           hash: null,
           status: "no_key",
+          sub,
         });
         return;
       }
@@ -60,6 +64,7 @@ export default function useKey() {
           key: null,
           hash: null,
           status: "no_enabled_key",
+          sub,
         });
         return;
       }
@@ -69,6 +74,7 @@ export default function useKey() {
           key: null,
           hash: null,
           status: "unloaded",
+          sub,
         });
         return;
       }
@@ -84,6 +90,7 @@ export default function useKey() {
           key: storedKey,
           hash,
           status: "active",
+          sub,
         });
         return;
       }
@@ -91,6 +98,7 @@ export default function useKey() {
         key: null,
         hash,
         status: "disabled",
+        sub,
       });
     };
     listener().catch(console.error);
@@ -105,10 +113,12 @@ export default function useKey() {
       key: key.key!,
       hash: key.hash!,
       status: key.status,
+      sub: key.sub!,
     };
   }
   return {
     hash: key.hash,
     status: key.status,
+    sub: key.sub,
   };
 }

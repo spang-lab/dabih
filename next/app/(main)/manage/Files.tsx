@@ -38,7 +38,7 @@ export default function Files() {
         <ParentDirectory />
         {nodes.map((inode) => (
           <div
-            className="h-fit w-32 select-none border border-green"
+            className="h-fit w-32 select-none"
             key={inode.mnemonic}
             onClick={(e) => {
               e.preventDefault();

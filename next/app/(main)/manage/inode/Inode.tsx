@@ -8,7 +8,6 @@ import Icon from "./Icon";
 import FileName from "./Filename";
 import { useState } from "react";
 import useFinder from "../Context";
-import { Spinner } from "@/app/util";
 
 
 export default function Inode({
@@ -116,7 +115,7 @@ export default function Inode({
             <Icon inode={inode} />
           </div>
           <div className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
-            Trash
+            Bin
           </div>
         </div>
       </Droppable >

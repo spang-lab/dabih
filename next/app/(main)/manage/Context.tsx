@@ -6,16 +6,21 @@ import api from '@/lib/api';
 import useKey from '@/lib/hooks/key';
 import crypto from '@/lib/crypto';
 
-import { InodeMembers, ListResponse } from '@/lib/api/types';
+import { InodeMembers, ListResponse, UserResponse } from '@/lib/api/types';
 import Menu from './Menu';
+import useUsers from '@/lib/hooks/users';
+import { User } from 'next-auth';
 
 interface FinderContextType {
+  user: User | null,
   nodes: InodeMembers[],
   parents: InodeMembers[],
+  users: Record<string, UserResponse> | null,
   selected: string[],
   setSelected: (selected: string[]) => void,
   position: { left: number, top: number },
   addFolder: () => void,
+  addMember: (mnemonic: string, sub: string) => void,
   remove: () => void,
   rename: (mnemonic: string, name: string) => void,
   list: (mnemonic: string | null) => void,
@@ -27,20 +32,27 @@ const nf = () => {
 };
 
 const FinderContext = createContext<FinderContextType>({
+  user: null,
   nodes: [],
   parents: [],
+  users: null,
   selected: [],
   setSelected: nf,
   position: { left: 0, top: 0 },
   addFolder: nf,
+  addMember: nf,
   remove: nf,
   rename: nf,
   list: nf,
   openMenu: nf,
 });
 
-export function FinderWrapper({ children }) {
+export function FinderWrapper({ user, children }: {
+  user: User,
+  children: React.ReactNode,
+}) {
   const key = useKey();
+  const users = useUsers();
   const [listData, setListData] = useState<ListResponse | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [position, setPosition] = useState({ left: 0, top: 0 });
@@ -63,6 +75,29 @@ export function FinderWrapper({ children }) {
     setListData(data);
   }, []);
 
+  const getKeys = useCallback(async (mnemonic: string) => {
+    const { data, error } = await api.fs.listFiles(mnemonic);
+    if (!data || error) {
+      console.error(error);
+      return;
+    }
+    if (key.status !== "active") {
+      console.error("Key not active");
+      return;
+    }
+    const keyPromises = data.map(async (file) => {
+      const aesKey = await crypto.file.decryptKey(key.key, file)
+      return {
+        mnemonic: file.mnemonic,
+        key: await crypto.aesKey.toBase64(aesKey),
+      }
+    });
+    const keys = await Promise.all(keyPromises);
+    return keys;
+  }, [key]);
+
+
+
   const addFolder = useCallback(async () => {
     let name = "untitled_folder";
     let count = 1;
@@ -73,6 +108,19 @@ export function FinderWrapper({ children }) {
     await api.fs.addDirectory(name, cwd ?? undefined);
     await list(cwd);
   }, [cwd, nodes, list]);
+
+  const addMember = useCallback(async (mnemonic: string, sub: string) => {
+    const keys = await getKeys(mnemonic);
+    if (!keys) {
+      return;
+    }
+    await api.fs.addMember(mnemonic, {
+      subs: [sub],
+      keys,
+    });
+    await list(cwd);
+  }, [getKeys, cwd, list]);
+
 
   const remove = useCallback(async () => {
     const promises = selected.map(async (mnemonic) => {
@@ -155,24 +203,30 @@ export function FinderWrapper({ children }) {
   }, [list]);
 
   const value = useMemo(() => ({
+    user,
     nodes,
     parents,
+    users,
     selected,
     setSelected,
     position,
     setPosition,
     addFolder,
+    addMember,
     remove,
     rename,
     list,
     openMenu,
   }), [
+    user,
     nodes,
     parents,
+    users,
     selected,
     setSelected,
     position,
     addFolder,
+    addMember,
     remove,
     rename,
     list,
