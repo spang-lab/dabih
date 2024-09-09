@@ -137,8 +137,8 @@ export function FinderWrapper({ user, children }: {
 
 
 
-  const move = useCallback(async (mnemonics: string[], target: string) => {
-    if (target === '__root__') {
+  const move = useCallback(async (mnemonics: string[], target: string | null) => {
+    if (!target) {
       const promises = mnemonics.map(async (mnemonic) => {
         await api.fs.move({ mnemonic, parent: null });
       });
@@ -175,7 +175,12 @@ export function FinderWrapper({ user, children }: {
 
 
   const onDragStart = useCallback((event: DragStartEvent) => {
-    const mnemonic = event.active.id as string;
+    const id = event.active.id as string;
+    const mnemonic = id.split("-", 2)[1];
+    if (!mnemonic) {
+      throw new Error(`Invalid drag id ${id}`);
+    }
+
     if (!selected.includes(mnemonic)) {
       setSelected([mnemonic]);
     }
@@ -185,8 +190,10 @@ export function FinderWrapper({ user, children }: {
     if (!event.over) {
       return;
     }
-    const target = event.over.id as string;
-    move(selected, target).catch(console.error);
+    const id = event.over.id as string;
+    const mnemonic = id.split("-", 2)[1] ?? null;
+
+    move(selected, mnemonic).catch(console.error);
   }, [move, selected]);
 
   const sensors = useSensors(

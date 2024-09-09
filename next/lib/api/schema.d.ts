@@ -424,7 +424,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["listRoot"];
+        get: operations["listHome"];
         put?: never;
         post?: never;
         delete?: never;
@@ -667,9 +667,12 @@ export interface components {
          *     DIRECTORY: a directory
          *     UPLOAD: a file that is being uploaded
          *     TRASH: the special directory that holds deleted files
+         *     ROOT: the global root directory
+         *     HOME: the user's home directory
+         *     USERS: the directory that holds all user directories
          * @enum {number}
          */
-        InodeType: 0 | 1 | 2 | 10;
+        InodeType: 0 | 1 | 2 | 10 | 11 | 12;
         FileData: {
             /**
              * Format: bigint
@@ -1518,7 +1521,7 @@ export interface operations {
             };
         };
     };
-    listRoot: {
+    listHome: {
         parameters: {
             query?: never;
             header?: never;

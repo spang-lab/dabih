@@ -1,4 +1,4 @@
-import { MoveInodeBody, User, InodeType, Permission } from '../types';
+import { MoveInodeBody, User, Permission } from '../types';
 import { AuthorizationError, RequestError } from '../errors';
 import { getPermission } from '#lib/database/member';
 import { addKeys, removeKeys } from '#lib/database/keys';
@@ -9,11 +9,8 @@ import { getParents } from '#lib/database/inode';
 export default async function move(user: User, body: MoveInodeBody) {
   const { sub, isAdmin } = user;
   const { mnemonic } = body;
-  if (!isAdmin) {
-    const permission = await getPermission(mnemonic, sub);
-    if (permission !== Permission.WRITE) {
-      throw new AuthorizationError(`Not authorized to move ${mnemonic}`);
-    }
+  if ((await getPermission(mnemonic, sub)) !== Permission.WRITE) {
+    throw new AuthorizationError(`Not authorized to move ${mnemonic}`);
   }
   const { name, tag } = body;
   if (name !== undefined || tag !== undefined) {
@@ -53,11 +50,7 @@ export default async function move(user: User, body: MoveInodeBody) {
   const permission =
     members.find((m) => m.sub === sub)?.permission ?? Permission.NONE;
 
-  const isTrash =
-    parentNode.type === InodeType.TRASH && permission !== Permission.NONE;
-  const isDir =
-    parentNode.type === InodeType.DIRECTORY && permission === Permission.WRITE;
-  if (!isTrash && !isDir) {
+  if (permission !== Permission.WRITE && !isAdmin) {
     throw new AuthorizationError(
       `User ${sub} does not have permission to move to ${parentNode.mnemonic}`,
     );

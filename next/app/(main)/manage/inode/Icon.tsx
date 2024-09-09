@@ -2,6 +2,7 @@
 import {
   AlignJustify, Code, File, FileText, Film, Image as ImageIcon,
   Layout, Link, Speaker, Table, Triangle, Folder, Trash2,
+  User,
 } from "react-feather";
 import { InodeMembers, InodeType } from "@/lib/api/types";
 import { Spinner } from "@/app/util";
@@ -88,6 +89,14 @@ export default function Icon({ inode }: { inode: InodeMembers }) {
       <div className="relative">
         <Folder size={80} strokeWidth={0.5} className="text-blue fill-blue/40" />
         <Trash2 size={40} strokeWidth={1} className="absolute bottom-4 left-5 text-gray-700 fill-gray-400/50" />
+      </div>
+    );
+  }
+  if (type === InodeType.HOME) {
+    return (
+      <div className="relative">
+        <Folder size={80} strokeWidth={0.5} className="text-blue fill-blue/40" />
+        <User size={40} strokeWidth={1} className="absolute bottom-4 left-5 text-blue fill-blue/50" />
       </div>
     );
   }

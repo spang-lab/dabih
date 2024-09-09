@@ -4,6 +4,7 @@ import { AuthorizationError } from '../errors';
 import db from '#lib/db';
 
 import { convertKey } from './util';
+import { getHome } from '#lib/database/inodes';
 
 export default async function add(user: User, body: UserAddBody) {
   const { isAdmin } = user;
@@ -14,6 +15,7 @@ export default async function add(user: User, body: UserAddBody) {
   const sub = body.sub ?? user.sub;
 
   const key = convertKey(user, body.key, body.isRootKey);
+  await getHome(sub);
   const result = await db.user.create({
     data: {
       sub,

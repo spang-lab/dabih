@@ -54,9 +54,10 @@ export default function Files() {
               setSelected([inode.mnemonic]);
             }}
             onDoubleClick={() => {
-              if (inode.type === InodeType.DIRECTORY || inode.type === InodeType.TRASH) {
-                list(inode.mnemonic);
+              if ([InodeType.FILE, InodeType.UPLOAD].includes(inode.type)) {
+                return;
               }
+              list(inode.mnemonic);
             }}
             onContextMenu={(e) => {
               e.preventDefault();

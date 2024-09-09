@@ -6,8 +6,10 @@ import publicKey from '#lib/database/publicKey';
 import { createBucket } from '#lib/fs';
 
 import { Permission, InodeType, User, UploadStartBody, File } from '../types';
-import { RequestError } from '../errors';
+import { AuthorizationError, RequestError } from '../errors';
 import { generateMnemonic, generateDataUid } from '#lib/database/inode';
+import { getHome } from '#lib/database/inodes';
+import { getPermission } from '#lib/database/member';
 
 export default async function start(
   user: User,
@@ -24,6 +26,12 @@ export default async function start(
 
   let parent = undefined;
   if (directory) {
+    const permission = await getPermission(directory, sub);
+    if (permission !== Permission.WRITE) {
+      throw new AuthorizationError(
+        `Not authorized to add file to ${directory}`,
+      );
+    }
     const dir = await db.inode.findUnique({
       where: {
         mnemonic: directory,
@@ -38,7 +46,15 @@ export default async function start(
         id: dir.id,
       },
     };
+  } else {
+    const home = await getHome(sub);
+    parent = {
+      connect: {
+        id: home.id,
+      },
+    };
   }
+
   const mnemonic = await generateMnemonic();
   const uid = await generateDataUid();
   const key = await crypto.aesKey.generate();
@@ -64,12 +80,6 @@ export default async function start(
       data: {
         connect: {
           id: data.id,
-        },
-      },
-      members: {
-        create: {
-          sub,
-          permission: Permission.WRITE,
         },
       },
     },

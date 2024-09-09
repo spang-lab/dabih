@@ -5,14 +5,14 @@ import useFinder from "../Context";
 
 export default function ParentDirectory() {
   const { parents, list } = useFinder();
-  const cwd = parents[0];
   const parent = parents[1];
-  if (!cwd) {
+  if (!parent) {
     return null;
   }
-  const mnemonic = parent?.mnemonic ?? null;
+  const { mnemonic } = parent;
+  const dropId = `drop-${mnemonic}`;
   return (
-    <Droppable id={mnemonic ?? "__root__"}>
+    <Droppable id={dropId}>
       <div
         onDoubleClick={() => list(mnemonic)}
         className="w-32 flex h-fit flex-col rounded-xl text-blue items-center">

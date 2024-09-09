@@ -10,10 +10,12 @@ import { RegisterRoutes } from '../build/routes';
 import { error, log, serialize } from './middleware';
 import { initKeyV } from '#lib/keyv';
 import { initFilesystem } from '#lib/fs';
+import { initInodes } from '#lib/database/inodes';
 
 const app = async (port?: number) => {
   await initKeyV();
   await initFilesystem();
+  await initInodes();
   const app = new Koa();
   app.use(koaBody());
   app.use(log());

@@ -126,7 +126,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeType": {
         "dataType": "refEnum",
-        "enums": [0,1,2,10],
+        "enums": [0,1,2,10,11,12],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileData": {
@@ -1235,9 +1235,9 @@ export function RegisterRoutes(router: KoaRouter) {
         router.get('/fs/list',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
-            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listRoot)),
+            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listHome)),
 
-            async function FilesystemController_listRoot(context: Context, next: Next) {
+            async function FilesystemController_listHome(context: Context, next: Next) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
             };
@@ -1255,7 +1255,7 @@ export function RegisterRoutes(router: KoaRouter) {
             const controller = new FilesystemController();
 
             return templateService.apiHandler({
-              methodName: 'listRoot',
+              methodName: 'listHome',
               controller,
               context,
               validatedArgs,

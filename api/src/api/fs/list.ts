@@ -2,6 +2,7 @@ import { AuthorizationError } from '../errors';
 import { Permission, User, Mnemonic, InodeMembers } from '../types';
 import db from '#lib/db';
 import { getParents } from '#lib/database/inode';
+import { getHome } from '#lib/database/inodes';
 
 export default async function list(user: User, mnemonic?: Mnemonic) {
   const { sub, isAdmin } = user;
@@ -22,15 +23,14 @@ export default async function list(user: User, mnemonic?: Mnemonic) {
       }
     }
     parentId = parents[0].id as bigint;
+  } else {
+    const home = await getHome(sub);
+    parents = await getParents(home.mnemonic);
+    parentId = home.id;
   }
   const children = await db.inode.findMany({
     where: {
       parentId,
-      members: {
-        some: {
-          sub,
-        },
-      },
     },
     include: {
       members: true,

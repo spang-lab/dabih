@@ -1,6 +1,6 @@
 import { InodeMembers, Member, Permission } from "@/lib/api/types";
 import useFinder from "../Context";
-import { Trash2, User } from "react-feather";
+import { Folder, Trash2, User } from "react-feather";
 import { Switch } from "@/app/util";
 
 const getPermission = (permission: Permission) => {
@@ -16,14 +16,16 @@ const getPermission = (permission: Permission) => {
 
 
 
-export default function Member({
+export default function MemberItem({
   inode,
   member,
   readOnly,
+  isParent,
 }: {
   inode: InodeMembers,
   member: Member,
   readOnly: boolean,
+  isParent: boolean,
 }) {
   const { users } = useFinder();
 
@@ -73,9 +75,26 @@ export default function Member({
     );
   }
 
+  const getParent = () => {
+    if (!isParent) {
+      return (
+        <div className="flex items-center text-xs text-gray-600">
+          direct access
+        </div>
+      )
+    }
+    return (
+      <div className="flex items-center text-xs text-gray-600">
+        from
+        <Folder size={14} className="fill-blue/40 mx-1 text-blue" />
+        {inode.name}
+      </div>
+    );
+  };
+
 
   return (
-    <div className="flex items-center mx-2 py-1 space-x-2 text-sm">
+    <div className={`flex items-center px-2 py-1 space-x-2 text-sm ${(isParent) ? "bg-gray-50" : ""}`}>
       <div className="pr-1 shrink-0 text-blue">
         <User size={20} />
       </div>
@@ -85,6 +104,7 @@ export default function Member({
         <a href={`mailto:${email}`} className="text-blue hover:underline text-xs">
           {email}
         </a>
+        {getParent()}
       </div>
       {getEdit()}
     </div>

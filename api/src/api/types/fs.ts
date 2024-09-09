@@ -222,7 +222,7 @@ export interface SetAccessBody {
   /**
    * The permission to set
    */
-  permission: 'read' | 'write' | 'none';
+  permission: Permission;
 }
 
 export interface ListResponse {

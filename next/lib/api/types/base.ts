@@ -29,12 +29,17 @@ export type PermissionString = 'none' | 'read' | 'write';
  * DIRECTORY: a directory
  * UPLOAD: a file that is being uploaded
  * TRASH: the special directory that holds deleted files
+ * ROOT: the global root directory
+ * HOME: the user's home directory
+ * USERS: the directory that holds all user directories
  */
 export enum InodeType {
   FILE = 0,
   DIRECTORY = 1,
   UPLOAD = 2,
   TRASH = 10,
+  ROOT = 11,
+  HOME = 12,
 }
 
 /**

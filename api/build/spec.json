@@ -363,12 +363,14 @@
 				"additionalProperties": false
 			},
 			"InodeType": {
-				"description": "InodeType is used to represent the type of an Inode.\nFILE: a file\nDIRECTORY: a directory\nUPLOAD: a file that is being uploaded\nTRASH: the special directory that holds deleted files",
+				"description": "InodeType is used to represent the type of an Inode.\nFILE: a file\nDIRECTORY: a directory\nUPLOAD: a file that is being uploaded\nTRASH: the special directory that holds deleted files\nROOT: the global root directory\nHOME: the user's home directory\nUSERS: the directory that holds all user directories",
 				"enum": [
 					0,
 					1,
 					2,
-					10
+					10,
+					11,
+					12
 				],
 				"type": "number"
 			},
@@ -2157,7 +2159,7 @@
 		},
 		"/fs/list": {
 			"get": {
-				"operationId": "listRoot",
+				"operationId": "listHome",
 				"responses": {
 					"200": {
 						"description": "Ok",

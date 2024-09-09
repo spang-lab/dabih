@@ -146,12 +146,12 @@ test('remove', async (t) => {
   t.is(response2.status, 400);
 
   const { data } = await api.fs.list(null);
-  if (!data?.inodes) {
+  if (!data?.children) {
     t.fail();
     return;
   }
-  const { inodes } = data;
-  const trash = inodes.find((inode) => inode.type === InodeType.TRASH);
+  const { children } = data;
+  const trash = children.find((inode) => inode.type === InodeType.TRASH);
   if (!trash) {
     t.fail('Trash not found');
     return;

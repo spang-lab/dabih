@@ -126,8 +126,8 @@ export class FilesystemController extends Controller {
   }
 
   @Get('list')
-  @OperationId('listRoot')
-  public async listRoot(
+  @OperationId('listHome')
+  public async listHome(
     @Request() request: RequestWithUser,
   ): Promise<ListResponse> {
     const { user } = request;

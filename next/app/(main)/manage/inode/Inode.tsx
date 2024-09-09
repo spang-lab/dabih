@@ -21,6 +21,9 @@ export default function Inode({
   const [name, setName] = useState<string | null>(null);
   const { type, mnemonic } = inode;
 
+  const dragId = `drag-${mnemonic}`;
+  const dropId = `drop-${mnemonic}`;
+
   const getName = () => {
     if (!name) {
       return (
@@ -65,7 +68,7 @@ export default function Inode({
 
   if (type === InodeType.FILE) {
     return (
-      <Draggable id={mnemonic}>
+      <Draggable id={dragId}>
         <div
           className="flex h-fit flex-col rounded-xl text-blue items-center">
           <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
@@ -86,8 +89,8 @@ export default function Inode({
 
   if (type === InodeType.DIRECTORY) {
     return (
-      <Draggable id={mnemonic}>
-        <Droppable id={mnemonic}>
+      <Draggable id={dragId}>
+        <Droppable id={dropId}>
           <div
             className="flex h-fit flex-col rounded-xl text-blue items-center">
             <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
@@ -106,16 +109,16 @@ export default function Inode({
       </Draggable>
     );
   }
-  if (type === InodeType.TRASH) {
+  if (type === InodeType.TRASH || type === InodeType.HOME) {
     return (
-      <Droppable id={mnemonic}>
+      <Droppable id={dropId}>
         <div
           className="flex h-fit flex-col rounded-xl text-blue items-center">
           <div className={`m-1 relative rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
             <Icon inode={inode} />
           </div>
           <div className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
-            Bin
+            {inode.name}
           </div>
         </div>
       </Droppable >

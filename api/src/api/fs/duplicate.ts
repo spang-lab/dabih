@@ -1,5 +1,5 @@
-import { User, Permission, InodeMembers } from '../types';
-import { AuthorizationError, NotFoundError } from '../errors';
+import { User, Permission, InodeMembers, InodeType } from '../types';
+import { AuthorizationError, NotFoundError, RequestError } from '../errors';
 import { getPermission } from '#lib/database/member';
 import { generateMnemonic } from '#lib/database/inode';
 import db from '#lib/db';
@@ -85,6 +85,12 @@ export default async function duplicate(user: User, mnemonic: string) {
   if (!root) {
     throw new NotFoundError(`No inode found for mnemonic ${mnemonic}`);
   }
+  if (![InodeType.DIRECTORY, InodeType.FILE].includes(root.type)) {
+    throw new RequestError(
+      `Unexpected: Inode ${mnemonic} is not a directory or file`,
+    );
+  }
+
   const new_name = `${root.name}_copy`;
   const newRoot = await duplicateRecursive(root, root.parentId);
   await db.inode.update({

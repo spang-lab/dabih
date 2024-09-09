@@ -21,7 +21,7 @@ export default function Overlay() {
   if (selected.length === 2) {
     return (
       <DragOverlay>
-        <div className="w-32 flex flex-col border items-center">
+        <div className="w-32 flex flex-col items-center">
           <div className="relative">
             <File className="fill-white" size={80} strokeWidth={0.5} />
             <File className="absolute bottom-2 left-2 fill-blue/20 " strokeWidth={0.5} size={80} />
@@ -36,7 +36,7 @@ export default function Overlay() {
 
   return (
     <DragOverlay>
-      <div className="w-32 flex flex-col border items-center">
+      <div className="w-32 flex flex-col items-center">
         <div className="relative">
           <File className="fill-white" size={80} strokeWidth={0.5} />
           <File className="absolute bottom-2 left-2 fill-blue/20 " strokeWidth={0.5} size={80} />

@@ -120,7 +120,7 @@ const getParentsRecursive = async (
   if (!inode) {
     throw new Error(`Inode ${inodeId} not found`);
   }
-  if (![InodeType.DIRECTORY, InodeType.TRASH].includes(inode.type)) {
+  if ([InodeType.FILE, InodeType.UPLOAD].includes(inode.type)) {
     throw new Error(`Unexpected: Inode ${inode.mnemonic} is not a directory`);
   }
   const parents = await getParentsRecursive(inode.parentId);
@@ -182,40 +182,4 @@ export const isChildOf = async (mnemonic: string, parent: string) => {
     return true;
   }
   return isChildOfRecursive(inode.parentId, parentInode.id);
-};
-
-export const getTrash = async (sub: string) => {
-  const trash = await db.inode.findFirst({
-    where: {
-      type: InodeType.TRASH,
-      parent: null,
-      members: {
-        some: {
-          sub,
-        },
-      },
-    },
-    include: {
-      members: true,
-    },
-  });
-  if (trash) {
-    return trash;
-  }
-  return db.inode.create({
-    data: {
-      mnemonic: await generateMnemonic(),
-      name: 'Trash',
-      type: InodeType.TRASH,
-      members: {
-        create: {
-          sub,
-          permission: Permission.READ,
-        },
-      },
-    },
-    include: {
-      members: true,
-    },
-  });
 };
