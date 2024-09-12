@@ -3,9 +3,9 @@ import Member from "./Member";
 import useFinder from "../Context";
 import AddMember from "./AddMember";
 import { Pluralize } from "@/app/util";
+import { DownloadCloud, Trash2 } from "react-feather";
 
 export default function Members({ inode }: { inode: InodeMembers }) {
-  const { members } = inode;
   const { user, parents } = useFinder();
   if (!user) {
     return null;
@@ -13,11 +13,16 @@ export default function Members({ inode }: { inode: InodeMembers }) {
 
   const nodes = [inode, ...parents].reverse();
 
+
   const writeIdx = nodes.findIndex((node) =>
     node.members.find((member) => member.sub === user.sub && member.permission === Permission.WRITE));
 
+  let hasRead = false;
   const entries = nodes.flatMap((node, idx) => {
     return node.members.map((member) => {
+      if (member.sub === user.sub) {
+        hasRead = true;
+      }
       return {
         key: `${node.mnemonic}-${member.sub}`,
         inode: node,
@@ -27,6 +32,8 @@ export default function Members({ inode }: { inode: InodeMembers }) {
       };
     });
   }).sort((m1, m2) => m1.member.sub.localeCompare(m2.member.sub));
+
+  const hasWrite = writeIdx !== -1;
 
 
   return (
@@ -38,8 +45,8 @@ export default function Members({ inode }: { inode: InodeMembers }) {
           Access
         </h3>
         <div className="text-sm font-medium px-3">
-          {members.length}
-          <Pluralize count={members.length}> user</Pluralize>
+          {entries.length}
+          <Pluralize count={entries.length}> user</Pluralize>
         </div>
       </div>
 
@@ -54,7 +61,25 @@ export default function Members({ inode }: { inode: InodeMembers }) {
           />
         ))}
       </div>
-      <AddMember hidden={writeIdx !== -1} inode={inode} />
+      <AddMember hidden={!hasWrite} inode={inode} />
+      <div className="flex space-x-2 mt-2">
+        <button
+          type="button"
+          disabled={!hasRead}
+          className="w-full p-2 text-white bg-blue rounded disabled:bg-blue/50 disabled:cursor-not-allowed inline-flex items-center"
+        >
+          <DownloadCloud className="mr-2" size={24} />
+          Download
+        </button>
+        <button
+          type="button"
+          disabled={!hasWrite}
+          className="w-full p-2 text-white bg-red rounded disabled:bg-red/50 disabled:cursor-not-allowed inline-flex items-center"
+        >
+          <Trash2 className="mr-2" size={24} />
+          Delete
+        </button>
+      </div>
     </div>
   );
 

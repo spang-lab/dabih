@@ -118,13 +118,7 @@ const removeKeysRecursive = async (
     include: {
       children: true,
       keys: true,
-      members: {
-        where: {
-          permission: {
-            not: Permission.NONE,
-          },
-        },
-      },
+      members: true,
     },
   });
   if (!inode) {

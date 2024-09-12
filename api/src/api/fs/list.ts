@@ -10,7 +10,8 @@ export default async function list(user: User, mnemonic?: Mnemonic) {
   let parentId = null;
   if (mnemonic) {
     parents = await getParents(mnemonic);
-    if (!isAdmin) {
+    const isRoot = parents.length === 1;
+    if (!isAdmin && !isRoot) {
       const members = parents.flatMap((parent) =>
         parent.members
           .filter((m) => m.permission !== Permission.NONE)

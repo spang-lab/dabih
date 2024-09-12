@@ -14,7 +14,7 @@ export default function Parents() {
         <Droppable id={`parent-${inode.mnemonic}`} key={inode.mnemonic}>
           <div
             className="flex rounded flex-row px-3 text-xs font-bold text-blue items-center hover:bg-blue/10 cursor-pointer"
-            onDoubleClick={() => list(inode.mnemonic)}
+            onClick={() => list(inode.mnemonic)}
           >
             <ChevronRight className="mr-3" size={26} strokeWidth={1} />
             <Folder

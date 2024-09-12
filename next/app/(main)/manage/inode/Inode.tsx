@@ -10,12 +10,75 @@ import { useState } from "react";
 import useFinder from "../Context";
 
 
-export default function Inode({
+export default function Inode({ inode }: { inode: InodeMembers }) {
+  const {
+    openMenu,
+    selected,
+    parents,
+    setSelected,
+    list,
+    user,
+  } = useFinder();
+
+  const isMember = [inode, ...parents].some((node) => {
+    return node.members.some((member) => member.sub === user?.sub);
+  });
+
+  return (
+    <div
+      className="h-fit w-32 select-none"
+      key={inode.mnemonic}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.shiftKey || e.metaKey) {
+          const newSelected = [...selected].filter((mnemonic) => mnemonic !== inode.mnemonic);
+          if (selected.length === newSelected.length) {
+            newSelected.push(inode.mnemonic);
+          }
+          setSelected(newSelected);
+          return;
+        }
+        setSelected([inode.mnemonic]);
+      }}
+      onDoubleClick={() => {
+        if ([InodeType.FILE, InodeType.UPLOAD].includes(inode.type)) {
+          return;
+        }
+        if (!isMember && !user?.isAdmin) {
+          return;
+        }
+        list(inode.mnemonic);
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!selected.includes(inode.mnemonic)) {
+          setSelected([inode.mnemonic]);
+        }
+        openMenu({ left: e.clientX, top: e.clientY });
+      }}
+    >
+      <InodeInner
+        inode={inode}
+        selected={selected.includes(inode.mnemonic)}
+        disabled={!isMember}
+      />
+    </div>
+  );
+
+
+}
+
+
+function InodeInner({
   inode,
   selected,
+  disabled,
 }: {
   inode: InodeMembers,
   selected: boolean,
+  disabled: boolean,
 }) {
   const { rename } = useFinder();
   const [name, setName] = useState<string | null>(null);
@@ -70,7 +133,7 @@ export default function Inode({
     return (
       <Draggable id={dragId}>
         <div
-          className="flex h-fit flex-col rounded-xl text-blue items-center">
+          className={`flex h-fit flex-col rounded-xl text-blue items-center ${(disabled) ? "opacity-70" : ""}`}>
           <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
             <Icon inode={inode} />
           </div>
@@ -92,7 +155,7 @@ export default function Inode({
       <Draggable id={dragId}>
         <Droppable id={dropId}>
           <div
-            className="flex h-fit flex-col rounded-xl text-blue items-center">
+            className={`flex h-fit flex-col rounded-xl text-blue items-center ${(disabled) ? "opacity-70" : ""}`}>
             <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
               <Icon inode={inode} />
             </div>
@@ -113,7 +176,7 @@ export default function Inode({
     return (
       <Droppable id={dropId}>
         <div
-          className="flex h-fit flex-col rounded-xl text-blue items-center">
+          className={`flex h-fit flex-col rounded-xl text-blue items-center ${(disabled) ? "opacity-70" : ""}`}>
           <div className={`m-1 relative rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
             <Icon inode={inode} />
           </div>

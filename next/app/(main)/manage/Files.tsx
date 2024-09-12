@@ -1,7 +1,5 @@
 "use client";
 
-import { InodeType } from "@/lib/api/types";
-
 import Inode from "./inode/Inode";
 import DragOverlay from "./DragOverlay";
 import ParentDirectory from "./inode/ParentDirectory";
@@ -14,9 +12,7 @@ export default function Files() {
   const {
     openMenu,
     nodes,
-    selected,
     setSelected,
-    list
   } = useFinder();
 
   const style = {
@@ -37,46 +33,11 @@ export default function Files() {
       <div className="flex flex-1 flex-row flex-wrap content-start ">
         <ParentDirectory />
         {nodes.map((inode) => (
-          <div
-            className="h-fit w-32 select-none"
-            key={inode.mnemonic}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (e.shiftKey || e.metaKey) {
-                const newSelected = [...selected].filter((mnemonic) => mnemonic !== inode.mnemonic);
-                if (selected.length === newSelected.length) {
-                  newSelected.push(inode.mnemonic);
-                }
-                setSelected(newSelected);
-                return;
-              }
-              setSelected([inode.mnemonic]);
-            }}
-            onDoubleClick={() => {
-              if ([InodeType.FILE, InodeType.UPLOAD].includes(inode.type)) {
-                return;
-              }
-              list(inode.mnemonic);
-            }}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (!selected.includes(inode.mnemonic)) {
-                setSelected([inode.mnemonic]);
-              }
-              openMenu({ left: e.clientX, top: e.clientY });
-            }}
-          >
-            <Inode
-              inode={inode}
-              selected={selected.includes(inode.mnemonic)}
-            />
-          </div>
+          <Inode key={inode.mnemonic} inode={inode} />
         ))}
         <DragOverlay />
       </div>
       <Parents />
-    </div>
+    </div >
   );
 }
