@@ -1,6 +1,6 @@
 import db from '#lib/db';
 import crypto from '#crypto';
-import { storeKey } from '#lib/keyv';
+import { storeKey } from '#lib/redis/aesKey';
 import { addKeys } from '#lib/database/keys';
 import publicKey from '#lib/database/publicKey';
 import { createBucket } from '#lib/fs';

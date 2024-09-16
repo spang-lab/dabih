@@ -3,7 +3,7 @@ import { Chunk } from '@prisma/client';
 import { NotFoundError, RequestError } from '../errors';
 import { File, User, InodeType } from '../types';
 import { createHash } from 'crypto';
-import { deleteKey } from '#lib/keyv';
+import { deleteKey } from '#lib/redis/aesKey';
 
 type ChunkRange = Pick<Chunk, 'start' | 'end'>;
 

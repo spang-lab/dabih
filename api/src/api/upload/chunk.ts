@@ -1,5 +1,5 @@
 import { ChunkAddBody, RequestWithUser, InodeType } from '../types';
-import { readKey } from '#lib/keyv';
+import { readKey } from '#lib/redis/aesKey';
 import { NotFoundError, RequestError } from '../errors';
 import crypto from '#crypto';
 import db from '#lib/db';

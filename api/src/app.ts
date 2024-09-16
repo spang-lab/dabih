@@ -8,14 +8,14 @@ import { createReadStream } from 'fs';
 import { RegisterRoutes } from '../build/routes';
 
 import { error, log, serialize } from './middleware';
-import { initKeyV } from '#lib/keyv';
 import { initFilesystem } from '#lib/fs';
 import { initInodes } from '#lib/database/inodes';
+import redis, { initRedis } from '#lib/redis';
 
 const app = async (port?: number) => {
-  await initKeyV();
   await initFilesystem();
   await initInodes();
+  await initRedis();
   const app = new Koa();
   app.use(koaBody());
   app.use(log());
@@ -41,6 +41,11 @@ const app = async (port?: number) => {
 
   const state = app.listen(lPort);
   logger.info(`API server listening on port ${lPort}`);
+  state.on('close', () => {
+    redis.quit().catch((err) => {
+      logger.error(`Error closing redis: ${err}`);
+    });
+  });
   return state;
 };
 

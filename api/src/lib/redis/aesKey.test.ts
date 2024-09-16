@@ -1,15 +1,24 @@
-import anyTest, { TestFn } from 'ava';
-import Keyv from 'keyv';
-import { initKeyV, storeKey, readKey, deleteKey } from './keyv';
+import app from 'src/app';
+import getPort from '@ava/get-port';
+import { test } from '#ava';
+import { storeKey, readKey, deleteKey } from './aesKey';
 
-const test = anyTest as TestFn<{ store: Keyv<string>, key: string }>;
-
-
-test.before(async () => {
-  await initKeyV('memory', 'test_secret');
+test.before(async (t) => {
+  const port = await getPort();
+  const server = await app(port);
+  t.context = {
+    server,
+    port,
+    users: {},
+    files: {},
+    directories: {},
+  };
+});
+test.after.always((t) => {
+  t.context.server.close();
 });
 
-test('store and read', async t => {
+test('store and read', async (t) => {
   const mnemonic = 'test_mnemonic';
   const key = 'test_key';
   const sub = 'test_sub';
@@ -18,7 +27,7 @@ test('store and read', async t => {
   t.is(result, key);
 });
 
-test('store and read different sub', async t => {
+test('store and read different sub', async (t) => {
   const mnemonic = 'test_mnemonic';
   const key = 'test_key';
   await storeKey('test_sub', mnemonic, key);
@@ -26,7 +35,7 @@ test('store and read different sub', async t => {
   t.is(result, null);
 });
 
-test('store and read different mnemonic', async t => {
+test('store and read different mnemonic', async (t) => {
   const key = 'test_key';
   const sub = 'test_sub';
   await storeKey(sub, 'test_mnemonic', key);
@@ -34,7 +43,7 @@ test('store and read different mnemonic', async t => {
   t.is(result, null);
 });
 
-test('store delete and read', async t => {
+test('store delete and read', async (t) => {
   const mnemonic = 'test_mnemonic';
   const key = 'test_key';
   const sub = 'test_sub';

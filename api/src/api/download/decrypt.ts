@@ -4,7 +4,7 @@ import { NotFoundError, RequestError } from '../errors';
 import db from '#lib/db';
 import crypto from '#lib/crypto/index';
 import { convertToken, generateValue } from '#lib/database/token';
-import { storeKey } from '#lib/keyv';
+import { storeKey } from '#lib/redis/aesKey';
 
 export default async function decrypt(
   user: User,
@@ -23,9 +23,6 @@ export default async function decrypt(
   });
   if (!file) {
     throw new NotFoundError(`No file found for mnemonic ${mnemonic}`);
-  }
-  if (file.deletedAt) {
-    throw new RequestError(`File ${mnemonic} has been deleted`);
   }
   const { data } = file;
   if (!data) {

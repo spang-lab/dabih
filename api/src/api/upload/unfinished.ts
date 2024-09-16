@@ -1,7 +1,7 @@
 import { User, InodeType } from '../types';
 
 import db from '#lib/db';
-import { readKey } from '#lib/keyv';
+import { readKey } from '#lib/redis/aesKey';
 
 export default async function unfinished(user: User) {
   const { sub } = user;

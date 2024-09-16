@@ -1,5 +1,5 @@
 import { User, InodeType } from '../types';
-import { readKey } from '#lib/keyv';
+import { readKey } from '#lib/redis/aesKey';
 import db from '#lib/db';
 import { AuthorizationError, NotFoundError, RequestError } from '../errors';
 import { get } from '#lib/fs';
