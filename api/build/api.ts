@@ -100,6 +100,8 @@ const init = (baseUrl: string) => {
       }
       return c.GET('/fs/{mnemonic}/list', { params: { path: { mnemonic } } });
     },
+    search: (body: schemas['InodeSearchBody']) =>
+      c.POST('/fs/search', { body }),
   };
 
   const download = {

@@ -465,6 +465,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fs/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["searchFs"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/download/{mnemonic}/decrypt": {
         parameters: {
             query?: never;
@@ -934,6 +950,12 @@ export interface components {
             parent?: components["schemas"]["Mnemonic"];
             /** @description A custom searchable tag for the directory */
             tag?: string;
+        };
+        InodeSearchBody: {
+            query: string;
+            name?: string;
+            tag?: string;
+            hash?: string;
         };
     };
     responses: never;
@@ -1583,6 +1605,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Directory"];
+                };
+            };
+        };
+    };
+    searchFs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InodeSearchBody"];
+            };
+        };
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        jobId: string;
+                    };
                 };
             };
         };

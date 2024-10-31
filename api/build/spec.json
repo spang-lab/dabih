@@ -1085,6 +1085,27 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"InodeSearchBody": {
+				"properties": {
+					"query": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"tag": {
+						"type": "string"
+					},
+					"hash": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"query"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -2269,6 +2290,57 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/AddDirectoryBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/fs/search": {
+			"post": {
+				"operationId": "searchFs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"jobId": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"jobId"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/InodeSearchBody"
 							}
 						}
 					}

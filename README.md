@@ -31,6 +31,12 @@ Start a demo version of dabih:
     cd ..
 ```
 
+- Install Pm2
+
+```
+    npm install -g pm2
+```
+
 - Start the development environment
 
 ```

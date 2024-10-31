@@ -238,9 +238,6 @@ export interface ListResponse {
 
 export interface InodeSearchBody {
   query: string;
-  take?: number;
-  skip?: number;
-  mnemonic?: Mnemonic;
   name?: string;
   tag?: string;
   hash?: string;
