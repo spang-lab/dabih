@@ -25,9 +25,11 @@ Start a demo version of dabih:
     cd dabih
     cd api
     npm install
+    npm run dev:migrate
     cd ..
     cd next
     npm install
+    npm run client
     cd ..
 ```
 

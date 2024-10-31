@@ -7,9 +7,6 @@ import db from './lib/db';
 
 import { AuthenticationError } from './api/errors';
 
-
-
-
 const parseHeader = (request: Request): string => {
   const authHeader = request.get('Authorization');
   if (!authHeader) {
@@ -19,7 +16,9 @@ const parseHeader = (request: Request): string => {
   if (bearer.toLowerCase() === 'bearer' && value) {
     return value;
   }
-  throw new AuthenticationError('Invalid Authorization header, needs to be "Bearer <token>"');
+  throw new AuthenticationError(
+    'Invalid Authorization header, needs to be "Bearer <token>"',
+  );
 };
 
 type AuthType = 'jwt' | 'api_key';
@@ -28,12 +27,14 @@ const verifyToken = async (request: Request, type: AuthType): Promise<User> => {
   const tokenStr = parseHeader(request);
   if (type === 'api_key') {
     if (!isToken(tokenStr)) {
-      throw new AuthenticationError('Expected an api key in the form dabih_at_<value>');
+      throw new AuthenticationError(
+        'Expected an api key in the form dabih_at_<value>',
+      );
     }
     const result = await db.token.findUnique({
       where: {
         value: tokenStr,
-      }
+      },
     });
     if (!result) {
       throw new AuthenticationError('Invalid api token');
@@ -67,7 +68,9 @@ const verifyToken = async (request: Request, type: AuthType): Promise<User> => {
   }
   const { scope, sub } = decoded;
   if (typeof scope !== 'string') {
-    throw new AuthenticationError(`Invalid "scope" key in jwt: ${scope}, must be a string with space separated values`);
+    throw new AuthenticationError(
+      `Invalid "scope" key in jwt: ${scope}, must be a string with space separated values`,
+    );
   }
   const scopes = scope.split(' ');
   const isAdmin = scopes.includes('dabih:admin');
@@ -75,20 +78,23 @@ const verifyToken = async (request: Request, type: AuthType): Promise<User> => {
     sub,
     scopes,
     isAdmin,
-  }
+  };
 };
 
-
-export async function koaAuthentication(request: Request, name: string, scopes?: string[]): Promise<User> {
+export async function koaAuthentication(
+  request: Request,
+  name: string,
+  scopes?: string[],
+): Promise<User> {
   if (name === 'jwt' || name === 'api_key') {
     const decoded = await verifyToken(request, name);
-    const missing = scopes?.filter(scope => !decoded.scopes.includes(scope));
+    const missing = scopes?.filter((scope) => !decoded.scopes.includes(scope));
     if (missing?.length) {
-      throw new AuthenticationError(`JWT does not contain the required scope: ${missing.join(', ')}`);
+      throw new AuthenticationError(
+        `JWT does not contain the required scope: ${missing.join(', ')}`,
+      );
     }
     return decoded;
   }
   throw new AuthenticationError(`Unknown authentication method: ${name}`);
 }
-
-

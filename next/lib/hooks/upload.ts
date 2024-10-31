@@ -43,12 +43,7 @@ export default function useUpload() {
         const { data: incomlete } = await api.upload.unfinished();
         if (incomlete?.length) {
           if (incomlete.length > 1) {
-            setState({
-              status: "error",
-              options,
-              error: "Multiple incomplete uploads",
-            });
-            return;
+            console.error("Multiple incomplete uploads");
           }
           setState({
             status: "interrupted",
