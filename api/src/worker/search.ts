@@ -5,11 +5,13 @@ import { initRedis } from '#lib/redis';
 import dbg from '#lib/dbg';
 import { InodeSearchBody, User } from 'src/api/types';
 
+let exported = null;
+
 if (isMainThread) {
-  const piscina = new Piscina({
+  console.log(import.meta.filename);
+  exported = new Piscina({
     filename: import.meta.filename,
   });
-  module.exports = piscina;
 } else {
   async function initalize() {
     await initRedis();
@@ -20,5 +22,6 @@ if (isMainThread) {
 
     return;
   }
-  module.exports = { initalize, search };
+  exported = { initalize, search };
 }
+export default exported;
