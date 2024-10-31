@@ -23,9 +23,11 @@ export const signJWT = async (user: User) => {
     .sign(new TextEncoder().encode(tokenSecret));
 };
 
-const handler = async (request: NextRequest, { params }: { params: { route: string } }) => {
+const handler = async (request: NextRequest, { params }: { params: Promise<{ route: string }> }) => {
   const baseUrl = requireEnv('API_URL');
-  const url = path.join(baseUrl, 'api', 'v1', ...params.route);
+  const p = await params;
+  const url = path.join(baseUrl, 'api', 'v1', ...p.route);
+
 
   const { headers, method, body } = request;
   const existingToken = headers.get('Authorization');
@@ -41,6 +43,7 @@ const handler = async (request: NextRequest, { params }: { params: { route: stri
     method,
     body,
     headers,
+
     // @ts-expect-error - types are wrong
     duplex: 'half',
   });
