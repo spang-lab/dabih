@@ -60,6 +60,7 @@
     "openapi-fetch": "^0.13.0",
     "piscina": "^4.7.0",
     "redis": "^4.7.0",
+    "ts-node": "^10.9.2",
     "tsoa": "^6.5.1",
     "winston": "^3.15.0"
   },
