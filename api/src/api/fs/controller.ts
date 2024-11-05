@@ -21,7 +21,7 @@ import move from './move';
 import duplicate from './duplicate';
 import tree from './tree';
 import list from './list';
-import search from './search';
+import { searchStart, searchResults } from './search';
 
 import {
   AddDirectoryBody,
@@ -163,6 +163,16 @@ export class FilesystemController extends Controller {
     @Request() request: RequestWithUser,
   ): Promise<{ jobId: string }> {
     const { user } = request;
-    return search(user, body);
+    return searchStart(user, body);
+  }
+
+  @Post('search/{jobId}')
+  @OperationId('searchResults')
+  public async searchResults(
+    @Path() jobId: string,
+    @Request() request: RequestWithUser,
+  ): Promise<void> {
+    const { user } = request;
+    return searchResults(user, jobId);
   }
 }

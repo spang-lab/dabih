@@ -1,12 +1,6 @@
 import db from '#lib/db';
 import crypto from '#crypto';
-import {
-  File,
-  InodeMembers,
-  InodeTree,
-  InodeType,
-  Permission,
-} from 'src/api/types';
+import { File, InodeMembers, InodeTree, InodeType } from 'src/api/types';
 
 export const generateDataUid = async () => {
   const maxAttempts = 3;

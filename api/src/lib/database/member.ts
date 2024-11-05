@@ -2,7 +2,6 @@ import db from '#lib/db';
 import { Member, Permission, PermissionString } from 'src/api/types';
 
 import { AuthorizationError, NotFoundError } from 'src/api/errors';
-import mnemonic from 'src/api/download/mnemonic';
 
 export const parsePermission = (permission: string): Permission => {
   switch (permission.toLowerCase()) {

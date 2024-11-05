@@ -238,7 +238,4 @@ export interface ListResponse {
 
 export interface InodeSearchBody {
   query: string;
-  name?: string;
-  tag?: string;
-  hash?: string;
 }
