@@ -4,17 +4,21 @@ import { useCallback, useEffect, useState } from "react";
 import { Search } from "react-feather";
 import api from '@/lib/api';
 import { InodeMembers } from "@/lib/api/types";
+import { Spinner } from "@/app/util";
 
 export default function Test() {
   const [query, setQuery] = useState<string>("");
   const [searchJob, setSearchJob] = useState<string | null>(null);
   const [results, setResults] = useState<InodeMembers[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const search = async () => {
     const { data } = await api.fs.searchStart({ query });
     if (!data) {
       return;
     }
+    setResults([]);
+    setLoading(true);
     setSearchJob(data.jobId);
   }
 
@@ -25,6 +29,7 @@ export default function Test() {
       return;
     }
     if (data.isComplete) {
+      setLoading(false);
       setSearchJob(null);
     }
     const newResults = data.inodes as InodeMembers[];
@@ -77,6 +82,7 @@ export default function Test() {
           </button>
         </div>
       </form>
+      <Spinner small loading={loading} />
       <pre>{JSON.stringify(results, null, 2)}</pre>
     </div>
   );

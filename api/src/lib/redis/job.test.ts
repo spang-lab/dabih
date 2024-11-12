@@ -22,7 +22,7 @@ test('create,run,complete', async (t) => {
   const sub = 'sub';
   const jobId = await job.create(sub);
   for (let i = 0; i < 110; i++) {
-    await job.addResults(jobId, i.toString());
+    await job.addResult(jobId, i.toString());
   }
   await job.complete(jobId);
   const results = await job.fetchResults(jobId, sub);

@@ -37,7 +37,7 @@ async function touch(jobId: string) {
   });
 }
 
-async function addResults(jobId: string, json: string | string[]) {
+async function addResult(jobId: string, json: string) {
   const jobKey = `job:${jobId}:data`;
   await redis.rPush(jobKey, json);
   await touch(jobId);
@@ -89,7 +89,7 @@ const job = {
   create,
   complete,
   list,
-  addResults,
+  addResult,
   getMeta,
   fetchResults,
   remove,

@@ -1,5 +1,4 @@
 import { initRedis } from '#lib/redis';
-import dbg from '#lib/dbg';
 import { InodeSearchBody, InodeMembers, InodeType, User } from 'src/api/types';
 import job from '#lib/redis/job';
 import db from '#lib/db';
@@ -10,6 +9,10 @@ async function initalize() {
 }
 
 export default initalize();
+
+function toJson(inode: InodeMembers) {
+  return JSON.stringify(inode, convertBigInts);
+}
 
 function inodeMatchesQuery(inode: InodeMembers, query: string) {
   const { name, tag, mnemonic, data } = inode;
@@ -23,6 +26,12 @@ function inodeMatchesQuery(inode: InodeMembers, query: string) {
   );
 }
 
+function isDir(inode: InodeMembers) {
+  return [InodeType.DIRECTORY, InodeType.TRASH, InodeType.HOME].includes(
+    inode.type,
+  );
+}
+
 export async function search({
   user,
   body,
@@ -32,9 +41,8 @@ export async function search({
   body: InodeSearchBody;
   jobId: string;
 }) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const { query } = body;
 
-  // return inodes where the sub is in the members
   const startPoints = await db.inode.findMany({
     where: {
       members: {
@@ -48,14 +56,32 @@ export async function search({
       data: true,
     },
   });
-  console.log(startPoints);
-  await job.addResults(
-    jobId,
-    startPoints.map((inode) => JSON.stringify(inode, convertBigInts)),
-  );
+  const promises = startPoints
+    .filter((inode) => inodeMatchesQuery(inode, query))
+    .map((inode) => job.addResult(jobId, toJson(inode)));
+  await Promise.all(promises);
+  const searched = new Set<bigint>();
+  const searchQueue = startPoints.filter(isDir).map((inode) => inode.id);
 
+  while (searchQueue.length > 0) {
+    const inodeId = searchQueue.shift()!;
+    searched.add(inodeId);
+    const children = await db.inode.findMany({
+      where: {
+        parentId: inodeId,
+      },
+      include: {
+        members: true,
+        data: true,
+      },
+    });
+    const promises = children
+      .filter((inode) => inodeMatchesQuery(inode, query))
+      .map((inode) => job.addResult(jobId, toJson(inode)));
+    await Promise.all(promises);
+    const newDirs = children.filter(isDir).map((inode) => inode.id);
+    searchQueue.push(...newDirs.filter((id) => !searched.has(id)));
+  }
   await job.complete(jobId);
-  dbg(user, body, jobId);
-
   return;
 }
