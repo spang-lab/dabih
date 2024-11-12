@@ -24,10 +24,3 @@ test.before(async (t) => {
 test.after.always((t) => {
   t.context.server.close();
 });
-
-test('basic search', async (t) => {
-  const api = client(t, 'test_search');
-  const { data } = await api.fs.search({ query: 'file' });
-  t.log(data);
-  t.pass();
-});

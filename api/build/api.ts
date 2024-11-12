@@ -2,6 +2,7 @@ import createClient from 'openapi-fetch';
 
 import type { components, paths } from './schema';
 import listParents from 'src/api/fs/listParents';
+import searchStart from 'src/api/fs/searchStart';
 type schemas = components['schemas'];
 
 type ChunkUpload = {
@@ -100,8 +101,12 @@ const init = (baseUrl: string) => {
       }
       return c.GET('/fs/{mnemonic}/list', { params: { path: { mnemonic } } });
     },
-    search: (body: schemas['InodeSearchBody']) =>
+    searchStart: (body: schemas['InodeSearchBody']) =>
       c.POST('/fs/search', { body }),
+    searchResults: (jobId: string) =>
+      c.POST('/fs/search/{jobId}', {
+        params: { path: { jobId } },
+      }),
   };
 
   const download = {

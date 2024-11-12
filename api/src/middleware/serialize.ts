@@ -1,7 +1,7 @@
 import { Context, Next } from 'koa';
 import { Stream } from 'stream';
 
-const convertBigInts = (_key: unknown, value: unknown) => {
+export const convertBigInts = (_key: unknown, value: unknown) => {
   if (typeof value === 'bigint') {
     return value.toString();
   }

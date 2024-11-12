@@ -222,7 +222,7 @@ export interface SetAccessBody {
   /**
    * The permission to set
    */
-  permission: 'read' | 'write' | 'none';
+  permission: Permission;
 }
 
 export interface ListResponse {
@@ -234,4 +234,15 @@ export interface ListResponse {
    * The list of inodes in the directory
    */
   children: InodeMembers[];
+}
+
+export interface InodeSearchBody {
+  query: string;
+}
+export interface InodeSearchResults {
+  isComplete: boolean;
+  /**
+   * The list of inodes that match the search query
+   */
+  inodes: Inode[];
 }

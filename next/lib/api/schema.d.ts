@@ -287,6 +287,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/job/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description List all jobs */
+        get: operations["listJobs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/fs/{mnemonic}/file": {
         parameters: {
             query?: never;
@@ -459,6 +476,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["addDirectory"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/fs/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["searchFs"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/fs/search/{jobId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["searchResults"];
         delete?: never;
         options?: never;
         head?: never;
@@ -830,6 +879,12 @@ export interface components {
              */
             lifetime: number | null;
         };
+        /** @enum {string} */
+        JobStatus: "running" | "complete" | "failed";
+        Job: {
+            jobId: string;
+            status: components["schemas"]["JobStatus"];
+        };
         Key: {
             /**
              * Format: bigint
@@ -934,6 +989,14 @@ export interface components {
             parent?: components["schemas"]["Mnemonic"];
             /** @description A custom searchable tag for the directory */
             tag?: string;
+        };
+        InodeSearchBody: {
+            query: string;
+        };
+        InodeSearchResults: {
+            isComplete: boolean;
+            /** @description The list of inodes that match the search query */
+            inodes: components["schemas"]["Inode"][];
         };
     };
     responses: never;
@@ -1345,6 +1408,26 @@ export interface operations {
             };
         };
     };
+    listJobs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Job"][];
+                };
+            };
+        };
+    };
     fileInfo: {
         parameters: {
             query?: never;
@@ -1583,6 +1666,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Directory"];
+                };
+            };
+        };
+    };
+    searchFs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InodeSearchBody"];
+            };
+        };
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        jobId: string;
+                    };
+                };
+            };
+        };
+    };
+    searchResults: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InodeSearchResults"];
                 };
             };
         };

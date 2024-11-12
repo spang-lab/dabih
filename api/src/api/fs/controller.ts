@@ -21,7 +21,8 @@ import move from './move';
 import duplicate from './duplicate';
 import tree from './tree';
 import list from './list';
-import { searchStart, searchResults } from './search';
+import searchStart from './searchStart';
+import searchResults from './searchResults';
 
 import {
   AddDirectoryBody,
@@ -37,6 +38,7 @@ import {
   ListResponse,
   InodeMembers,
   InodeSearchBody,
+  InodeSearchResults,
 } from '../types';
 
 @Route('fs')
@@ -171,7 +173,7 @@ export class FilesystemController extends Controller {
   public async searchResults(
     @Path() jobId: string,
     @Request() request: RequestWithUser,
-  ): Promise<void> {
+  ): Promise<InodeSearchResults> {
     const { user } = request;
     return searchResults(user, jobId);
   }

@@ -239,3 +239,10 @@ export interface ListResponse {
 export interface InodeSearchBody {
   query: string;
 }
+export interface InodeSearchResults {
+  isComplete: boolean;
+  /**
+   * The list of inodes that match the search query
+   */
+  inodes: Inode[];
+}

@@ -1,9 +1,11 @@
 import Piscina from 'piscina';
 import { resolve } from 'path';
 
+const dirname = import.meta.dirname || __dirname;
+
 export const searchWorker = new Piscina({
-  filename: resolve(import.meta.dirname, './wrapper.cjs'),
+  filename: resolve(dirname, './wrapper.cjs'),
   workerData: {
-    path: resolve(import.meta.dirname, './search.ts'),
+    path: resolve(dirname, './search.ts'),
   },
 });

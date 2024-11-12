@@ -1121,6 +1121,26 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"InodeSearchResults": {
+				"properties": {
+					"isComplete": {
+						"type": "boolean"
+					},
+					"inodes": {
+						"items": {
+							"$ref": "#/components/schemas/Inode"
+						},
+						"type": "array",
+						"description": "The list of inodes that match the search query"
+					}
+				},
+				"required": [
+					"isComplete",
+					"inodes"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -2403,8 +2423,15 @@
 			"post": {
 				"operationId": "searchResults",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InodeSearchResults"
+								}
+							}
+						}
 					}
 				},
 				"tags": [

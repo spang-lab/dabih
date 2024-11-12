@@ -4,6 +4,7 @@ import { FinderWrapper } from "./Context";
 
 import Files from "./Files";
 import Info from "./Info";
+import Search from "./inode/Search";
 
 export default async function Manage() {
   const session = await auth();
@@ -19,6 +20,9 @@ export default async function Manage() {
         <span className="text-blue"> your files</span>
       </h1>
       <FinderWrapper user={session.user}>
+        <div className="flex flex-row">
+          <Search />
+        </div>
         <div className="flex flex-row">
           <div className="grow">
             <Files />

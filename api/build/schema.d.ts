@@ -993,6 +993,11 @@ export interface components {
         InodeSearchBody: {
             query: string;
         };
+        InodeSearchResults: {
+            isComplete: boolean;
+            /** @description The list of inodes that match the search query */
+            inodes: components["schemas"]["Inode"][];
+        };
     };
     responses: never;
     parameters: never;
@@ -1702,12 +1707,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description No content */
-            204: {
+            /** @description Ok */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["InodeSearchResults"];
+                };
             };
         };
     };

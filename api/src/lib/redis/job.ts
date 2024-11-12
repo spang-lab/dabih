@@ -3,11 +3,12 @@ import crypto from '#crypto';
 
 type JobStatus = 'running' | 'complete' | 'failed';
 
-async function create() {
+async function create(sub: string) {
   const jobId = await crypto.random.getToken(10);
   const jobKey = `job:${jobId}:meta`;
   await redis.hSet(jobKey, {
     status: 'running',
+    sub,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
@@ -16,7 +17,6 @@ async function create() {
 
 async function list() {
   const keys = await redis.keys('job:*:meta');
-  console.log(keys);
   const jobIds = keys.map((key) => key.split(':')[1]);
   const jobs = await Promise.all(jobIds.map(getMeta));
   return jobs;
@@ -37,7 +37,7 @@ async function touch(jobId: string) {
   });
 }
 
-async function addResult(jobId: string, json: string) {
+async function addResults(jobId: string, json: string | string[]) {
   const jobKey = `job:${jobId}:data`;
   await redis.rPush(jobKey, json);
   await touch(jobId);
@@ -49,14 +49,19 @@ async function getMeta(jobId: string) {
   return {
     jobId,
     status: meta.status as JobStatus,
+    sub: meta.sub,
     createdAt: parseInt(meta.createdAt, 10),
     updatedAt: parseInt(meta.updatedAt, 10),
   };
 }
 
-async function fetchResults(jobId: string) {
+async function fetchResults(jobId: string, sub: string) {
   const jobKey = `job:${jobId}:data`;
   const meta = await getMeta(jobId);
+
+  if (meta.sub !== sub) {
+    throw new Error('Unauthorized');
+  }
 
   const results = await redis
     .multi()
@@ -68,7 +73,7 @@ async function fetchResults(jobId: string) {
 
   return {
     data: entries,
-    meta,
+    ...meta,
   };
 }
 
@@ -84,7 +89,7 @@ const job = {
   create,
   complete,
   list,
-  addResult,
+  addResults,
   getMeta,
   fetchResults,
   remove,

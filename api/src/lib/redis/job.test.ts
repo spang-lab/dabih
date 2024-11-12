@@ -19,18 +19,19 @@ test.after.always((t) => {
 });
 
 test('create,run,complete', async (t) => {
-  const jobId = await job.create();
+  const sub = 'sub';
+  const jobId = await job.create(sub);
   for (let i = 0; i < 110; i++) {
-    await job.addResult(jobId, i.toString());
+    await job.addResults(jobId, i.toString());
   }
   await job.complete(jobId);
-  const results = await job.fetchResults(jobId);
+  const results = await job.fetchResults(jobId, sub);
   t.is(results.status, 'complete');
   t.is(results.data.length, 100);
   t.is(results.data[0], '0');
   t.is(results.data[99], '99');
 
-  const results2 = await job.fetchResults(jobId);
+  const results2 = await job.fetchResults(jobId, sub);
   t.is(results2.status, 'complete');
   t.is(results2.data.length, 10);
   t.deepEqual(results2.data, [
