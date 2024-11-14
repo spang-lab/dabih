@@ -16,14 +16,25 @@ function toJson(inode: InodeMembers) {
 
 function inodeMatchesQuery(inode: InodeMembers, query: string) {
   const { name, tag, mnemonic, data } = inode;
-  return (
-    name.includes(query) ??
-    tag?.includes(query) ??
-    mnemonic.includes(query) ??
-    data?.fileName.includes(query) ??
-    data?.uid.includes(query) ??
-    data?.hash?.includes(query)
-  );
+  if (name.includes(query)) {
+    return true;
+  }
+  if (tag?.includes(query)) {
+    return true;
+  }
+  if (mnemonic.includes(query)) {
+    return true;
+  }
+  if (data?.fileName.includes(query)) {
+    return true;
+  }
+  if (data?.uid.includes(query)) {
+    return true;
+  }
+  if (data?.hash?.includes(query)) {
+    return true;
+  }
+  return false;
 }
 
 function isDir(inode: InodeMembers) {

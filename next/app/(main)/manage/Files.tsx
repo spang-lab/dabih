@@ -5,6 +5,7 @@ import DragOverlay from "./DragOverlay";
 import ParentDirectory from "./inode/ParentDirectory";
 import Parents from "./inode/Parents";
 import useFinder from "./Context";
+import SearchHeader from "./inode/SearchHeader";
 
 
 
@@ -29,7 +30,7 @@ export default function Files() {
         openMenu({ left: e.clientX, top: e.clientY });
       }}
     >
-
+      <SearchHeader />
       <div className="flex flex-1 flex-row flex-wrap content-start ">
         <ParentDirectory />
         {nodes.map((inode) => (

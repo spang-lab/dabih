@@ -6,8 +6,8 @@ import { Pluralize } from "@/app/util";
 import { DownloadCloud, Trash2 } from "react-feather";
 
 export default function Members({ inode }: { inode: InodeMembers }) {
-  const { user, parents } = useFinder();
-  if (!user) {
+  const { user, parents, search } = useFinder();
+  if (!user || search.isActive) {
     return null;
   }
 

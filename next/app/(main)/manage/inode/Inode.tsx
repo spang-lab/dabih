@@ -18,11 +18,13 @@ export default function Inode({ inode }: { inode: InodeMembers }) {
     setSelected,
     list,
     user,
+    search,
   } = useFinder();
 
   const isMember = [inode, ...parents].some((node) => {
     return node.members.some((member) => member.sub === user?.sub);
   });
+  const isSearch = ["complete", "loading"].includes(search.status);
 
   return (
     <div
@@ -42,10 +44,7 @@ export default function Inode({ inode }: { inode: InodeMembers }) {
         setSelected([inode.mnemonic]);
       }}
       onDoubleClick={() => {
-        if ([InodeType.FILE, InodeType.UPLOAD].includes(inode.type)) {
-          return;
-        }
-        if (!isMember && !user?.isAdmin) {
+        if (!isMember && !user?.isAdmin && !isSearch) {
           return;
         }
         list(inode.mnemonic);
@@ -62,7 +61,7 @@ export default function Inode({ inode }: { inode: InodeMembers }) {
       <InodeInner
         inode={inode}
         selected={selected.includes(inode.mnemonic)}
-        disabled={!isMember}
+        disabled={!isMember && !isSearch}
       />
     </div>
   );

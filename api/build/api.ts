@@ -25,6 +25,7 @@ const init = (baseUrl: string) => {
   const c = createClient<paths>({
     baseUrl,
   });
+
   const token = {
     info: () => c.GET('/token/info'),
     add: (body: schemas['TokenAddBody']) => c.POST('/token/add', { body }),

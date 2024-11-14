@@ -8,6 +8,10 @@ export default function Parents() {
 
   const reverse = [...parents].reverse();
 
+  if (parents.length === 0) {
+    return null;
+  }
+
   return (
     <div className="flex justify-start flex-wrap border-t py-1">
       {reverse.map((inode) => (

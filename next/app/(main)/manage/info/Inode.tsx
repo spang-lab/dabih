@@ -29,7 +29,7 @@ function FileInfo({ inode }: { inode: InodeMembers }) {
   }
   const size = parseInt(data.size as string, 10);
   const { hash, uid, fileName, filePath } = data;
-  const copyHash = () => navigator.clipboard.writeText(hash!).catch(console.error);
+  const copyHash = () => { navigator.clipboard.writeText(hash!).catch(console.error) };
   return (
     <>
       <ListItem label="Size">
@@ -81,6 +81,9 @@ export default function InodeInfo({ inode }: { inode: InodeMembers }) {
 
   useEffect(() => {
     const list = async () => {
+      if (!isDir) {
+        return;
+      }
       const { data } = await api.fs.listFiles(inode.mnemonic);
       if (!data) {
         return;

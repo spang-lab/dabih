@@ -1,8 +1,15 @@
 import { AuthorizationError } from '../errors';
-import { Permission, User, Mnemonic, InodeMembers } from '../types';
+import { Permission, User, Mnemonic, InodeMembers, InodeType } from '../types';
 import db from '#lib/db';
 import { getParents } from '#lib/database/inode';
 import { getHome } from '#lib/database/inodes';
+
+function isListable(inode: InodeMembers) {
+  if ([InodeType.FILE, InodeType.UPLOAD].includes(inode.type)) {
+    return false;
+  }
+  return true;
+}
 
 export default async function list(user: User, mnemonic?: Mnemonic) {
   const { sub, isAdmin } = user;
@@ -22,6 +29,9 @@ export default async function list(user: User, mnemonic?: Mnemonic) {
           `Not authorized to list directory ${mnemonic}`,
         );
       }
+    }
+    if (!isListable(parents[0])) {
+      parents = parents.slice(1);
     }
     parentId = parents[0].id as bigint;
   } else {
