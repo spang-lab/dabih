@@ -27,7 +27,11 @@ export default function useSearch() {
     setResults([]);
   };
 
-  const clear = () => {
+  const clear = async () => {
+    if (state.status === "loading" && state.jobId) {
+      await api.fs.searchCancel(state.jobId);
+    }
+
     setState({ status: "idle" });
     setResults([]);
   };

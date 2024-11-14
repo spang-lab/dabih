@@ -47,3 +47,13 @@ test('create,run,complete', async (t) => {
     '109',
   ]);
 });
+
+test('addResults', async (t) => {
+  const sub = 'sub';
+  const jobId = await job.create(sub);
+  const results = Array.from({ length: 10 }, (_, i) => i.toString());
+  await job.addResults(jobId, results);
+  await job.complete(jobId);
+  const fetched = await job.fetchResults(jobId, sub);
+  t.deepEqual(fetched.data, results);
+});

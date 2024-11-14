@@ -514,6 +514,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fs/search/{jobId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["searchCancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/download/{mnemonic}/decrypt": {
         parameters: {
             query?: never;
@@ -1715,6 +1731,26 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["InodeSearchResults"];
                 };
+            };
+        };
+    };
+    searchCancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

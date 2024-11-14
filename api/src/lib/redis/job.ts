@@ -43,6 +43,15 @@ async function addResult(jobId: string, json: string) {
   await touch(jobId);
 }
 
+async function addResults(jobId: string, jsons: string[]) {
+  if (jsons.length === 0) {
+    return;
+  }
+  const jobKey = `job:${jobId}:data`;
+  await redis.rPush(jobKey, jsons);
+  await touch(jobId);
+}
+
 async function getMeta(jobId: string) {
   const jobKey = `job:${jobId}:meta`;
   const meta = await redis.hGetAll(jobKey);
@@ -90,6 +99,7 @@ const job = {
   complete,
   list,
   addResult,
+  addResults,
   getMeta,
   fetchResults,
   remove,

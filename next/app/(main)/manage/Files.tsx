@@ -5,7 +5,7 @@ import DragOverlay from "./DragOverlay";
 import ParentDirectory from "./inode/ParentDirectory";
 import Parents from "./inode/Parents";
 import useFinder from "./Context";
-import SearchHeader from "./inode/SearchHeader";
+import Header from "./inode/Header";
 
 
 
@@ -23,14 +23,14 @@ export default function Files() {
   return (
     <div
       style={style}
-      className="overflow-y-scroll justify-stretch flex flex-col bg-gray-50 shadow-inner rounded-xl px-3 pt-3 select-none"
+      className="overflow-y-scroll justify-stretch flex flex-col bg-gray-50 shadow-inner rounded-xl px-3 select-none"
       onContextMenu={(e) => {
         e.preventDefault();
         setSelected([]);
         openMenu({ left: e.clientX, top: e.clientY });
       }}
     >
-      <SearchHeader />
+      <Header />
       <div className="flex flex-1 flex-row flex-wrap content-start ">
         <ParentDirectory />
         {nodes.map((inode) => (

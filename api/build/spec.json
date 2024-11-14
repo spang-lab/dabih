@@ -2461,6 +2461,41 @@
 				]
 			}
 		},
+		"/fs/search/{jobId}/cancel": {
+			"post": {
+				"operationId": "searchCancel",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					},
+					{
+						"jwt": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "jobId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/download/{mnemonic}/decrypt": {
 			"post": {
 				"operationId": "decryptDataset",

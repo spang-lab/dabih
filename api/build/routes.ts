@@ -1455,6 +1455,38 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        router.post('/fs/search/:jobId/cancel',
+            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            ...(fetchMiddlewares<Middleware>(FilesystemController)),
+            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.searchCancel)),
+
+            async function FilesystemController_searchCancel(context: Context, next: Next) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    jobId: {"in":"path","name":"jobId","required":true,"dataType":"string"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new FilesystemController();
+
+            return templateService.apiHandler({
+              methodName: 'searchCancel',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         router.post('/download/:mnemonic/decrypt',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(DownloadController)),

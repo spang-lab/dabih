@@ -50,14 +50,14 @@ export function FinderWrapper({ user, children }: {
 
 
   const { nodes, parents, cwd } = useMemo(() => {
-    if (search.results.length > 0) {
+    if (search.isActive) {
       return { nodes: search.results, parents: [], cwd: null };
     }
     const nodes = listData?.children ?? [];
     const parents = listData?.parents ?? [];
     const cwd = parents[0]?.mnemonic ?? null;
     return { nodes, parents, cwd };
-  }, [search.results, listData]);
+  }, [search, listData]);
 
 
 

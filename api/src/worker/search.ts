@@ -67,14 +67,19 @@ export async function search({
       data: true,
     },
   });
-  const promises = startPoints
+  const jsons = startPoints
     .filter((inode) => inodeMatchesQuery(inode, query))
-    .map((inode) => job.addResult(jobId, toJson(inode)));
-  await Promise.all(promises);
+    .map((inode) => toJson(inode));
+  await job.addResults(jobId, jsons);
   const searched = new Set<bigint>();
   const searchQueue = startPoints.filter(isDir).map((inode) => inode.id);
 
   while (searchQueue.length > 0) {
+    const meta = await job.getMeta(jobId);
+    if (!meta || meta.status !== 'running') {
+      return;
+    }
+
     const inodeId = searchQueue.shift()!;
     searched.add(inodeId);
     const children = await db.inode.findMany({
@@ -86,10 +91,10 @@ export async function search({
         data: true,
       },
     });
-    const promises = children
+    const jsons = children
       .filter((inode) => inodeMatchesQuery(inode, query))
-      .map((inode) => job.addResult(jobId, toJson(inode)));
-    await Promise.all(promises);
+      .map((inode) => toJson(inode));
+    await job.addResults(jobId, jsons);
     const newDirs = children.filter(isDir).map((inode) => inode.id);
     searchQueue.push(...newDirs.filter((id) => !searched.has(id)));
   }

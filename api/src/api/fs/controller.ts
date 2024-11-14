@@ -23,6 +23,7 @@ import tree from './tree';
 import list from './list';
 import searchStart from './searchStart';
 import searchResults from './searchResults';
+import searchCancel from './searchCancel';
 
 import {
   AddDirectoryBody,
@@ -176,5 +177,14 @@ export class FilesystemController extends Controller {
   ): Promise<InodeSearchResults> {
     const { user } = request;
     return searchResults(user, jobId);
+  }
+  @Post('search/{jobId}/cancel')
+  @OperationId('searchCancel')
+  public async searchCancel(
+    @Path() jobId: string,
+    @Request() request: RequestWithUser,
+  ): Promise<void> {
+    const { user } = request;
+    return searchCancel(user, jobId);
   }
 }
