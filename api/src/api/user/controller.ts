@@ -61,7 +61,7 @@ export class UserController extends Controller {
   public async get(
     @Body() { sub }: { sub: string },
   ): Promise<UserResponse | null> {
-    return get(sub);
+    return get(user.sub);
   }
 
   @Get('list')

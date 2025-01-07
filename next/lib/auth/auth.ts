@@ -1,12 +1,12 @@
 import NextAuth from "next-auth";
 
 import DemoProvider from "./demo";
+import TokenProvider from "./token";
 
 declare module "next-auth" {
   interface User {
     sub: string;
     scopes: string[];
-    isAdmin: boolean;
   }
 
   interface Session {
@@ -27,7 +27,7 @@ declare module "@auth/core/JWT" {
   }
 }
 
-const providers = [DemoProvider()];
+const providers = [DemoProvider(), TokenProvider()];
 
 export interface Provider {
   id: string;
@@ -39,7 +39,8 @@ export const providerMap: Provider[] = providers.map((provider) => {
   if (typeof id !== "string") {
     throw new Error(`Provider ${provider.name} does not have an id`);
   }
-  return { id, name: provider.name };
+  const name = (provider.options?.name as string) ?? provider.name;
+  return { id, name };
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({

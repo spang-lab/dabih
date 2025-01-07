@@ -16,22 +16,12 @@ function toJson(inode: InodeMembers) {
 
 function inodeMatchesQuery(inode: InodeMembers, query: string) {
   const { name, tag, mnemonic, data } = inode;
-  if (name.includes(query)) {
-    return true;
-  }
-  if (tag?.includes(query)) {
-    return true;
-  }
-  if (mnemonic.includes(query)) {
-    return true;
-  }
-  if (data?.fileName.includes(query)) {
-    return true;
-  }
-  if (data?.uid.includes(query)) {
-    return true;
-  }
-  if (data?.hash?.includes(query)) {
+
+  const fields = [name, tag, mnemonic, data?.fileName, data?.uid, data?.hash]
+    .map((field) => field?.toLowerCase())
+    .filter((field) => field);
+
+  if (fields.some((field) => field?.includes(query.toLowerCase()))) {
     return true;
   }
   return false;

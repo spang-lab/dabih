@@ -44,9 +44,7 @@ export default function DemoProvider({ provider }: { provider: Provider }) {
             type="submit"
           >
             <Codesandbox size={32} className="pr-3" />
-            Sign in with
-            {' '}
-            {provider.name}
+            Sign in with demo provider
           </button>
         </form>
       </div>

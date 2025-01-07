@@ -1,18 +1,22 @@
 import Image from 'next/image';
 import URProvider from './UrProvider';
 import DemoProvider from './DemoProvider';
+import TokenProvider from './TokenProvider';
 
 import { signIn, Provider } from '@/lib/auth/auth';
 
 
 
-export default function Provider({ provider }: { provider: Provider }) {
+export default function BaseProvider({ provider }: { provider: Provider }) {
   const { id } = provider;
   if (id === 'demo') {
     return <DemoProvider provider={provider} />;
   }
   if (id === 'ur') {
     return <URProvider provider={provider} />;
+  }
+  if (id === 'token') {
+    return <TokenProvider provider={provider} />;
   }
 
   const logoSrc = `/images/providers/${id}.png`;

@@ -1,6 +1,11 @@
+import { CredentialsSignin } from "next-auth";
 import { Provider } from "next-auth/providers";
 
 import CredentialsProvider from "next-auth/providers/credentials";
+
+class InvalidLoginError extends CredentialsSignin {
+  code = "invalid name";
+}
 
 export default function DemoProvider(): Provider {
   return CredentialsProvider({
@@ -11,11 +16,11 @@ export default function DemoProvider(): Provider {
     },
     authorize(credentials) {
       if (!credentials) {
-        return null;
+        throw new InvalidLoginError();
       }
       const { name } = credentials;
       if (!name || typeof name !== "string") {
-        return null;
+        throw new InvalidLoginError();
       }
       const maxLength = 20;
       const isAdmin = name.toLowerCase().includes("admin");
