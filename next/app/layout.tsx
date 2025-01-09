@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import './globals.css';
 
-import Providers from './providers';
 import Header from './Header';
 import Footer from './Footer';
 import { auth } from '@/lib/auth/auth';
@@ -20,13 +19,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <Providers>
-          <div className="flex flex-col h-screen">
-            <Header user={user} />
-            {children}
-            <Footer />
-          </div>
-        </Providers>
+        <div className="flex flex-col h-screen">
+          <Header user={user} />
+          {children}
+          <Footer />
+        </div>
       </body>
     </html>
   );

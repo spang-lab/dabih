@@ -28,7 +28,7 @@ export default async function Profile() {
       <p className="text-gray-500">
         This is the data dabih has about you.
       </p>
-      <User />
+      <User session={session} />
       <h2 className="text-xl pt-5 font-extrabold tracking-tight sm:text-2xl md:text-3xl">
         <span className="text-blue">Access </span>
         Tokens
@@ -51,7 +51,7 @@ export default async function Profile() {
       <p className="text-gray-500">
         The owners root keys are able to recover data.
       </p>
-      <PublicKeys />
+      <PublicKeys user={user} />
     </div>
   );
 }

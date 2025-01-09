@@ -4,11 +4,11 @@ import {
 import { LocalDate } from '@/app/util';
 
 import LocalKey from './LocalKey';
-import { auth } from '@/lib/auth/auth';
+import { Session } from 'next-auth';
 
 
-export default async function Account() {
-  const session = await auth();
+
+export default function Account({ session }: { session: Session }) {
   if (!session?.user) {
     return null;
   }

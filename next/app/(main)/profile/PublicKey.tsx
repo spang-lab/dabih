@@ -1,16 +1,16 @@
 import React from 'react';
 import { Trash2, Key } from 'react-feather';
 import { Switch, LocalDate } from '@/app/util';
-import useSession from '@/app/session';
 
 import type { PublicKey, UserResponse } from '@/lib/api/types';
 
 
-export default function PublicKey({ publicKey, user, show, onRemove, onEnable }:
+export default function PublicKey({ publicKey, user, isAdmin, show, onRemove, onEnable }:
   {
     user: UserResponse,
     publicKey: PublicKey,
     show: boolean,
+    isAdmin: boolean,
     onRemove: (hash: string) => void,
     onEnable: (enabled: boolean) => void
   }
@@ -18,7 +18,6 @@ export default function PublicKey({ publicKey, user, show, onRemove, onEnable }:
   const { name, sub, email } = user;
   const { hash, enabled, createdAt, isRootKey } = publicKey;
   const isEnabled = !!enabled || isRootKey;
-  const { isAdmin } = useSession();
 
   if (!show) {
     return null;

@@ -8,7 +8,7 @@ const isAvailable = () => {
     storage.setItem(testKey, testData);
     storage.removeItem(testKey);
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 };

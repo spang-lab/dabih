@@ -8,12 +8,10 @@ import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
 import api from '@/lib/api';
 import { Dropzone } from '@/app/util';
-import useSession from '@/app/session';
 import ErrorDialog from '@/app/dialog/Error';
 import WebcamDialog from '@/app/dialog/Webcam';
 
 export default function LoadKey() {
-  const { update } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [showWebcam, setShowWebcam] = useState(false);
 
@@ -37,7 +35,6 @@ export default function LoadKey() {
       return;
     }
     await storage.storeKey(privateKey);
-    update();
   };
 
   const onFile = async (file: File) => {

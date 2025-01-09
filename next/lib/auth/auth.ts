@@ -7,6 +7,7 @@ declare module "next-auth" {
   interface User {
     sub: string;
     scopes: string[];
+    isAdmin: boolean;
   }
 
   interface Session {

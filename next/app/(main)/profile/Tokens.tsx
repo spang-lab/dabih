@@ -54,7 +54,7 @@ export default function Tokens({ user }:
         show={showCreateToken}
         scopes={user.scopes}
         onClose={() => setShowCreateToken(false)}
-        onSubmit={addToken}
+        onSubmit={(r) => void addToken(r).catch(console.error)}
       />
       <ShowTokenDialog
         token={tokenValue}
@@ -62,7 +62,7 @@ export default function Tokens({ user }:
       />
 
       {tokens.map((t) => (
-        <Token data={t} key={t.value} onRemove={() => removeToken(t.id)} />
+        <Token data={t} key={t.value} onRemove={() => void removeToken(t.id as number)} />
       ))}
       <div hidden={tokens.length > 0} className="p-2 m-2 border italic text-gray-500 rounded-lg text-center">
         You have no access tokens.

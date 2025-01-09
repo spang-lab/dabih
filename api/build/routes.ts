@@ -412,17 +412,17 @@ export function RegisterRoutes(router: KoaRouter) {
     // ###########################################################################################################
 
 
+        const argsUtilController_healthy: Record<string, TsoaRoute.ParameterSchema> = {
+        };
         router.get('/healthy',
             ...(fetchMiddlewares<Middleware>(UtilController)),
             ...(fetchMiddlewares<Middleware>(UtilController.prototype.healthy)),
 
             async function UtilController_healthy(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUtilController_healthy, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -441,17 +441,17 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUtilController_info: Record<string, TsoaRoute.ParameterSchema> = {
+        };
         router.get('/info',
             ...(fetchMiddlewares<Middleware>(UtilController)),
             ...(fetchMiddlewares<Middleware>(UtilController.prototype.info)),
 
             async function UtilController_info(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUtilController_info, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -470,20 +470,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_add: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UserAddBody"},
+        };
         router.post('/user/add',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.add)),
 
             async function UserController_add(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UserAddBody"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUserController_add, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -502,19 +502,19 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_me: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/user/me',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.me)),
 
             async function UserController_me(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUserController_me, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -533,19 +533,19 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_get: Record<string, TsoaRoute.ParameterSchema> = {
+                undefined: {"in":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"sub":{"dataType":"string","required":true}}},
+        };
         router.post('/user/find',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.get)),
 
             async function UserController_get(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    undefined: {"in":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"sub":{"dataType":"string","required":true}}},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUserController_get, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -564,18 +564,18 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_list: Record<string, TsoaRoute.ParameterSchema> = {
+        };
         router.get('/user/list',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.list)),
 
             async function UserController_list(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUserController_list, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -594,20 +594,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_remove: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                undefined: {"in":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"sub":{"dataType":"string","required":true}}},
+        };
         router.post('/user/remove',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.remove)),
 
             async function UserController_remove(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    undefined: {"in":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"sub":{"dataType":"string","required":true}}},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUserController_remove, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -626,20 +626,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_addKey: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"ref":"KeyAddBody"},
+        };
         router.post('/user/key/add',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.addKey)),
 
             async function UserController_addKey(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    body: {"in":"body","name":"body","required":true,"ref":"KeyAddBody"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUserController_addKey, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -658,20 +658,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_enableKey: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"ref":"KeyEnableBody"},
+        };
         router.post('/user/key/enable',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.enableKey)),
 
             async function UserController_enableKey(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    body: {"in":"body","name":"body","required":true,"ref":"KeyEnableBody"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUserController_enableKey, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -690,20 +690,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_removeKey: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"ref":"KeyRemoveBody"},
+        };
         router.post('/user/key/remove',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.removeKey)),
 
             async function UserController_removeKey(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    body: {"in":"body","name":"body","required":true,"ref":"KeyRemoveBody"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUserController_removeKey, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -722,20 +722,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUploadController_start: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UploadStartBody"},
+        };
         router.post('/upload/start',
             authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.start)),
 
             async function UploadController_start(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UploadStartBody"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUploadController_start, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -754,20 +754,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUploadController_cancel: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+        };
         router.post('/upload/:mnemonic/cancel',
             authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.cancel)),
 
             async function UploadController_cancel(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUploadController_cancel, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -786,22 +786,22 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUploadController_chunk: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                contentRange: {"in":"header","name":"content-range","required":true,"dataType":"string"},
+                digest: {"in":"header","name":"digest","required":true,"dataType":"string"},
+        };
         router.put('/upload/:mnemonic/chunk',
             authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.chunk)),
 
             async function UploadController_chunk(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    contentRange: {"in":"header","name":"content-range","required":true,"dataType":"string"},
-                    digest: {"in":"header","name":"digest","required":true,"dataType":"string"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUploadController_chunk, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -820,20 +820,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUploadController_finish: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+        };
         router.post('/upload/:mnemonic/finish',
             authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.finish)),
 
             async function UploadController_finish(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUploadController_finish, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -852,19 +852,19 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUploadController_unfinished: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/upload/unfinished',
             authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.unfinished)),
 
             async function UploadController_unfinished(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsUploadController_unfinished, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -883,19 +883,19 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTokenController_info: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/token/info',
             authenticateMiddleware([{"api_key":[]},{"jwt":[]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.info)),
 
             async function TokenController_info(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsTokenController_info, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -914,20 +914,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTokenController_add: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TokenAddBody"},
+        };
         router.post('/token/add',
             authenticateMiddleware([{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.add)),
 
             async function TokenController_add(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TokenAddBody"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsTokenController_add, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -946,19 +946,19 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTokenController_list: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/token/list',
             authenticateMiddleware([{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.list)),
 
             async function TokenController_list(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsTokenController_list, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -977,20 +977,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTokenController_remove: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"tokenId":{"dataType":"double","required":true}}},
+        };
         router.post('/token/remove',
             authenticateMiddleware([{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.remove)),
 
             async function TokenController_remove(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"tokenId":{"dataType":"double","required":true}}},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsTokenController_remove, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1009,18 +1009,18 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsJobController_listJobs: Record<string, TsoaRoute.ParameterSchema> = {
+        };
         router.get('/job/list',
             authenticateMiddleware([{"api_key":["dabih:admin"]},{"jwt":["dabih:admin"]}]),
             ...(fetchMiddlewares<Middleware>(JobController)),
             ...(fetchMiddlewares<Middleware>(JobController.prototype.listJobs)),
 
             async function JobController_listJobs(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsJobController_listJobs, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1039,20 +1039,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_file: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/fs/:mnemonic/file',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.file)),
 
             async function FilesystemController_file(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_file, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1071,20 +1071,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_listFiles: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/fs/:mnemonic/file/list',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listFiles)),
 
             async function FilesystemController_listFiles(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_listFiles, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1103,20 +1103,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_listParents: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/fs/:mnemonic/parent/list',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listParents)),
 
             async function FilesystemController_listParents(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_listParents, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1135,21 +1135,21 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_addMembers: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                body: {"in":"body","name":"body","required":true,"ref":"MemberAddBody"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.post('/fs/:mnemonic/member/add',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.addMembers)),
 
             async function FilesystemController_addMembers(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-                    body: {"in":"body","name":"body","required":true,"ref":"MemberAddBody"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_addMembers, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1168,20 +1168,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_duplicate: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.post('/fs/:mnemonic/duplicate',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.duplicate)),
 
             async function FilesystemController_duplicate(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_duplicate, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1200,20 +1200,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_remove: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.post('/fs/:mnemonic/remove',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.remove)),
 
             async function FilesystemController_remove(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_remove, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1232,20 +1232,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_tree: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/fs/:mnemonic/tree',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.tree)),
 
             async function FilesystemController_tree(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_tree, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1264,20 +1264,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_move: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"MoveInodeBody"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.post('/fs/move',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.move)),
 
             async function FilesystemController_move(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    body: {"in":"body","name":"body","required":true,"ref":"MoveInodeBody"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_move, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1296,19 +1296,19 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_listHome: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/fs/list',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listHome)),
 
             async function FilesystemController_listHome(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_listHome, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1327,20 +1327,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_listInodes: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+        };
         router.get('/fs/:mnemonic/list',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listInodes)),
 
             async function FilesystemController_listInodes(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_listInodes, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1359,20 +1359,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_addDirectory: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"AddDirectoryBody"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.post('/fs/directory/add',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.addDirectory)),
 
             async function FilesystemController_addDirectory(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    body: {"in":"body","name":"body","required":true,"ref":"AddDirectoryBody"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_addDirectory, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1391,20 +1391,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_search: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"InodeSearchBody"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.post('/fs/search',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.search)),
 
             async function FilesystemController_search(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    body: {"in":"body","name":"body","required":true,"ref":"InodeSearchBody"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_search, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1423,20 +1423,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_searchResults: Record<string, TsoaRoute.ParameterSchema> = {
+                jobId: {"in":"path","name":"jobId","required":true,"dataType":"string"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.post('/fs/search/:jobId',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.searchResults)),
 
             async function FilesystemController_searchResults(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    jobId: {"in":"path","name":"jobId","required":true,"dataType":"string"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_searchResults, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1455,20 +1455,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_searchCancel: Record<string, TsoaRoute.ParameterSchema> = {
+                jobId: {"in":"path","name":"jobId","required":true,"dataType":"string"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.post('/fs/search/:jobId/cancel',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.searchCancel)),
 
             async function FilesystemController_searchCancel(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    jobId: {"in":"path","name":"jobId","required":true,"dataType":"string"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_searchCancel, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1487,21 +1487,21 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDownloadController_decrypt: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"ref":"AESKey","required":true}}},
+        };
         router.post('/download/:mnemonic/decrypt',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(DownloadController)),
             ...(fetchMiddlewares<Middleware>(DownloadController.prototype.decrypt)),
 
             async function DownloadController_decrypt(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"ref":"AESKey","required":true}}},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsDownloadController_decrypt, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1520,19 +1520,19 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDownloadController_download: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
         router.get('/download',
             authenticateMiddleware([{"api_key":[]}]),
             ...(fetchMiddlewares<Middleware>(DownloadController)),
             ...(fetchMiddlewares<Middleware>(DownloadController.prototype.download)),
 
             async function DownloadController_download(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsDownloadController_download, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1551,20 +1551,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDownloadController_chunk: Record<string, TsoaRoute.ParameterSchema> = {
+                uid: {"in":"path","name":"uid","required":true,"dataType":"string"},
+                hash: {"in":"path","name":"hash","required":true,"dataType":"string"},
+        };
         router.get('/download/:uid/chunk/:hash',
             authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(DownloadController)),
             ...(fetchMiddlewares<Middleware>(DownloadController.prototype.chunk)),
 
             async function DownloadController_chunk(context: Context, next: Next) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    uid: {"in":"path","name":"uid","required":true,"dataType":"string"},
-                    hash: {"in":"path","name":"hash","required":true,"dataType":"string"},
-            };
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsDownloadController_chunk, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });

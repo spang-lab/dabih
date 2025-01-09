@@ -4,22 +4,19 @@ import { useState, useCallback, useEffect } from 'react';
 import api from '@/lib/api';
 import { Plus } from 'react-feather';
 import { Switch } from '@/app/util';
-import useSession from '@/app/session';
 
 import { UserResponse } from '@/lib/api/types';
 import DeleteDialog from '@/app/dialog/Delete';
 import { KeyRemoveBody } from '@/lib/api/types';
 import PublicKey from './PublicKey';
+import { User } from 'next-auth';
 
 
-export default function PublicKeys() {
+export default function PublicKeys({ user }: { user: User }) {
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [rootOnly, setRootOnly] = useState<boolean>(false);
   const [toRemove, setToRemove] = useState<KeyRemoveBody | null>(null);
 
-  const {
-    status, isAdmin, update,
-  } = useSession();
 
   const fetchKeys = useCallback(async () => {
     const { data, error } = await api.user.list();
@@ -41,7 +38,6 @@ export default function PublicKeys() {
   const removeKey = async (req: KeyRemoveBody) => {
     await api.user.removeKey(req);
     await fetchKeys();
-    update();
   };
 
   const createKey = () => {
@@ -64,7 +60,7 @@ export default function PublicKeys() {
   };
 
   const getButton = () => {
-    if (!isAdmin) {
+    if (!user.isAdmin) {
       return null;
     }
     return (
@@ -84,21 +80,19 @@ export default function PublicKeys() {
   };
 
   useEffect(() => {
-    if (status !== 'authenticated') {
-      return;
-    }
     fetchKeys().catch(console.error);
-  }, [status, fetchKeys]);
+  }, [fetchKeys]);
 
 
 
   return (
     <div className="py-2">
+      <pre>{JSON.stringify(user, null, 2)}</pre>
       <DeleteDialog
         type="public key"
         name={toRemove?.hash ?? ''}
         show={!!toRemove}
-        onSubmit={() => removeKey(toRemove!)}
+        onSubmit={() => void removeKey(toRemove!)}
         onClose={() => setToRemove(null)}
       />
       <div className="inline-flex items-center">
@@ -115,8 +109,9 @@ export default function PublicKeys() {
               publicKey={k}
               user={u}
               show={!rootOnly || k.isRootKey}
+              isAdmin={user.isAdmin}
               onRemove={() => setToRemove({ sub: u.sub, hash: k.hash })}
-              onEnable={(e: boolean) => enableKey(u.sub, k.hash, e)}
+              onEnable={(e: boolean) => void enableKey(u.sub, k.hash, e)}
             />
           )))
         )}
