@@ -102,9 +102,12 @@ export default function useKey() {
       });
     };
     listener().catch(console.error);
-    window.addEventListener(storage.EVENT_NAME, listener);
+    const elistener = () => {
+      void listener();
+    };
+    window.addEventListener(storage.EVENT_NAME, elistener);
     return () => {
-      window.removeEventListener(storage.EVENT_NAME, listener);
+      window.removeEventListener(storage.EVENT_NAME, elistener);
     };
   }, []);
 

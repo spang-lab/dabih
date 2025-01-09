@@ -16,7 +16,7 @@ const timeToSeconds = (timeString: string) => {
     m: 31 * oneDay,
     y: 356 * oneDay,
   };
-  const match = timeStr.match(/^(\d+)([hdwmy])$/);
+  const match = /^(\d+)([hdwmy])$/.exec(timeStr);
   if (!match) {
     throw new Error(`invalid timeStr: ${timeStr}`);
   }
@@ -118,7 +118,7 @@ export default function CreateTokenDialog({ show, scopes, onClose, onSubmit }:
                   <ListboxOption
                     key={lt.value}
                     value={lt}
-                    className={({ active }) => `relative cursor-default select-none py-2 pl-10 ${active ? 'bg-blue text-white' : 'text-gray-800'}`}
+                    className="relative cursor-default select-none py-2 pl-10 text-gray-800 data-[focus]:bg-blue data-[focus]:text-white"
                   >
                     <span
                       className="block truncate"

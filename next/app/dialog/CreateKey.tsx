@@ -30,8 +30,13 @@ export default function CreateKeyDialog({ show, onClose, onSubmit }:
   const print = useReactToPrint({
     pageStyle:
       '@page { size: auto; margin: 10mm } @media print { body { -webkit-print-color-adjust: exact; } }',
-    content: () => keyRef.current ?? null,
+    contentRef: keyRef,
   });
+
+  const close = () => {
+    setKeyData(null);
+    onClose();
+  }
 
   useEffect(() => {
     if (!show) {
@@ -92,7 +97,7 @@ export default function CreateKeyDialog({ show, onClose, onSubmit }:
           <button
             type="button"
             className="m-2 px-3 py-2 text-lg rounded bg-blue text-white"
-            onClick={print}
+            onClick={() => print()}
           >
             <Printer className="inline-block" size={30} />
             {' '}
@@ -154,7 +159,7 @@ export default function CreateKeyDialog({ show, onClose, onSubmit }:
             disabled={!(keyData?.isSaved)}
             onClick={() => {
               onSubmit(keyData!.publicKey);
-              onClose();
+              close();
             }}
           >
             Upload this key to
@@ -164,7 +169,7 @@ export default function CreateKeyDialog({ show, onClose, onSubmit }:
           <button
             type="button"
             className="mx-3 px-3 py-2 text-white bg-gray-400 rounded-md"
-            onClick={onClose}
+            onClick={close}
           >
             Cancel
           </button>

@@ -60,7 +60,7 @@ export default function CreateKey({ user, status }: {
       <CreateKeyDialog
         show={showGenerate}
         onClose={() => setShowGenerate(false)}
-        onSubmit={uploadKey} />
+        onSubmit={(k) => void uploadKey(k)} />
       <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
         Add a
         <span className="text-blue"> new </span>
