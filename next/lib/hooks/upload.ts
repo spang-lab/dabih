@@ -40,15 +40,15 @@ export default function useUpload() {
     const { status, options, file, inode } = state;
     switch (status) {
       case "loading": {
-        const { data: incomlete } = await api.upload.unfinished();
-        if (incomlete?.length) {
-          if (incomlete.length > 1) {
+        const { data: incomplete } = await api.upload.unfinished();
+        if (incomplete?.length) {
+          if (incomplete.length > 1) {
             console.error("Multiple incomplete uploads");
           }
           setState({
             status: "interrupted",
             options,
-            inode: incomlete[0],
+            inode: incomplete[0],
           });
           return;
         }

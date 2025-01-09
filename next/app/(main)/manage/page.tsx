@@ -4,9 +4,11 @@ import { FinderWrapper } from "./Context";
 
 import Files from "./Files";
 import Info from "./Info";
+import Upload from "./Upload";
 
 export default async function Manage() {
   const session = await auth();
+
 
   if (!session?.user) {
     redirect("/signin");
@@ -18,7 +20,9 @@ export default async function Manage() {
         Manage
         <span className="text-blue"> your files</span>
       </h1>
+
       <FinderWrapper user={session.user}>
+        <Upload />
         <div className="flex flex-row">
           <div className="grow">
             <Files />

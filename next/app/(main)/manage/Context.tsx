@@ -67,7 +67,7 @@ export function FinderWrapper({ user, children }: {
       return;
     }
     setListData(data);
-    search.clear();
+    void search.clear();
   }, []);
 
   const getKeys = useCallback(async (mnemonic: string) => {
