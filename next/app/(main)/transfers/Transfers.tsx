@@ -1,13 +1,34 @@
 "use client";
 
-import useTransfers from "@/lib/hooks/transfers";
+import useTransfers, { Transfer as TransferType } from "@/lib/hooks/transfers";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { ChevronRight } from "react-feather";
 import Transfer from "./Transfer";
+import { useEffect } from "react";
+import handleTransfer from "@/lib/transfer";
 
 export default function Transfers() {
 
   const transfers = useTransfers((state) => state.transfers);
+  const updateTransfer = useTransfers((state) => state.updateTransfer);
+
+
+
+  const isActive = (transfer: TransferType) =>
+    !["complete", "error", "interrupted"].includes(transfer.status);
+
+
+
+  useEffect(() => {
+    const transfer = transfers.find(isActive);
+    if (!transfer) {
+      return;
+    }
+    (async () => {
+      const t = await handleTransfer(transfer);
+      updateTransfer(t);
+    })().catch(console.error);
+  }, [transfers]);
 
 
   return (

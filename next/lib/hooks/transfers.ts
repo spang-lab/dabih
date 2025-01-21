@@ -9,9 +9,7 @@ interface UploadRequest {
   chunkSize?: number;
 }
 
-type TransferStatus =
-  | "loading"
-  | "ready"
+export type TransferStatus =
   | "interrupted"
   | "preparing"
   | "uploading"
@@ -20,7 +18,7 @@ type TransferStatus =
   | "complete"
   | "error";
 
-interface Transfer {
+export interface Transfer {
   id: string;
   type: "upload" | "download";
   status: TransferStatus;
@@ -39,8 +37,7 @@ interface State {
 
 interface Actions {
   upload: (req: UploadRequest) => void;
-  addTransfer: (transfer: Transfer) => void;
-  removeTransfer: (transfer: Transfer) => void;
+  updateTransfer: (transfer: Transfer) => void;
 }
 
 const useTransfers = create<State & Actions>((set) => ({
@@ -50,7 +47,7 @@ const useTransfers = create<State & Actions>((set) => ({
     const transfer: Transfer = {
       id,
       type: "upload",
-      status: "loading",
+      status: "preparing",
       file,
       tag,
       directory,
@@ -59,12 +56,13 @@ const useTransfers = create<State & Actions>((set) => ({
     };
     set((state) => ({ transfers: [...state.transfers, transfer] }));
   },
-  addTransfer: (transfer) =>
-    set((state) => ({ transfers: [...state.transfers, transfer] })),
-  removeTransfer: (transfer) =>
+  updateTransfer: (transfer) => {
     set((state) => ({
-      transfers: state.transfers.filter((t) => t !== transfer),
-    })),
+      transfers: state.transfers.map((t) =>
+        t.id === transfer.id ? transfer : t,
+      ),
+    }));
+  },
 }));
 
 export default useTransfers;

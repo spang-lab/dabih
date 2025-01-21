@@ -111,9 +111,7 @@ export default function useUpload() {
         const { chunks } = inode.data;
         let start = 0;
         if (chunks.length) {
-          console.log(chunks);
           const { end } = chunks.at(-1)!;
-          console.log(end);
           start = parseInt(end as string) + 1;
           if (isNaN(start)) {
             setState({

@@ -35,7 +35,9 @@ export default async function start(
     const dir = await db.inode.findUnique({
       where: {
         mnemonic: directory,
-        type: InodeType.DIRECTORY,
+        type: {
+          in: [InodeType.DIRECTORY, InodeType.HOME],
+        },
       },
     });
     if (!dir) {
