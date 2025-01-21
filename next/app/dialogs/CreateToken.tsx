@@ -3,7 +3,6 @@
 import { Dialog, Listbox } from '@headlessui/react';
 import { useState } from 'react';
 import { ChevronDown } from 'react-feather';
-import useSession from '@/app/session';
 import { Switch } from '../util';
 
 const timeToSeconds = (timeString: string) => {
@@ -17,7 +16,7 @@ const timeToSeconds = (timeString: string) => {
     m: 31 * oneDay,
     y: 356 * oneDay,
   };
-  const match = timeStr.match(/^(\d+)([hdwmy])$/);
+  const match = /^(\d+)([hdwmy])$/.exec(timeStr);
   if (!match) {
     throw new Error(`invalid timeStr: ${timeStr}`);
   }

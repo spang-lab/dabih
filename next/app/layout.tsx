@@ -16,6 +16,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const session = await auth();
   const user = session?.user;
 
+
   return (
     <html lang="en">
       <body>

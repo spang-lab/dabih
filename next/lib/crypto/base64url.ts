@@ -1,12 +1,9 @@
-/* eslint-disable no-bitwise */
 /* global BigInt */
-const toBase64 = (
-  base64url: string,
-): string => base64url.replace(/-/g, '+').replace(/_/g, '/');
+const toBase64 = (base64url: string): string =>
+  base64url.replace(/-/g, "+").replace(/_/g, "/");
 
-const fromBase64 = (
-  base64: string,
-): string => base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+const fromBase64 = (base64: string): string =>
+  base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
 
 const fromUint8 = (array: ArrayBuffer): string => {
   const uintArray = new Uint8Array(array);
@@ -35,18 +32,20 @@ const toBigInt = (base64url: string): bigint => {
   const bin = atob(base64);
   const hex: string[] = [];
 
-  bin.split('').forEach((ch) => {
+  bin.split("").forEach((ch) => {
     let h = ch.charCodeAt(0).toString(16);
-    if (h.length % 2) { h = `0${h}`; }
+    if (h.length % 2) {
+      h = `0${h}`;
+    }
     hex.push(h);
   });
 
-  return BigInt(`0x${hex.join('')}`);
+  return BigInt(`0x${hex.join("")}`);
 };
 
 const fromBigInt = (bigInt: bigint): string => {
   if (bigInt < BigInt(0)) {
-    throw new Error('BigInt must be non-negative for Uint8Array conversion.');
+    throw new Error("BigInt must be non-negative for Uint8Array conversion.");
   }
   let byteCount = 0;
   let tmp = bigInt;
@@ -59,7 +58,7 @@ const fromBigInt = (bigInt: bigint): string => {
   const uint8Array = new Uint8Array(byteCount);
 
   for (let i = 0; i < byteCount; i += 1) {
-    uint8Array[i] = Number(tmp & BigInt(0xFF));
+    uint8Array[i] = Number(tmp & BigInt(0xff));
     tmp >>= BigInt(8);
   }
   uint8Array.reverse();
@@ -67,18 +66,21 @@ const fromBigInt = (bigInt: bigint): string => {
 };
 
 const fromString = (str: string): string => {
-  const encoded = encodeURIComponent(str)
-    .replace(/%([0-9A-F]{2})/g, (_m, p1) => String.fromCharCode(parseInt(p1, 16)));
+  const encoded = encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_m, p1) =>
+    String.fromCharCode(parseInt(p1, 16)),
+  );
   const base64 = btoa(encoded);
   return fromBase64(base64);
 };
 
 const toString = (base64url: string): string => {
   const base64 = toBase64(base64url);
-  const buffer = Array.prototype.map.call(
-    atob(base64),
-    (c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`,
-  ).join('');
+  const buffer = Array.prototype.map
+    .call(
+      atob(base64),
+      (c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`,
+    )
+    .join("");
   return decodeURIComponent(buffer);
 };
 

@@ -67,7 +67,6 @@ export default function PublicKeys({ user }: { user: User }) {
 
   return (
     <div className="py-2">
-      <pre>{JSON.stringify(key, null, 2)}</pre>
       <CreateKeyDialog
         show={showGenerate}
         onClose={() => setShowGenerate(false)}

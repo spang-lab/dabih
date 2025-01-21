@@ -136,6 +136,18 @@ const init = (baseUrl: string) => {
     info: () => c.GET("/info"),
   };
 
+  const isAvailable = async () => {
+    try {
+      const { response } = await c.GET("/healthy");
+      if (response.status !== 200) {
+        return false;
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   return {
     client: c,
     token,
@@ -144,6 +156,7 @@ const init = (baseUrl: string) => {
     upload,
     download,
     util,
+    isAvailable,
   };
 };
 export default init;

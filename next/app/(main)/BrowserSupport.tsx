@@ -5,14 +5,21 @@ import Link from 'next/link';
 
 import crypto from '@/lib/crypto';
 import storage from '@/lib/storage';
+import api from '@/lib/api';
 
 export default function BrowserSupport() {
   const [hasCrypto, setCrypto] = useState(true);
   const [hasStorage, setStorage] = useState(true);
+  const [hasApi, setApi] = useState(true);
 
   useEffect(() => {
     setCrypto(crypto.isAvailable());
     setStorage(storage.isAvailable());
+
+    void api.isAvailable().then((available) => {
+      setApi(available);
+    });
+
   }, []);
 
   const storageError = () => {
@@ -21,7 +28,7 @@ export default function BrowserSupport() {
     }
     return (
       <div
-        className="relative p-3 m-3 text-xl font-semibold text-center text-red bg-red-100 rounded-lg"
+        className="relative p-3 m-3 text-xl font-semibold text-center text-red bg-red/20 rounded-lg"
         role="alert"
       >
         <p className="p-2 text-2xl font-bold">
@@ -46,7 +53,7 @@ export default function BrowserSupport() {
     }
     return (
       <div
-        className="relative p-3 m-3 text-xl font-semibold text-center text-red bg-red-100 rounded-lg"
+        className="relative p-3 m-3 text-xl font-semibold text-center text-red bg-red/20 rounded-lg"
         role="alert"
       >
         <p className="p-2 text-2xl font-bold">
@@ -66,10 +73,29 @@ export default function BrowserSupport() {
     );
   };
 
+  const apiError = () => {
+    if (hasApi) {
+      return null;
+    }
+    return (
+      <div
+        className="relative p-3 m-3 text-xl font-semibold text-center text-red bg-red/20 rounded-lg"
+        role="alert"
+      >
+        <span className="p-2 text-2xl font-bold">
+          Connection Error:
+        </span>
+        The Dabih API is not available, please contact the administrator.
+      </div>
+    );
+  }
+
+
   return (
     <div>
       {storageError()}
       {cryptoError()}
+      {apiError()}
     </div>
   );
 }

@@ -1,24 +1,31 @@
 "use client";
 
+import { useState } from "react";
+
 import { UploadCloud } from "react-feather";
 import useFinder from "./Context";
-import useTransfers from "@/lib/hooks/transfers";
+import UploadDialog from "@/app/dialog/Upload";
 
 export default function Upload() {
   const { parents } = useFinder();
   const cwd = parents[0]?.mnemonic ?? null;
 
-  const addTransfer = useTransfers((state) => state.addTransfer);
+  const [showUpload, setShowUpload] = useState<boolean>(false);
+  const onCloseUpload = () => setShowUpload(false);
+
+
+
   return (
-    <div>
+    <div className="py-2">
+      <UploadDialog cwd={cwd} show={showUpload} onClose={onCloseUpload} />
       <button
         type="button"
         aria-label="Upload"
         className="inline-flex items-center px-4 py-2 text-white bg-blue rounded-lg"
-        onClick={() => { addTransfer(`upload to ${cwd}`); }}
+        onClick={() => setShowUpload(true)}
       >
         <UploadCloud className="mr-2" />
-        Upload
+        Upload...
       </button>
     </div>
   );

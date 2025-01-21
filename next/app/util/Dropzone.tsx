@@ -1,6 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading  */
 
-'use client';
 
 import { FileRejection, useDropzone } from 'react-dropzone';
 import { FilePlus, X } from 'react-feather';
@@ -12,6 +10,13 @@ export default function Dropzone({
   maxSize = Infinity,
   disabled = false,
   maxFiles = 1,
+}: {
+  children: React.ReactNode;
+  onFile: (file: File) => void;
+  onError: (error: string) => void;
+  maxSize?: number;
+  disabled?: boolean;
+  maxFiles?: number;
 }) {
   const onDrop = (files: File[]) => {
     if (files.length === 0) {
