@@ -68,7 +68,7 @@ export default function Tokens({ user }:
         You have no access tokens.
       </div>
       <button
-        className="m-1 rounded text-white font-semibold bg-blue px-2 py-1 inline-flex items-center"
+        className="m-1 rounded-sm text-white font-semibold bg-blue px-2 py-1 inline-flex items-center"
         type="button"
         onClick={() => setShowCreateToken(true)}
       >

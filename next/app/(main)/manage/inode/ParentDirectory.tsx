@@ -22,7 +22,7 @@ export default function ParentDirectory() {
             <ArrowUp size={40} strokeWidth={2} className="absolute bottom-5 left-6" />
           </div>
         </div>
-        <div className="max-w-full px-1 rounded">
+        <div className="max-w-full px-1 rounded-sm">
           ..
         </div>
       </div>

@@ -16,7 +16,7 @@ export default function Node({
       <div className={`m-1 rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
         <Icon inode={inode} />
       </div>
-      <div className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
+      <div className={`max-w-full px-1 rounded-sm ${(selected) ? "text-white bg-blue/90" : ""}`}>
         <FileName fileName={inode.name} />
       </div>
     </div>

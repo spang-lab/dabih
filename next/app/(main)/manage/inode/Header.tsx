@@ -22,7 +22,7 @@ export default function Header() {
     return (
       <div className="flex flex-row border-b py-1 mb-3 text-gray-600 justify-between">
         <div
-          className="flex rounded flex-row px-3 text-xs font-bold text-blue items-center hover:bg-blue/10 cursor-pointer"
+          className="flex rounded-sm flex-row px-3 text-xs font-bold text-blue items-center hover:bg-blue/10 cursor-pointer"
         >
           <Folder
             className="fill-blue/40 mr-1"
@@ -82,7 +82,7 @@ export default function Header() {
         <Spinner small loading={true} />
         <div>
           <button
-            className="px-2 border border-gray-600 rounded inline-flex items-center"
+            className="px-2 border border-gray-600 rounded-sm inline-flex items-center"
             type="button"
             onClick={() => { search.clear().catch(console.error); }}
           >
@@ -108,7 +108,7 @@ export default function Header() {
       </div>
       <div>
         <button
-          className="px-2 border border-gray-600 rounded inline-flex items-center"
+          className="px-2 border border-gray-600 rounded-sm inline-flex items-center"
           type="button"
           onClick={() => { search.clear().catch(console.error); }}
         >

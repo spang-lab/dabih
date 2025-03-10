@@ -60,7 +60,7 @@ export default function AddMember(
         <ComboboxOptions
           transition
           anchor="bottom"
-          className="divide-y border rounded bg-white"
+          className="divide-y border rounded-sm bg-white"
         >
           {addable.map((user) => (
             <ComboboxOption

@@ -53,7 +53,7 @@ function HexKey({ qrCode, hexData }: { qrCode: string, hexData: string[] }, ref:
   return (
     <div
       ref={ref}
-      className="p-4 mx-0 my-3 text-center border-2 rounded border-blue"
+      className="p-4 mx-0 my-3 text-center border-2 rounded-sm border-blue"
     >
       <table className="mx-auto font-semibold leading-none table-fixed text-xs">
         <tbody>

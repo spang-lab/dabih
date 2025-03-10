@@ -107,18 +107,18 @@ export default function CreateTokenDialog({ show, scopes, onClose, onSubmit }:
         <div className="h-72">
           <Listbox value={lifetime} onChange={setLifetime}>
             <div className="relative mt-1">
-              <ListboxButton className="relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 text-left border  focus:outline-none sm:text-sm">
+              <ListboxButton className="relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 text-left border  focus:outline-hidden sm:text-sm">
                 <span className="block truncate">{lifetime.label}</span>
                 <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                   <ChevronDown />
                 </span>
               </ListboxButton>
-              <ListboxOptions className="mt-1 w-full overflow-auto rounded-md bg-white py-1 text-base border sm:text-sm">
+              <ListboxOptions className="mt-1 w-full overflow-auto rounded-md bg-white py-1 text-base border border-gray-200 sm:text-sm">
                 {lifetimeOptions.map((lt) => (
                   <ListboxOption
                     key={lt.value}
                     value={lt}
-                    className="relative cursor-default select-none py-2 pl-10 text-gray-800 data-[focus]:bg-blue data-[focus]:text-white"
+                    className="relative cursor-default select-none py-2 pl-10 text-gray-800 data-focus:bg-blue data-focus:text-white"
                   >
                     <span
                       className="block truncate"

@@ -32,7 +32,7 @@ export default function ErrorDialog({
           <button
             type="button"
             onClick={onClose}
-            className="mx-3 px-3 py-2 rounded bg-gray-500 text-gray-100 hover:text-white"
+            className="mx-3 px-3 py-2 rounded-sm bg-gray-500 text-gray-100 hover:text-white"
           >
             Ok
           </button>

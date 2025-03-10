@@ -141,7 +141,7 @@ function InodeInner({
               e.stopPropagation();
               setName(inode.name);
             }}
-            className={`max-w-full px-1 rounded ${(selected && !name) ? "text-white bg-blue/90" : ""}`}>
+            className={`max-w-full px-1 rounded-sm ${(selected && !name) ? "text-white bg-blue/90" : ""}`}>
             {getName()}
           </div>
         </div>
@@ -163,7 +163,7 @@ function InodeInner({
                 e.stopPropagation();
                 setName(inode.name);
               }}
-              className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
+              className={`max-w-full px-1 rounded-sm ${(selected) ? "text-white bg-blue/90" : ""}`}>
               {getName()}
             </div>
           </div>
@@ -179,7 +179,7 @@ function InodeInner({
           <div className={`m-1 relative rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
             <Icon inode={inode} />
           </div>
-          <div className={`max-w-full px-1 rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
+          <div className={`max-w-full px-1 rounded-sm ${(selected) ? "text-white bg-blue/90" : ""}`}>
             {inode.name}
           </div>
         </div>
@@ -193,7 +193,7 @@ function InodeInner({
       <div className={`m-1 relative rounded-lg ${(selected) ? "bg-blue/10" : ""}`}>
         <Icon inode={inode} />
       </div>
-      <div className={`max-w-full px-1 text-[10px] rounded ${(selected) ? "text-white bg-blue/90" : ""}`}>
+      <div className={`max-w-full px-1 text-[10px] rounded-sm ${(selected) ? "text-white bg-blue/90" : ""}`}>
         <FileName fileName={inode.name} />
       </div>
     </div>

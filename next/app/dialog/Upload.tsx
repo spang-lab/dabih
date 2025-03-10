@@ -45,7 +45,7 @@ export default function UploadDialog({ show, cwd, onClose }:
       open={show}
       onClose={onClose}
       transition
-      className="fixed inset-0 flex w-screen items-center justify-center bg-gray-900/75 p-4 transition duration-300 ease-out data-[closed]:opacity-0"
+      className="fixed inset-0 flex w-screen items-center justify-center bg-gray-900/75 p-4 transition duration-300 ease-out data-closed:opacity-0"
     >
       <DialogPanel
         className="w-full max-w-5xl p-6 overflow-hidden text-left align-middle bg-white shadow-xl transform rounded-2xl transition-all"

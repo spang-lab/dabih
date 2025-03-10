@@ -89,7 +89,7 @@ export default function DownloadProgress(props) {
         </text>
       </svg>
       <div>
-        <div className="animate-download mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded m-4  box-border" />
+        <div className="animate-download mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded-sm m-4  box-border" />
       </div>
     </div>
   );

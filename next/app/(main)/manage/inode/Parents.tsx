@@ -17,7 +17,7 @@ export default function Parents() {
       {reverse.map((inode) => (
         <Droppable id={`parent-${inode.mnemonic}`} key={inode.mnemonic}>
           <div
-            className="flex rounded flex-row px-3 text-xs font-bold text-blue items-center hover:bg-blue/10 cursor-pointer"
+            className="flex rounded-sm flex-row px-3 text-xs font-bold text-blue items-center hover:bg-blue/10 cursor-pointer"
             onClick={() => list(inode.mnemonic)}
           >
             <ChevronRight className="mr-3" size={26} strokeWidth={1} />

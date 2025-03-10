@@ -96,7 +96,7 @@ export default function CreateKeyDialog({ show, onClose, onSubmit }:
           <span className="text-2xl">Please</span>
           <button
             type="button"
-            className="m-2 px-3 py-2 text-lg rounded bg-blue text-white"
+            className="m-2 px-3 py-2 text-lg rounded-sm bg-blue text-white"
             onClick={() => print()}
           >
             <Printer className="inline-block" size={30} />
@@ -107,7 +107,7 @@ export default function CreateKeyDialog({ show, onClose, onSubmit }:
           <a
             href={qrCode}
             download="dabih_private_key_qrcode.png"
-            className="button px-3 m-2 py-2 text-lg text-white bg-blue rounded"
+            className="button px-3 m-2 py-2 text-lg text-white bg-blue rounded-sm"
           >
             <Download className="inline-block" size={30} />
             {' '}
@@ -117,7 +117,7 @@ export default function CreateKeyDialog({ show, onClose, onSubmit }:
           <a
             href={pemUrl}
             download="dabih_private_key.pem"
-            className="button px-3 m-2 py-2 text-lg text-white bg-blue rounded"
+            className="button px-3 m-2 py-2 text-lg text-white bg-blue rounded-sm"
             onClick={() => setKeyData({ ...keyData, isSaved: true })}
           >
             <Download className="inline-block" size={30} />

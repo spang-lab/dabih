@@ -50,7 +50,7 @@ export default function Members({ inode }: { inode: InodeMembers }) {
         </div>
       </div>
 
-      <div className="max-h-72 overflow-y-scroll border rounded divide-y">
+      <div className="max-h-72 overflow-y-scroll border rounded-sm divide-y">
         {entries.map((e) => (
           <Member
             key={e.key}
@@ -66,7 +66,7 @@ export default function Members({ inode }: { inode: InodeMembers }) {
         <button
           type="button"
           disabled={!hasRead}
-          className="w-full p-2 text-white bg-blue rounded disabled:bg-blue/50 disabled:cursor-not-allowed inline-flex items-center"
+          className="w-full p-2 text-white bg-blue rounded-sm disabled:bg-blue/50 disabled:cursor-not-allowed inline-flex items-center"
         >
           <DownloadCloud className="mr-2" size={24} />
           Download
@@ -74,7 +74,7 @@ export default function Members({ inode }: { inode: InodeMembers }) {
         <button
           type="button"
           disabled={!hasWrite}
-          className="w-full p-2 text-white bg-red rounded disabled:bg-red/50 disabled:cursor-not-allowed inline-flex items-center"
+          className="w-full p-2 text-white bg-red rounded-sm disabled:bg-red/50 disabled:cursor-not-allowed inline-flex items-center"
         >
           <Trash2 className="mr-2" size={24} />
           Delete

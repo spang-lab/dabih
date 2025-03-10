@@ -13,7 +13,7 @@ export default function ToggleSwitch({ show = true, enabled, onChange }:
       checked={enabled}
       onChange={onChange}
       className={`${enabled ? 'bg-blue' : 'bg-gray-400'}
-          relative inline-flex h-[28px] w-[52px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+          relative inline-flex h-[28px] w-[52px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
     >
       <span
         aria-hidden="true"

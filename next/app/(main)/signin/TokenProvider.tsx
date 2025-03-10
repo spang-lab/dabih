@@ -17,7 +17,7 @@ export default function TokenProvider({ provider }: { provider: Provider }) {
       </p>
       <Disclosure>
         <DisclosureButton className="group flex items-center gap-2 text-gray-500">
-          <ChevronRight className="group-data-[open]:rotate-90" />
+          <ChevronRight className="group-data-open:rotate-90" />
           Use an access token
         </DisclosureButton>
         <DisclosurePanel className="flex">

@@ -31,7 +31,7 @@ export default function ShowTokenDialog({ token, onClose }:
           <div className="text-center">
             <input
               size={46}
-              className="p-2 border border-gray-400 text-gray-700 font-mono text-lg rounded text-center"
+              className="p-2 border border-gray-400 text-gray-700 font-mono text-lg rounded-sm text-center"
               type="text"
               readOnly
               value={token ?? ''}
