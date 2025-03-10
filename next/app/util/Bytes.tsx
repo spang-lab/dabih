@@ -17,5 +17,5 @@ export default function Bytes({ value, decimals = 2, binary = false }: BytesProp
 
 
   const i = Math.floor(Math.log(value) / Math.log(k));
-  return `${parseFloat((value / k ** i).toFixed(dm))} ${sizes[i]}`;
+  return `${(value / k ** i).toFixed(dm)} ${sizes[i]}`;
 }

@@ -4,7 +4,10 @@ import api from "./api";
 import crypto from "./crypto";
 import { FileUpload } from "./api/types";
 
-function toError(transfer: Transfer, message: string) {
+function toError(transfer: Transfer, message: Error | string) {
+  if (typeof message !== "string") {
+    message = message.message;
+  }
   return {
     ...transfer,
     status: "error" as TransferStatus,

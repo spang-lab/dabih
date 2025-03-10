@@ -36,12 +36,17 @@ interface State {
 }
 
 interface Actions {
+  addTransfer: (transfer: Transfer) => void;
   upload: (req: UploadRequest) => void;
   updateTransfer: (transfer: Transfer) => void;
+  clearTransfer: (id: string) => void;
 }
 
 const useTransfers = create<State & Actions>((set) => ({
   transfers: [],
+  addTransfer: (transfer: Transfer) => {
+    set((state) => ({ transfers: [...state.transfers, transfer] }));
+  },
   upload: ({ file, tag, directory, filePath, chunkSize }) => {
     const id = Math.random().toString(36).substring(7);
     const transfer: Transfer = {
@@ -61,6 +66,11 @@ const useTransfers = create<State & Actions>((set) => ({
       transfers: state.transfers.map((t) =>
         t.id === transfer.id ? transfer : t,
       ),
+    }));
+  },
+  clearTransfer: (id: string) => {
+    set((state) => ({
+      transfers: state.transfers.filter((t) => t.id !== id),
     }));
   },
 }));

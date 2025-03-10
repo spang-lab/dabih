@@ -6,17 +6,33 @@ import { ChevronRight } from "react-feather";
 import Transfer from "./Transfer";
 import { useEffect } from "react";
 import handleTransfer from "@/lib/transfer";
+import api from "@/lib/api";
 
 export default function Transfers() {
-
   const transfers = useTransfers((state) => state.transfers);
   const updateTransfer = useTransfers((state) => state.updateTransfer);
-
+  const addTransfer = useTransfers((state) => state.addTransfer);
 
 
   const isActive = (transfer: TransferType) =>
     !["complete", "error", "interrupted"].includes(transfer.status);
 
+  useEffect(() => {
+    void (async () => {
+      const { data: incomplete } = await api.upload.unfinished();
+      if (!incomplete || incomplete.length === 0) {
+        return;
+      }
+      const transfers = incomplete.map((inode) => ({
+        id: inode.id,
+        type: "upload",
+        status: "interrupted",
+        inode,
+      })) as TransferType[];
+      console.log("incomplete transfers", transfers);
+      transfers.forEach(addTransfer);
+    })();
+  }, []);
 
 
   useEffect(() => {
@@ -32,13 +48,13 @@ export default function Transfers() {
 
 
   return (
-    <div className="fixed bottom-10 right-10 p-2 w-96" hidden={transfers.length === 0}>
-      <Disclosure>
+    <div className="fixed bottom-10 right-10 p-2 w-[500px]" hidden={transfers.length === 0}>
+      <Disclosure defaultOpen={true}>
         <DisclosurePanel
           transition
           className="origin-bottom transition duration-200 ease-out data-closed:translate-y-3 data-closed:opacity-0 pb-2"
         >
-          <div className="bg-white border border-blue p-2 shadow-xl rounded-xl  border-gray-200">
+          <div className="bg-white border border-blue p-2 shadow-xl rounded-xl">
             {transfers.map((transfer) => (
               <Transfer key={transfer.id} data={transfer} />
             ))}
