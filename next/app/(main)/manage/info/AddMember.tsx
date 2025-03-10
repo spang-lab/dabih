@@ -47,7 +47,7 @@ export default function AddMember(
   return (
     <div className="flex items-center">
       <Combobox value={selected} onChange={setSelected}>
-        <div className="grow flex my-2 border rounded-lg overflow-hidden">
+        <div className="grow flex my-2 border rounded-lg overflow-hidden border-gray-200">
           <ComboboxInput
             className="w-full pl-3 text-blue"
             displayValue={display}
@@ -60,7 +60,7 @@ export default function AddMember(
         <ComboboxOptions
           transition
           anchor="bottom"
-          className="divide-y border rounded-sm bg-white"
+          className="divide-y border rounded-sm bg-white border-gray-200"
         >
           {addable.map((user) => (
             <ComboboxOption

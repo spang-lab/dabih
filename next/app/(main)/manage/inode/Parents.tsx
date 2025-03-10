@@ -13,7 +13,7 @@ export default function Parents() {
   }
 
   return (
-    <div className="flex justify-start flex-wrap border-t py-1">
+    <div className="flex justify-start flex-wrap border-t py-1 border-gray-200">
       {reverse.map((inode) => (
         <Droppable id={`parent-${inode.mnemonic}`} key={inode.mnemonic}>
           <div

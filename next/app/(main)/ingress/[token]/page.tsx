@@ -100,7 +100,7 @@ export default function Upload() {
         Downloads
       </h3>
       <div className="flex h-52 justify-stretch items-stretch my-4">
-        <div className="border flex flex-col m-2 p-2 rounded-md w-1/3">
+        <div className="border flex flex-col m-2 p-2 rounded-md w-1/3 border-gray-200">
           <div className="w-20 h-20 relative mx-auto m-2">
             <Image
               alt="macOS Logo"
@@ -118,7 +118,7 @@ export default function Upload() {
           </div>
 
         </div>
-        <div className="border m-2 p-2 rounded-md w-1/3">
+        <div className="border m-2 p-2 rounded-md w-1/3 border-gray-200">
           <div className="w-20 h-20 relative mx-auto m-2">
             <Image
               src="/images/logo/windows.svg"
@@ -132,7 +132,7 @@ export default function Upload() {
             <WindowsDownload />
           </div>
         </div>
-        <div className="border flex flex-col m-2 p-2 rounded-md w-1/3">
+        <div className="border flex flex-col m-2 p-2 rounded-md w-1/3 border-gray-200">
           <div className="w-20 h-20 relative mx-auto m-2">
             <Image
               alt="Linux Logo"

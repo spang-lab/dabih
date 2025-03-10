@@ -33,7 +33,7 @@ export default function Upload() {
     }
     if (status === 'complete') {
       return (
-        <div className="bg-green/30 my-3 border-green border px-3 py-2 text-gray-800 rounded-lg">
+        <div className="bg-green/30 my-3 border-green border px-3 py-2 text-gray-800 rounded-lg border-gray-200">
           <span className="font-bold text-green mr-2 ">
             Upload complete:
           </span>

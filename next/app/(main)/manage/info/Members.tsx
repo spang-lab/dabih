@@ -50,7 +50,7 @@ export default function Members({ inode }: { inode: InodeMembers }) {
         </div>
       </div>
 
-      <div className="max-h-72 overflow-y-scroll border rounded-sm divide-y">
+      <div className="max-h-72 overflow-y-scroll border rounded-sm divide-y border-gray-200">
         {entries.map((e) => (
           <Member
             key={e.key}

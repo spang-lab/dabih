@@ -35,7 +35,7 @@ export default function UploadProgress({ state }: { state: UploadState }) {
   const getLoader = () => {
     if (status === "uploading") {
       return (
-        <div className="animate-upload mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded-sm m-4  box-border" />
+        <div className="animate-upload mx-auto relative left-[-100px] w-4 h-4 text-gray-500 rounded-sm m-4 box-border" />
       );
     }
     if (status === "interrupted") {

@@ -28,7 +28,7 @@ const timeToSeconds = (timeString: string) => {
 function Scope({ scope, value, onChange }:
   { scope: string, value: boolean, onChange: (scope: string, value: boolean) => void }) {
   return (
-    <div className="flex flex-row items-center justify-between border-b py-1 mx-3">
+    <div className="flex flex-row items-center justify-between border-b py-1 mx-3 border-gray-200">
       <div className="font-mono">
         {scope}
       </div>
@@ -107,7 +107,7 @@ export default function CreateTokenDialog({ show, scopes, onClose, onSubmit }:
         <div className="h-72">
           <Listbox value={lifetime} onChange={setLifetime}>
             <div className="relative mt-1">
-              <ListboxButton className="relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 text-left border  focus:outline-hidden sm:text-sm">
+              <ListboxButton className="relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 text-left border focus:outline-hidden sm:text-sm border-gray-200">
                 <span className="block truncate">{lifetime.label}</span>
                 <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                   <ChevronDown />

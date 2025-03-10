@@ -18,7 +18,7 @@ export default function URProvider({ provider }) {
   };
   return (
     <div className="flex">
-      <div className="border-b pb-4 mb-4 ">
+      <div className="border-b pb-4 mb-4  border-gray-200">
         <SignInError />
         <form method="post" onSubmit={onSubmit}>
           <div className="w-full">
@@ -27,7 +27,7 @@ export default function URProvider({ provider }) {
                 RZ Account
               </p>
               <input
-                className="border w-full rounded-md px-2 py-1 my-1"
+                className="border w-full rounded-md px-2 py-1 my-1 border-gray-200"
                 name="uid"
                 id="uid"
                 type="text"
@@ -43,7 +43,7 @@ export default function URProvider({ provider }) {
                 Password
               </p>
               <input
-                className="border w-full rounded-md px-4 py-1 my-1"
+                className="border w-full rounded-md px-4 py-1 my-1 border-gray-200"
                 name="password"
                 type="password"
                 value={user.password}

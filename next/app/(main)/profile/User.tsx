@@ -53,7 +53,7 @@ export default function Account({ session }: { session: Session }) {
           {scopes.map((s) => (
             <span
               key={s}
-              className="border text-sm font-mono rounded-full px-2 py-1 mx-1"
+              className="border text-sm font-mono rounded-full px-2 py-1 mx-1 border-gray-200"
             >
               {s}
             </span>

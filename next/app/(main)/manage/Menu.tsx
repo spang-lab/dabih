@@ -20,7 +20,7 @@ function OptionsMenu(props, ref: ForwardedRef<HTMLDivElement>) {
       </MenuButton>
       <MenuItems
         transition
-        className="w-52 z-10 absolute rounded-sm border border-gray-300 bg-white p-1  text-sm/6 text-blue transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-hidden data-closed:scale-95 data-closed:opacity-0"
+        className="w-52 z-10 absolute rounded-sm border border-gray-300 bg-white p-1 text-sm/6 text-blue transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-hidden data-closed:scale-95 data-closed:opacity-0"
         style={position}>
         <MenuItem>
           <button

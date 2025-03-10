@@ -35,12 +35,12 @@ export default function TokenProvider({ provider }: { provider: Provider }) {
             }
             }>
               <input
-                className="border w-[500px] rounded-md px-4 py-1 my-1 text-xs"
+                className="border w-[500px] rounded-md px-4 py-1 my-1 text-xs border-gray-200"
                 name="token"
                 type="text"
               />
               <button
-                className="px-2 py-1 text-sm  inline-flex items-center bg-blue text-white rounded-md"
+                className="px-2 py-1 text-sm inline-flex items-center bg-blue text-white rounded-md"
                 type="submit"
               >
                 <Cpu size={24} className="pr-3" />

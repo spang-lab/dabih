@@ -20,7 +20,7 @@ export default function Header() {
 
   if (search.status === "idle" && inode) {
     return (
-      <div className="flex flex-row border-b py-1 mb-3 text-gray-600 justify-between">
+      <div className="flex flex-row border-b py-1 mb-3 text-gray-600 justify-between border-gray-200">
         <div
           className="flex rounded-sm flex-row px-3 text-xs font-bold text-blue items-center hover:bg-blue/10 cursor-pointer"
         >
@@ -39,7 +39,7 @@ export default function Header() {
               <div className="relative flex items-center">
                 <input
                   type="text"
-                  className="border rounded-full px-2 py-1 "
+                  className="border rounded-full px-2 py-1  border-gray-200"
                   placeholder="Search..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -68,7 +68,7 @@ export default function Header() {
 
   if (search.status === "loading") {
     return (
-      <div className="flex flex-row border-b pt-2 mb-3 text-gray-600 justify-between">
+      <div className="flex flex-row border-b pt-2 mb-3 text-gray-600 justify-between border-gray-200">
         <div>
           <span className="text-orange px-2 font-bold">
             Searching
@@ -95,7 +95,7 @@ export default function Header() {
   }
 
   return (
-    <div className="flex flex-row border-b pt-2 mb-3 text-gray-600 justify-between">
+    <div className="flex flex-row border-b pt-2 mb-3 text-gray-600 justify-between border-gray-200">
       <div>
         <span className="text-orange px-2 font-bold">
           Showing results

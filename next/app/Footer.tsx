@@ -11,7 +11,7 @@ export default async function Footer() {
   const organization = branding?.organization;
 
   return (
-    <footer className="p-2 space-x-2 flex flex-row flex-wrap justify-center text-gray-400 border-t">
+    <footer className="p-2 space-x-2 flex flex-row flex-wrap justify-center text-gray-400 border-t border-gray-200">
       <div>
         <Link href={department?.url ?? '#'}>{department?.name}</Link>
         {' '}

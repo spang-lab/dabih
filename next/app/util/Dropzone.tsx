@@ -74,8 +74,7 @@ export default function Dropzone({
     return (
       <div
         {...getRootProps()}
-        className="bg-blue/20 w-full shadow-inner border-dashed
-        border-2 border-blue h-full flex-col flex rounded-3xl"
+        className="bg-blue/20 w-full shadow-inner border-dashed border-2 border-blue h-full flex-col flex rounded-3xl"
       >
         <input {...getInputProps()} />
         <div className="flex grow justify-center items-center">
@@ -94,7 +93,7 @@ export default function Dropzone({
   return (
     <div
       {...getRootProps()}
-      className="bg-gray-100 w-full shadow-inner border-2 border-blue  h-full flex-col flex rounded-3xl"
+      className="bg-gray-100 w-full shadow-inner border-2 border-blue h-full flex-col flex rounded-3xl"
     >
       <input {...getInputProps()} />
       {getContent()}

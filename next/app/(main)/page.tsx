@@ -38,7 +38,7 @@ export default function Home() {
               Get Started
             </Link>
             <Link
-              className="text-xl  text-blue hover:underline mx-5 px-4 py-3"
+              className="text-xl text-blue hover:underline mx-5 px-4 py-3"
               href="/docs"
             >
               Documentation
@@ -46,7 +46,7 @@ export default function Home() {
           </div>
         </div>
         <div className="basis-1/4">
-          <div className="relative w-32 h-32 truncate  rounded-full shadow-xl lg:w-72 lg:h-72">
+          <div className="relative w-32 h-32 truncate rounded-full shadow-xl lg:w-72 lg:h-72">
             <Image
               alt="Spang Lab Dabih Logo"
               fill

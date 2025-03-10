@@ -38,7 +38,7 @@ export default function Transfers() {
           transition
           className="origin-bottom transition duration-200 ease-out data-closed:translate-y-3 data-closed:opacity-0 pb-2"
         >
-          <div className="bg-white border border-blue p-2 shadow-xl rounded-xl ">
+          <div className="bg-white border border-blue p-2 shadow-xl rounded-xl  border-gray-200">
             {transfers.map((transfer) => (
               <Transfer key={transfer.id} data={transfer} />
             ))}
@@ -48,7 +48,7 @@ export default function Transfers() {
           <DisclosureButton className="group bg-blue inline-flex items-center text-white font-extrabold rounded-full px-3 py-2 text-xl shadow-xl">
             <ChevronRight className="group-data-open:-rotate-90" />
             Transfers
-            <div className="absolute bg-orange text-white text-xs flex justify-center items-center w-5 h-5 rounded-full -top-1 -right-1 border border-white">
+            <div className="absolute bg-orange text-white text-xs flex justify-center items-center w-5 h-5 rounded-full -top-1 -right-1 border border-white border-gray-200">
               {transfers.length}
             </div>
           </DisclosureButton>

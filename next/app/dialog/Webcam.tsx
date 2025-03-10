@@ -93,7 +93,7 @@ export default function WebcamDialog({
         <div className="stroke-blue">
           <video ref={videoRef} playsInline muted />
           <div
-            className="border bg-gray-100 bg-opacity-10 border-blue"
+            className="border bg-gray-100 bg-opacity-10 border-blue border-gray-200"
             ref={overlayRef}
           />
           <Spinner loading={loading} />

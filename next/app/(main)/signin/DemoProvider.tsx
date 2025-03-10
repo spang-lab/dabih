@@ -32,7 +32,7 @@ export default function DemoProvider({ provider }: { provider: Provider }) {
                 User Name
               </p>
               <input
-                className="border w-full rounded-md px-4 py-1 my-1"
+                className="border w-full rounded-md px-4 py-1 my-1 border-gray-200"
                 name="name"
                 maxLength={20}
                 type="text"

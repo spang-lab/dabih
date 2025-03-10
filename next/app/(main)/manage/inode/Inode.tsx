@@ -95,7 +95,7 @@ function InodeInner({
     return (
       <input
         autoFocus
-        className="w-full h-full border text-blue"
+        className="w-full h-full border text-blue border-gray-200"
         value={name}
         onChange={(e) => setName(e.target.value)}
         onFocus={(e) => {

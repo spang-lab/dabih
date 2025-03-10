@@ -19,7 +19,7 @@ export default function Download() {
 
   if (download.state === 'error') {
     return (
-      <div className="text-center border border-red rounded-xl p-3">
+      <div className="text-center border border-red rounded-xl p-3 border-gray-200">
         <h1 className="text-3xl text-red">
           Unexpected Error
         </h1>

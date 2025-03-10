@@ -64,7 +64,7 @@ export default function Tokens({ user }:
       {tokens.map((t) => (
         <Token data={t} key={t.value} onRemove={() => void removeToken(t.id as number)} />
       ))}
-      <div hidden={tokens.length > 0} className="p-2 m-2 border italic text-gray-500 rounded-lg text-center">
+      <div hidden={tokens.length > 0} className="p-2 m-2 border italic text-gray-500 rounded-lg text-center border-gray-200">
         You have no access tokens.
       </div>
       <button
