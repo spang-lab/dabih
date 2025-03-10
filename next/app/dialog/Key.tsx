@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key, @typescript-eslint/no-loop-func */
 
 'use client';
 
@@ -16,18 +15,33 @@ interface HexRow {
   rowIdx: number,
 }
 
+const toRgb = (v: string): { r: number, g: number, b: number } => {
+  const num = parseInt(v.slice(1), 16);
+  return { r: num >> 16, g: (num >> 8) & 0xff, b: num & 0xff };
+}
 
 const toHexValue = (v: string, colIdx: number): HexValue => {
-  const num = parseInt(v, 16);
-  const color = num < 75 ? 'text-gray-500' : num < 150 ? 'text-gray-800' : num < 225 ? 'text-blue' : 'text-orange';
+  const blue = "#145876";
+  const orange = "#ea580c";
+  const alpha = parseInt(v, 16) / 255;
+
+  const blueRgb = toRgb(blue);
+  const orangeRgb = toRgb(orange);
+  const r = Math.round(blueRgb.r * alpha + orangeRgb.r * (1 - alpha));
+  const g = Math.round(blueRgb.g * alpha + orangeRgb.g * (1 - alpha));
+  const b = Math.round(blueRgb.b * alpha + orangeRgb.b * (1 - alpha));
+  const color = `rgb(${r},${g},${b})`;
+  console.log(color);
+
+
   return { v, color, colIdx };
 }
 
 function HexKey({ qrCode, hexData }: { qrCode: string, hexData: string[] }, ref: ForwardedRef<HTMLDivElement>) {
-  const longRow = 48;
+  const longRow = 50;
   const shortRow = 22;
   const longRows = 10;
-  const shortRows = 40;
+  const shortRows = 48;
   const shortStart = longRows * longRow;
   const shortEnd = shortStart + shortRows * shortRow;
   const qrIndex = shortStart + shortRow / 2;
@@ -78,12 +92,12 @@ function HexKey({ qrCode, hexData }: { qrCode: string, hexData: string[] }, ref:
                           {' '}
                         </span>
                       </td>
-                      <td className={color}>{v}</td>
+                      <td style={{ color }}>{v}</td>
                     </Fragment>
                   );
                 }
                 return (
-                  <td key={colIdx} className={color}>
+                  <td key={colIdx} style={{ color }}>
                     {v}
                   </td>
                 );
