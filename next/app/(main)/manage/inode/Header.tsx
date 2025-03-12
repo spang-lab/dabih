@@ -1,24 +1,30 @@
 'use client';
 
 import { Spinner } from "@/app/util";
-import useFinder from "../Context";
 import { X, Search, Folder } from "react-feather";
 import { useState, useEffect } from "react";
+import useFiles from "@/lib/hooks/files";
 
 
 export default function Header() {
   const [query, setQuery] = useState<string>("");
-  const { parents, search } = useFinder();
+  const parents = useFiles((state) => state.parents);
+
+  const searchStatus = useFiles((state) => state.searchStatus);
+  const searchQuery = useFiles((state) => state.query);
+  const search = useFiles((state) => state.search);
+  const list = useFiles((state) => state.list);
+
   const inode = parents.at(0);
 
   useEffect(() => {
-    if (search.status === "complete") {
+    if (searchStatus === "complete") {
       setQuery("");
     }
-  }, [search.status]);
+  }, [searchStatus]);
 
 
-  if (search.status === "idle" && inode) {
+  if (searchStatus === "idle" && inode) {
     return (
       <div className="flex flex-row border-b py-1 mb-3 text-gray-600 justify-between border-gray-200">
         <div
@@ -32,7 +38,7 @@ export default function Header() {
 
         <div>
           <form onSubmit={(e) => {
-            search.search(query).catch(console.error);
+            search(query).catch(console.error);
             e.preventDefault();
           }}>
             <div className="flex items-center">
@@ -66,7 +72,7 @@ export default function Header() {
       </div>);
   }
 
-  if (search.status === "loading") {
+  if (searchStatus === "loading") {
     return (
       <div className="flex flex-row border-b pt-2 mb-3 text-gray-600 justify-between border-gray-200">
         <div>
@@ -76,7 +82,7 @@ export default function Header() {
           {' '}
           for
           <span className="text-blue font-mono px-2">
-            "{search.query}"
+            "{searchQuery}"
           </span>
         </div>
         <Spinner small loading={true} />
@@ -84,7 +90,7 @@ export default function Header() {
           <button
             className="px-2 border border-gray-600 rounded-sm inline-flex items-center"
             type="button"
-            onClick={() => { search.clear().catch(console.error); }}
+            onClick={() => { list(null).catch(console.error); }}
           >
             <X />
             Cancel
@@ -103,14 +109,14 @@ export default function Header() {
         {' '}
         for search
         <span className="text-blue font-mono px-2">
-          "{search.query}"
+          "{searchQuery}"
         </span>
       </div>
       <div>
         <button
           className="px-2 border border-gray-600 rounded-sm inline-flex items-center"
           type="button"
-          onClick={() => { search.clear().catch(console.error); }}
+          onClick={() => { list(null).catch(console.error); }}
         >
           <X />
           Clear

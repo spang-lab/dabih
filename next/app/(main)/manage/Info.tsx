@@ -1,12 +1,14 @@
 "use client";
 
+import useFiles from "@/lib/hooks/files";
 import useFinder from "./Context";
 import InodeInfo from "./info/Inode";
 import Members from "./info/Members";
 
 
 export default function Info() {
-  const { nodes, selected } = useFinder();
+  const { selected } = useFinder();
+  const nodes = useFiles((state) => state.nodes);
   const set = new Set(selected);
   const selectedNodes = nodes.filter((node) => set.has(node.mnemonic));
 

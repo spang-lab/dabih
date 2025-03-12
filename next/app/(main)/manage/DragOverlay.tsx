@@ -3,10 +3,12 @@ import { DragOverlay } from "@dnd-kit/core";
 import { File } from "react-feather";
 import Node from "./inode/Node";
 import useFinder from "./Context";
+import useFiles from "@/lib/hooks/files";
 
 
 export default function Overlay() {
-  const { nodes, selected } = useFinder();
+  const { selected } = useFinder();
+  const nodes = useFiles((state) => state.nodes);
   if (!selected.length) {
     <DragOverlay />
   }

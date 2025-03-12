@@ -8,23 +8,24 @@ import Icon from "./Icon";
 import FileName from "./Filename";
 import { useState } from "react";
 import useFinder from "../Context";
+import useFiles from "@/lib/hooks/files";
 
 
 export default function Inode({ inode }: { inode: InodeMembers }) {
   const {
     openMenu,
     selected,
-    parents,
     setSelected,
     list,
     user,
-    search,
   } = useFinder();
+  const searchStatus = useFiles((state) => state.searchStatus);
+  const parents = useFiles((state) => state.parents);
 
   const isMember = [inode, ...parents].some((node) => {
     return node.members.some((member) => member.sub === user?.sub);
   });
-  const isSearch = ["complete", "loading"].includes(search.status);
+  const isSearch = ["complete", "loading"].includes(searchStatus);
 
   return (
     <div

@@ -4,10 +4,13 @@ import useFinder from "../Context";
 import AddMember from "./AddMember";
 import { Pluralize } from "@/app/util";
 import { DownloadCloud, Trash2 } from "react-feather";
+import useFiles from "@/lib/hooks/files";
 
 export default function Members({ inode }: { inode: InodeMembers }) {
-  const { user, parents, search } = useFinder();
-  if (!user || search.isActive) {
+  const parents = useFiles((state) => state.parents);
+  const searchStatus = useFiles((state) => state.searchStatus);
+  const { user } = useFinder();
+  if (!user || searchStatus !== "idle") {
     return null;
   }
 

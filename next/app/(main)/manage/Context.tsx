@@ -4,18 +4,16 @@ import React, { createContext, useState, useContext, useMemo, useCallback, useEf
 import { DndContext, DragStartEvent, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import api from '@/lib/api';
 import useKey from '@/lib/hooks/key';
-import useSearch from '@/lib/hooks/search';
 import crypto from '@/lib/crypto';
 
-import { InodeMembers, ListResponse, UserResponse } from '@/lib/api/types';
+import { UserResponse } from '@/lib/api/types';
 import Menu from './Menu';
 import useUsers from '@/lib/hooks/users';
 import { User } from 'next-auth';
+import useFiles from '@/lib/hooks/files';
 
 interface FinderContextType {
   user: User | null,
-  nodes: InodeMembers[],
-  parents: InodeMembers[],
   users: Record<string, UserResponse> | null,
   selected: string[],
   setSelected: (selected: string[]) => void,
@@ -26,7 +24,6 @@ interface FinderContextType {
   rename: (mnemonic: string, name: string) => void,
   list: (mnemonic: string | null) => void,
   openMenu: (position: { left: number, top: number }) => void,
-  search: ReturnType<typeof useSearch>,
 }
 
 const FinderContext = createContext<FinderContextType>({} as FinderContextType);
@@ -36,9 +33,7 @@ export function FinderWrapper({ user, children }: {
   children: React.ReactNode,
 }) {
   const key = useKey();
-  const search = useSearch();
   const users = useUsers();
-  const [listData, setListData] = useState<ListResponse | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [position, setPosition] = useState({ left: 0, top: 0 });
   const menuButton = useRef<HTMLDivElement>(null);
@@ -48,27 +43,10 @@ export function FinderWrapper({ user, children }: {
     menuButton.current?.click();
   }, []);
 
+  const nodes = useFiles((state) => state.nodes);
+  const cwd = useFiles((state) => state.cwd);
+  const list = useFiles((state) => state.list);
 
-  const { nodes, parents, cwd } = useMemo(() => {
-    if (search.isActive) {
-      return { nodes: search.results, parents: [], cwd: null };
-    }
-    const nodes = listData?.children ?? [];
-    const parents = listData?.parents ?? [];
-    const cwd = parents[0]?.mnemonic ?? null;
-    return { nodes, parents, cwd };
-  }, [search, listData]);
-
-
-
-  const list = useCallback(async (mnemonic: string | null) => {
-    const { data, error } = await api.fs.list(mnemonic);
-    if (!data || error) {
-      return;
-    }
-    setListData(data);
-    void search.clear();
-  }, []);
 
   const getKeys = useCallback(async (mnemonic: string) => {
     const { data, error } = await api.fs.listFiles(mnemonic);
@@ -206,8 +184,6 @@ export function FinderWrapper({ user, children }: {
 
   const value = useMemo(() => ({
     user,
-    nodes,
-    parents,
     users,
     selected,
     setSelected,
@@ -217,13 +193,10 @@ export function FinderWrapper({ user, children }: {
     addMember,
     remove,
     rename,
-    search,
     list,
     openMenu,
   }), [
     user,
-    nodes,
-    parents,
     users,
     selected,
     setSelected,
@@ -232,7 +205,6 @@ export function FinderWrapper({ user, children }: {
     addMember,
     remove,
     rename,
-    search,
     list,
     openMenu,
   ]);

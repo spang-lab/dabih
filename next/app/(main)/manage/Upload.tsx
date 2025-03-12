@@ -3,12 +3,11 @@
 import { useState } from "react";
 
 import { UploadCloud } from "react-feather";
-import useFinder from "./Context";
 import UploadDialog from "@/app/dialog/Upload";
+import useFiles from "@/lib/hooks/files";
 
 export default function Upload() {
-  const { parents } = useFinder();
-  const cwd = parents[0]?.mnemonic ?? null;
+  const cwd = useFiles((state) => state.cwd);
 
   const [showUpload, setShowUpload] = useState<boolean>(false);
   const onCloseUpload = () => setShowUpload(false);

@@ -6,15 +6,16 @@ import ParentDirectory from "./inode/ParentDirectory";
 import Parents from "./inode/Parents";
 import useFinder from "./Context";
 import Header from "./inode/Header";
+import useFiles from "@/lib/hooks/files";
 
 
 
 export default function Files() {
   const {
     openMenu,
-    nodes,
     setSelected,
   } = useFinder();
+  const nodes = useFiles((state) => state.nodes);
 
   const style = {
     height: "calc(100vh - 300px)",

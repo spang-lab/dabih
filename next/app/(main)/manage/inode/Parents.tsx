@@ -1,10 +1,11 @@
 
 import { ChevronRight, Folder } from "react-feather";
-import useFinder from "../Context";
 import Droppable from "./Droppable";
+import useFiles from "@/lib/hooks/files";
 
 export default function Parents() {
-  const { parents, list } = useFinder();
+  const parents = useFiles((state) => state.parents);
+  const list = useFiles((state) => state.list);
 
   const reverse = [...parents].reverse();
 
@@ -18,7 +19,7 @@ export default function Parents() {
         <Droppable id={`parent-${inode.mnemonic}`} key={inode.mnemonic}>
           <div
             className="flex rounded-sm flex-row px-3 text-xs font-bold text-blue items-center hover:bg-blue/10 cursor-pointer"
-            onClick={() => list(inode.mnemonic)}
+            onClick={() => void list(inode.mnemonic).catch(console.error)}
           >
             <ChevronRight className="mr-3" size={26} strokeWidth={1} />
             <Folder

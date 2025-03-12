@@ -1,10 +1,11 @@
 
 import { ArrowUp, Folder } from "react-feather";
 import Droppable from "./Droppable";
-import useFinder from "../Context";
+import useFiles from "@/lib/hooks/files";
 
 export default function ParentDirectory() {
-  const { parents, list } = useFinder();
+  const parents = useFiles((state) => state.parents);
+  const list = useFiles((state) => state.list);
   const parent = parents[1];
   if (!parent) {
     return null;
@@ -14,7 +15,7 @@ export default function ParentDirectory() {
   return (
     <Droppable id={dropId}>
       <div
-        onDoubleClick={() => list(mnemonic)}
+        onDoubleClick={() => void list(mnemonic).catch(console.error)}
         className="w-32 flex h-fit flex-col rounded-xl text-blue items-center">
         <div className="m-1 rounded-lg" >
           <div className="relative">
@@ -26,7 +27,7 @@ export default function ParentDirectory() {
           ..
         </div>
       </div>
-    </Droppable>
+    </Droppable >
   );
 
 }

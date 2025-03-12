@@ -6,7 +6,6 @@ import api from "@/lib/api";
 interface State {
   nodes: InodeMembers[];
   parents: InodeMembers[];
-  selected: string[];
   cwd: string | null;
   query?: string;
   jobId?: string;
@@ -16,7 +15,6 @@ interface State {
 interface Actions {
   list: (mnemonic: string | null) => Promise<void>;
   search: (query: string) => Promise<void>;
-  setSelected: (selected: string[]) => void;
   fetchResults: () => Promise<void>;
 }
 
@@ -25,7 +23,6 @@ const useFiles = create<State & Actions>((set, get) => ({
   parents: [],
   cwd: null,
   searchStatus: "idle",
-  selected: [],
   async list(mnemonic) {
     const state = get();
     if (state.searchStatus === "loading" && state.jobId) {
@@ -44,9 +41,6 @@ const useFiles = create<State & Actions>((set, get) => ({
       jobId: undefined,
       searchStatus: "idle",
     });
-  },
-  setSelected(selected) {
-    set({ selected });
   },
   async search(query) {
     const { data } = await api.fs.searchStart({ query });
