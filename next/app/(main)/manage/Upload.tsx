@@ -19,8 +19,9 @@ export default function Upload() {
       <UploadDialog cwd={cwd} show={showUpload} onClose={onCloseUpload} />
       <button
         type="button"
+        disabled={!cwd}
         aria-label="Upload"
-        className="inline-flex items-center px-4 py-2 text-white bg-blue rounded-lg"
+        className="inline-flex items-center px-4 py-2 text-white bg-blue rounded-lg disabled:opacity-50"
         onClick={() => setShowUpload(true)}
       >
         <UploadCloud className="mr-2" />

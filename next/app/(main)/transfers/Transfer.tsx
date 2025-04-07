@@ -2,6 +2,7 @@ import { Bytes } from "@/app/util";
 import useTransfers from "@/lib/hooks/transfers";
 import type { Transfer } from "@/lib/hooks/transfers";
 import { Download, Upload, X } from "react-feather";
+import FileName from "../manage/inode/Filename";
 
 
 export default function Transfer({ data }: { data: Transfer }) {
@@ -36,7 +37,7 @@ export default function Transfer({ data }: { data: Transfer }) {
 
   const getStatus = () => {
     const inode = data.inode;
-    const fileName = inode?.name ?? data.file.name;
+    const fileName = inode?.name ?? data.file?.name ?? "";
     const mnemonic = inode?.mnemonic;
     const error = data.error;
 
@@ -45,7 +46,7 @@ export default function Transfer({ data }: { data: Transfer }) {
         return (
           <div className="text-xs">
             <div className="font-mono py-1">
-              {fileName}
+              <FileName fileName={fileName} />
             </div>
             <span className="bg-red text-white font-bold px-2 py-1 mx-2 rounded-full">Error</span>
             <span className="text-red text-xs">
@@ -58,7 +59,7 @@ export default function Transfer({ data }: { data: Transfer }) {
           <div className="text-xs text-left py-1">
             <span className="bg-orange text-white font-bold px-2 py-1 mx-2 rounded-full">Interrupted</span>
             <span className="font-mono py-1">
-              {fileName}
+              <FileName fileName={fileName} />
             </span>
 
           </div >
@@ -68,7 +69,7 @@ export default function Transfer({ data }: { data: Transfer }) {
           <div className="text-xs text-left py-1 flex items-center">
             <div className="bg-green text-white font-bold px-2 py-1 mx-2 rounded-full">Complete</div>
             <div className="font-mono py-1">
-              {fileName}
+              <FileName fileName={fileName} />
               <p className="text-blue font-mono font-extrabold">
                 {mnemonic}
               </p>
@@ -76,7 +77,19 @@ export default function Transfer({ data }: { data: Transfer }) {
           </div >
         );
       case "uploading":
-        return `Uploading ${fileName} as ${mnemonic}`;
+        return (
+          <div>
+            Uploading
+            {" "}
+            <FileName fileName={fileName} />
+            {" "}
+            as
+            {" "}
+            <p className="text-blue font-mono font-extrabold">
+              {mnemonic}
+            </p>
+          </div>
+        );
       default:
         return `Transfer ${status}: ${fileName}`;
     }
@@ -116,7 +129,7 @@ export default function Transfer({ data }: { data: Transfer }) {
 
 
   return (
-    <div className="flex items-center py-2 border-b border-gray-200">
+    <div className="flex items-center py-2 border-b last:border-none border-gray-200">
       <div>
         {getIcon()}
       </div>

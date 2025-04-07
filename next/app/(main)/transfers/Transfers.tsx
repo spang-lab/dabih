@@ -7,15 +7,32 @@ import Transfer from "./Transfer";
 import { useEffect } from "react";
 import handleTransfer from "@/lib/transfer";
 import api from "@/lib/api";
+import useFiles from "@/lib/hooks/files";
 
 export default function Transfers() {
   const transfers = useTransfers((state) => state.transfers);
   const updateTransfer = useTransfers((state) => state.updateTransfer);
   const addTransfer = useTransfers((state) => state.addTransfer);
+  const list = useFiles((state) => state.list);
+  const cwd = useFiles((state) => state.cwd);
 
 
   const isActive = (transfer: TransferType) =>
     !["complete", "error", "interrupted"].includes(transfer.status);
+
+  const requiresList = (t1: TransferType, t2: TransferType) => {
+    const oldStatus = t1.status;
+    const newStatus = t2.status;
+    if (oldStatus === "finishing" && newStatus === "complete") {
+      return true;
+    }
+    if (oldStatus === "preparing" && newStatus === "uploading") {
+      return true;
+    }
+    return false;
+  }
+
+
 
   useEffect(() => {
     void (async () => {
@@ -42,6 +59,11 @@ export default function Transfers() {
     }
     (async () => {
       const t = await handleTransfer(transfer);
+      if (requiresList(transfer, t)) {
+        await list(cwd);
+      }
+
+
       updateTransfer(t);
     })().catch(console.error);
   }, [transfers]);

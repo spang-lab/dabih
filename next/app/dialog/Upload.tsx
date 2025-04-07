@@ -6,12 +6,16 @@ import { useDropzone } from 'react-dropzone';
 import useTransfers from "@/lib/hooks/transfers";
 
 export default function UploadDialog({ show, cwd, onClose }:
-  { show: boolean, cwd: string, onClose: () => void }) {
+  { show: boolean, cwd: string | null, onClose: () => void }) {
 
   const upload = useTransfers((state) => state.upload);
 
 
   const onFiles = (files: File[]) => {
+    if (!cwd) {
+      console.error("No current working directory");
+      return;
+    }
     files.forEach((file) => {
       upload({ file, directory: cwd });
     });

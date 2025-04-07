@@ -3,7 +3,7 @@ import getPort from '@ava/get-port';
 import { test, client } from '#ava';
 import crypto from '#crypto';
 
-test.before(async t => {
+test.before(async (t) => {
   const port = await getPort();
   const server = await app(port);
   t.context = {
@@ -13,21 +13,21 @@ test.before(async t => {
     files: {},
     directories: {},
   };
-})
+});
 
-test.after.always(t => {
+test.after.always((t) => {
   t.context.server.close();
-})
+});
 
-test('add user', async t => {
-  const api = client(t, "test_user", true);
+test('add user', async (t) => {
+  const api = client(t, 'test_user', true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 
   const { response, data: user } = await api.user.add({
-    sub: "test",
-    name: "test",
-    email: "test",
+    sub: 'test',
+    name: 'test',
+    email: 'test',
     key: jwk,
   });
 
@@ -40,31 +40,31 @@ test('add user', async t => {
   t.is(response2.status, 204);
 });
 
-test('add invalid key', async t => {
-  const api = client(t, "test_user", true);
+test('add invalid key', async (t) => {
+  const api = client(t, 'test_user', true);
   const { error, response } = await api.user.add({
-    sub: "testuser",
-    name: "test",
-    email: "test",
+    sub: 'testuser',
+    name: 'test',
+    email: 'test',
     key: {
-      kty: "RSA",
-      e: "AQAB",
-      n: "invalid",
+      kty: 'RSA',
+      e: 'AQAB',
+      n: 'invalid',
     },
   });
   t.truthy(error);
   t.is(response.status, 500);
 });
 
-test('check key hash', async t => {
-  const api = client(t, "test_hash", true);
+test('check key hash', async (t) => {
+  const api = client(t, 'test_hash', true);
   const privateKey = await crypto.privateKey.generate();
   const publicKey = crypto.privateKey.toPublicKey(privateKey);
   const jwk = crypto.publicKey.toJwk(publicKey);
   const hash = crypto.publicKey.toHash(publicKey);
   const { response, data: user } = await api.user.add({
-    name: "test",
-    email: "test",
+    name: 'test',
+    email: 'test',
     key: jwk,
   });
   t.is(response.status, 201);
@@ -75,17 +75,17 @@ test('check key hash', async t => {
   t.is(user.keys[0].hash, hash);
 });
 
-test('add user with two keys', async t => {
-  const api = client(t, "test_user", true);
+test('add user with two keys', async (t) => {
+  const api = client(t, 'test_user', true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 
-  const sub = "testuser_2keys";
+  const sub = 'testuser_2keys';
 
   const { response, data: user } = await api.user.add({
     sub,
-    name: "test",
-    email: "test",
+    name: 'test',
+    email: 'test',
     key: jwk,
   });
   t.is(response.status, 201);
@@ -108,16 +108,16 @@ test('add user with two keys', async t => {
   t.is(response3.status, 204);
 });
 
-test('add the same key twice', async t => {
-  const api = client(t, "test_user", true);
+test('add the same key twice', async (t) => {
+  const api = client(t, 'test_user', true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 
-  const sub = "testuser_key_collide";
+  const sub = 'testuser_key_collide';
   const { response, data: user } = await api.user.add({
     sub,
-    name: "test",
-    email: "test",
+    name: 'test',
+    email: 'test',
     key: jwk,
   });
   t.is(response.status, 201);
@@ -135,16 +135,16 @@ test('add the same key twice', async t => {
   t.is(response3.status, 204);
 });
 
-test('remove key', async t => {
-  const api = client(t, "test_user", true);
+test('remove key', async (t) => {
+  const api = client(t, 'test_user', true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 
-  const sub = "testuser_key_remove";
+  const sub = 'testuser_key_remove';
   const { response, data: user } = await api.user.add({
     sub,
-    name: "test",
-    email: "test",
+    name: 'test',
+    email: 'test',
     key: jwk,
   });
   t.is(response.status, 201);
@@ -162,17 +162,16 @@ test('remove key', async t => {
   t.is(response3.status, 204);
 });
 
-
-test('disable/enable key', async t => {
-  const api = client(t, "test_user", true);
+test('disable/enable key', async (t) => {
+  const api = client(t, 'test_user', true);
   const { publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
 
-  const sub = "testuser_key_disable";
+  const sub = 'testuser_key_disable';
   const { response, data: user } = await api.user.add({
     sub,
-    name: "test",
-    email: "test",
+    name: 'test',
+    email: 'test',
     key: jwk,
   });
   t.is(response.status, 201);
@@ -203,4 +202,3 @@ test('disable/enable key', async t => {
   const { response: response4 } = await api.user.remove(sub);
   t.is(response4.status, 204);
 });
-

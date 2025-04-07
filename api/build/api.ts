@@ -1,9 +1,6 @@
 import createClient from 'openapi-fetch';
 
 import type { components, paths } from './schema';
-import listParents from 'src/api/fs/listParents';
-import searchStart from 'src/api/fs/searchStart';
-import searchCancel from 'src/api/fs/searchCancel';
 type schemas = components['schemas'];
 
 type ChunkUpload = {
