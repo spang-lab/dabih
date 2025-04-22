@@ -1,15 +1,19 @@
-import { InodeMembers, Permission } from "@/lib/api/types";
+import { InodeMembers, InodeType, Permission } from "@/lib/api/types";
 import Member from "./Member";
 import useFinder from "../Context";
 import AddMember from "./AddMember";
 import { Pluralize } from "@/app/util";
 import { DownloadCloud, Trash2 } from "react-feather";
 import useFiles from "@/lib/hooks/files";
+import useTransfers from "@/lib/hooks/transfers";
+import useKey from "@/lib/hooks/key";
 
 export default function Members({ inode }: { inode: InodeMembers }) {
   const parents = useFiles((state) => state.parents);
   const searchStatus = useFiles((state) => state.searchStatus);
   const { user } = useFinder();
+  const download = useTransfers((state => state.download));
+  const key = useKey();
   if (!user || searchStatus !== "idle") {
     return null;
   }
@@ -37,6 +41,7 @@ export default function Members({ inode }: { inode: InodeMembers }) {
   }).sort((m1, m2) => m1.member.sub.localeCompare(m2.member.sub));
 
   const hasWrite = writeIdx !== -1;
+  const isFileOrDir = [InodeType.FILE, InodeType.DIRECTORY].includes(inode.type);
 
 
   return (
@@ -68,15 +73,16 @@ export default function Members({ inode }: { inode: InodeMembers }) {
       <div className="flex space-x-2 mt-2">
         <button
           type="button"
-          disabled={!hasRead}
+          disabled={!hasRead || !isFileOrDir}
           className="w-full p-2 text-white bg-blue rounded-sm disabled:bg-blue/50 disabled:cursor-not-allowed inline-flex items-center"
+          onClick={() => download(inode.mnemonic, key)}
         >
           <DownloadCloud className="mr-2" size={24} />
           Download
         </button>
         <button
           type="button"
-          disabled={!hasWrite}
+          disabled={!hasWrite || !isFileOrDir}
           className="w-full p-2 text-white bg-red rounded-sm disabled:bg-red/50 disabled:cursor-not-allowed inline-flex items-center"
         >
           <Trash2 className="mr-2" size={24} />

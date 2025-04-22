@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { FileUpload } from "../api/types";
+import { FileDownload, FileUpload, InodeMembers } from "../api/types";
+import { KeyState } from "./key";
 
 interface UploadRequest {
   file: File;
@@ -9,7 +10,16 @@ interface UploadRequest {
   chunkSize?: number;
 }
 
-export type TransferStatus =
+export type DownloadStatus =
+  | "preparing"
+  | "creating"
+  | "downloading"
+  | "finishing"
+  | "canceling"
+  | "complete"
+  | "error";
+
+export type UploadStatus =
   | "interrupted"
   | "preparing"
   | "uploading"
@@ -18,18 +28,38 @@ export type TransferStatus =
   | "complete"
   | "error";
 
-export interface Transfer {
+export interface SingleDownload {
+  inode: FileDownload;
+  aesKey: CryptoKey;
+  downloaded: Set<string>;
+}
+
+export interface Download {
   id: string;
-  type: "upload" | "download";
-  status: TransferStatus;
+  type: "download";
+  status: DownloadStatus;
+  key: KeyState;
+  mnemonic: string;
+  files?: InodeMembers[];
+  downloads?: SingleDownload[];
+  error?: string;
+}
+
+export interface Upload {
+  id: string;
+  type: "upload";
+  status: UploadStatus;
   file?: File;
   tag?: string;
   directory?: string;
   filePath?: string;
-  chunkSize?: number;
   inode?: FileUpload;
+  chunkSize?: number;
   error?: string;
+  requiresList?: boolean;
 }
+
+export type Transfer = Upload | Download;
 
 interface State {
   transfers: Transfer[];
@@ -38,6 +68,7 @@ interface State {
 interface Actions {
   addTransfer: (transfer: Transfer) => void;
   upload: (req: UploadRequest) => void;
+  download: (mnemonic: string, key: KeyState) => void;
   updateTransfer: (transfer: Transfer) => void;
   clearTransfer: (id: string) => void;
 }
@@ -58,6 +89,17 @@ const useTransfers = create<State & Actions>((set) => ({
       directory,
       filePath,
       chunkSize,
+    };
+    set((state) => ({ transfers: [...state.transfers, transfer] }));
+  },
+  download: (mnemonic: string, key: KeyState) => {
+    const id = Math.random().toString(36).substring(7);
+    const transfer: Transfer = {
+      id,
+      type: "download",
+      status: "preparing",
+      key,
+      mnemonic,
     };
     set((state) => ({ transfers: [...state.transfers, transfer] }));
   },

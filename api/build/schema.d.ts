@@ -968,7 +968,10 @@ export interface components {
             /** @description The list of AES-256 keys required to decrypt all child datasets */
             keys: components["schemas"]["FileDecryptionKey"][];
         };
-        InodeTree: components["schemas"]["InodeMembers"] & {
+        InodeMembersParent: components["schemas"]["InodeMembers"] & {
+            parent: components["schemas"]["InodeMembersParent"] | null;
+        };
+        InodeTree: components["schemas"]["InodeMembersParent"] & {
             keys: components["schemas"]["Key"][];
             children?: components["schemas"]["InodeTree"][];
         };

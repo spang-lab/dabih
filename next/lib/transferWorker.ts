@@ -13,6 +13,7 @@ import {
   InodeMembersParent,
   InodeTree,
   InodeType,
+  InodeMembers,
 } from "./api/types";
 
 function toError(transfer: Transfer, message: Error | string) {
@@ -56,6 +57,7 @@ async function handleUpload(transfer: Upload) {
       return {
         ...transfer,
         status: "uploading" as UploadStatus,
+        requiresList: true,
         inode: {
           ...inode,
           data: {
@@ -102,6 +104,7 @@ async function handleUpload(transfer: Upload) {
       }
       return {
         ...transfer,
+        requiresList: false,
         inode: {
           ...inode,
           data: {
@@ -137,61 +140,43 @@ async function handleUpload(transfer: Upload) {
         status: "complete" as UploadStatus,
         inode: result as FileUpload,
         file: undefined,
+        requiresList: true,
       };
     }
     case "canceling": {
-      return transfer;
+      throw new Error("Not implemented");
     }
     default:
       return invalidStateError(transfer);
   }
 }
 
-function invertTree(tree: InodeTree) {
-  const files: InodeMembersParent[] = [];
-  const queue: InodeTree[] = [
-    {
-      ...tree,
-      parent: null,
-    },
-  ];
-  while (queue.length) {
-    const node = queue.shift()!;
-    if (node.type === InodeType.FILE && node.data) {
-      files.push(node);
-    }
-    if (node.children) {
-      const children = node.children.map((child) => ({
-        ...child,
-        parent: {
-          ...node,
-          children: undefined,
-        },
-      }));
-      queue.push(...children);
-    }
-  }
-  return files;
-}
+const handles = new Map<string, FileSystemHandle>();
 
-async function getFileHandle(node: InodeMembersParent) {
-  let current = node;
-  let handle = await navigator.storage.getDirectory();
-  const parents: string[] = [];
-  while (current.parent) {
-    const { name } = current.parent;
-    parents.push(name);
-    current = current.parent;
+async function createHandles(
+  node: InodeTree,
+  parentHandle: FileSystemDirectoryHandle,
+): Promise<InodeMembers[]> {
+  if (node.type === InodeType.FILE) {
+    const { name, mnemonic } = node;
+    const handle = await parentHandle.getFileHandle(name, { create: true });
+    handles.set(mnemonic, handle);
+    return [node];
   }
-  parents.reverse();
-  for (const name of parents) {
-    handle = await handle.getDirectoryHandle(name, {
+  if (node.children) {
+    const { name, mnemonic } = node;
+    const handle = await parentHandle.getDirectoryHandle(name, {
       create: true,
     });
+    handles.set(mnemonic, handle);
+    const nodes: InodeMembers[] = [];
+    for (const child of node.children) {
+      const newNodes = await createHandles(child, handle);
+      nodes.push(...newNodes);
+    }
+    return nodes;
   }
-  return handle.getFileHandle(node.name, {
-    create: true,
-  });
+  return [];
 }
 
 async function handleDownload(transfer: Download) {
@@ -204,7 +189,8 @@ async function handleDownload(transfer: Download) {
           `Failed to list tree for ${transfer.mnemonic}`,
         );
       }
-      const files = invertTree(tree);
+      const rootHandle = await navigator.storage.getDirectory();
+      const files = await createHandles(tree, rootHandle);
       return {
         ...transfer,
         status: "creating" as DownloadStatus,
@@ -232,16 +218,11 @@ async function handleDownload(transfer: Download) {
         return toError(transfer, error ?? "Failed to get inode");
       }
       const aesKey = await crypto.file.decryptKey(key.key, inode);
-      const handle = await getFileHandle(nextFile);
-      console.log(handle);
       const download = {
         inode,
         aesKey,
-        handle,
-        stream: await handle.createWritable(),
         downloaded: new Set<string>(),
       };
-      console.log(download);
       return {
         ...transfer,
         status: "downloading" as DownloadStatus,
@@ -258,12 +239,15 @@ async function handleDownload(transfer: Download) {
       if (!download) {
         return invalidStateError(transfer);
       }
-      const { stream, aesKey, inode, downloaded } = download;
+      const { aesKey, inode, downloaded } = download;
+      const handle = handles.get(inode.mnemonic) as FileSystemFileHandle;
+      const accessHandle = await handle.createSyncAccessHandle();
       const { chunks, uid } = inode.data;
       const chunk = chunks.find((c) => !downloaded.has(c.hash));
       if (!chunk) {
         return {
           ...transfer,
+          downloads: [...downloads, download],
           status: "creating" as DownloadStatus,
         };
       }
@@ -280,8 +264,17 @@ async function handleDownload(transfer: Download) {
         chunk.iv,
         encrypted,
       );
-      await stream.write(decrypted);
+      const hash = await crypto.hash(decrypted);
+      if (hash !== chunk.hash) {
+        return toError(
+          transfer,
+          `Hash mismatch. Downloaded: ${hash} !== Server: ${chunk.hash}`,
+        );
+      }
+      const offset = parseInt(chunk.start as string, 10);
+      accessHandle.write(decrypted, { at: offset });
       downloaded.add(chunk.hash);
+      accessHandle.close();
 
       return {
         ...transfer,
@@ -311,3 +304,12 @@ export default async function handleTransfer(
   }
   throw new Error(`Unsupported transfer type`);
 }
+
+self.onmessage = async (event: MessageEvent<Transfer>) => {
+  const transfer = event.data;
+  if (!transfer) {
+    return;
+  }
+  const result = await handleTransfer(transfer);
+  self.postMessage(result);
+};

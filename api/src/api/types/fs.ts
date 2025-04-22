@@ -99,10 +99,10 @@ export type InodeMembers = Inode & {
   members: Member[];
 };
 export type InodeMembersParent = InodeMembers & {
-  parent: Inode | null;
+  parent: InodeMembersParent | null;
 };
 
-export type InodeTree = InodeMembers & {
+export type InodeTree = InodeMembersParent & {
   children?: InodeTree[];
   keys: Key[];
 };

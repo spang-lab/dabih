@@ -1,43 +1,19 @@
 import { Bytes } from "@/app/util";
 import useTransfers from "@/lib/hooks/transfers";
-import type { Transfer } from "@/lib/hooks/transfers";
-import { Download, Upload, X } from "react-feather";
+import type { Download } from "@/lib/hooks/transfers";
+import { Download as DownloadIcon, X } from "react-feather";
 import FileName from "../manage/inode/Filename";
 
 
-export default function Transfer({ data }: { data: Transfer }) {
-  const { status, type } = data;
+export default function DownloadTransfer({ data }: { data: Download }) {
+  const { status } = data;
 
   const clearTransfer = useTransfers((state) => state.clearTransfer);
-
-  const getIcon = () => {
-    if (type === "upload") {
-      return (<div className="text-[10px] font-bold text-blue border-r border-gray-200 px-2">
-        <Upload className="mx-auto" size={24} />
-        Upload
-      </div>)
-    }
-    if (type === "download") {
-      return <Download className="text-blue" size={24} />;
-    }
-    return null;
-  }
-
-  const colors = {
-    interrupted: "bg-orange/40 text-orange",
-    preparing: "bg-blue/50 text-blue",
-    uploading: "bg-blue/50",
-    finishing: "bg-blue/50",
-    canceling: "bg-blue/50",
-    complete: "bg-green/50 text-green",
-    error: "bg-red/50",
-  };
-
 
 
   const getStatus = () => {
     const inode = data.inode;
-    const fileName = inode?.name ?? data.file?.name ?? "";
+    const fileName = inode?.name ?? "";
     const mnemonic = inode?.mnemonic;
     const error = data.error;
 
@@ -130,8 +106,9 @@ export default function Transfer({ data }: { data: Transfer }) {
 
   return (
     <div className="flex items-center py-2 border-b last:border-none border-gray-200">
-      <div>
-        {getIcon()}
+      <div className="text-[10px] font-bold text-blue border-r border-gray-200 px-2">
+        <DownloadIcon className="mx-auto" size={24} />
+        Download
       </div>
       <div className="grow">
         <div className="text-xs text-center">

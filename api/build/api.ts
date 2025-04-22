@@ -130,6 +130,11 @@ const init = (baseUrl: string) => {
         parseAs: 'stream',
         params: { path: { uid, hash } },
       }),
+    chunkBuf: (uid: string, hash: string) =>
+      c.GET('/download/{uid}/chunk/{hash}', {
+        parseAs: 'arrayBuffer',
+        params: { path: { uid, hash } },
+      }),
   };
   const util = {
     healthy: () => c.GET('/healthy'),

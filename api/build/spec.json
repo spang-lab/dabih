@@ -975,10 +975,33 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"InodeTree": {
+			"InodeMembersParent": {
 				"allOf": [
 					{
 						"$ref": "#/components/schemas/InodeMembers"
+					},
+					{
+						"properties": {
+							"parent": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/InodeMembersParent"
+									}
+								],
+								"nullable": true
+							}
+						},
+						"required": [
+							"parent"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"InodeTree": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/InodeMembersParent"
 					},
 					{
 						"properties": {
