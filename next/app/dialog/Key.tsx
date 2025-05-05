@@ -37,7 +37,7 @@ const toHexValue = (v: string, colIdx: number): HexValue => {
   return { v, color, colIdx };
 }
 
-function HexKey({ qrCode, hexData }: { qrCode: string, hexData: string[] }, ref: ForwardedRef<HTMLDivElement>) {
+export default function HexKey({ qrCode, hexData, ref }: { qrCode: string, hexData: string[], ref: ForwardedRef<HTMLDivElement> }) {
   const longRow = 50;
   const shortRow = 22;
   const longRows = 10;
@@ -110,4 +110,3 @@ function HexKey({ qrCode, hexData }: { qrCode: string, hexData: string[] }, ref:
     </div>
   );
 }
-export default React.forwardRef(HexKey);

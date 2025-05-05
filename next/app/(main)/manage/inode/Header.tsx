@@ -12,10 +12,22 @@ export default function Header() {
 
   const searchStatus = useFiles((state) => state.searchStatus);
   const searchQuery = useFiles((state) => state.query);
+  const fetchResults = useFiles((state) => state.fetchResults);
   const search = useFiles((state) => state.search);
   const list = useFiles((state) => state.list);
 
   const inode = parents.at(0);
+  useEffect(() => {
+    if (searchStatus !== "loading") {
+      return;
+    }
+    const interval = setInterval(() => {
+      fetchResults().catch(console.error);
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [searchStatus]);
 
   useEffect(() => {
     if (searchStatus === "complete") {

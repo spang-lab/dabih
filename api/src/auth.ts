@@ -52,10 +52,11 @@ const verifyToken = async (request: Request, type: AuthType): Promise<User> => {
     };
   }
 
-  const { origin } = request;
+  const { host, protocol } = request;
+  const audience = `${protocol}://${host}`;
   const secret = requireEnv('TOKEN_SECRET');
   const decoded = jwt.verify(tokenStr, secret, {
-    audience: origin,
+    audience,
   });
   if (typeof decoded === 'string') {
     throw new AuthenticationError('Invalid jwt');

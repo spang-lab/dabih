@@ -13,7 +13,7 @@ import useFiles from "@/lib/hooks/files";
 
 export default function Inode({ inode }: { inode: InodeMembers }) {
   const {
-    openMenu,
+    setMenu,
     selected,
     setSelected,
     list,
@@ -56,7 +56,7 @@ export default function Inode({ inode }: { inode: InodeMembers }) {
         if (!selected.includes(inode.mnemonic)) {
           setSelected([inode.mnemonic]);
         }
-        openMenu({ left: e.clientX, top: e.clientY });
+        setMenu({ left: e.clientX, top: e.clientY, open: true });
       }}
     >
       <InodeInner

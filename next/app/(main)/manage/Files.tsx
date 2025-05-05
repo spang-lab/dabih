@@ -12,7 +12,7 @@ import useFiles from "@/lib/hooks/files";
 
 export default function Files() {
   const {
-    openMenu,
+    setMenu,
     setSelected,
   } = useFinder();
   const nodes = useFiles((state) => state.nodes);
@@ -28,7 +28,7 @@ export default function Files() {
       onContextMenu={(e) => {
         e.preventDefault();
         setSelected([]);
-        openMenu({ left: e.clientX, top: e.clientY });
+        setMenu({ left: e.clientX, top: e.clientY, open: true });
       }}
     >
       <Header />

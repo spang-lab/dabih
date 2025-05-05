@@ -17,13 +17,13 @@ interface FinderContextType {
   users: Record<string, UserResponse> | null,
   selected: string[],
   setSelected: (selected: string[]) => void,
-  position: { left: number, top: number },
   addFolder: () => void,
   addMember: (mnemonic: string, sub: string) => void,
   remove: () => void,
   rename: (mnemonic: string, name: string) => void,
   list: (mnemonic: string | null) => void,
-  openMenu: (position: { left: number, top: number }) => void,
+  menu: { left: number, top: number, open: boolean },
+  setMenu: (position: { left: number, top: number, open: boolean }) => void,
 }
 
 const FinderContext = createContext<FinderContextType>({} as FinderContextType);
@@ -35,13 +35,8 @@ export function FinderWrapper({ user, children }: {
   const key = useKey();
   const users = useUsers();
   const [selected, setSelected] = useState<string[]>([]);
-  const [position, setPosition] = useState({ left: 0, top: 0 });
-  const menuButton = useRef<HTMLDivElement>(null);
+  const [menu, setMenu] = useState({ left: 0, top: 0, open: false });
 
-  const openMenu = useCallback((p: { left: number, top: number }) => {
-    setPosition(p);
-    menuButton.current?.click();
-  }, []);
 
   const nodes = useFiles((state) => state.nodes);
   const cwd = useFiles((state) => state.cwd);
@@ -187,31 +182,30 @@ export function FinderWrapper({ user, children }: {
     users,
     selected,
     setSelected,
-    position,
-    setPosition,
     addFolder,
     addMember,
     remove,
     rename,
     list,
-    openMenu,
+    menu,
+    setMenu,
   }), [
     user,
     users,
     selected,
     setSelected,
-    position,
     addFolder,
     addMember,
     remove,
     rename,
     list,
-    openMenu,
+    menu,
+    setMenu,
   ]);
 
   return (
     <FinderContext.Provider value={value}>
-      <Menu ref={menuButton} />
+      <Menu />
       <DndContext
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
