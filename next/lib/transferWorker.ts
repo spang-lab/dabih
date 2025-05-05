@@ -8,13 +8,8 @@ import {
 
 import api from "./api";
 import crypto from "./crypto";
-import {
-  FileUpload,
-  InodeMembersParent,
-  InodeTree,
-  InodeType,
-  InodeMembers,
-} from "./api/types";
+import { FileUpload, InodeTree, InodeType, InodeMembers } from "./api/types";
+import JSZip from "jszip";
 
 function toError(transfer: Transfer, message: Error | string) {
   if (typeof message !== "string") {
@@ -179,6 +174,26 @@ async function createHandles(
   return [];
 }
 
+async function addToZip(
+  handle: FileSystemHandle,
+  path: string | null,
+  zip: JSZip,
+) {
+  if (handle.kind === "file") {
+    const fileHandle = handle as FileSystemFileHandle;
+    const file = await fileHandle.getFile();
+    const data = await file.arrayBuffer();
+    zip.file(path!, data);
+  } else {
+    const dirHandle = handle as FileSystemDirectoryHandle;
+    for await (const entry of dirHandle.values()) {
+      const name = entry.name;
+      const newPath = path ? `${path}/${name}` : name;
+      await addToZip(entry, newPath, zip);
+    }
+  }
+}
+
 async function handleDownload(transfer: Download) {
   switch (transfer.status) {
     case "preparing": {
@@ -191,10 +206,17 @@ async function handleDownload(transfer: Download) {
       }
       const rootHandle = await navigator.storage.getDirectory();
       const files = await createHandles(tree, rootHandle);
+      const size = files.reduce((acc, file) => {
+        if (file.data) {
+          return acc + parseInt(file.data.size as string, 10);
+        }
+        return acc;
+      }, 0);
       return {
         ...transfer,
         status: "creating" as DownloadStatus,
         files,
+        size,
         downloads: [],
       };
     }
@@ -272,13 +294,17 @@ async function handleDownload(transfer: Download) {
         );
       }
       const offset = parseInt(chunk.start as string, 10);
+      const end = parseInt(chunk.end as string, 10);
       accessHandle.write(decrypted, { at: offset });
       downloaded.add(chunk.hash);
+      const size = end - offset + 1;
+      const current = transfer.current ?? 0;
       accessHandle.close();
 
       return {
         ...transfer,
         status: "downloading" as DownloadStatus,
+        current: current + size,
         downloads: [
           ...downloads,
           {
@@ -286,6 +312,38 @@ async function handleDownload(transfer: Download) {
             downloaded,
           },
         ],
+      };
+    }
+    case "finishing": {
+      const { mnemonic } = transfer;
+
+      const root = await navigator.storage.getDirectory();
+      const handle = handles.get(mnemonic);
+      if (!handle) {
+        return toError(transfer, "Failed to get root handle");
+      }
+      if (handle.kind === "file") {
+        const file = await (handle as FileSystemFileHandle).getFile();
+        await root.removeEntry(handle.name);
+        return {
+          ...transfer,
+          status: "complete" as DownloadStatus,
+          downloads: [],
+          result: file,
+        };
+      }
+      const directory = handle as FileSystemDirectoryHandle;
+      const zip = new JSZip();
+      await addToZip(directory, "", zip);
+      const blob = await zip.generateAsync({ type: "blob" });
+      const file = new File([blob], `${mnemonic}.zip`);
+      await root.removeEntry(directory.name, { recursive: true });
+
+      return {
+        ...transfer,
+        status: "complete" as DownloadStatus,
+        downloads: [],
+        result: file,
       };
     }
     default:

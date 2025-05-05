@@ -6,15 +6,12 @@ import FileName from "../manage/inode/Filename";
 
 
 export default function DownloadTransfer({ data }: { data: Download }) {
-  const { status } = data;
+  const { status, mnemonic } = data;
 
   const clearTransfer = useTransfers((state) => state.clearTransfer);
 
 
   const getStatus = () => {
-    const inode = data.inode;
-    const fileName = inode?.name ?? "";
-    const mnemonic = inode?.mnemonic;
     const error = data.error;
 
     switch (status) {
@@ -22,7 +19,7 @@ export default function DownloadTransfer({ data }: { data: Download }) {
         return (
           <div className="text-xs">
             <div className="font-mono py-1">
-              <FileName fileName={fileName} />
+              {mnemonic}
             </div>
             <span className="bg-red text-white font-bold px-2 py-1 mx-2 rounded-full">Error</span>
             <span className="text-red text-xs">
@@ -30,56 +27,49 @@ export default function DownloadTransfer({ data }: { data: Download }) {
             </span>
           </div>
         );
-      case "interrupted":
-        return (
-          <div className="text-xs text-left py-1">
-            <span className="bg-orange text-white font-bold px-2 py-1 mx-2 rounded-full">Interrupted</span>
-            <span className="font-mono py-1">
-              <FileName fileName={fileName} />
-            </span>
+      case "complete": {
+        const file = data.result!;
+        const url = URL.createObjectURL(file);
 
-          </div >
-        );
-      case "complete":
+
         return (
           <div className="text-xs text-left py-1 flex items-center">
             <div className="bg-green text-white font-bold px-2 py-1 mx-2 rounded-full">Complete</div>
             <div className="font-mono py-1">
-              <FileName fileName={fileName} />
-              <p className="text-blue font-mono font-extrabold">
+              <a href={url} download={file.name} className="text-white bg-blue px-2 py-1 rounded-lg font-bold">
+                Save
+                {" "}
+                <FileName fileName={file.name} />
+              </a>
+              <p className="text-gray-500 font-mono font-extrabold">
                 {mnemonic}
               </p>
             </div>
           </div >
         );
-      case "uploading":
+      }
+      case "downloading":
         return (
           <div>
-            Uploading
-            {" "}
-            <FileName fileName={fileName} />
-            {" "}
-            as
-            {" "}
+            Downloading
             <p className="text-blue font-mono font-extrabold">
               {mnemonic}
             </p>
           </div>
         );
       default:
-        return `Transfer ${status}: ${fileName}`;
+        return `Transfer ${status}: ${mnemonic}`;
     }
   }
 
   const getProgress = () => {
-    const inode = data.inode;
-    const chunks = inode?.data.chunks;
-    if (!chunks) {
+    const { current, size, status } = data;
+    if (!current || !size || status !== "downloading") {
       return null;
     }
-    const total = parseInt(inode.data.size as string, 10);
-    const current = parseInt(chunks.at(-1)?.end as string, 10) ?? 0;
-    const percent = Math.round((1000 * current) / total) / 10;
+
+
+    const percent = Math.round((1000 * current) / size) / 10;
     const width = `${Math.round(percent)}%`;
     return (
       <div className="flex items-center">
@@ -95,7 +85,7 @@ export default function DownloadTransfer({ data }: { data: Download }) {
           {" "}
           /
           {" "}
-          <Bytes value={total} />
+          <Bytes value={size} />
         </div>
       </div>
     );

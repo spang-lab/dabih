@@ -43,6 +43,9 @@ export interface Download {
   files?: InodeMembers[];
   downloads?: SingleDownload[];
   error?: string;
+  size?: number;
+  current?: number;
+  result?: File;
 }
 
 export interface Upload {
