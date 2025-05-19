@@ -1,7 +1,6 @@
 use std::{env, path::PathBuf};
 
 use config::Context;
-use openapi::apis::{configuration::Configuration, user_api::me};
 
 mod config;
 mod error;
@@ -16,21 +15,8 @@ async fn main() -> Result<()> {
             .join(".config")
             .join("dabih"),
     };
-    let ctx = Context::from(ctx_path)?;
-    dbg!(&ctx);
+    let mut ctx = Context::from(ctx_path)?;
+    ctx.init().await?;
 
-    let token = "dabih_at_CgI-W7i2CL7rGWmF_tW7MJgjsaBx5x_U";
-
-    let config = Configuration {
-        base_path: "http://localhost:3001/api/v1".to_string(),
-        user_agent: Some("rust-client".to_string()),
-        bearer_access_token: Some(token.to_string()),
-        ..Default::default()
-    };
-    let user = me(&config).await.unwrap();
-
-    dbg!(user);
-
-    println!("Hello, world!");
     Ok(())
 }

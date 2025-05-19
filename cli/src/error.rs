@@ -20,6 +20,15 @@ pub enum CliError {
     #[error("Config directory does not exist")]
     ConfigDirNotFound,
 
+    #[error("Connection to the API server endpoint {url} failed")]
+    ConnectionError { url: String },
+
+    #[error("Authentication error")]
+    AuthenticationError,
+
+    #[error("Api error")]
+    ApiError,
+
     #[error("Failed to deserialize response")]
     ResponseDeserializationError(#[from] serde_json::Error),
 }
