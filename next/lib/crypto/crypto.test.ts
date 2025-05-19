@@ -1,9 +1,9 @@
 /* global BigInt */
-import test from 'ava';
+import test from "ava";
 
-import privateKey from './privateKey';
-import publicKey from './publicKey';
-import base64url from './base64url';
+import privateKey from "./privateKey";
+import publicKey from "./publicKey";
+import base64url from "./base64url";
 
 const pemKey = `-----BEGIN PRIVATE KEY-----
 MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJX4p0Q6Y4hN1kEi
@@ -23,20 +23,24 @@ Zjs+OBCCyNlkQak
 -----END PRIVATE KEY-----`;
 
 const pemKeyV = {
-  n: BigInt('105313429899678910954244412377667300234742162661631185984232412341791845602572433084450441871725611649812118692613041953392439563383571019956337384857525864661306089923896367438553025959504505254867324603521069029621835152119177458437773475202053279184646404732396279488811330955369804082801745761264563679051'),
-  p: BigInt('10276810848009585603394145623765203138739025488375319137624144086556986283585924666475292559586646875402899775721905315059448710108520119257981289283458291'),
-  q: BigInt('10247676196168973294556088510802688982847948104061206343571750858100009867254454946892394325149604594318125232252398135844254185513241461300030694872396361'),
-
+  n: BigInt(
+    "105313429899678910954244412377667300234742162661631185984232412341791845602572433084450441871725611649812118692613041953392439563383571019956337384857525864661306089923896367438553025959504505254867324603521069029621835152119177458437773475202053279184646404732396279488811330955369804082801745761264563679051",
+  ),
+  p: BigInt(
+    "10276810848009585603394145623765203138739025488375319137624144086556986283585924666475292559586646875402899775721905315059448710108520119257981289283458291",
+  ),
+  q: BigInt(
+    "10247676196168973294556088510802688982847948104061206343571750858100009867254454946892394325149604594318125232252398135844254185513241461300030694872396361",
+  ),
 };
-const sshPubKey = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCV+KdEOmOITdZBIj6MuQJzZexdiGT5/bL4ZCApWPKf2hm4EwBi83O32NkblKRZofRrwgqMK8Fn6WiLYzpgxIfRX0xcVHHtIM29Jt3dHKmgKAeWHofGBW+zPcPwPjHIIOg8y8u9SgcWHpz3/3Z+GmYeX8NVO087EfCkxuj0GLRvSw== testkey';
+const sshPubKey =
+  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCV+KdEOmOITdZBIj6MuQJzZexdiGT5/bL4ZCApWPKf2hm4EwBi83O32NkblKRZofRrwgqMK8Fn6WiLYzpgxIfRX0xcVHHtIM29Jt3dHKmgKAeWHofGBW+zPcPwPjHIIOg8y8u9SgcWHpz3/3Z+GmYeX8NVO087EfCkxuj0GLRvSw== testkey";
 
-
-
-test('RSA encrypt decrypt', async t => {
+test("RSA encrypt decrypt", async (t) => {
   const key = await privateKey.generate();
   const pKey = await privateKey.toPublicKey(key);
 
-  const payload = base64url.fromString('TEST PAYLOAD');
+  const payload = base64url.fromString("TEST PAYLOAD");
   const buffer = base64url.toUint8(payload);
 
   const encrypted = await publicKey.encrypt(pKey, buffer);
@@ -45,20 +49,20 @@ test('RSA encrypt decrypt', async t => {
   t.is(result, payload);
 });
 
-test('Key hash', async t => {
+test("Key hash", async (t) => {
   const key = await privateKey.generate();
   const pKey = await privateKey.toPublicKey(key);
   const hash = await publicKey.toHash(pKey);
   t.truthy(hash);
 });
 
-test('Load PEM Key', async t => {
+test("Load PEM Key", async (t) => {
   const key = await privateKey.fromPEM(pemKey);
   const pem = await privateKey.toPEM(key);
   t.is(pem, pemKey);
 });
 
-test('Private key conversion', async t => {
+test("Private key conversion", async (t) => {
   const key = await privateKey.generate();
   const hash = await privateKey.toHash(key);
 
@@ -68,8 +72,8 @@ test('Private key conversion', async t => {
   t.is(hash, hash2);
 });
 
-test('base64url conversion', t => {
-  const data = 'Hello, 你好!';
+test("base64url conversion", (t) => {
+  const data = "Hello, 你好!";
   const encoded = base64url.fromString(data);
 
   const buffer = base64url.toUint8(encoded);
@@ -78,7 +82,7 @@ test('base64url conversion', t => {
   const decoded = base64url.toString(encoded2);
   t.is(data, decoded);
 });
-test('BigInt conversion', async t => {
+test("BigInt conversion", async (t) => {
   const key = await privateKey.fromPEM(pemKey);
   const jwk = await privateKey.toJWK(key);
 
@@ -92,19 +96,19 @@ test('BigInt conversion', async t => {
   t.is(n, pemKeyV.n);
 });
 
-test('BigInt consistency', t => {
-  const e = base64url.toBigInt('AQAB');
+test("BigInt consistency", (t) => {
+  const e = base64url.toBigInt("AQAB");
   const e2 = BigInt(65537);
   t.is(e, e2);
   const es = base64url.fromBigInt(e2);
-  t.is(es, 'AQAB');
+  t.is(es, "AQAB");
 
   const ps = base64url.fromBigInt(pemKeyV.p);
   const p2 = base64url.toBigInt(ps);
   t.is(p2, pemKeyV.p);
 });
 
-test('Key compression 1024', async t => {
+test("Key compression 1024", async (t) => {
   const key = await privateKey.fromPEM(pemKey);
   const jwk = await privateKey.toJWK(key);
   const json = await privateKey.toJSON(key);
@@ -127,7 +131,7 @@ test('Key compression 1024', async t => {
   t.deepEqual(jwk, jwk2);
 });
 
-test('Key compression 4096', async t => {
+test("Key compression 4096", async (t) => {
   const key = await privateKey.generate();
   const jwk = await privateKey.toJWK(key);
   const json = await privateKey.toJSON(key);
@@ -136,7 +140,7 @@ test('Key compression 4096', async t => {
   t.deepEqual(jwk, jwk2);
 });
 
-test('OpenSSH public key', async t => {
+test("OpenSSH public key", async (t) => {
   const pubKey = await publicKey.fromOpenSSH(sshPubKey);
   const hash = await publicKey.toHash(pubKey);
 

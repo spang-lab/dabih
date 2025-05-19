@@ -11,7 +11,7 @@ import useKey from "@/lib/hooks/key";
 export default function Members({ inode }: { inode: InodeMembers }) {
   const parents = useFiles((state) => state.parents);
   const searchStatus = useFiles((state) => state.searchStatus);
-  const { user } = useFinder();
+  const { user, remove } = useFinder();
   const download = useTransfers((state => state.download));
   const key = useKey();
   if (!user || searchStatus !== "idle") {
@@ -83,6 +83,7 @@ export default function Members({ inode }: { inode: InodeMembers }) {
         <button
           type="button"
           disabled={!hasWrite || !isFileOrDir}
+          onClick={() => remove()}
           className="w-full p-2 text-white bg-red rounded-sm disabled:bg-red/50 disabled:cursor-not-allowed inline-flex items-center"
         >
           <Trash2 className="mr-2" size={24} />

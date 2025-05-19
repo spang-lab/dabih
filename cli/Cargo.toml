@@ -1,49 +1,21 @@
 [package]
 name = "dabih"
-description = "Command Line Interface for dabih"
-authors = ["Michael Huttner<michael@mhuttner.com>"]
-version = "1.15.3"
-edition = "2021"
-license = "MIT"
-readme = "README.md"
-homepage = "https://github.com/spang-lab/dabih"
-repository = "https://github.com/spang-lab/dabih"
-keywords = ["cli", "dabih"]
-categories = ["command-line-utilities"]
-
-[features]
-default = []
-
-[lib]
-name = "dabih"
-path = "src/lib.rs"
-
-[[bin]]
-name = "dabih"
-path = "src/main.rs"
-
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Michael Huttner <michael@mhuttner.com>"]
+version = "0.1.0"
+edition = "2024"
 
 [dependencies]
-anyhow = "1.0.72"
-base64 = "0.21.2"
-clap = { version = "4.3.21", features = ["derive"] }
-flate2 = "1.0.27"
-glob = "0.3.1"
-home = "0.5.5"
-inquire = "0.6.2"
-openssl = { version ="0.10.59", features=["vendored"] }
-pbr = "1.1.1"
-reqwest = { version = "0.11.18", features = ["json", "multipart"] }
-serde = { version = "1.0.183", features = ["derive"] }
-serde_json = "1.0.104"
-serde_yaml = "0.9.25"
-tokio = { version = "1.29.1", features = ["full"] }
-url = "2.4.0"
-zip = "0.6.6"
-openssh = { version = "0.10.0", optional = true }
-openssh-sftp-client = {version = "0.14.0", optional = true }
-sha2 = "0.10.7"
-clap_complete = "4.4.1"
-rand = "0.8.5"
+futures = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.8"
+tokio = { version = "1.21", features = ["fs", "io-util", "macros", "rt-multi-thread"] }
+reqwest = { version = "0.10", features = ["stream", "json"] }
+openapi = { version = "0.1.0", path = "openapi" }
+rsa = "0.9.8"
+sha2 = "0.10.9"
+aes = "0.8.4"
+cbc = "0.1.2"
+thiserror = "2.0.12"
+
+

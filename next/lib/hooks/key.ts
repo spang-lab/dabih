@@ -120,6 +120,7 @@ export default function useKey() {
     };
   }
   return {
+    key: null,
     hash: key.hash,
     status: key.status,
     sub: key.sub,

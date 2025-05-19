@@ -1176,6 +1176,8 @@
 				"type": "oauth2",
 				"flows": {
 					"authorizationCode": {
+						"tokenUrl": "https://example.com/oauth/token",
+						"authorizationUrl": "https://example.com/oauth/authorize",
 						"scopes": {
 							"dabih:admin": "Allow the user to perform admin actions in dabih",
 							"dabih:api": "Allow access to the dataset API",

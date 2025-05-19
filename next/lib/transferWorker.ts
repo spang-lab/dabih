@@ -148,6 +148,17 @@ async function handleUpload(transfer: Upload) {
 
 const handles = new Map<string, FileSystemHandle>();
 
+async function getRootHandle(id: string) {
+  const handle = handles.get(id);
+  if (handle) {
+    return handle as FileSystemDirectoryHandle;
+  }
+  const rootHandle = await navigator.storage.getDirectory();
+  const newHandle = await rootHandle.getDirectoryHandle(id, { create: true });
+  handles.set(id, newHandle);
+  return newHandle;
+}
+
 async function createHandles(
   node: InodeTree,
   parentHandle: FileSystemDirectoryHandle,
@@ -204,7 +215,7 @@ async function handleDownload(transfer: Download) {
           `Failed to list tree for ${transfer.mnemonic}`,
         );
       }
-      const rootHandle = await navigator.storage.getDirectory();
+      const rootHandle = await getRootHandle(transfer.id);
       const files = await createHandles(tree, rootHandle);
       const size = files.reduce((acc, file) => {
         if (file.data) {
@@ -317,14 +328,13 @@ async function handleDownload(transfer: Download) {
     case "finishing": {
       const { mnemonic } = transfer;
 
-      const root = await navigator.storage.getDirectory();
       const handle = handles.get(mnemonic);
+      handles.clear();
       if (!handle) {
-        return toError(transfer, "Failed to get root handle");
+        return toError(transfer, "Failed to get handle");
       }
       if (handle.kind === "file") {
         const file = await (handle as FileSystemFileHandle).getFile();
-        await root.removeEntry(handle.name);
         return {
           ...transfer,
           status: "complete" as DownloadStatus,
@@ -337,7 +347,6 @@ async function handleDownload(transfer: Download) {
       await addToZip(directory, "", zip);
       const blob = await zip.generateAsync({ type: "blob" });
       const file = new File([blob], `${mnemonic}.zip`);
-      await root.removeEntry(directory.name, { recursive: true });
 
       return {
         ...transfer,
