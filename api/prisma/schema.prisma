@@ -13,7 +13,6 @@ datasource db {
 model User {
   id        BigInt      @id @default(autoincrement())
   sub       String      @unique
-  name      String
   email     String
   keys      PublicKey[]
   createdAt DateTime    @default(now())

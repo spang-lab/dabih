@@ -10,7 +10,7 @@ export default async function add(user: User, body: UserAddBody) {
   const { isAdmin } = user;
 
   if (!isAdmin && body.sub && user.sub !== body.sub) {
-    throw new AuthorizationError('Not authorized to this user');
+    throw new AuthorizationError('Not authorized to add a user');
   }
   const sub = body.sub ?? user.sub;
 

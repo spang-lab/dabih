@@ -235,6 +235,7 @@ name = "dabih"
 version = "0.1.0"
 dependencies = [
  "aes",
+ "base64ct",
  "cbc",
  "futures",
  "openapi",

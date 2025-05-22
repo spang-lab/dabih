@@ -1,32 +1,34 @@
-import { Provider } from 'next-auth/providers';
-import { User } from 'next-auth';
+import { Provider } from "next-auth/providers";
+import { User } from "next-auth";
 
-export default function SpangLabProvider(options:
-{ clientId: string, clientSecret: string }): Provider {
+export default function SpangLabProvider(options: {
+  clientId: string;
+  clientSecret: string;
+}): Provider {
   const { clientId, clientSecret } = options;
 
   const provider = {
     clientId,
     clientSecret,
-    id: 'acrux',
-    name: 'Spang Lab Acrux',
-    type: 'oauth',
+    id: "acrux",
+    name: "Spang Lab Acrux",
+    type: "oauth",
     wellKnown:
-      'https://auth.spang-lab.de/oidc/.well-known/openid-configuration',
-    endSession: 'https://auth.spang-lab.de/oidc/session/end',
+      "https://auth.spang-lab.de/oidc/.well-known/openid-configuration",
+    endSession: "https://auth.spang-lab.de/oidc/session/end",
     authorization: {
       params: {
-        scope: 'openid profile grouplist email',
+        scope: "openid profile grouplist email",
       },
     },
     idToken: true,
-    checks: ['pkce', 'state'],
+    checks: ["pkce", "state"],
     options,
-    profile(profile: { sub: String, name: String }): User {
+    profile(profile: { sub: string; name: string }): User {
       return {
         id: profile.sub,
         name: profile.name,
-        image: '',
+        image: "",
       } as User;
     },
   };

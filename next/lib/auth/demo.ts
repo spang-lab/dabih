@@ -37,11 +37,9 @@ export default function DemoProvider(): Provider {
       }
 
       return {
-        id,
         sub: id,
-        name: short,
-        email: `${id}@dabih.com`,
         scopes,
+        isAdmin,
       };
     },
   });

@@ -16,21 +16,24 @@ pub struct Config {
 
 #[derive(Debug)]
 pub struct Context {
+    path: PathBuf,
     config: Config,
-    keys: Vec<PathBuf>,
     private_key: Option<PrivateKey>,
     openapi_config: Configuration,
 }
 
-fn find_pem_files(path: &PathBuf) -> Result<Vec<PathBuf>> {
-    let mut pem_files = Vec::new();
+fn find_key(path: &PathBuf, fingerprints: Vec<String>) -> Result<Option<PrivateKey>> {
     for entry in path.read_dir()? {
         let entry = entry?;
         if entry.path().extension() == Some(std::ffi::OsStr::new("pem")) {
-            pem_files.push(entry.path());
+            let key = PrivateKey::from(entry.path())?;
+            let fingerprint = key.hash()?;
+            if fingerprints.contains(&fingerprint) {
+                return Ok(Some(key));
+            }
         }
     }
-    Ok(pem_files)
+    Ok(None)
 }
 
 fn normalize_url(url: &str) -> String {
@@ -54,8 +57,8 @@ impl Context {
             ..Default::default()
         };
         Self {
+            path: path::PathBuf::new(),
             config: Config { url, token },
-            keys: Vec::new(),
             private_key: None,
             openapi_config,
         }
@@ -78,11 +81,10 @@ impl Context {
             bearer_access_token: Some(config.token.clone()),
             ..Default::default()
         };
-        let keys = find_pem_files(&path)?;
 
         Ok(Self {
+            path,
             config,
-            keys,
             private_key: None,
             openapi_config,
         })
@@ -94,7 +96,13 @@ impl Context {
     pub async fn init(&mut self) -> Result<()> {
         match user_api::me(self.openapi()).await {
             Ok(user) => {
-                println!("User: {:?}", user);
+                let fingerprints = user
+                    .keys
+                    .iter()
+                    .map(|key| key.hash.clone())
+                    .collect::<Vec<_>>();
+                let key = find_key(&self.path, fingerprints)?;
+                dbg!(&key);
             }
             Err(_) => match util_api::healthy(self.openapi()).await {
                 Ok(_) => {
@@ -119,7 +127,7 @@ async fn test_invalid_url() -> Result<()> {
     let result = ctx.init().await;
     dbg!(&result);
     assert!(result.is_err());
-    assert!(matches!(result, Err(CliError::ConnectionError { url })));
+    assert!(matches!(result, Err(CliError::ConnectionError { url: _ })));
     Ok(())
 }
 #[tokio::test]

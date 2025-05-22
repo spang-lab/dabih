@@ -2,6 +2,7 @@ import { Provider } from "next-auth/providers";
 import { CredentialsSignin } from "next-auth";
 
 import CredentialsProvider from "next-auth/providers/credentials";
+import { User } from "../api/types";
 
 class NoTokenError extends CredentialsSignin {
   code = "no token";
@@ -38,9 +39,7 @@ export default function TokenProvider(): Provider {
         console.error(error);
         throw new InvalidTokenError();
       }
-      const user = await response.json();
-
-      console.log(user);
+      const user = (await response.json()) as User;
       return user;
     },
   });
