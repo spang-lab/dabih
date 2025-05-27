@@ -123,6 +123,28 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"AuthResponse": {
+				"properties": {
+					"sub": {
+						"type": "string",
+						"description": "The unique user sub"
+					},
+					"email": {
+						"type": "string",
+						"description": "The email of the user"
+					},
+					"token": {
+						"type": "string",
+						"description": "The JWT token for the user, only used when no email provider is configured"
+					}
+				},
+				"required": [
+					"sub",
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"PublicKey": {
 				"properties": {
 					"id": {
@@ -1254,6 +1276,46 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/user/auth": {
+			"post": {
+				"operationId": "authenticateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/user/add": {

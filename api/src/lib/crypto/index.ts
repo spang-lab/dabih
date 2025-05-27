@@ -6,6 +6,7 @@ import aesKey from './aesKey';
 import stream from './stream';
 import hash from './hash';
 import fileData from './fileData';
+import jwt from './jwt';
 
 const crypto = {
   privateKey,
@@ -15,6 +16,7 @@ const crypto = {
   base64url,
   aesKey,
   stream,
-  hash
+  hash,
+  jwt,
 };
 export default crypto;

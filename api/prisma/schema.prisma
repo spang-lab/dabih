@@ -13,7 +13,8 @@ datasource db {
 model User {
   id        BigInt      @id @default(autoincrement())
   sub       String      @unique
-  email     String
+  email     String      @unique
+  isAdmin   Boolean     @default(false)
   keys      PublicKey[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt

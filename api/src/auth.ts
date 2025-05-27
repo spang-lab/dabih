@@ -55,6 +55,8 @@ const verifyToken = async (request: Request, type: AuthType): Promise<User> => {
   const { host, protocol } = request;
   const audience = `${protocol}://${host}`;
   const secret = requireEnv('TOKEN_SECRET');
+  const tmp = jwt.decode(tokenStr, { complete: true });
+  console.log('Decoded jwt', JSON.stringify(tmp, null, 2));
   const decoded = jwt.verify(tokenStr, secret, {
     audience,
   });

@@ -2,15 +2,7 @@ import createClient from "openapi-fetch";
 
 import type { components, paths } from "./schema";
 type schemas = components["schemas"];
-
-interface ChunkUpload {
-  mnemonic: string;
-  hash: string;
-  start: number;
-  end: number;
-  size?: number;
-  data: Blob;
-}
+import { ChunkUpload } from "./types";
 
 const contentRange = (ck: ChunkUpload) => {
   if (!ck.size) {

@@ -4,6 +4,7 @@ import Router from '@koa/router';
 import logger from '#lib/logger';
 import { getEnv } from '#lib/env';
 import { createReadStream } from 'fs';
+import serve from 'koa-static';
 
 import { RegisterRoutes } from '../build/routes';
 
@@ -11,11 +12,14 @@ import { error, log, serialize } from './middleware';
 import { initFilesystem } from '#lib/fs';
 import { initInodes } from '#lib/database/inodes';
 import redis, { initRedis } from '#lib/redis';
+import { initEmail } from '#lib/email';
+import { resolve } from 'path';
 
 const app = async (port?: number) => {
   await initFilesystem();
   await initInodes();
   await initRedis();
+  initEmail();
   const app = new Koa();
   app.use(koaBody());
   app.use(log());
@@ -32,7 +36,8 @@ const app = async (port?: number) => {
   RegisterRoutes(apiRouter);
 
   const appRouter = new Router();
-
+  const baseDir = new URL('.', import.meta.url).pathname;
+  const staticPath = resolve(baseDir, '../dist');
   appRouter.get('/', (ctx) => {
     const docFile = './build/index.html';
     ctx.type = 'html';
@@ -41,6 +46,7 @@ const app = async (port?: number) => {
   });
   appRouter.use('/api/v1', apiRouter.routes(), apiRouter.allowedMethods());
 
+  app.use(serve(staticPath, {}));
   app.use(appRouter.routes()).use(appRouter.allowedMethods());
 
   const lPort = port?.toString() ?? getEnv('PORT', '3001');
