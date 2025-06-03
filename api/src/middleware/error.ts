@@ -1,7 +1,7 @@
-import logger from "#lib/logger";
-import { Context, Next } from "koa";
-import { ValidateError } from "@tsoa/runtime";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import logger from '#lib/logger';
+import { Context, Next } from 'koa';
+import { ValidateError } from '@tsoa/runtime';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 interface DabihError {
   message: string;
@@ -9,12 +9,11 @@ interface DabihError {
   details?: unknown;
 }
 
-declare module "koa" {
+declare module 'koa' {
   interface BaseContext {
     error: (error: DabihError | string) => void;
   }
 }
-
 
 const getStackMessage = (error: Error) => {
   const { stack } = error;
@@ -43,7 +42,7 @@ const error = async (ctx: Context, next: Next) => {
       }
       ctx.status = error.code ?? 500;
       logger.error(`${ctx.status}: ${error.message}`);
-      logger.verbose(error.details);
+      logger.verbose(`Error Details: ${JSON.stringify(error.details)}`);
 
       ctx.body = {
         message: error.message,
@@ -75,7 +74,7 @@ const error = async (ctx: Context, next: Next) => {
       });
       return;
     }
-    if ("code" in err && typeof err.code === 'number') {
+    if ('code' in err && typeof err.code === 'number') {
       ctx.error({
         message: err.message,
         code: err.code,
@@ -91,4 +90,3 @@ const error = async (ctx: Context, next: Next) => {
   }
 };
 export default () => error;
-

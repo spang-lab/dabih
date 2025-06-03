@@ -2,8 +2,10 @@
 CREATE TABLE "User" (
     "id" BIGSERIAL NOT NULL,
     "sub" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "emailVerified" TIMESTAMP(3),
+    "scope" TEXT NOT NULL,
+    "lastAuthAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -60,7 +62,7 @@ CREATE TABLE "Chunk" (
 CREATE TABLE "Inode" (
     "id" BIGSERIAL NOT NULL,
     "mnemonic" TEXT NOT NULL,
-    "type" BIGINT NOT NULL,
+    "type" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "tag" TEXT,
     "dataId" BIGINT,
@@ -76,7 +78,7 @@ CREATE TABLE "Member" (
     "id" BIGSERIAL NOT NULL,
     "sub" TEXT NOT NULL,
     "inodeId" BIGINT NOT NULL,
-    "permission" BIGINT NOT NULL,
+    "permission" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -110,6 +112,9 @@ CREATE TABLE "Token" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_sub_key" ON "User"("sub");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "PublicKey_hash_key" ON "PublicKey"("hash");

@@ -1,7 +1,7 @@
 
-import Transfers from "./transfers/Transfers";
+import Transfers from "@/pages/transfers/Transfers";
 
-export default function Container({ children }) {
+export default function Container({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-gray-50 h-full">
       <Transfers />

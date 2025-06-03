@@ -4,3 +4,4 @@ export * from './token';
 export * from './upload';
 export * from './user';
 export * from './job';
+export * from './auth';

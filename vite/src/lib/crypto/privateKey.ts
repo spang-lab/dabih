@@ -14,7 +14,7 @@ const generate = async () => {
       hash: "SHA-256",
     },
     true,
-    ["encrypt", "decrypt"],
+    ["encrypt", "decrypt", "sign"],
   );
   return privateKey;
 };
@@ -31,7 +31,7 @@ const fromJWK = async (keyData: object) =>
       hash: "SHA-256",
     },
     true,
-    ["decrypt"],
+    ["decrypt", "sign"],
   );
 
 const toUint8 = async (privateKey: CryptoKey) =>
@@ -47,7 +47,7 @@ const toPEM = async (privateKey: CryptoKey) => {
   return `${pkcs8Header}\n${content}\n${pkcs8Footer}`;
 };
 
-const fromUint8 = async (keyData: ArrayBuffer) =>
+const fromUint8 = async (keyData: BufferSource) =>
   crypto.subtle.importKey(
     "pkcs8",
     keyData,
@@ -56,7 +56,7 @@ const fromUint8 = async (keyData: ArrayBuffer) =>
       hash: "SHA-256",
     },
     true,
-    ["decrypt"],
+    ["decrypt", "sign"],
   );
 
 const fromBase64 = async (base64: string) => {
@@ -144,7 +144,7 @@ const toPublicKey = async (privateKey: CryptoKey) => {
 
 const decrypt = async (
   privateKey: CryptoKey,
-  data: ArrayBuffer,
+  data: BufferSource,
 ): Promise<ArrayBuffer> =>
   crypto.subtle.decrypt(
     {

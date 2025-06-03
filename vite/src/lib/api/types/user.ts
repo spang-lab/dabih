@@ -68,10 +68,6 @@ export interface UserAddBody {
    */
   sub?: string;
   /**
-   * The name of the user
-   */
-  name: string;
-  /**
    * The email of the user
    */
   email: string;
@@ -111,13 +107,21 @@ export interface UserResponse {
    */
   sub: string;
   /**
-   * The name of the user
-   */
-  name: string;
-  /**
    * The email of the user
    */
   email: string;
+  /**
+   * The time the email was verified
+   */
+  emailVerified: Date | null;
+  /**
+   * the list of scopes the user has
+   */
+  scope: string;
+  /**
+   * The time of the last authentication
+   */
+  lastAuthAt: Date;
   /**
    * The date the user was created
    */

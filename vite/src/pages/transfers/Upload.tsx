@@ -1,4 +1,4 @@
-import { Bytes } from "@/app/util";
+import { Bytes } from "@/util";
 import useTransfers from "@/lib/hooks/transfers";
 import type { Upload } from "@/lib/hooks/transfers";
 import { Upload as UploadIcon, X } from "react-feather";

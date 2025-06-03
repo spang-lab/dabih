@@ -68,10 +68,6 @@ export interface UserAddBody {
    */
   sub?: string;
   /**
-   * The name of the user
-   */
-  name: string;
-  /**
    * The email of the user
    */
   email: string;
@@ -85,6 +81,21 @@ export interface UserAddBody {
   isRootKey?: boolean;
 }
 
+export interface AuthResponse {
+  /**
+   * The unique user sub
+   */
+  sub: string;
+  /**
+   * The email of the user
+   */
+  email: string;
+  /**
+   * The JWT token for the user, only used when no email provider is configured
+   */
+  token?: string;
+}
+
 export interface UserResponse {
   /**
    * The database id of the user
@@ -96,13 +107,21 @@ export interface UserResponse {
    */
   sub: string;
   /**
-   * The name of the user
-   */
-  name: string;
-  /**
    * The email of the user
    */
   email: string;
+  /**
+   * The time the email was verified
+   */
+  emailVerified: Date | null;
+  /**
+   * the list of scopes the user has
+   */
+  scope: string;
+  /**
+   * The time of the last authentication
+   */
+  lastAuthAt: Date;
   /**
    * The date the user was created
    */

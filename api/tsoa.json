@@ -17,13 +17,16 @@
       "jwt": {
         "type": "oauth2",
         "flow": "accessCode",
-        "tokenUrl": "https://example.com/oauth/token",
-        "authorizationUrl": "https://example.com/oauth/authorize",
         "scopes": {
           "dabih:admin": "Allow the user to perform admin actions in dabih",
           "dabih:api": "Allow access to the dataset API",
           "dabih:upload": "Allow the user to upload files"
         }
+      },
+      "rsa": {
+        "type": "http",
+        "name": "Authorization",
+        "scheme": "bearer"
       }
     },
     "specMerging": "recursive",

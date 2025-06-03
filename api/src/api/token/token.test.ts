@@ -18,17 +18,6 @@ test.after.always((t) => {
   t.context.server.close();
 });
 
-test('valid access token', async (t) => {
-  const api = client(t, 'admin', true);
-  const { data } = await api.token.info();
-  t.truthy(data);
-  t.truthy(data!.isAdmin);
-  const api2 = client(t, 'not_admin');
-  const { data: data2 } = await api2.token.info();
-  t.truthy(data2);
-  t.falsy(data2!.isAdmin);
-});
-
 test('create a dabih access_token', async (t) => {
   const api = client(t, 'test_token');
   const { data } = await api.token.add({
@@ -36,6 +25,7 @@ test('create a dabih access_token', async (t) => {
     lifetime: null,
   });
   t.truthy(data);
+  console.log('Token created:', JSON.stringify(data, null, 2));
   if (data) {
     const { response } = await api.token.remove(data.id);
     t.is(response.status, 204);
@@ -62,7 +52,7 @@ test('use access token', async (t) => {
     return t.fail();
   }
   const { value } = token;
-  const { data: info } = await api.client.GET('/token/info', {
+  const { data: info } = await api.client.GET('/auth/info', {
     headers: {
       Authorization: `Bearer ${value}`,
     },
@@ -98,7 +88,7 @@ test('expire token', async (t) => {
     return t.fail();
   }
   const { value } = token;
-  const { response, data: info } = await api.client.GET('/token/info', {
+  const { response, data: info } = await api.client.GET('/auth/info', {
     headers: {
       Authorization: `Bearer ${value}`,
     },

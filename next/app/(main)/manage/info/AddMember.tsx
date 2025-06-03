@@ -28,10 +28,9 @@ export default function AddMember(
     .filter((user) => user.keys.find((k) => k.enabled))
     .filter((user) => !memberIds.has(user.sub))
     .filter((user) => {
-      const n = user.name.toLowerCase().replace(/\s/g, '');
       const e = user.email.toLowerCase().replace(/\s/g, '');
       const s = user.sub.toLowerCase().replace(/\s/g, '');
-      return !q.length || n.includes(q) || e.includes(q) || s.includes(q);
+      return !q.length || e.includes(q) || s.includes(q);
     });
   const display = (o: UserResponse | null) => {
     if (!o) {
@@ -70,9 +69,6 @@ export default function AddMember(
             >
               <User className="inline-block" size={14} />
               <span className="text-blue font-semibold">
-                {user.name}
-              </span>
-              <span className="text-gray-600 px-3">
                 {user.email}
               </span>
               <span className="text-gray-600 px-3">

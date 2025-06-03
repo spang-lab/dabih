@@ -30,16 +30,19 @@ export const client = (t: Test, sub: string, admin?: boolean) => {
   const host = `http://localhost:${port}`;
   const baseUrl = `${host}/api/v1`;
 
-  let scope = "dabih:upload dabih:api";
+  let scope = 'dabih:upload dabih:api';
   if (admin) {
-    scope += " dabih:admin";
+    scope += ' dabih:admin';
   }
-  const tokenSecret = requireEnv("TOKEN_SECRET");
-  const token = jwt.sign({
-    sub: sub ?? "admin",
-    scope,
-    aud: host,
-  }, tokenSecret);
+  const tokenSecret = requireEnv('TOKEN_SECRET');
+  const token = jwt.sign(
+    {
+      sub: sub ?? 'admin',
+      scope,
+      aud: host,
+    },
+    tokenSecret,
+  );
 
   const middleware: Middleware = {
     onRequest({ request }) {
@@ -58,7 +61,8 @@ export const client = (t: Test, sub: string, admin?: boolean) => {
     const oneMiB = 1024 * 1024;
     const chunkSize = info?.chunkSize ?? 2 * oneMiB;
     const data = info?.data ?? new Blob([await crypto.random.getToken(10)]);
-    const fileName = info?.fileName ?? `unnamed_file_${await crypto.random.getToken(4)}.txt`;
+    const fileName =
+      info?.fileName ?? `unnamed_file_${await crypto.random.getToken(4)}.txt`;
     const directory = info?.directory ?? undefined;
 
     const uploadInfo = {
@@ -82,7 +86,7 @@ export const client = (t: Test, sub: string, admin?: boolean) => {
         size: data.size,
         hash: await crypto.hash.blob(chunkData),
         data: chunkData,
-      }
+      };
       hasher.update(chunk.hash, 'base64url');
       const { error } = await upload.chunk(chunk);
       if (error) {
@@ -105,7 +109,7 @@ export const client = (t: Test, sub: string, admin?: boolean) => {
       t.fail(error);
     }
     t.context.directories[name] = directory.mnemonic;
-  }
+  };
 
   const addUser = async (sub: string, root?: boolean) => {
     const privateKey = await crypto.privateKey.generate();
@@ -113,7 +117,6 @@ export const client = (t: Test, sub: string, admin?: boolean) => {
     const jwk = crypto.publicKey.toJwk(publicKey);
     const user = {
       sub,
-      name: sub,
       email: `${sub}@test.com`,
       key: jwk,
       isRootKey: root,
@@ -125,7 +128,6 @@ export const client = (t: Test, sub: string, admin?: boolean) => {
     t.context.users[sub] = privateKey;
   };
 
-
   return {
     ...api,
     test: {
@@ -134,5 +136,4 @@ export const client = (t: Test, sub: string, admin?: boolean) => {
       addUser,
     },
   };
-}
-
+};

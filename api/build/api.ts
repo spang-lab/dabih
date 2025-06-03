@@ -23,11 +23,14 @@ const init = (baseUrl: string) => {
   const c = createClient<paths>({
     baseUrl,
   });
+  const auth = {
+    info: () => c.GET('/auth/info'),
+    signIn: (email: string) => c.POST('/auth/signIn', { body: { email } }),
+  };
 
   const token = {
-    info: () => c.GET('/token/info'),
     add: (body: schemas['TokenAddBody']) => c.POST('/token/add', { body }),
-    remove: (id: number) => c.POST('/token/remove', { body: { tokenId: id } }),
+    remove: (id: string) => c.POST('/token/remove', { body: { tokenId: id } }),
     list: () => c.GET('/token/list'),
   };
   const user = {
@@ -143,6 +146,7 @@ const init = (baseUrl: string) => {
 
   return {
     client: c,
+    auth,
     token,
     user,
     fs,

@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { getEnv } from './env';
+import logger from './logger';
 
 let resend: Resend | null = null;
 let fromEmail: string | null = null;
@@ -7,9 +8,8 @@ let fromEmail: string | null = null;
 export function initEmail() {
   const token = getEnv('RESEND_TOKEN');
   if (!token) {
-    throw new Error(
-      'RESEND_TOKEN is not set, email functionality will not work',
-    );
+    logger.warn('RESEND_TOKEN is not set, email functionality will not work');
+    return;
   }
   resend = new Resend(token);
   fromEmail = getEnv('RESEND_EMAIL', 'dabih@resend.dev');

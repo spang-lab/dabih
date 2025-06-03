@@ -27,7 +27,7 @@ export default function LoadKey() {
     const { keys } = user;
     const key = keys.find((k) => k.hash === hash);
     if (!key) {
-      setError(`Key with hash ${hash} does not belong to user ${user.name}`);
+      setError(`Key with hash ${hash} does not belong to user ${user.email}`);
       return;
     }
     if (!key.enabled) {

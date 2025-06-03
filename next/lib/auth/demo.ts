@@ -37,6 +37,7 @@ export default function DemoProvider(): Provider {
       }
 
       return {
+        id,
         sub: id,
         scopes,
         isAdmin,

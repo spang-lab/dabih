@@ -123,28 +123,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AuthResponse": {
-				"properties": {
-					"sub": {
-						"type": "string",
-						"description": "The unique user sub"
-					},
-					"email": {
-						"type": "string",
-						"description": "The email of the user"
-					},
-					"token": {
-						"type": "string",
-						"description": "The JWT token for the user, only used when no email provider is configured"
-					}
-				},
-				"required": [
-					"sub",
-					"email"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"PublicKey": {
 				"properties": {
 					"id": {
@@ -206,13 +184,24 @@
 						"type": "string",
 						"description": "The unique user sub"
 					},
-					"name": {
-						"type": "string",
-						"description": "The name of the user"
-					},
 					"email": {
 						"type": "string",
 						"description": "The email of the user"
+					},
+					"emailVerified": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true,
+						"description": "The time the email was verified"
+					},
+					"scope": {
+						"type": "string",
+						"description": "the list of scopes the user has"
+					},
+					"lastAuthAt": {
+						"type": "string",
+						"format": "date-time",
+						"description": "The time of the last authentication"
 					},
 					"createdAt": {
 						"type": "string",
@@ -235,8 +224,10 @@
 				"required": [
 					"id",
 					"sub",
-					"name",
 					"email",
+					"emailVerified",
+					"scope",
+					"lastAuthAt",
 					"createdAt",
 					"updatedAt",
 					"keys"
@@ -295,10 +286,6 @@
 						"type": "string",
 						"description": "The unique user sub\nif undefined the sub from the auth token will be used"
 					},
-					"name": {
-						"type": "string",
-						"description": "The name of the user"
-					},
 					"email": {
 						"type": "string",
 						"description": "The email of the user"
@@ -313,7 +300,6 @@
 					}
 				},
 				"required": [
-					"name",
 					"email",
 					"key"
 				],
@@ -648,37 +634,6 @@
 						"type": "object"
 					}
 				]
-			},
-			"User": {
-				"description": "User is the type that represents a user in the system.",
-				"properties": {
-					"sub": {
-						"type": "string",
-						"description": "The subject of the user, a unique identifier",
-						"example": "mhuttner"
-					},
-					"scopes": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "The scopes the user has",
-						"example": [
-							"dabih:api"
-						]
-					},
-					"isAdmin": {
-						"type": "boolean",
-						"description": "Does the user have the dabih:admin scope"
-					}
-				},
-				"required": [
-					"sub",
-					"scopes",
-					"isAdmin"
-				],
-				"type": "object",
-				"additionalProperties": false
 			},
 			"Token": {
 				"properties": {
@@ -1186,6 +1141,79 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"Scope": {
+				"type": "string",
+				"enum": [
+					"dabih:admin",
+					"dabih:api",
+					"dabih:upload"
+				]
+			},
+			"User": {
+				"description": "User is the type that represents a user in the system.",
+				"properties": {
+					"sub": {
+						"type": "string",
+						"description": "The subject of the user, a unique identifier",
+						"example": "mhuttner"
+					},
+					"scopes": {
+						"items": {
+							"$ref": "#/components/schemas/Scope"
+						},
+						"type": "array",
+						"description": "The scopes the user has",
+						"example": [
+							"dabih:api"
+						]
+					},
+					"isAdmin": {
+						"type": "boolean",
+						"description": "Does the user have the dabih:admin scope"
+					}
+				},
+				"required": [
+					"sub",
+					"scopes",
+					"isAdmin"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuthResponse": {
+				"properties": {
+					"sub": {
+						"type": "string",
+						"description": "The unique user sub"
+					},
+					"email": {
+						"type": "string",
+						"description": "The email of the user"
+					},
+					"token": {
+						"type": "string",
+						"description": "The JWT token for the user, only used when no email provider is configured"
+					}
+				},
+				"required": [
+					"sub",
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SignInBody": {
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -1198,8 +1226,6 @@
 				"type": "oauth2",
 				"flows": {
 					"authorizationCode": {
-						"tokenUrl": "https://example.com/oauth/token",
-						"authorizationUrl": "https://example.com/oauth/authorize",
 						"scopes": {
 							"dabih:admin": "Allow the user to perform admin actions in dabih",
 							"dabih:api": "Allow access to the dataset API",
@@ -1207,6 +1233,11 @@
 						}
 					}
 				}
+			},
+			"rsa": {
+				"type": "http",
+				"name": "Authorization",
+				"scheme": "bearer"
 			}
 		}
 	},
@@ -1276,46 +1307,6 @@
 				],
 				"security": [],
 				"parameters": []
-			}
-		},
-		"/user/auth": {
-			"post": {
-				"operationId": "authenticateUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AuthResponse"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"email": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"email"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/user/add": {
@@ -1813,35 +1804,6 @@
 				"parameters": []
 			}
 		},
-		"/token/info": {
-			"get": {
-				"operationId": "tokenInfo",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Token"
-				],
-				"security": [
-					{
-						"api_key": []
-					},
-					{
-						"jwt": []
-					}
-				],
-				"parameters": []
-			}
-		},
 		"/token/add": {
 			"post": {
 				"operationId": "addToken",
@@ -1952,8 +1914,7 @@
 							"schema": {
 								"properties": {
 									"tokenId": {
-										"type": "number",
-										"format": "double"
+										"type": "string"
 									}
 								},
 								"required": [
@@ -2719,6 +2680,67 @@
 						}
 					}
 				]
+			}
+		},
+		"/auth/info": {
+			"get": {
+				"operationId": "authInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"api_key": []
+					},
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/signIn": {
+			"post": {
+				"operationId": "signIn",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignInBody"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/upload/{mnemonic}/chunk": {

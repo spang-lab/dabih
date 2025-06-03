@@ -1,28 +1,19 @@
-import { StrictMode, Suspense } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import routes from "virtual:generated-pages-react"
-import { BrowserRouter, useRoutes } from 'react-router-dom'
-import Header from './Header'
-import Footer from './Footer'
+import { BrowserRouter } from 'react-router-dom'
+import { SessionWrapper } from './Session'
 
-function App() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      {useRoutes(routes)}
-    </Suspense>
-  );
-}
-
+import App from './App'
 
 const root = document.getElementById('root')!;
 
 createRoot(root).render(
   <StrictMode>
     <BrowserRouter>
-      <Header />
-      <App />
-      <Footer />
+      <SessionWrapper>
+        <App />
+      </SessionWrapper>
     </BrowserRouter>
   </StrictMode>,
 )

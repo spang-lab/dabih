@@ -31,22 +31,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/user/auth": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["authenticateUser"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/user/add": {
         parameters: {
             query?: never;
@@ -231,22 +215,6 @@ export interface paths {
             cookie?: never;
         };
         get: operations["unfinishedUploads"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/token/info": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["tokenInfo"];
         put?: never;
         post?: never;
         delete?: never;
@@ -594,6 +562,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["authInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/signIn": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["signIn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/upload/{mnemonic}/chunk": {
         parameters: {
             query?: never;
@@ -643,14 +643,6 @@ export interface components {
                 };
             };
         };
-        AuthResponse: {
-            /** @description The unique user sub */
-            sub: string;
-            /** @description The email of the user */
-            email: string;
-            /** @description The JWT token for the user, only used when no email provider is configured */
-            token?: string;
-        };
         PublicKey: {
             /**
              * Format: bigint
@@ -681,10 +673,20 @@ export interface components {
             id: string;
             /** @description The unique user sub */
             sub: string;
-            /** @description The name of the user */
-            name: string;
             /** @description The email of the user */
             email: string;
+            /**
+             * Format: date-time
+             * @description The time the email was verified
+             */
+            emailVerified: Date | null;
+            /** @description the list of scopes the user has */
+            scope: string;
+            /**
+             * Format: date-time
+             * @description The time of the last authentication
+             */
+            lastAuthAt: Date;
             /**
              * Format: date-time
              * @description The date the user was created
@@ -719,8 +721,6 @@ export interface components {
             /** @description The unique user sub
              *     if undefined the sub from the auth token will be used */
             sub?: string;
-            /** @description The name of the user */
-            name: string;
             /** @description The email of the user */
             email: string;
             /** @description The public key of the user as a JWK */
@@ -868,23 +868,6 @@ export interface components {
         };
         FileUpload: components["schemas"]["File"] & {
             data: components["schemas"]["ChunkData"];
-        };
-        /** @description User is the type that represents a user in the system. */
-        User: {
-            /**
-             * @description The subject of the user, a unique identifier
-             * @example mhuttner
-             */
-            sub: string;
-            /**
-             * @description The scopes the user has
-             * @example [
-             *       "dabih:api"
-             *     ]
-             */
-            scopes: string[];
-            /** @description Does the user have the dabih:admin scope */
-            isAdmin: boolean;
         };
         Token: {
             /**
@@ -1041,6 +1024,36 @@ export interface components {
             /** @description The list of inodes that match the search query */
             inodes: components["schemas"]["Inode"][];
         };
+        /** @enum {string} */
+        Scope: "dabih:admin" | "dabih:api" | "dabih:upload";
+        /** @description User is the type that represents a user in the system. */
+        User: {
+            /**
+             * @description The subject of the user, a unique identifier
+             * @example mhuttner
+             */
+            sub: string;
+            /**
+             * @description The scopes the user has
+             * @example [
+             *       "dabih:api"
+             *     ]
+             */
+            scopes: components["schemas"]["Scope"][];
+            /** @description Does the user have the dabih:admin scope */
+            isAdmin: boolean;
+        };
+        AuthResponse: {
+            /** @description The unique user sub */
+            sub: string;
+            /** @description The email of the user */
+            email: string;
+            /** @description The JWT token for the user, only used when no email provider is configured */
+            token?: string;
+        };
+        SignInBody: {
+            email: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -1088,32 +1101,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DabihInfo"];
-                };
-            };
-        };
-    };
-    authenticateUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    email: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthResponse"];
                 };
             };
         };
@@ -1388,26 +1375,6 @@ export interface operations {
             };
         };
     };
-    tokenInfo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["User"];
-                };
-            };
-        };
-    };
     addToken: {
         parameters: {
             query?: never;
@@ -1462,8 +1429,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** Format: double */
-                    tokenId: number;
+                    tokenId: string;
                 };
             };
         };
@@ -1874,6 +1840,50 @@ export interface operations {
                 };
                 content: {
                     "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    authInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+        };
+    };
+    signIn: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignInBody"];
+            };
+        };
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthResponse"];
                 };
             };
         };

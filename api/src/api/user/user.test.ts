@@ -25,9 +25,8 @@ test('add user', async (t) => {
   const jwk = crypto.publicKey.toJwk(publicKey);
 
   const { response, data: user } = await api.user.add({
-    sub: 'test',
-    name: 'test',
-    email: 'test',
+    sub: 'adduser',
+    email: 'adduser@test.com',
     key: jwk,
   });
 
@@ -43,9 +42,8 @@ test('add user', async (t) => {
 test('add invalid key', async (t) => {
   const api = client(t, 'test_user', true);
   const { error, response } = await api.user.add({
-    sub: 'testuser',
-    name: 'test',
-    email: 'test',
+    sub: 'invalid_key',
+    email: 'invalid_key@test.com',
     key: {
       kty: 'RSA',
       e: 'AQAB',
@@ -63,8 +61,7 @@ test('check key hash', async (t) => {
   const jwk = crypto.publicKey.toJwk(publicKey);
   const hash = crypto.publicKey.toHash(publicKey);
   const { response, data: user } = await api.user.add({
-    name: 'test',
-    email: 'test',
+    email: 'test_hash@test.com',
     key: jwk,
   });
   t.is(response.status, 201);
@@ -84,8 +81,7 @@ test('add user with two keys', async (t) => {
 
   const { response, data: user } = await api.user.add({
     sub,
-    name: 'test',
-    email: 'test',
+    email: 'testuser_2keys@test.com',
     key: jwk,
   });
   t.is(response.status, 201);
@@ -116,8 +112,7 @@ test('add the same key twice', async (t) => {
   const sub = 'testuser_key_collide';
   const { response, data: user } = await api.user.add({
     sub,
-    name: 'test',
-    email: 'test',
+    email: `${sub}@test.com`,
     key: jwk,
   });
   t.is(response.status, 201);
@@ -143,8 +138,7 @@ test('remove key', async (t) => {
   const sub = 'testuser_key_remove';
   const { response, data: user } = await api.user.add({
     sub,
-    name: 'test',
-    email: 'test',
+    email: `${sub}@test.com`,
     key: jwk,
   });
   t.is(response.status, 201);
@@ -170,8 +164,7 @@ test('disable/enable key', async (t) => {
   const sub = 'testuser_key_disable';
   const { response, data: user } = await api.user.add({
     sub,
-    name: 'test',
-    email: 'test',
+    email: `${sub}@test.com`,
     key: jwk,
   });
   t.is(response.status, 201);

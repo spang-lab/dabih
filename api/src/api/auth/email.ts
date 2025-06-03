@@ -15,7 +15,7 @@ export default async function auth(email: string): Promise<AuthResponse> {
   const token = crypto.jwt.createEmailToken({ sub, email });
 
   if (!hasEmail()) {
-    logger.warn('Email service is not available returning token directly');
+    logger.warn('Email service is not available. Returning token directly');
     return {
       token,
       sub,
@@ -23,6 +23,6 @@ export default async function auth(email: string): Promise<AuthResponse> {
     };
   }
   throw new Error(
-    'unimplemented auth flow, email service is required for this operation',
+    'Unimplemented auth flow, email service is required for this operation',
   );
 }

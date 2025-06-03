@@ -1,4 +1,4 @@
-import { Bytes } from "@/app/util";
+import { Bytes } from "@/util";
 import useTransfers from "@/lib/hooks/transfers";
 import type { Download } from "@/lib/hooks/transfers";
 import { Download as DownloadIcon, X } from "react-feather";

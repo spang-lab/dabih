@@ -16,11 +16,12 @@ export default async function add(user: User, body: UserAddBody) {
 
   const key = convertKey(user, body.key, body.isRootKey);
   await getHome(sub);
+  const defaultScope = ['dabih:upload', 'dabih:api'].join(' ');
   const result = await db.user.create({
     data: {
       sub,
-      name: body.name,
       email: body.email,
+      scope: defaultScope,
       keys: {
         create: key,
       },

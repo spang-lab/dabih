@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 import {
   UserPlus,
   Key,
-  UploadCloud,
   Share2,
   Home,
   User as UserIcon,
@@ -15,6 +14,8 @@ import {
 import NavItem from './NavItem';
 import useKey from '@/lib/hooks/key';
 import { useLocation } from 'react-router';
+import useUser from './lib/hooks/user';
+import { useEffect } from 'react';
 
 function NavLine() {
   return <div className="flex-auto mx-3 h-6 border-t-2 border-gray-300" />;
@@ -30,10 +31,17 @@ type PageStatus = 'complete' | 'enabled' | 'disabled' | 'active';
 
 
 export default function Header() {
-  const user = null; // Replace with actual user fetching logic
+  const fetchUser = useUser((state) => state.fetchUser);
+  const user = useUser((state) => state.user);
   const page = usePage();
   const keyStatus = useKey((state) => state.status);
   const isActive = (keyStatus === 'active');
+
+  useEffect(() => {
+    void fetchUser();
+  }, [fetchUser]);
+
+
 
   const state: { [key: string]: PageStatus } = {
     start: 'complete',
@@ -109,7 +117,6 @@ export default function Header() {
         <NavItem href="/profile" state={state.profile} label="Settings">
           <Settings size={24} />
         </NavItem>
-        {getSignIn()}
       </div>
     </nav>
   );

@@ -9,7 +9,6 @@ import {
   Security,
   OperationId,
   SuccessResponse,
-  NoSecurity,
 } from '@tsoa/runtime';
 
 import {
@@ -20,7 +19,6 @@ import {
   KeyEnableBody,
   KeyRemoveBody,
   PublicKey,
-  AuthResponse,
 } from '../types';
 import get from './get';
 import add from './add';
@@ -29,28 +27,12 @@ import remove from './remove';
 import addKey from './addKey';
 import enableKey from './enableKey';
 import removeKey from './removeKey';
-import { rateLimit } from '#lib/redis/rateLimit';
-import { Request as KoaRequest } from 'koa';
-import auth from './auth';
 
 @Route('user')
 @Tags('User')
 @Security('api_key', ['dabih:api'])
 @Security('jwt', ['dabih:api'])
 export class UserController extends Controller {
-  @Post('auth')
-  @OperationId('authenticateUser')
-  @NoSecurity()
-  public async auth(
-    @Request() request: KoaRequest,
-    @Body() requestBody: { email: string },
-  ): Promise<AuthResponse> {
-    await rateLimit(request.ip);
-    const { email } = requestBody;
-    const response = await auth(email);
-    return response;
-  }
-
   @Post('add')
   @OperationId('addUser')
   @SuccessResponse('201', 'Created')

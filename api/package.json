@@ -24,7 +24,8 @@
     "test:prepare": "dotenv -e .env.test prisma migrate deploy",
     "test:api": "dotenv -e .env.test ava --serial",
     "test": "npm run test:clean && npm run test:startdb && sleep 2 && npm run test:startredis && npm run test:prepare && npm run test:api ; npm run test:stopdb && npm run test:stopredis",
-    "studio": "dotenv -e .env.dev prisma studio"
+    "studio": "dotenv -e .env.dev prisma studio",
+    "lint": "eslint ."
   },
   "author": "Michael Huttner",
   "license": "MIT",

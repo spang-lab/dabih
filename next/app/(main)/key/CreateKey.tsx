@@ -20,10 +20,9 @@ export default function CreateKey({ user, status }: {
 
   const uploadKey = async (publicKey: JsonWebKey) => {
     if (status === 'unregistered') {
-      const { name, email } = user;
+      const { email } = user;
       await api.user.add(
         {
-          name: name ?? '',
           email: email ?? '',
           key: { ...publicKey }
         },

@@ -1,24 +1,19 @@
-import { useState } from 'react'
 
-function App() {
-  const [count, setCount] = useState(0)
+import { Suspense } from 'react'
+import './index.css'
+import routes from "virtual:generated-pages-react"
+import { useRoutes } from 'react-router-dom'
+import Header from './Header'
+import Footer from './Footer'
 
+export default function App() {
   return (
     <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p className='text-blue'>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Header />
+      <Suspense fallback={<div>Loading...</div>}>
+        {useRoutes(routes)}
+      </Suspense>
+      <Footer />
     </>
-  )
+  );
 }
-
-export default App
