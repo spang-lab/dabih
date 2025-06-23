@@ -25,6 +25,7 @@ const init = (baseUrl: string) => {
   });
   const auth = {
     info: () => c.GET('/auth/info'),
+    token: () => c.POST('/auth/token', { body: {} }),
     signIn: (email: string) => c.POST('/auth/signIn', { body: { email } }),
   };
 

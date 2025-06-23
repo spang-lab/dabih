@@ -1,5 +1,3 @@
-import { Scope } from './auth';
-
 /**
  * mnemonics are human readable unique identifiers for datasets
  * mnemonics have the form <random adjective>_<random first name>
@@ -57,7 +55,7 @@ export interface User {
    * The scopes the user has
    * @example ["dabih:api"]
    */
-  scopes: Scope[];
+  scopes: string[];
   /**
    * Does the user have the dabih:admin scope
    */

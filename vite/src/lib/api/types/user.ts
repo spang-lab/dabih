@@ -81,21 +81,6 @@ export interface UserAddBody {
   isRootKey?: boolean;
 }
 
-export interface AuthResponse {
-  /**
-   * The unique user sub
-   */
-  sub: string;
-  /**
-   * The email of the user
-   */
-  email: string;
-  /**
-   * The JWT token for the user, only used when no email provider is configured
-   */
-  token?: string;
-}
-
 export interface UserResponse {
   /**
    * The database id of the user

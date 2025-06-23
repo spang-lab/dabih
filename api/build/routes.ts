@@ -396,27 +396,20 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Scope": {
-        "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["dabih:admin"]},{"dataType":"enum","enums":["dabih:api"]},{"dataType":"enum","enums":["dabih:upload"]}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "User": {
         "dataType": "refObject",
         "properties": {
             "sub": {"dataType":"string","required":true},
-            "scopes": {"dataType":"array","array":{"dataType":"refAlias","ref":"Scope"},"required":true},
+            "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "isAdmin": {"dataType":"boolean","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AuthResponse": {
+    "AuthToken": {
         "dataType": "refObject",
         "properties": {
-            "sub": {"dataType":"string","required":true},
-            "email": {"dataType":"string","required":true},
-            "token": {"dataType":"string"},
+            "token": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -506,7 +499,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UserAddBody"},
         };
         router.post('/user/add',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.add)),
 
@@ -537,7 +530,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/user/me',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.me)),
 
@@ -568,7 +561,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 undefined: {"in":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"sub":{"dataType":"string","required":true}}},
         };
         router.post('/user/find',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.get)),
 
@@ -598,7 +591,7 @@ export function RegisterRoutes(router: KoaRouter) {
         const argsUserController_list: Record<string, TsoaRoute.ParameterSchema> = {
         };
         router.get('/user/list',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.list)),
 
@@ -630,7 +623,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 undefined: {"in":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"sub":{"dataType":"string","required":true}}},
         };
         router.post('/user/remove',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.remove)),
 
@@ -662,7 +655,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 body: {"in":"body","name":"body","required":true,"ref":"KeyAddBody"},
         };
         router.post('/user/key/add',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.addKey)),
 
@@ -694,7 +687,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 body: {"in":"body","name":"body","required":true,"ref":"KeyEnableBody"},
         };
         router.post('/user/key/enable',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.enableKey)),
 
@@ -726,7 +719,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 body: {"in":"body","name":"body","required":true,"ref":"KeyRemoveBody"},
         };
         router.post('/user/key/remove',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.removeKey)),
 
@@ -758,7 +751,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UploadStartBody"},
         };
         router.post('/upload/start',
-            authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.start)),
 
@@ -790,7 +783,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
         };
         router.post('/upload/:mnemonic/cancel',
-            authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.cancel)),
 
@@ -824,7 +817,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 digest: {"in":"header","name":"digest","required":true,"dataType":"string"},
         };
         router.put('/upload/:mnemonic/chunk',
-            authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.chunk)),
 
@@ -856,7 +849,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
         };
         router.post('/upload/:mnemonic/finish',
-            authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.finish)),
 
@@ -887,7 +880,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/upload/unfinished',
-            authenticateMiddleware([{"jwt":["dabih:upload"]},{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.unfinished)),
 
@@ -919,7 +912,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"TokenAddBody"},
         };
         router.post('/token/add',
-            authenticateMiddleware([{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.add)),
 
@@ -950,7 +943,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/token/list',
-            authenticateMiddleware([{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.list)),
 
@@ -982,7 +975,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"tokenId":{"dataType":"string","required":true}}},
         };
         router.post('/token/remove',
-            authenticateMiddleware([{"jwt":["dabih:api"]},{"api_key":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(TokenController)),
             ...(fetchMiddlewares<Middleware>(TokenController.prototype.remove)),
 
@@ -1012,7 +1005,7 @@ export function RegisterRoutes(router: KoaRouter) {
         const argsJobController_listJobs: Record<string, TsoaRoute.ParameterSchema> = {
         };
         router.get('/job/list',
-            authenticateMiddleware([{"api_key":["dabih:admin"]},{"jwt":["dabih:admin"]}]),
+            authenticateMiddleware([{"api_key":["dabih:admin"]}]),
             ...(fetchMiddlewares<Middleware>(JobController)),
             ...(fetchMiddlewares<Middleware>(JobController.prototype.listJobs)),
 
@@ -1044,7 +1037,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/fs/:mnemonic/file',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.file)),
 
@@ -1076,7 +1069,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/fs/:mnemonic/file/list',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listFiles)),
 
@@ -1108,7 +1101,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/fs/:mnemonic/parent/list',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listParents)),
 
@@ -1141,7 +1134,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/:mnemonic/member/add',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.addMembers)),
 
@@ -1173,7 +1166,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/:mnemonic/duplicate',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.duplicate)),
 
@@ -1205,7 +1198,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/:mnemonic/remove',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.remove)),
 
@@ -1237,7 +1230,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/fs/:mnemonic/tree',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.tree)),
 
@@ -1269,7 +1262,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/move',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.move)),
 
@@ -1300,7 +1293,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/fs/list',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listHome)),
 
@@ -1332,7 +1325,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
         };
         router.get('/fs/:mnemonic/list',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.listInodes)),
 
@@ -1364,7 +1357,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/directory/add',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.addDirectory)),
 
@@ -1396,7 +1389,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/search',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.search)),
 
@@ -1428,7 +1421,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/search/:jobId',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.searchResults)),
 
@@ -1460,7 +1453,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/search/:jobId/cancel',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
             ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.searchCancel)),
 
@@ -1493,7 +1486,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"ref":"AESKey","required":true}}},
         };
         router.post('/download/:mnemonic/decrypt',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(DownloadController)),
             ...(fetchMiddlewares<Middleware>(DownloadController.prototype.decrypt)),
 
@@ -1556,7 +1549,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 hash: {"in":"path","name":"hash","required":true,"dataType":"string"},
         };
         router.get('/download/:uid/chunk/:hash',
-            authenticateMiddleware([{"api_key":["dabih:api"]},{"jwt":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(DownloadController)),
             ...(fetchMiddlewares<Middleware>(DownloadController.prototype.chunk)),
 
@@ -1587,7 +1580,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/auth/info',
-            authenticateMiddleware([{"api_key":[]},{"jwt":[]}]),
+            authenticateMiddleware([{"api_key":[]}]),
             ...(fetchMiddlewares<Middleware>(AuthController)),
             ...(fetchMiddlewares<Middleware>(AuthController.prototype.info)),
 
@@ -1638,6 +1631,67 @@ export function RegisterRoutes(router: KoaRouter) {
 
             return templateService.apiHandler({
               methodName: 'signIn',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_verify: Record<string, TsoaRoute.ParameterSchema> = {
+                requestBody: {"in":"body","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"token":{"dataType":"string","required":true}}},
+        };
+        router.post('/auth/verify',
+            ...(fetchMiddlewares<Middleware>(AuthController)),
+            ...(fetchMiddlewares<Middleware>(AuthController.prototype.verify)),
+
+            async function AuthController_verify(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_verify, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new AuthController();
+
+            return templateService.apiHandler({
+              methodName: 'verify',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_token: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        router.post('/auth/token',
+            authenticateMiddleware([{"api_key":["dabih:token"]}]),
+            ...(fetchMiddlewares<Middleware>(AuthController)),
+            ...(fetchMiddlewares<Middleware>(AuthController.prototype.token)),
+
+            async function AuthController_token(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_token, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new AuthController();
+
+            return templateService.apiHandler({
+              methodName: 'token',
               controller,
               context,
               validatedArgs,

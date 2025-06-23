@@ -14,7 +14,6 @@ import list from './list';
 @Route('job')
 @Tags('Job')
 @Security('api_key', ['dabih:admin'])
-@Security('jwt', ['dabih:admin'])
 export class JobController extends Controller {
   /**
    * List all jobs

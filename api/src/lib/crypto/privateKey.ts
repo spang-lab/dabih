@@ -3,6 +3,7 @@ import {
   generateKeyPair,
   createPublicKey,
   privateDecrypt,
+  createSign,
   constants,
   createHash,
 } from 'node:crypto';
@@ -22,7 +23,6 @@ const generatePair = async () => {
   };
 };
 
-
 const generate = async () => {
   const { privateKey } = await generatePair();
   return privateKey;
@@ -33,39 +33,41 @@ const toJwk = (key: KeyObject) => {
     format: 'jwk',
   });
   return jwk;
-}
+};
 
 const toPublicKey = (key: KeyObject) => {
-  const {
-    n, alg, e, kty,
-  } = toJwk(key);
+  const { n, alg, e, kty } = toJwk(key);
   const publicKey = createPublicKey({
     key: {
-      n, alg, e, kty,
+      n,
+      alg,
+      e,
+      kty,
     },
     format: 'jwk',
   });
   return publicKey;
-}
+};
 const toHash = (key: KeyObject) => {
   const publicKey = toPublicKey(key);
-  const buffer = publicKey.export(
-    { type: 'spki', format: 'der' }
-  );
+  const buffer = publicKey.export({ type: 'spki', format: 'der' });
   const hasher = createHash('sha256');
   hasher.update(buffer);
   return hasher.digest('base64url');
-}
+};
 
 const decrypt = (key: KeyObject, base64: string) => {
   const buffer = base64url.toUint8(base64);
-  const result = privateDecrypt({
-    key,
-    oaepHash: 'sha256',
-    padding: constants.RSA_PKCS1_OAEP_PADDING,
-  }, buffer);
+  const result = privateDecrypt(
+    {
+      key,
+      oaepHash: 'sha256',
+      padding: constants.RSA_PKCS1_OAEP_PADDING,
+    },
+    buffer,
+  );
   return base64url.fromUint8(result);
-}
+};
 
 const privateKey = {
   generatePair,

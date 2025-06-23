@@ -594,6 +594,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["verifyEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["token"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/upload/{mnemonic}/chunk": {
         parameters: {
             query?: never;
@@ -1024,8 +1056,6 @@ export interface components {
             /** @description The list of inodes that match the search query */
             inodes: components["schemas"]["Inode"][];
         };
-        /** @enum {string} */
-        Scope: "dabih:admin" | "dabih:api" | "dabih:upload";
         /** @description User is the type that represents a user in the system. */
         User: {
             /**
@@ -1039,17 +1069,12 @@ export interface components {
              *       "dabih:api"
              *     ]
              */
-            scopes: components["schemas"]["Scope"][];
+            scopes: string[];
             /** @description Does the user have the dabih:admin scope */
             isAdmin: boolean;
         };
-        AuthResponse: {
-            /** @description The unique user sub */
-            sub: string;
-            /** @description The email of the user */
-            email: string;
-            /** @description The JWT token for the user, only used when no email provider is configured */
-            token?: string;
+        AuthToken: {
+            token: string;
         };
         SignInBody: {
             email: string;
@@ -1883,7 +1908,51 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthResponse"];
+                    "application/json": components["schemas"]["AuthToken"] | null;
+                };
+            };
+        };
+    };
+    verifyEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    token: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthToken"];
                 };
             };
         };

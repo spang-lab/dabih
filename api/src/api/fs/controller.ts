@@ -45,7 +45,6 @@ import {
 @Route('fs')
 @Tags('Filesystem')
 @Security('api_key', ['dabih:api'])
-@Security('jwt', ['dabih:api'])
 export class FilesystemController extends Controller {
   /**
    * Get all the file information required to download a single file

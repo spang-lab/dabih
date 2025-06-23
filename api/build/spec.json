@@ -1142,14 +1142,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Scope": {
-				"type": "string",
-				"enum": [
-					"dabih:admin",
-					"dabih:api",
-					"dabih:upload"
-				]
-			},
 			"User": {
 				"description": "User is the type that represents a user in the system.",
 				"properties": {
@@ -1160,7 +1152,7 @@
 					},
 					"scopes": {
 						"items": {
-							"$ref": "#/components/schemas/Scope"
+							"type": "string"
 						},
 						"type": "array",
 						"description": "The scopes the user has",
@@ -1181,24 +1173,14 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AuthResponse": {
+			"AuthToken": {
 				"properties": {
-					"sub": {
-						"type": "string",
-						"description": "The unique user sub"
-					},
-					"email": {
-						"type": "string",
-						"description": "The email of the user"
-					},
 					"token": {
-						"type": "string",
-						"description": "The JWT token for the user, only used when no email provider is configured"
+						"type": "string"
 					}
 				},
 				"required": [
-					"sub",
-					"email"
+					"token"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1218,23 +1200,6 @@
 		},
 		"securitySchemes": {
 			"api_key": {
-				"type": "http",
-				"name": "Authorization",
-				"scheme": "bearer"
-			},
-			"jwt": {
-				"type": "oauth2",
-				"flows": {
-					"authorizationCode": {
-						"scopes": {
-							"dabih:admin": "Allow the user to perform admin actions in dabih",
-							"dabih:api": "Allow access to the dataset API",
-							"dabih:upload": "Allow the user to upload files"
-						}
-					}
-				}
-			},
-			"rsa": {
 				"type": "http",
 				"name": "Authorization",
 				"scheme": "bearer"
@@ -1332,11 +1297,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [],
@@ -1380,11 +1340,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": []
@@ -1416,11 +1371,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -1472,11 +1422,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": []
@@ -1496,11 +1441,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -1549,11 +1489,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [],
@@ -1592,11 +1527,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [],
@@ -1626,11 +1556,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -1668,11 +1593,6 @@
 				],
 				"security": [
 					{
-						"jwt": [
-							"dabih:upload"
-						]
-					},
-					{
 						"api_key": [
 							"dabih:upload"
 						]
@@ -1703,11 +1623,6 @@
 					"Upload"
 				],
 				"security": [
-					{
-						"jwt": [
-							"dabih:upload"
-						]
-					},
 					{
 						"api_key": [
 							"dabih:upload"
@@ -1745,11 +1660,6 @@
 					"Upload"
 				],
 				"security": [
-					{
-						"jwt": [
-							"dabih:upload"
-						]
-					},
 					{
 						"api_key": [
 							"dabih:upload"
@@ -1791,11 +1701,6 @@
 				],
 				"security": [
 					{
-						"jwt": [
-							"dabih:upload"
-						]
-					},
-					{
 						"api_key": [
 							"dabih:upload"
 						]
@@ -1823,11 +1728,6 @@
 					"Token"
 				],
 				"security": [
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					},
 					{
 						"api_key": [
 							"dabih:api"
@@ -1870,11 +1770,6 @@
 				],
 				"security": [
 					{
-						"jwt": [
-							"dabih:api"
-						]
-					},
-					{
 						"api_key": [
 							"dabih:api"
 						]
@@ -1895,11 +1790,6 @@
 					"Token"
 				],
 				"security": [
-					{
-						"jwt": [
-							"dabih:api"
-						]
-					},
 					{
 						"api_key": [
 							"dabih:api"
@@ -1954,11 +1844,6 @@
 						"api_key": [
 							"dabih:admin"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:admin"
-						]
 					}
 				],
 				"parameters": []
@@ -1986,11 +1871,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -2034,11 +1914,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [
@@ -2079,11 +1954,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [
@@ -2112,11 +1982,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -2166,11 +2031,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [
@@ -2199,11 +2059,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -2243,11 +2098,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [
@@ -2276,11 +2126,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -2321,11 +2166,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": []
@@ -2352,11 +2192,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -2394,11 +2229,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -2447,11 +2277,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [],
@@ -2490,11 +2315,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [
@@ -2523,11 +2343,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -2565,11 +2380,6 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
-						]
-					},
-					{
-						"jwt": [
 							"dabih:api"
 						]
 					}
@@ -2655,11 +2465,6 @@
 						"api_key": [
 							"dabih:api"
 						]
-					},
-					{
-						"jwt": [
-							"dabih:api"
-						]
 					}
 				],
 				"parameters": [
@@ -2703,9 +2508,6 @@
 				"security": [
 					{
 						"api_key": []
-					},
-					{
-						"jwt": []
 					}
 				],
 				"parameters": []
@@ -2720,7 +2522,12 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/AuthResponse"
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/AuthToken"
+										}
+									],
+									"nullable": true
 								}
 							}
 						}
@@ -2743,6 +2550,67 @@
 				}
 			}
 		},
+		"/auth/verify": {
+			"post": {
+				"operationId": "verifyEmail",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"token": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"token"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/token": {
+			"post": {
+				"operationId": "token",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthToken"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:token"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/upload/{mnemonic}/chunk": {
 			"put": {
 				"operationId": "chunkUpload",
@@ -2762,11 +2630,6 @@
 					"Upload"
 				],
 				"security": [
-					{
-						"jwt": [
-							"dabih:upload"
-						]
-					},
 					{
 						"api_key": [
 							"dabih:upload"

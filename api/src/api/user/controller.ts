@@ -31,7 +31,6 @@ import removeKey from './removeKey';
 @Route('user')
 @Tags('User')
 @Security('api_key', ['dabih:api'])
-@Security('jwt', ['dabih:api'])
 export class UserController extends Controller {
   @Post('add')
   @OperationId('addUser')
@@ -45,8 +44,6 @@ export class UserController extends Controller {
     this.setStatus(201);
     return response;
   }
-  @Security('api_key', ['dabih:api'])
-  @Security('jwt', ['dabih:api'])
   @Get('me')
   @OperationId('me')
   public async me(

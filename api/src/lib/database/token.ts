@@ -1,20 +1,16 @@
-
-import { TokenResponse } from "src/api/types";
-import { Token } from "@prisma/client";
-import random from "#lib/crypto/random";
-
+import { TokenResponse } from 'src/api/types';
+import { Token } from '@prisma/client';
+import random from '#lib/crypto/random';
+import db from '#lib/db';
 
 const TOKEN_PREFIX = 'dabih_at_';
 
-export const isToken = (token: string) => token.startsWith(TOKEN_PREFIX)
-
+export const isToken = (token: string) => token.startsWith(TOKEN_PREFIX);
 
 export const generateValue = async () => {
   const token = await random.getToken(32);
   return `${TOKEN_PREFIX}${token}`;
-}
-
-
+};
 
 const getExpired = (exp: Date | null) => {
   if (!exp) {
@@ -48,14 +44,15 @@ export const convertToken = (token: Token, censor: boolean): TokenResponse => {
   let value = token.value;
   if (censor) {
     const n = value.length;
-    value = [...value].map((c, i) => {
-      if (i < 14 || i > n - 4) {
-        return c;
-      }
-      return '■';
-    }).join('');
+    value = [...value]
+      .map((c, i) => {
+        if (i < 14 || i > n - 4) {
+          return c;
+        }
+        return '■';
+      })
+      .join('');
   }
-
   return {
     ...token,
     value,
@@ -63,5 +60,3 @@ export const convertToken = (token: Token, censor: boolean): TokenResponse => {
     expired: getExpired(exp),
   };
 };
-
-

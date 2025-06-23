@@ -25,7 +25,6 @@ test('create a dabih access_token', async (t) => {
     lifetime: null,
   });
   t.truthy(data);
-  console.log('Token created:', JSON.stringify(data, null, 2));
   if (data) {
     const { response } = await api.token.remove(data.id);
     t.is(response.status, 204);
@@ -88,11 +87,16 @@ test('expire token', async (t) => {
     return t.fail();
   }
   const { value } = token;
-  const { response, data: info } = await api.client.GET('/auth/info', {
+  const {
+    response,
+    data: info,
+    error,
+  } = await api.client.GET('/auth/info', {
     headers: {
       Authorization: `Bearer ${value}`,
     },
   });
+  t.truthy(error);
   t.is(response.status, 401);
   t.falsy(info);
   await api.token.remove(token.id);

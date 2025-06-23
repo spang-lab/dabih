@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { requireEnv } from '#lib/env';
 import { Request } from 'koa';
-import { Scope, User, validScopes } from './api/types';
+import { User } from './api/types';
 import { isToken, convertToken } from './lib/database/token';
 import db from './lib/db';
+import crypto from '#crypto';
 
 import { AuthenticationError } from './api/errors';
 
@@ -25,42 +26,76 @@ const parseRequest = (request: Request): string => {
   );
 };
 
-type AuthType = 'jwt' | 'api_key';
+const verify = async (
+  request: Request,
+): Promise<{
+  scopes: string[];
+  sub: string;
+}> => {
+  const tokenStr = parseRequest(request);
+  if (isToken(tokenStr)) {
+    // This is a token in the database, not a JWT
+    const result = await db.token.findUnique({
+      where: {
+        value: tokenStr,
+      },
+    });
+    if (!result) {
+      throw new AuthenticationError(`Token not found: ${tokenStr}`);
+    }
+    const token = convertToken(result, false);
+    if (token.expired) {
+      throw new AuthenticationError(`Token expired ${token.expired}`);
+    }
+    return token;
+  }
+  const payload = jwt.decode(tokenStr);
+  if (!payload || typeof payload !== 'object') {
+    throw new AuthenticationError('Invalid token: not a valid JWT');
+  }
 
-const verifyKey = async (key: string): Promise<User> => {
-  if (!isToken(key)) {
+  if (payload.email) {
+    // This is a signIn Token
+    const { email } = payload;
+    if (typeof email !== 'string') {
+      throw new AuthenticationError('Invalid token: email is not a string');
+    }
+    const user = await db.user.findUnique({
+      where: { email },
+      include: {
+        keys: {
+          where: {
+            enabled: { not: null },
+          },
+        },
+      },
+    });
+    if (!user) {
+      throw new AuthenticationError(`User not found: ${email}`);
+    }
+    const isValid = user.keys.some((key) => {
+      const publicKey = crypto.publicKey.fromString(key.data);
+      try {
+        jwt.verify(tokenStr, publicKey, {
+          algorithms: ['RS256'],
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    });
+    if (isValid) {
+      return {
+        sub: user.sub,
+        scopes: ['dabih:token'],
+      };
+    }
     throw new AuthenticationError(
-      'Expected an api key in the form dabih_at_<value>',
+      `Invalid token: no valid signature for user ${email}`,
     );
   }
-  const result = await db.token.findUnique({
-    where: {
-      value: key,
-    },
-  });
-  if (!result) {
-    throw new AuthenticationError('Invalid api token');
-  }
-  const token = convertToken(result, false);
-  if (token.expired) {
-    throw new AuthenticationError(`Token has expired ${token.expired}`);
-  }
-  const { scopes, sub } = token;
-  const isAdmin = scopes.includes('dabih:admin');
-  return {
-    sub,
-    scopes,
-    isAdmin,
-  };
-};
-
-const verifyJwt = async (tokenStr: string, request: Request): Promise<User> => {
-  const { protocol, host } = request;
-  const origin = `${protocol}://${host}`;
   const secret = requireEnv('TOKEN_SECRET');
-  const decoded = jwt.verify(tokenStr, secret, {
-    audience: origin,
-  });
+  const decoded = jwt.verify(tokenStr, secret);
   if (typeof decoded === 'string') {
     throw new AuthenticationError('Invalid jwt');
   }
@@ -76,51 +111,28 @@ const verifyJwt = async (tokenStr: string, request: Request): Promise<User> => {
       `Invalid "scope" key in jwt: ${scope}, must be a string with space separated values`,
     );
   }
-  const scopes = scope.split(' ').map((s) => {
-    if (!validScopes.includes(s as Scope)) {
-      throw new AuthenticationError(
-        `Invalid scope in jwt: ${s}, must be one of ${validScopes.join(', ')}`,
-      );
-    }
-    return s as Scope;
-  });
-
-  const isAdmin = scopes.includes('dabih:admin');
+  const scopes = scope.split(/\s+/);
   return {
     sub,
     scopes,
-    isAdmin,
   };
-};
-
-const verifyToken = async (request: Request, type: AuthType): Promise<User> => {
-  const tokenStr = parseRequest(request);
-  if (type === 'api_key') {
-    return verifyKey(tokenStr);
-  }
-  if (type === 'jwt') {
-    return verifyJwt(tokenStr, request);
-  }
-  if (type === 'rsa') {
-    throw new AuthenticationError('RSA authentication is not supported yet');
-  }
-  throw new AuthenticationError(`Unknown authentication type`);
 };
 
 export async function koaAuthentication(
   request: Request,
-  name: string,
+  _name: string,
   scopes?: string[],
 ): Promise<User> {
-  if (name === 'jwt' || name === 'api_key') {
-    const decoded = await verifyToken(request, name);
-    const missing = scopes?.filter((scope) => !decoded.scopes.includes(scope));
-    if (missing?.length) {
-      throw new AuthenticationError(
-        `JWT does not contain the required scope: ${missing.join(', ')}`,
-      );
-    }
-    return decoded;
+  const decoded = await verify(request);
+  const missing = scopes?.filter((scope) => !decoded.scopes.includes(scope));
+  if (missing?.length) {
+    throw new AuthenticationError(
+      `JWT does not contain the required scope: ${missing.join(', ')}`,
+    );
   }
-  throw new AuthenticationError(`Unknown authentication method: ${name}`);
+  const user = {
+    ...decoded,
+    isAdmin: decoded.scopes.includes('dabih:admin'),
+  };
+  return user;
 }

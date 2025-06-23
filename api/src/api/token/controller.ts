@@ -18,9 +18,8 @@ import remove from './remove';
 
 @Route('token')
 @Tags('Token')
+@Security('api_key', ['dabih:api'])
 export class TokenController extends Controller {
-  @Security('jwt', ['dabih:api'])
-  @Security('api_key', ['dabih:api'])
   @Post('add')
   @OperationId('addToken')
   public async add(
@@ -30,8 +29,6 @@ export class TokenController extends Controller {
     const { user } = request;
     return add(user, requestBody);
   }
-  @Security('jwt', ['dabih:api'])
-  @Security('api_key', ['dabih:api'])
   @Get('list')
   @OperationId('listTokens')
   public async list(
@@ -39,8 +36,6 @@ export class TokenController extends Controller {
   ): Promise<TokenResponse[]> {
     return list(request.user);
   }
-  @Security('jwt', ['dabih:api'])
-  @Security('api_key', ['dabih:api'])
   @Post('remove')
   @OperationId('removeToken')
   public async remove(

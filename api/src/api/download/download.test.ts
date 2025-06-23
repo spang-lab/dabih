@@ -65,7 +65,7 @@ test('download', async (t) => {
 test('reject jwt on download endpoint', async (t) => {
   const api = client(t, 'test_downloader');
   const { response } = await api.client.GET('/download');
-  t.is(response.status, 401);
+  t.is(response.status, 403);
 });
 
 test('server decrypt', async (t) => {
