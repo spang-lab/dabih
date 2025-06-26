@@ -8,12 +8,12 @@ import Footer from './Footer'
 
 export default function App() {
   return (
-    <>
+    <div className="h-screen flex flex-col">
       <Header />
       <Suspense fallback={<div>Loading...</div>}>
         {useRoutes(routes)}
       </Suspense>
       <Footer />
-    </>
+    </div>
   );
 }

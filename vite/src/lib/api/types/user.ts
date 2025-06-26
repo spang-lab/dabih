@@ -96,10 +96,6 @@ export interface UserResponse {
    */
   email: string;
   /**
-   * The time the email was verified
-   */
-  emailVerified: Date | null;
-  /**
    * the list of scopes the user has
    */
   scope: string;

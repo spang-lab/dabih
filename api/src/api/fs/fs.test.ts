@@ -14,7 +14,7 @@ test.before(async (t) => {
     files: {},
     directories: {},
   };
-  const api = client(t, 'owner', true);
+  const api = await client(t, 'owner', true);
   await api.test.addUser('owner');
   await api.test.addUser('member_A');
   await api.test.addUser('member_B');
@@ -58,7 +58,7 @@ test.after.always((t) => {
 });
 
 test('file', async (t) => {
-  const api = client(t, 'owner');
+  const api = await client(t, 'owner');
   const mnemonic = t.context.files.File_A;
   const { data: info } = await api.fs.file(mnemonic);
   if (!info) {
@@ -72,13 +72,13 @@ test('file', async (t) => {
 });
 
 test('invalid mnemonic', async (t) => {
-  const api = client(t, 'owner');
+  const api = await client(t, 'owner');
   const { response } = await api.fs.file('invalid_mnemonic');
   t.is(response.status, 404);
 });
 
 test('mv file', async (t) => {
-  const api = client(t, 'owner');
+  const api = await client(t, 'owner');
 
   const mnemonic = t.context.files.File_A;
   const { data: file } = await api.fs.file(mnemonic);
@@ -94,18 +94,18 @@ test('mv file', async (t) => {
   });
   t.is(response.status, 204);
 
-  const api2 = client(t, 'member_B');
+  const api2 = await client(t, 'member_B');
   const { response: response2 } = await api2.fs.file(mnemonic);
   t.is(response2.status, 200);
 
   await new Promise((resolve) => setTimeout(resolve, 500));
-  const api3 = client(t, 'member_A');
+  const api3 = await client(t, 'member_A');
   const { response: response3 } = await api3.fs.file(mnemonic);
   t.is(response3.status, 403);
 });
 
 test('mv file invalid', async (t) => {
-  const api = client(t, 'owner');
+  const api = await client(t, 'owner');
   const { response } = await api.fs.move({
     mnemonic: 'invalid_mnemonic',
     name: 'new_name',
@@ -114,7 +114,7 @@ test('mv file invalid', async (t) => {
 });
 
 test('duplicate', async (t) => {
-  const api = client(t, 'owner');
+  const api = await client(t, 'owner');
   const mnemonic = t.context.directories.test_dir;
   const { response, error, data: dir } = await api.fs.duplicate(mnemonic);
   t.is(response.status, 200);
@@ -137,7 +137,7 @@ test('duplicate', async (t) => {
 });
 
 test('remove', async (t) => {
-  const api = client(t, 'owner');
+  const api = await client(t, 'owner');
   const mnemonic = t.context.files.File_E;
   const { response } = await api.fs.remove(mnemonic);
   t.is(response.status, 204);
@@ -165,7 +165,7 @@ test('remove', async (t) => {
 });
 
 test('file list', async (t) => {
-  const api = client(t, 'owner');
+  const api = await client(t, 'owner');
   const { data: files, response } = await api.fs.listFiles(
     t.context.files.File_A,
   );
@@ -178,7 +178,7 @@ test('file list', async (t) => {
 });
 
 test('add directory', async (t) => {
-  const api = client(t, 'owner');
+  const api = await client(t, 'owner');
   const { data: directory, response } = await api.fs.addDirectory('test_dir');
   t.is(response.status, 200);
   if (!directory) {

@@ -8,13 +8,17 @@ import {
   Request,
   Security,
   OperationId,
+  SuccessResponse,
 } from '@tsoa/runtime';
 
 import { rateLimit } from '#lib/redis/rateLimit';
 import { Request as KoaRequest } from 'koa';
-import { SignInBody, RequestWithUser, AuthToken } from '../types';
+import { RequestWithUser } from '../types';
 import token from './token';
-import signIn from './email';
+import signIn from './signIn';
+
+import { parseRequest } from 'src/auth';
+import verifyEmail from './verifyEmail';
 
 @Route('auth')
 @Tags('Auth')
@@ -31,25 +35,24 @@ export class AuthController extends Controller {
   @OperationId('signIn')
   public async signIn(
     @Request() request: KoaRequest,
-    @Body() requestBody: SignInBody,
-  ): Promise<AuthToken | null> {
+    @Body() requestBody: { email: string },
+  ): Promise<string | null> {
     await rateLimit(request.ip);
     const { email } = requestBody;
     return signIn(email);
   }
   @Post('verify')
   @OperationId('verifyEmail')
+  @SuccessResponse('204', 'No Content')
   public async verify(@Body() requestBody: { token: string }): Promise<void> {
     const { token } = requestBody;
-    console.log('verify', token);
-    throw new Error('unimplemented');
+    return verifyEmail(token);
   }
 
   @Post('token')
   @OperationId('token')
-  @Security('api_key', ['dabih:token'])
-  public async token(@Request() request: RequestWithUser): Promise<AuthToken> {
-    const { user } = request;
-    return token(user);
+  public async token(@Request() request: KoaRequest): Promise<string> {
+    const tokenStr = parseRequest(request);
+    return token(tokenStr);
   }
 }

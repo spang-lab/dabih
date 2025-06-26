@@ -105,7 +105,6 @@ export function SessionWrapper({ children }: {
 
   return (
     <SessionContext.Provider value={value}>
-      <pre>{JSON.stringify(value, null, 2)}</pre>
       {children}
     </SessionContext.Provider>
   );

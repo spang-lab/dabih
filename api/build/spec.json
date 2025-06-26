@@ -188,12 +188,6 @@
 						"type": "string",
 						"description": "The email of the user"
 					},
-					"emailVerified": {
-						"type": "string",
-						"format": "date-time",
-						"nullable": true,
-						"description": "The time the email was verified"
-					},
 					"scope": {
 						"type": "string",
 						"description": "the list of scopes the user has"
@@ -225,7 +219,6 @@
 					"id",
 					"sub",
 					"email",
-					"emailVerified",
 					"scope",
 					"lastAuthAt",
 					"createdAt",
@@ -1169,30 +1162,6 @@
 					"sub",
 					"scopes",
 					"isAdmin"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"AuthToken": {
-				"properties": {
-					"token": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"token"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SignInBody": {
-				"properties": {
-					"email": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"email"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -2522,11 +2491,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/AuthToken"
-										}
-									],
+									"type": "string",
 									"nullable": true
 								}
 							}
@@ -2543,7 +2508,15 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/SignInBody"
+								"properties": {
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email"
+								],
+								"type": "object"
 							}
 						}
 					}
@@ -2555,7 +2528,7 @@
 				"operationId": "verifyEmail",
 				"responses": {
 					"204": {
-						"description": "No content"
+						"description": "No Content"
 					}
 				},
 				"tags": [
@@ -2592,7 +2565,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/AuthToken"
+									"type": "string"
 								}
 							}
 						}
@@ -2601,13 +2574,7 @@
 				"tags": [
 					"Auth"
 				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:token"
-						]
-					}
-				],
+				"security": [],
 				"parameters": []
 			}
 		},

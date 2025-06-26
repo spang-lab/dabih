@@ -1,5 +1,3 @@
-import jwt from 'jsonwebtoken';
-import { requireEnv } from './env';
 import createClient from 'build/api';
 import { Middleware } from 'openapi-fetch';
 import crypto from '#crypto';
@@ -7,6 +5,7 @@ import crypto from '#crypto';
 import { Server } from 'http';
 import avaTest, { ExecutionContext, TestFn } from 'ava';
 import { KeyObject } from 'crypto';
+import { getSecret, SECRET } from './redis/secrets';
 
 interface TestContext {
   server: Server;
@@ -25,7 +24,7 @@ export interface Upload {
   chunkSize?: number;
 }
 
-export const client = (t: Test, sub: string, admin?: boolean) => {
+export const client = async (t: Test, sub: string, admin?: boolean) => {
   const { port } = t.context;
   const host = `http://localhost:${port}`;
   const baseUrl = `${host}/api/v1`;
@@ -34,14 +33,13 @@ export const client = (t: Test, sub: string, admin?: boolean) => {
   if (admin) {
     scope += ' dabih:admin';
   }
-  const tokenSecret = requireEnv('TOKEN_SECRET');
-  const token = jwt.sign(
+  const secret = await getSecret(SECRET.AUTH);
+  const token = crypto.jwt.signWithSecret(
     {
-      sub: sub ?? 'admin',
+      sub,
       scope,
-      aud: host,
     },
-    tokenSecret,
+    secret,
   );
 
   const middleware: Middleware = {

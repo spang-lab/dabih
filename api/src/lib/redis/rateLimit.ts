@@ -5,6 +5,11 @@ const prefix = 'rateLimit:';
 const windowSeconds = 60;
 const maxRequests = 3;
 
+export async function resetRateLimit(ip: string): Promise<void> {
+  const key = `${prefix}:${ip}`;
+  await redis.del(key);
+}
+
 export async function rateLimit(ip: string): Promise<void> {
   const key = `${prefix}:${ip}`;
 

@@ -707,11 +707,6 @@ export interface components {
             sub: string;
             /** @description The email of the user */
             email: string;
-            /**
-             * Format: date-time
-             * @description The time the email was verified
-             */
-            emailVerified: Date | null;
             /** @description the list of scopes the user has */
             scope: string;
             /**
@@ -1072,12 +1067,6 @@ export interface components {
             scopes: string[];
             /** @description Does the user have the dabih:admin scope */
             isAdmin: boolean;
-        };
-        AuthToken: {
-            token: string;
-        };
-        SignInBody: {
-            email: string;
         };
     };
     responses: never;
@@ -1898,7 +1887,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SignInBody"];
+                "application/json": {
+                    email: string;
+                };
             };
         };
         responses: {
@@ -1908,7 +1899,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthToken"] | null;
+                    "application/json": string | null;
                 };
             };
         };
@@ -1928,7 +1919,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description No content */
+            /** @description No Content */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -1952,7 +1943,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthToken"];
+                    "application/json": string;
                 };
             };
         };

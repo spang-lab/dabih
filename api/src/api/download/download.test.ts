@@ -17,7 +17,7 @@ test.before(async (t) => {
     files: {},
     directories: {},
   };
-  const api = client(t, 'test_downloader', true);
+  const api = await client(t, 'test_downloader', true);
   await api.test.addUser('test_downloader');
 
   await api.test.addDirectory('download_dir');
@@ -34,7 +34,7 @@ test.after.always((t) => {
 });
 
 test('download', async (t) => {
-  const api = client(t, 'test_downloader');
+  const api = await client(t, 'test_downloader');
   const mnemonic = t.context.files.download_file;
   const privateKey = t.context.users.test_downloader;
   const { data: file } = await api.fs.file(mnemonic);
@@ -63,13 +63,13 @@ test('download', async (t) => {
 });
 
 test('reject jwt on download endpoint', async (t) => {
-  const api = client(t, 'test_downloader');
+  const api = await client(t, 'test_downloader');
   const { response } = await api.client.GET('/download');
   t.is(response.status, 403);
 });
 
 test('server decrypt', async (t) => {
-  const api = client(t, 'test_downloader');
+  const api = await client(t, 'test_downloader');
   const mnemonic = t.context.files.download_file;
   const { data: file } = await api.fs.file(mnemonic);
   if (!file) {

@@ -1,37 +1,38 @@
 import crypto from '#crypto';
-import { getEnv } from '#lib/env';
+import { requireEnv } from '#lib/env';
 import redis from '#lib/redis';
 
-let aesKey: string | null = null;
+const secret = requireEnv('SECRET');
+const aesKey = crypto.aesKey.derive(secret, 'ephemeral');
 
-export async function init() {
-  const randomSecret = await crypto.random.getToken(10);
-  const s = getEnv('EPHEMERAL_SECRET', randomSecret);
-  aesKey = await crypto.aesKey.derive(s, 'ephemeral');
+interface AesKey {
+  value: string;
+  iv: string;
 }
+const prefix = 'aesKey';
+const EX = 60 * 60;
 
-export async function storeKey(sub: string, mnemonic: string, key: string) {
+export async function storeKey(sub: string, mnemonic: string, value: string) {
   const iv = await crypto.aesKey.generateIv();
-  const encrypted = crypto.aesKey.encryptString(aesKey!, iv, key);
-  const oneHour = 60 * 60;
-  const ex = { EX: oneHour };
-  await redis.set(`iv:${sub}:${mnemonic}`, iv, ex);
-  await redis.set(`aesKey:${sub}:${mnemonic}`, encrypted, ex);
+  const encrypted = crypto.aesKey.encryptString(aesKey, iv, value);
+
+  const key = `${prefix}:${sub}:${mnemonic}`;
+  await redis.set(key, JSON.stringify({ value: encrypted, iv }), { EX });
 }
 
 export async function readKey(sub: string, mnemonic: string) {
-  const iv = await redis.get(`iv:${sub}:${mnemonic}`);
-  const encrypted = await redis.get(`aesKey:${sub}:${mnemonic}`);
-  if (!encrypted || !iv) {
+  const key = `${prefix}:${sub}:${mnemonic}`;
+  const json = await redis.get(key);
+  if (!json) {
     return null;
   }
-  const key = crypto.aesKey.decryptString(aesKey!, iv, encrypted);
-  await redis.expire(`iv:${sub}:${mnemonic}`, 60 * 60);
-  await redis.expire(`aesKey:${sub}:${mnemonic}`, 60 * 60);
-  return key;
+  const { value, iv } = JSON.parse(json) as AesKey;
+  const decrypted = crypto.aesKey.decryptString(aesKey, iv, value);
+  await redis.expire(key, EX);
+  return decrypted;
 }
 
 export async function deleteKey(sub: string, mnemonic: string) {
-  await redis.del(`iv:${sub}:${mnemonic}`);
-  await redis.del(`aesKey:${sub}:${mnemonic}`);
+  const key = `${prefix}:${sub}:${mnemonic}`;
+  await redis.del(key);
 }

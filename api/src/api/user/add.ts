@@ -13,8 +13,9 @@ export default async function add(user: User, body: UserAddBody) {
     throw new AuthorizationError('Not authorized to add a user');
   }
   const sub = body.sub ?? user.sub;
+  const isRootKey = body.isRootKey && isAdmin;
 
-  const key = convertKey(user, body.key, body.isRootKey);
+  const key = convertKey(user, body.key, isRootKey);
   await getHome(sub);
   const defaultScope = ['dabih:upload', 'dabih:api'].join(' ');
   const result = await db.user.create({

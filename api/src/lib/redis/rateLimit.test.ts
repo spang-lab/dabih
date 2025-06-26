@@ -1,7 +1,7 @@
 import app from 'src/app';
 import getPort from '@ava/get-port';
 import { test } from '#ava';
-import { rateLimit } from './rateLimit';
+import { rateLimit, resetRateLimit } from './rateLimit';
 
 test.before(async (t) => {
   const port = await getPort();
@@ -20,6 +20,7 @@ test.after.always((t) => {
 
 test('rate limit within limit', async (t) => {
   const ip = '1.2.3.4';
+  await resetRateLimit(ip);
   for (let i = 0; i < 3; i++) {
     await rateLimit(ip);
   }
@@ -28,6 +29,7 @@ test('rate limit within limit', async (t) => {
 
 test('rate limit exceeded', async (t) => {
   const ip = '5.6.7.8';
+  await resetRateLimit(ip);
   for (let i = 0; i < 3; i++) {
     await rateLimit(ip);
   }

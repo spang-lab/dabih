@@ -1,14 +1,13 @@
-import jwt from 'jsonwebtoken';
-import { requireEnv } from '#lib/env';
 import { Request } from 'koa';
 import { User } from './api/types';
 import { isToken, convertToken } from './lib/database/token';
 import db from './lib/db';
-import crypto from '#crypto';
 
 import { AuthenticationError } from './api/errors';
+import { getSecrets, SECRET } from '#lib/redis/secrets';
+import crypto from './lib/crypto';
 
-const parseRequest = (request: Request): string => {
+export const parseRequest = (request: Request): string => {
   const authCookie = request.ctx.cookies.get('auth_token');
   if (authCookie) {
     return authCookie;
@@ -49,53 +48,8 @@ const verify = async (
     }
     return token;
   }
-  const payload = jwt.decode(tokenStr);
-  if (!payload || typeof payload !== 'object') {
-    throw new AuthenticationError('Invalid token: not a valid JWT');
-  }
-
-  if (payload.email) {
-    // This is a signIn Token
-    const { email } = payload;
-    if (typeof email !== 'string') {
-      throw new AuthenticationError('Invalid token: email is not a string');
-    }
-    const user = await db.user.findUnique({
-      where: { email },
-      include: {
-        keys: {
-          where: {
-            enabled: { not: null },
-          },
-        },
-      },
-    });
-    if (!user) {
-      throw new AuthenticationError(`User not found: ${email}`);
-    }
-    const isValid = user.keys.some((key) => {
-      const publicKey = crypto.publicKey.fromString(key.data);
-      try {
-        jwt.verify(tokenStr, publicKey, {
-          algorithms: ['RS256'],
-        });
-        return true;
-      } catch {
-        return false;
-      }
-    });
-    if (isValid) {
-      return {
-        sub: user.sub,
-        scopes: ['dabih:token'],
-      };
-    }
-    throw new AuthenticationError(
-      `Invalid token: no valid signature for user ${email}`,
-    );
-  }
-  const secret = requireEnv('TOKEN_SECRET');
-  const decoded = jwt.verify(tokenStr, secret);
+  const secrets = await getSecrets(SECRET.AUTH);
+  const decoded = crypto.jwt.verifyWithSecrets(tokenStr, secrets);
   if (typeof decoded === 'string') {
     throw new AuthenticationError('Invalid jwt');
   }

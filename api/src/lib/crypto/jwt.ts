@@ -1,52 +1,65 @@
 import jwt from 'jsonwebtoken';
 import { KeyObject } from 'crypto';
 
-import { requireEnv } from '#lib/env';
+import { StringValue } from 'ms';
 
-interface User {
-  sub: string;
-  email: string;
-}
+const decode = (token: string) => jwt.decode(token);
 
-const createEmailToken = (user: User) => {
-  const secret = requireEnv('EMAIL_TOKEN_SECRET');
-  const token = jwt.sign(user, secret, {
-    expiresIn: '15m', // 15 minutes
-  });
-  return token;
-};
-
-const verifyEmailToken = (token: string): User => {
-  const secret = requireEnv('EMAIL_TOKEN_SECRET');
-  try {
-    const decoded = jwt.verify(token, secret) as User;
-    return decoded;
-  } catch {
-    throw new Error('Invalid or expired email token');
-  }
-};
-
-const signRSA = (data: object, key: KeyObject) => {
-  const token = jwt.sign(data, key, {
+const signWithRSA = (
+  data: object,
+  privateKey: KeyObject,
+  expiresIn?: StringValue,
+) => {
+  const token = jwt.sign(data, privateKey, {
     algorithm: 'RS256',
-    expiresIn: '1h',
+    expiresIn: expiresIn ?? '1h',
   });
   return token;
 };
 
-const signSecret = (data: object) => {
-  const secret = requireEnv('JWT_SECRET');
+const verifyWithRSA = (token: string, publicKeys: KeyObject[]) => {
+  for (const publicKey of publicKeys) {
+    try {
+      return jwt.verify(token, publicKey, {
+        algorithms: ['RS256'],
+      });
+    } catch {
+      // Continue to the next key if verification fails
+    }
+  }
+  throw new Error('Token verification failed with all provided public keys');
+};
+
+const signWithSecret = (
+  data: object,
+  secret: string,
+  expiresIn?: StringValue,
+) => {
   const token = jwt.sign(data, secret, {
     algorithm: 'HS256',
-    expiresIn: '1h',
+    expiresIn: expiresIn ?? '1h',
   });
   return token;
+};
+
+const verifyWithSecrets = (token: string, secrets: string[]) => {
+  for (const secret of secrets) {
+    try {
+      return jwt.verify(token, secret, {
+        algorithms: ['HS256'],
+      });
+    } catch {
+      // Continue to the next secret if verification fails
+    }
+  }
+  throw new Error('Token verification failed with all provided secrets');
 };
 
 const jsonWebToken = {
-  signRSA,
-  signSecret,
-  createEmailToken,
-  verifyEmailToken,
+  decode,
+  signWithRSA,
+  verifyWithRSA,
+  signWithSecret,
+  verifyWithSecrets,
 };
 export default jsonWebToken;

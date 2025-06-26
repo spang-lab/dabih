@@ -13,7 +13,7 @@ test.before(async (t) => {
     files: {},
     directories: {},
   };
-  const api = client(t, 'test_auth_user', true);
+  const api = await client(t, 'test_auth_user', true);
   await api.test.addUser('test_auth_user');
 });
 
@@ -22,75 +22,76 @@ test.after.always((t) => {
 });
 
 test('valid access token', async (t) => {
-  const api = client(t, 'admin', true);
+  const api = await client(t, 'admin', true);
   const { data } = await api.auth.info();
   t.truthy(data);
   t.truthy(data!.isAdmin);
-  const api2 = client(t, 'not_admin');
+  const api2 = await client(t, 'not_admin');
   const { data: data2 } = await api2.auth.info();
   t.truthy(data2);
   t.falsy(data2!.isAdmin);
 });
 
 test('user rsa access token', async (t) => {
-  const api = client(t, 'test_auth_user');
+  const api = await client(t, 'test_auth_user');
   const key = t.context.users.test_auth_user;
   const payload = {
     email: 'test_auth_user@test.com',
   };
-  const token = crypto.jwt.signRSA(payload, key);
+  const token = crypto.jwt.signWithRSA(payload, key);
   const {
     response,
-    data: info,
+    data: jwt,
     error,
-  } = await api.client.GET('/auth/info', {
+  } = await api.client.POST('/auth/token', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
   if (error) {
     t.log(error);
-    t.fail('Failed to get user info');
+    t.fail('Failed to get token');
   }
   t.is(response.status, 200);
-  t.is(info.scopes[0], 'dabih:token');
-  t.truthy(info);
+  t.truthy(jwt);
 });
 
 test('invalid signature', async (t) => {
-  const api = client(t, 'test_auth_user');
+  const api = await client(t, 'test_auth_user');
   const key = await crypto.privateKey.generate();
   const payload = {
     email: 'test_auth_user@test.com',
   };
-  const token = crypto.jwt.signRSA(payload, key);
+  const token = crypto.jwt.signWithRSA(payload, key);
   const { response, error } = await api.client.GET('/auth/info', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+  t.log(error);
   t.is(response.status, 401);
   t.truthy(error);
 });
 
 test('invalid email', async (t) => {
-  const api = client(t, 'test_auth_user');
+  const api = await client(t, 'test_auth_user');
   const key = t.context.users.test_auth_user;
   const payload = {
     email: 'invalid_email',
   };
-  const token = crypto.jwt.signRSA(payload, key);
+  const token = crypto.jwt.signWithRSA(payload, key);
   const { response, error } = await api.client.GET('/auth/info', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+  t.log(error);
   t.is(response.status, 401);
   t.truthy(error);
 });
 
 test('user with 2 keys', async (t) => {
-  const api = client(t, 'test_auth_user', true);
+  const api = await client(t, 'test_auth_user', true);
 
   const { privateKey, publicKey } = await crypto.privateKey.generatePair();
   const jwk = crypto.publicKey.toJwk(publicKey);
@@ -105,12 +106,12 @@ test('user with 2 keys', async (t) => {
   const payload = {
     email: 'test_auth_user@test.com',
   };
-  const token = crypto.jwt.signRSA(payload, privateKey);
+  const token = crypto.jwt.signWithRSA(payload, privateKey);
   const {
     response: response2,
     data: info,
     error,
-  } = await api.client.GET('/auth/info', {
+  } = await api.client.POST('/auth/token', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -121,30 +122,38 @@ test('user with 2 keys', async (t) => {
   }
   t.is(response2.status, 200);
   t.truthy(info);
-  t.is(info.scopes[0], 'dabih:token');
 });
 
 test('get a token', async (t) => {
-  const api = client(t, 'test_auth_user');
+  const api = await client(t, 'test_auth_user');
   const key = t.context.users.test_auth_user;
   const payload = {
     email: 'test_auth_user@test.com',
   };
-  const token = crypto.jwt.signRSA(payload, key);
+  const token = crypto.jwt.signWithRSA(payload, key);
 
   const { data, error } = await api.client.POST('/auth/token', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  t.log(error);
+  t.falsy(error);
   t.truthy(data);
 });
 
 test('try to get a token with a token', async (t) => {
-  const api = client(t, 'test_auth_user');
+  const api = await client(t, 'test_auth_user');
   const { response, data, error } = await api.auth.token();
-  t.log(error);
+  t.falsy(error);
   t.is(data, undefined);
   t.is(response.status, 401);
+});
+
+test('sign in with email', async (t) => {
+  const api = await client(t, 'test_auth_user');
+  const { data: token, error } = await api.auth.signIn(
+    'unknown-email@dabih.com',
+  );
+  t.falsy(error);
+  t.truthy(token);
 });

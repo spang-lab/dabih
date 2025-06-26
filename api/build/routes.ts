@@ -60,7 +60,6 @@ const models: TsoaRoute.Models = {
             "id": {"dataType":"any","required":true},
             "sub": {"dataType":"string","required":true},
             "email": {"dataType":"string","required":true},
-            "emailVerified": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
             "scope": {"dataType":"string","required":true},
             "lastAuthAt": {"dataType":"datetime","required":true},
             "createdAt": {"dataType":"datetime","required":true},
@@ -402,22 +401,6 @@ const models: TsoaRoute.Models = {
             "sub": {"dataType":"string","required":true},
             "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "isAdmin": {"dataType":"boolean","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AuthToken": {
-        "dataType": "refObject",
-        "properties": {
-            "token": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SignInBody": {
-        "dataType": "refObject",
-        "properties": {
-            "email": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -1609,7 +1592,7 @@ export function RegisterRoutes(router: KoaRouter) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_signIn: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"SignInBody"},
+                requestBody: {"in":"body","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true}}},
         };
         router.post('/auth/signIn',
             ...(fetchMiddlewares<Middleware>(AuthController)),
@@ -1664,7 +1647,7 @@ export function RegisterRoutes(router: KoaRouter) {
               controller,
               context,
               validatedArgs,
-              successStatus: undefined,
+              successStatus: 204,
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1672,7 +1655,6 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/auth/token',
-            authenticateMiddleware([{"api_key":["dabih:token"]}]),
             ...(fetchMiddlewares<Middleware>(AuthController)),
             ...(fetchMiddlewares<Middleware>(AuthController.prototype.token)),
 

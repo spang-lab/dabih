@@ -15,7 +15,7 @@ test.before(async (t) => {
     files: {},
     directories: {},
   };
-  const api = client(t, 'test_uploader', true);
+  const api = await client(t, 'test_uploader', true);
   await api.test.addUser('test_uploader');
 });
 
@@ -24,7 +24,7 @@ test.after.always((t) => {
 });
 
 test('upload start', async (t) => {
-  const api = client(t, 'test_uploader');
+  const api = await client(t, 'test_uploader');
   const { response, data: dataset } = await api.upload.start({
     fileName: 'test.txt',
     tag: 'unfinished',
@@ -45,7 +45,7 @@ test('upload start', async (t) => {
 });
 
 test('upload chunk', async (t) => {
-  const api = client(t, 'test_uploader');
+  const api = await client(t, 'test_uploader');
   const { response: response, data: dataset } = await api.upload.start({
     fileName: 'test.txt',
   });
@@ -70,7 +70,7 @@ test('upload chunk', async (t) => {
 });
 
 test('full upload', async (t) => {
-  const api = client(t, 'test_uploader');
+  const api = await client(t, 'test_uploader');
   const { response: response, data: dataset } = await api.upload.start({
     fileName: 'test_ok.txt',
     size: 4,
@@ -98,13 +98,13 @@ test('full upload', async (t) => {
 });
 
 test('upload blob', async (t) => {
-  const api = client(t, 'test_uploader');
+  const api = await client(t, 'test_uploader');
   const dataset = await api.test.addFile('file');
   t.truthy(dataset);
 });
 
 test('upload blob into directory', async (t) => {
-  const api = client(t, 'test_uploader');
+  const api = await client(t, 'test_uploader');
   const { data: directory } = await api.fs.addDirectory('test_dir');
   if (!directory) {
     t.fail('No directory');
@@ -117,7 +117,7 @@ test('upload blob into directory', async (t) => {
 });
 
 test('upload blob, multiple chunks', async (t) => {
-  const api = client(t, 'test_uploader');
+  const api = await client(t, 'test_uploader');
   const dataset = await api.test.addFile('multi_chunk', { chunkSize: 4 });
   if (!dataset) {
     t.fail('No dataset');

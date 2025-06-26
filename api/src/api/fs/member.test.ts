@@ -17,7 +17,7 @@ test.before(async (t) => {
     files: {},
     directories: {},
   };
-  const api = client(t, 'test_owner', true);
+  const api = await client(t, 'test_owner', true);
   await api.test.addUser('test_owner');
   await api.test.addUser('test_member');
   await api.test.addUser('test_root', true);
@@ -34,7 +34,7 @@ test.after.always((t) => {
 });
 
 test('member list', async (t) => {
-  const api = client(t, 'test_owner');
+  const api = await client(t, 'test_owner');
   const mnemonic = t.context.files.test_file;
 
   const { data: inodes, response } = await api.fs.listParents(mnemonic);
@@ -51,7 +51,7 @@ test('member list', async (t) => {
 });
 
 test('add member', async (t) => {
-  const api = client(t, 'test_owner');
+  const api = await client(t, 'test_owner');
   const mnemonic = t.context.files.test_file;
   const privateKey = t.context.users.test_owner;
   const { data: file } = await api.fs.file(mnemonic);
@@ -71,7 +71,7 @@ test('add member', async (t) => {
     ],
   });
   t.is(response2.status, 204);
-  const api2 = client(t, 'test_member');
+  const api2 = await client(t, 'test_member');
   const { data: file2 } = await api2.fs.file(mnemonic);
   if (!file2) {
     t.fail();
@@ -83,7 +83,7 @@ test('add member', async (t) => {
 });
 
 test('add member to directory', async (t) => {
-  const api = client(t, 'test_owner');
+  const api = await client(t, 'test_owner');
   const mnemonic = t.context.directories.test_dir;
   const { data: files } = await api.fs.listFiles(mnemonic);
   if (!files) {
@@ -110,7 +110,7 @@ test('add member to directory', async (t) => {
     keys,
   });
   t.is(response.status, 204);
-  const api2 = client(t, 'test_member');
+  const api2 = await client(t, 'test_member');
   const { data: files2 } = await api2.fs.listFiles(mnemonic);
   if (!files2) {
     t.fail();
@@ -132,7 +132,7 @@ test('add member to directory', async (t) => {
 });
 
 test('root access', async (t) => {
-  const api = client(t, 'test_root', true);
+  const api = await client(t, 'test_root', true);
   const mnemonic = t.context.files.test_file;
   const { data: file } = await api.fs.file(mnemonic);
   if (!file) {

@@ -594,6 +594,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["verifyEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/token": {
         parameters: {
             query?: never;
@@ -691,11 +707,6 @@ export interface components {
             sub: string;
             /** @description The email of the user */
             email: string;
-            /**
-             * Format: date-time
-             * @description The time the email was verified
-             */
-            emailVerified: Date | null;
             /** @description the list of scopes the user has */
             scope: string;
             /**
@@ -1056,17 +1067,6 @@ export interface components {
             scopes: string[];
             /** @description Does the user have the dabih:admin scope */
             isAdmin: boolean;
-        };
-        AuthResponse: {
-            /** @description The unique user sub */
-            sub: string;
-            /** @description The email of the user */
-            email: string;
-            /** @description The JWT token for the user, only used when no email provider is configured */
-            token?: string;
-        };
-        SignInBody: {
-            email: string;
         };
     };
     responses: never;
@@ -1887,7 +1887,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SignInBody"];
+                "application/json": {
+                    email: string;
+                };
             };
         };
         responses: {
@@ -1897,8 +1899,32 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthResponse"];
+                    "application/json": string | null;
                 };
+            };
+        };
+    };
+    verifyEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -1911,12 +1937,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description No content */
-            204: {
+            /** @description Ok */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": string;
+                };
             };
         };
     };

@@ -1,8 +1,13 @@
 import { createClient } from 'redis';
 import logger from './logger';
 
-const client = createClient();
-import { init } from './redis/aesKey';
+const redisUrl = requireEnv('REDIS_URL');
+
+const client = createClient({
+  url: redisUrl,
+});
+import { init as initSecrets } from './redis/secrets';
+import { requireEnv } from './env';
 
 client.on('error', (err) => {
   logger.error(`Redis error: ${err}`);
@@ -10,7 +15,7 @@ client.on('error', (err) => {
 
 export async function initRedis() {
   await client.connect();
-  await init();
+  await initSecrets();
 }
 
 export default client;
