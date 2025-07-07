@@ -69,6 +69,11 @@ export interface RequestWithUser {
   user: User;
 }
 
+export interface SignInResponse {
+  status: 'success' | 'email_sent' | 'error';
+  token?: string;
+}
+
 export interface DabihInfo {
   version: string;
   branding: {

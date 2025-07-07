@@ -1,42 +1,32 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Cpu, File, Lock } from 'react-feather';
 import api from '@/lib/api';
-import { Dropzone } from '@/app/util';
+import { Dropzone } from '@/util';
 import crypto from '@/lib/crypto';
-import ErrorDialog from '@/app/dialog/Error';
-import CreateKeyDialog from '@/app/dialog/CreateKey';
-import { User } from 'next-auth';
-import storage from '@/lib/storage';
+import ErrorDialog from '@/dialog/Error';
+import CreateKeyDialog from '@/dialog/CreateKey';
+import useSession from '@/Session';
 
 
-export default function CreateKey({ user, status }: {
-  status: 'unregistered' | 'no_key',
-  user: User,
-}) {
+export default function CreateKey() {
+  const { user, fetchUser } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [showGenerate, setShowGenerate] = useState(false);
 
+  if (!user) {
+    return null;
+  }
+
+
   const uploadKey = async (publicKey: JsonWebKey) => {
-    if (status === 'unregistered') {
-      const { name, email } = user;
-      await api.user.add(
-        {
-          name: name ?? '',
-          email: email ?? '',
-          key: { ...publicKey }
-        },
-      );
-    }
-    if (status === 'no_key') {
-      await api.user.addKey({
-        sub: user.sub,
-        data: { ...publicKey },
-        isRootKey: false,
-      });
-    }
-    storage.update();
+    await api.user.addKey({
+      sub: user.sub,
+      data: { ...publicKey },
+      isRootKey: false,
+    });
+    await fetchUser();
   };
 
   const onFile = async (file: File) => {

@@ -1,15 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Camera, File, Key } from 'react-feather';
-import Image from 'next/image';
 import crypto from '@/lib/crypto';
-import storage from '@/lib/storage';
 import api from '@/lib/api';
-import { Dropzone } from '@/app/util';
-import ErrorDialog from '@/app/dialog/Error';
-import WebcamDialog from '@/app/dialog/Webcam';
+import { Dropzone } from '@/util';
+import ErrorDialog from '@/dialog/Error';
+import WebcamDialog from '@/dialog/Webcam';
 
 export default function LoadKey() {
   const [error, setError] = useState<string | null>(null);
@@ -27,14 +25,14 @@ export default function LoadKey() {
     const { keys } = user;
     const key = keys.find((k) => k.hash === hash);
     if (!key) {
-      setError(`Key with hash ${hash} does not belong to user ${user.name}`);
+      setError(`Key with hash ${hash} does not belong to user ${user.email}`);
       return;
     }
     if (!key.enabled) {
       setError('This key needs to be enabled first');
       return;
     }
-    await storage.storeKey(privateKey);
+    //await storage.storeKey(privateKey);
   };
 
   const onFile = async (file: File) => {
@@ -79,7 +77,7 @@ export default function LoadKey() {
       </h2>
       <div className="lg:grid gap-x-6 grid-cols-2 mt-4">
         <div className="h-80 sm:h-64 flex m-2 grow items-center flex-col justify-center border-2 rounded-3xl bg-gray-100 border-blue ">
-          <Image
+          <img
             src="/images/dabih-qr.svg"
             alt="QR Code"
             width={60}

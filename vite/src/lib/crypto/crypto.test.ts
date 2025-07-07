@@ -4,6 +4,7 @@ import test from "ava";
 import privateKey from "./privateKey";
 import publicKey from "./publicKey";
 import base64url from "./base64url";
+import jwt from "./jwt";
 
 const pemKey = `-----BEGIN PRIVATE KEY-----
 MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJX4p0Q6Y4hN1kEi
@@ -147,4 +148,12 @@ test("OpenSSH public key", async (t) => {
   const privKey = await privateKey.fromPEM(pemKey);
   const hash2 = await privateKey.toHash(privKey);
   t.is(hash, hash2);
+});
+
+test("Sign JWT with private key", async (t) => {
+  const key = await privateKey.generate();
+  const sKey = await privateKey.toSigningKey(key);
+  const payload = { data: "test" };
+  const token = await jwt.signWithRSA(payload, sKey);
+  t.truthy(token);
 });

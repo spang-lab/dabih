@@ -1,6 +1,7 @@
 import createClient from 'openapi-fetch';
 
 import type { components, paths } from './schema';
+import refresh from 'src/api/auth/refresh';
 type schemas = components['schemas'];
 
 type ChunkUpload = {
@@ -25,8 +26,12 @@ const init = (baseUrl: string) => {
   });
   const auth = {
     info: () => c.GET('/auth/info'),
-    token: () => c.POST('/auth/token', {}),
+    refresh: (token: string) =>
+      c.POST('/auth/refresh', {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
     signIn: (email: string) => c.POST('/auth/signIn', { body: { email } }),
+    verify: (token: string) => c.POST('/auth/verify', { body: { token } }),
   };
 
   const token = {

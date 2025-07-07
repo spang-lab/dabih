@@ -14,7 +14,7 @@ const generate = async () => {
       hash: "SHA-256",
     },
     true,
-    ["encrypt", "decrypt", "sign"],
+    ["encrypt", "decrypt"],
   );
   return privateKey;
 };
@@ -31,7 +31,7 @@ const fromJWK = async (keyData: object) =>
       hash: "SHA-256",
     },
     true,
-    ["decrypt", "sign"],
+    ["decrypt"],
   );
 
 const toUint8 = async (privateKey: CryptoKey) =>
@@ -47,6 +47,23 @@ const toPEM = async (privateKey: CryptoKey) => {
   return `${pkcs8Header}\n${content}\n${pkcs8Footer}`;
 };
 
+const toSigningKey = async (privateKey: CryptoKey) => {
+  const jwk = await toJWK(privateKey);
+  delete jwk.key_ops;
+  delete jwk.alg;
+  const key = crypto.subtle.importKey(
+    "jwk",
+    jwk,
+    {
+      name: "RSASSA-PKCS1-v1_5",
+      hash: "SHA-256",
+    },
+    true,
+    ["sign"],
+  );
+  return key;
+};
+
 const fromUint8 = async (keyData: BufferSource) =>
   crypto.subtle.importKey(
     "pkcs8",
@@ -56,7 +73,7 @@ const fromUint8 = async (keyData: BufferSource) =>
       hash: "SHA-256",
     },
     true,
-    ["decrypt", "sign"],
+    ["decrypt"],
   );
 
 const fromBase64 = async (base64: string) => {
@@ -178,6 +195,7 @@ const privateKey = {
   generate,
   toPublicKey,
   toJWK,
+  toSigningKey,
   fromJWK,
   toJSON,
   fromJSON,

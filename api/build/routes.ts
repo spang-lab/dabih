@@ -405,6 +405,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SignInResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["success"]},{"dataType":"enum","enums":["email_sent"]},{"dataType":"enum","enums":["error"]}],"required":true},
+            "token": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const templateService = new KoaTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
@@ -1563,7 +1572,6 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/auth/info',
-            authenticateMiddleware([{"api_key":[]}]),
             ...(fetchMiddlewares<Middleware>(AuthController)),
             ...(fetchMiddlewares<Middleware>(AuthController.prototype.info)),
 
@@ -1647,14 +1655,14 @@ export function RegisterRoutes(router: KoaRouter) {
               controller,
               context,
               validatedArgs,
-              successStatus: 204,
+              successStatus: undefined,
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_token: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
-        router.post('/auth/token',
+        router.post('/auth/refresh',
             ...(fetchMiddlewares<Middleware>(AuthController)),
             ...(fetchMiddlewares<Middleware>(AuthController.prototype.token)),
 

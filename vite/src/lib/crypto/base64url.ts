@@ -5,7 +5,7 @@ const toBase64 = (base64url: string): string =>
 const fromBase64 = (base64: string): string =>
   base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
 
-const fromUint8 = (array: ArrayBuffer): string => {
+const fromUint8 = (array: ArrayBuffer | ArrayLike<number>): string => {
   const uintArray = new Uint8Array(array);
   const base64 = btoa(String.fromCharCode(...uintArray));
   return fromBase64(base64);

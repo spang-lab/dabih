@@ -610,7 +610,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/token": {
+    "/auth/refresh": {
         parameters: {
             query?: never;
             header?: never;
@@ -619,7 +619,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["token"];
+        post: operations["refreshToken"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1067,6 +1067,11 @@ export interface components {
             scopes: string[];
             /** @description Does the user have the dabih:admin scope */
             isAdmin: boolean;
+        };
+        SignInResponse: {
+            /** @enum {string} */
+            status: "success" | "email_sent" | "error";
+            token?: string;
         };
     };
     responses: never;
@@ -1899,7 +1904,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": string | null;
+                    "application/json": components["schemas"]["SignInResponse"];
                 };
             };
         };
@@ -1919,16 +1924,18 @@ export interface operations {
             };
         };
         responses: {
-            /** @description No Content */
-            204: {
+            /** @description Ok */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": string;
+                };
             };
         };
     };
-    token: {
+    refreshToken: {
         parameters: {
             query?: never;
             header?: never;

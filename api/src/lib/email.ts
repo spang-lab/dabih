@@ -7,12 +7,16 @@ let fromEmail: string | null = null;
 
 export function initEmail() {
   const token = getEnv('RESEND_TOKEN');
+  fromEmail = getEnv('RESEND_EMAIL');
   if (!token) {
     logger.warn('RESEND_TOKEN is not set, email functionality will not work');
     return;
   }
+  if (!fromEmail) {
+    logger.warn('RESEND_EMAIL is not set, email functionality will not work');
+    return;
+  }
   resend = new Resend(token);
-  fromEmail = getEnv('RESEND_EMAIL', 'dabih@resend.dev');
 }
 
 export async function sendEmail(

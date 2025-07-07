@@ -10,6 +10,7 @@ import useFiles from "@/lib/hooks/files";
 
 import UploadTransfer from "./Upload";
 import DownloadTransfer from "./Download";
+import useSession from "@/Session";
 
 
 function Transfer({ data }: { data: TransferType }) {
@@ -24,6 +25,7 @@ function Transfer({ data }: { data: TransferType }) {
 }
 
 export default function Transfers() {
+  const { status } = useSession();
   const workerRef = useRef<Worker | null>(null);
   const transfers = useTransfers((state) => state.transfers);
   const updateTransfer = useTransfers((state) => state.updateTransfer);
@@ -39,6 +41,9 @@ export default function Transfers() {
 
 
   useEffect(() => {
+    if (status !== "authenticated") {
+      return;
+    }
     workerRef.current ??= new Worker(new URL("@/lib/transferWorker", import.meta.url));
     const worker = workerRef.current;
     worker.onmessage = async (e: MessageEvent<TransferType>) => {
@@ -66,7 +71,7 @@ export default function Transfers() {
       console.log("incomplete transfers", transfers);
       transfers.forEach(addTransfer);
     })();
-  }, []);
+  }, [addTransfer, cwd, list, updateTransfer, status]);
 
 
   useEffect(() => {

@@ -12,10 +12,8 @@ import {
 } from 'react-feather';
 
 import NavItem from './NavItem';
-import useKey from '@/lib/hooks/key';
 import { useLocation } from 'react-router';
-import useUser from './lib/hooks/user';
-import { useEffect } from 'react';
+import useSession from './Session';
 
 function NavLine() {
   return <div className="flex-auto mx-3 h-6 border-t-2 border-gray-300" />;
@@ -31,30 +29,26 @@ type PageStatus = 'complete' | 'enabled' | 'disabled' | 'active';
 
 
 export default function Header() {
-  const fetchUser = useUser((state) => state.fetchUser);
-  const user = useUser((state) => state.user);
+  const { user, key } = useSession();
   const page = usePage();
-  const keyStatus = useKey((state) => state.status);
-  const isActive = (keyStatus === 'active');
 
-  useEffect(() => {
-    void fetchUser();
-  }, [fetchUser]);
 
+  const hasUser = !!user;
+  const hasKey = !!key;
 
 
   const state: { [key: string]: PageStatus } = {
     start: 'complete',
-    signin: (user) ? 'complete' : 'enabled',
-    key: (user) ? (isActive) ? 'complete' : 'enabled' : 'disabled',
-    manage: (isActive) ? 'enabled' : 'disabled',
-    profile: (user) ? 'enabled' : 'disabled',
+    signin: (hasUser) ? 'complete' : 'enabled',
+    key: (hasUser) ? (hasKey) ? 'complete' : 'enabled' : 'disabled',
+    manage: (hasKey) ? 'enabled' : 'disabled',
+    profile: (hasUser) ? 'enabled' : 'disabled',
   };
   state[page] = 'active';
 
 
   const getSignIn = () => {
-    if (user) {
+    if (hasUser) {
       return (
         <>
           <NavLine />
@@ -117,6 +111,7 @@ export default function Header() {
         <NavItem href="/profile" state={state.profile} label="Settings">
           <Settings size={24} />
         </NavItem>
+        {getSignIn()}
       </div>
     </nav>
   );

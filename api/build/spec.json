@@ -1165,6 +1165,26 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"SignInResponse": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"success",
+							"email_sent",
+							"error"
+						]
+					},
+					"token": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -2474,11 +2494,7 @@
 				"tags": [
 					"Auth"
 				],
-				"security": [
-					{
-						"api_key": []
-					}
-				],
+				"security": [],
 				"parameters": []
 			}
 		},
@@ -2491,8 +2507,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "string",
-									"nullable": true
+									"$ref": "#/components/schemas/SignInResponse"
 								}
 							}
 						}
@@ -2527,8 +2542,15 @@
 			"post": {
 				"operationId": "verifyEmail",
 				"responses": {
-					"204": {
-						"description": "No Content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
 					}
 				},
 				"tags": [
@@ -2556,9 +2578,9 @@
 				}
 			}
 		},
-		"/auth/token": {
+		"/auth/refresh": {
 			"post": {
-				"operationId": "token",
+				"operationId": "refreshToken",
 				"responses": {
 					"200": {
 						"description": "Ok",

@@ -1,16 +1,22 @@
-import { Container } from "@/util";
 import { Mail } from "react-feather";
 import useSession from "@/Session";
 import { useState } from "react";
+import { Navigate } from "react-router";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
 
-  const { signIn } = useSession();
+  const { signIn, user, token } = useSession();
+
+  if (user) {
+    return <Navigate to="/key" />
+  }
 
 
   return (
-    <Container>
+    <div>
+      <pre> {JSON.stringify(user, null, 2)}</pre>
+      <pre> {JSON.stringify(token, null, 2)}</pre>
       <h1 className="text-4xl pb-4 font-extrabold tracking-tight sm:text-5xl md:text-6xl">
         Sign in to
         {' '}
@@ -43,6 +49,6 @@ export default function SignIn() {
           </button>
         </form>
       </div>
-    </Container>
+    </div>
   );
 }

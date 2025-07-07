@@ -23,7 +23,7 @@ const fromOpenSSH = async (text: string) => {
   }
   const keyStr = base64url.fromBase64(parts[1]);
   const keyData = base64url.toUint8(keyStr);
-  const data: ArrayBuffer[] = [];
+  const data: Uint8Array[] = [];
   let current = 0;
   while (current < keyData.length) {
     // segment starts with an UInt32 length l, followed by l bytes of data
@@ -100,7 +100,7 @@ const fromFile = async (text: string) => {
 
 const encrypt = async (
   publicKey: CryptoKey,
-  data: ArrayBuffer,
+  data: BufferSource,
 ): Promise<ArrayBuffer> =>
   crypto.subtle.encrypt(
     {

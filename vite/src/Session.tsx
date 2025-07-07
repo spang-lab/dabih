@@ -3,30 +3,21 @@ import { UserResponse } from "./lib/api/types";
 
 import crypto from "./lib/crypto";
 import api from "./lib/api";
-const storageKey = "dabih_private_key";
+
 const storage = window.localStorage;
+export const KEY = {
+  privateKey: "dabih_private_key",
+  token: "dabih_token",
+};
 
-async function readKey() {
-  const base64 = storage.getItem(storageKey);
-  if (!base64) {
-    return null;
-  }
-  return crypto.privateKey.fromBase64(base64);
-}
 
-async function writeKey(key: CryptoKey) {
-  const base64 = await crypto.privateKey.toBase64(key);
-  storage.setItem(storageKey, base64);
-}
 
-async function deleteKey() {
-  storage.removeItem(storageKey);
-}
+
+
 
 type AuthStatus =
   "loading" |
   "unauthenticated" |
-  "unregistered" |
   "registered_without_key" |
   "registered_key_disabled" |
   "registered" |
@@ -38,7 +29,9 @@ interface SessionContextType {
   status: AuthStatus;
   user: UserResponse | null;
   key: CryptoKey | null;
+  token: string | null;
   signIn: (email: string) => Promise<void>;
+  fetchUser: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionContextType>({} as SessionContextType);
@@ -47,50 +40,120 @@ export function SessionWrapper({ children }: {
   children: React.ReactNode,
 }) {
   const [status, setStatus] = useState<AuthStatus>("loading");
-  const [user, setUser] = useState<UserResponse | null>(null);
   const [key, setKey] = useState<CryptoKey | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<UserResponse | null>(null);
 
 
   const fetchUser = useCallback(async () => {
+    if (!token) {
+      return;
+    }
     const { data, error } = await api.user.me();
     if (error || !data) {
       setUser(null);
       return;
     }
     setUser(data);
-  }, [setUser]);
+  }, [setUser, token]);
 
-  const loadKey = useCallback(async () => {
-    const storedKey = await readKey();
-    setKey(storedKey);
-  }, [setKey]);
+  const readStorage = useCallback(async () => {
+    const base64 = storage.getItem(KEY.privateKey);
+    if (base64) {
+      const key = await crypto.privateKey.fromBase64(base64);
+      setKey(key);
+    }
+    const token = storage.getItem(KEY.token);
+    if (token) {
+      setToken(token);
+    }
+  }, [setKey, setToken]);
+
+
 
   const updateStatus = useCallback(async () => {
     if (!user) {
       setStatus("unauthenticated");
       return;
     }
-  }, [setStatus, user]);
+    const { keys } = user;
+    if (keys.length === 0) {
+      setStatus("registered_without_key");
+      return;
+    }
+    const enabledKeys = keys.filter(k => k.enabled);
+    if (enabledKeys.length === 0) {
+      setStatus("registered_key_disabled");
+      return;
+    }
+    if (!key) {
+      setStatus("registered");
+      return;
+    }
+    const hash = await crypto.privateKey.toHash(key);
+    const isValid = enabledKeys.some(k => k.hash === hash);
+    if (!isValid) {
+      storage.removeItem(KEY.privateKey);
+      setKey(null);
+      return;
+    }
+    setStatus("authenticated");
+  }, [setStatus, user, key]);
+
+
 
   const signIn = useCallback(async (email: string) => {
     const { data, error } = await api.auth.signIn(email);
-    console.log("Sign in response:", data, error);
+    if (error || !data) {
+      console.error("Sign in error:", error);
+      return;
+    }
+    const { status, token } = data;
+    if (status === "success" && token) {
+      const { data: jwt, error } = await api.auth.verify(token);
+      if (error || !jwt) {
+        console.error("Verification error:", error);
+        return;
+      }
+      storage.setItem(KEY.token, jwt);
+      await readStorage();
+    }
+  }, [readStorage]);
 
+  const refreshToken = useCallback(async () => {
+    if (!token) {
+      return;
+    }
+    const payload = crypto.jwt.decode(token);
+    const { sub, exp } = payload;
+    if (!sub || !exp) {
+      console.error("Invalid token payload:", payload);
+      return;
+    }
+    const now = Math.floor(Date.now() / 1000);
+    const thirtyMinutes = 30 * 60;
+    if (exp - now > thirtyMinutes) {
+      return;
+    }
+    // TODO: Implement token refresh logic
+  }, [token]);
 
-  }, []);
+  useEffect(() => {
+    void refreshToken();
+  }, [token, refreshToken]);
+
+  useEffect(() => {
+    void updateStatus();
+  }, [status, updateStatus]);
 
 
 
   useEffect(() => {
-    if (status !== "loading") {
-      return;
-    }
     (async () => {
+      await readStorage();
       await fetchUser();
-      await loadKey();
-      await updateStatus();
     })().catch(console.error);
-  }, [status, updateStatus, fetchUser, loadKey]);
+  }, [status, fetchUser, readStorage]);
 
 
 
@@ -100,8 +163,10 @@ export function SessionWrapper({ children }: {
     status,
     user,
     key,
+    token,
     signIn,
-  }), [status, user, key, signIn]);
+    fetchUser,
+  }), [status, user, key, signIn, token, fetchUser]);
 
   return (
     <SessionContext.Provider value={value}>
