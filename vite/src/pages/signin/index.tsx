@@ -6,7 +6,7 @@ import { Navigate } from "react-router";
 export default function SignIn() {
   const [email, setEmail] = useState("");
 
-  const { signIn, user, token } = useSession();
+  const { signIn, user } = useSession();
 
   if (user) {
     return <Navigate to="/key" />
@@ -15,8 +15,6 @@ export default function SignIn() {
 
   return (
     <div>
-      <pre> {JSON.stringify(user, null, 2)}</pre>
-      <pre> {JSON.stringify(token, null, 2)}</pre>
       <h1 className="text-4xl pb-4 font-extrabold tracking-tight sm:text-5xl md:text-6xl">
         Sign in to
         {' '}

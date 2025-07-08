@@ -11,7 +11,7 @@ import useSession from '@/Session';
 
 
 export default function CreateKey() {
-  const { user, fetchUser } = useSession();
+  const { user, update } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [showGenerate, setShowGenerate] = useState(false);
 
@@ -26,7 +26,7 @@ export default function CreateKey() {
       data: { ...publicKey },
       isRootKey: false,
     });
-    await fetchUser();
+    await update();
   };
 
   const onFile = async (file: File) => {

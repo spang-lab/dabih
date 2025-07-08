@@ -1,9 +1,8 @@
 
-import React from 'react';
 import {
   Trash2, Terminal,
 } from 'react-feather';
-import { LocalDate } from '@/app/util';
+import { LocalDate } from '@/util';
 import { TokenResponse } from '@/lib/api/types';
 
 

@@ -1,23 +1,25 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Plus } from 'react-feather';
 import api from '@/lib/api';
 import Token from './Token';
 
 import { TokenAddBody, TokenResponse } from '@/lib/api/types';
-import { User } from 'next-auth';
-import CreateTokenDialog from '@/app/dialog/CreateToken';
-import ShowTokenDialog from '@/app/dialog/ShowToken';
+import CreateTokenDialog from '@/dialog/CreateToken';
+import ShowTokenDialog from '@/dialog/ShowToken';
+import useSession from '@/Session';
 
 
 
 
-export default function Tokens({ user }:
-  { user: User }) {
+export default function Tokens() {
+  const { user } = useSession();
   const [tokens, setTokens] = useState<TokenResponse[]>([]);
   const [showCreateToken, setShowCreateToken] = useState(false);
   const [tokenValue, setTokenValue] = useState<string | null>(null);
+
+  const scopes = user?.scope.split(' ') || [];
 
 
   const fetchTokens = useCallback(async () => {
@@ -39,7 +41,7 @@ export default function Tokens({ user }:
     await fetchTokens();
   }
 
-  const removeToken = async (tokenId: number) => {
+  const removeToken = async (tokenId: string) => {
     await api.token.remove(tokenId);
     await fetchTokens();
   };
@@ -52,7 +54,7 @@ export default function Tokens({ user }:
     <div>
       <CreateTokenDialog
         show={showCreateToken}
-        scopes={user.scopes}
+        scopes={scopes}
         onClose={() => setShowCreateToken(false)}
         onSubmit={(r) => void addToken(r).catch(console.error)}
       />
@@ -62,7 +64,7 @@ export default function Tokens({ user }:
       />
 
       {tokens.map((t) => (
-        <Token data={t} key={t.value} onRemove={() => void removeToken(t.id as number)} />
+        <Token data={t} key={t.value} onRemove={() => void removeToken(t.id as string)} />
       ))}
       <div hidden={tokens.length > 0} className="p-2 m-2 border italic text-gray-500 rounded-lg text-center border-gray-200">
         You have no access tokens.

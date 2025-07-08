@@ -4,36 +4,16 @@ import { useState } from 'react';
 
 import { Camera, File, Key } from 'react-feather';
 import crypto from '@/lib/crypto';
-import api from '@/lib/api';
 import { Dropzone } from '@/util';
 import ErrorDialog from '@/dialog/Error';
 import WebcamDialog from '@/dialog/Webcam';
+import useSession from '@/Session';
 
 export default function LoadKey() {
   const [error, setError] = useState<string | null>(null);
   const [showWebcam, setShowWebcam] = useState(false);
+  const { saveKey } = useSession();
 
-
-  const saveKey = async (privateKey: CryptoKey) => {
-    const hash = await crypto.privateKey.toHash(privateKey);
-
-    const { data: user, error, response } = await api.user.me();
-    if (!user || response.status === 204 || error) {
-      setError(error ?? 'Could not load user data');
-      return;
-    }
-    const { keys } = user;
-    const key = keys.find((k) => k.hash === hash);
-    if (!key) {
-      setError(`Key with hash ${hash} does not belong to user ${user.email}`);
-      return;
-    }
-    if (!key.enabled) {
-      setError('This key needs to be enabled first');
-      return;
-    }
-    //await storage.storeKey(privateKey);
-  };
 
   const onFile = async (file: File) => {
     try {

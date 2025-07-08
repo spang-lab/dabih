@@ -3,24 +3,22 @@
 import { useState, useCallback, useEffect } from 'react';
 import api from '@/lib/api';
 import { Plus } from 'react-feather';
-import { Switch } from '@/app/util';
+import { Switch } from '@/util';
 
 import { UserResponse } from '@/lib/api/types';
-import DeleteDialog from '@/app/dialog/Delete';
-import CreateKeyDialog from '@/app/dialog/CreateKey';
+import DeleteDialog from '@/dialog/Delete';
+import CreateKeyDialog from '@/dialog/CreateKey';
 import { KeyRemoveBody } from '@/lib/api/types';
 import PublicKey from './PublicKey';
-import { User } from 'next-auth';
-import storage from '@/lib/storage';
-import useKey from '@/lib/hooks/key';
+import useSession from '@/Session';
 
 
-export default function PublicKeys({ user }: { user: User }) {
+export default function PublicKeys() {
+  const { user, update, isAdmin } = useSession();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [rootOnly, setRootOnly] = useState<boolean>(false);
   const [toRemove, setToRemove] = useState<KeyRemoveBody | null>(null);
   const [showGenerate, setShowGenerate] = useState(false);
-  const key = useKey();
 
 
   const fetchKeys = useCallback(async () => {
@@ -38,7 +36,7 @@ export default function PublicKeys({ user }: { user: User }) {
       enabled,
     });
     await fetchKeys();
-    storage.update();
+    await update();
   };
 
   const removeKey = async (req: KeyRemoveBody) => {
@@ -46,7 +44,7 @@ export default function PublicKeys({ user }: { user: User }) {
     await fetchKeys();
   };
   const uploadKey = async (publicKey: JsonWebKey) => {
-    if (key.status !== 'active') {
+    if (!user) {
       return;
     }
     await api.user.addKey({
@@ -55,7 +53,7 @@ export default function PublicKeys({ user }: { user: User }) {
       isRootKey: true,
     });
     await fetchKeys();
-    storage.update();
+    await update();
   };
 
 
@@ -92,18 +90,17 @@ export default function PublicKeys({ user }: { user: User }) {
               publicKey={k}
               user={u}
               show={!rootOnly || k.isRootKey}
-              isAdmin={user.isAdmin}
+              isAdmin={isAdmin}
               onRemove={() => setToRemove({ sub: u.sub, hash: k.hash })}
               onEnable={(e: boolean) => void enableKey(u.sub, k.hash, e)}
             />
           )))
         )}
       </div>
-      <div hidden={!user.isAdmin} className="m-2">
+      <div hidden={!isAdmin} className="m-2">
         <button
           className="px-2 py-1 bg-blue text-white rounded-lg disabled:opacity-50"
           type="button"
-          disabled={key.status !== 'active'}
           onClick={() => setShowGenerate(true)}
         >
           <span className="whitespace-nowrap font-bold">

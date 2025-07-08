@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { ForwardedRef, Fragment } from 'react';
+import { ForwardedRef, Fragment } from 'react';
 
 interface HexValue {
   v: string,
@@ -30,7 +30,6 @@ const toHexValue = (v: string, colIdx: number): HexValue => {
   const g = Math.round(blueRgb.g * alpha + orangeRgb.g * (1 - alpha));
   const b = Math.round(blueRgb.b * alpha + orangeRgb.b * (1 - alpha));
   const color = `rgb(${r},${g},${b})`;
-  console.log(color);
 
 
   return { v, color, colIdx };

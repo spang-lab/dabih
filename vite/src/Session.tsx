@@ -11,10 +11,6 @@ export const KEY = {
 };
 
 
-
-
-
-
 type AuthStatus =
   "loading" |
   "unauthenticated" |
@@ -27,11 +23,15 @@ type AuthStatus =
 
 interface SessionContextType {
   status: AuthStatus;
+  isAdmin: boolean;
   user: UserResponse | null;
   key: CryptoKey | null;
   token: string | null;
   signIn: (email: string) => Promise<void>;
-  fetchUser: () => Promise<void>;
+  signOut: () => Promise<void>;
+  saveKey: (privateKey: CryptoKey) => Promise<void>;
+  dropKey: () => Promise<void>;
+  update: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionContextType>({} as SessionContextType);
@@ -39,14 +39,15 @@ const SessionContext = createContext<SessionContextType>({} as SessionContextTyp
 export function SessionWrapper({ children }: {
   children: React.ReactNode,
 }) {
-  const [status, setStatus] = useState<AuthStatus>("loading");
   const [key, setKey] = useState<CryptoKey | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserResponse | null>(null);
 
-
-  const fetchUser = useCallback(async () => {
+  const update = useCallback(async () => {
+    const token = storage.getItem(KEY.token);
+    setToken(token);
     if (!token) {
+      setUser(null);
       return;
     }
     const { data, error } = await api.user.me();
@@ -55,50 +56,41 @@ export function SessionWrapper({ children }: {
       return;
     }
     setUser(data);
-  }, [setUser, token]);
-
-  const readStorage = useCallback(async () => {
     const base64 = storage.getItem(KEY.privateKey);
     if (base64) {
       const key = await crypto.privateKey.fromBase64(base64);
+      const hash = await crypto.privateKey.toHash(key);
+      const userKey = data.keys.find(k => k.hash === hash);
+      if (!userKey || !userKey.enabled) {
+        storage.removeItem(KEY.privateKey);
+        setKey(null);
+        return;
+      }
       setKey(key);
+    } else {
+      setKey(null);
     }
-    const token = storage.getItem(KEY.token);
-    if (token) {
-      setToken(token);
-    }
-  }, [setKey, setToken]);
+  }, [setKey, setToken, setUser]);
 
 
 
-  const updateStatus = useCallback(async () => {
+  const getStatus = useCallback((): AuthStatus => {
     if (!user) {
-      setStatus("unauthenticated");
-      return;
+      return "unauthenticated";
     }
     const { keys } = user;
     if (keys.length === 0) {
-      setStatus("registered_without_key");
-      return;
+      return "registered_without_key";
     }
     const enabledKeys = keys.filter(k => k.enabled);
     if (enabledKeys.length === 0) {
-      setStatus("registered_key_disabled");
-      return;
+      return "registered_key_disabled";
     }
     if (!key) {
-      setStatus("registered");
-      return;
+      return "registered";
     }
-    const hash = await crypto.privateKey.toHash(key);
-    const isValid = enabledKeys.some(k => k.hash === hash);
-    if (!isValid) {
-      storage.removeItem(KEY.privateKey);
-      setKey(null);
-      return;
-    }
-    setStatus("authenticated");
-  }, [setStatus, user, key]);
+    return "authenticated";
+  }, [user, key]);
 
 
 
@@ -116,9 +108,39 @@ export function SessionWrapper({ children }: {
         return;
       }
       storage.setItem(KEY.token, jwt);
-      await readStorage();
+      await update();
     }
-  }, [readStorage]);
+  }, [update]);
+
+
+  const saveKey = useCallback(async (privateKey: CryptoKey) => {
+    if (!user) {
+      throw new Error("User must be authenticated to save a key");
+    }
+    const hash = await crypto.privateKey.toHash(privateKey);
+    const userKey = user.keys.find(k => k.hash === hash);
+    if (!userKey) {
+      throw new Error(`Key with hash ${hash} does not belong to user ${user.email}`);
+    }
+    if (!userKey.enabled) {
+      throw new Error("This key needs to be enabled first");
+    }
+    const base64 = await crypto.privateKey.toBase64(privateKey);
+    storage.setItem(KEY.privateKey, base64);
+    await update();
+  }, [update, user]);
+
+  const dropKey = useCallback(async () => {
+    storage.removeItem(KEY.privateKey);
+    await update();
+  }, [update]);
+
+
+
+  const signOut = useCallback(async () => {
+    storage.removeItem(KEY.token);
+    await update();
+  }, [update]);
 
   const refreshToken = useCallback(async () => {
     if (!token) {
@@ -138,35 +160,43 @@ export function SessionWrapper({ children }: {
     // TODO: Implement token refresh logic
   }, [token]);
 
+
+
+
   useEffect(() => {
     void refreshToken();
   }, [token, refreshToken]);
 
   useEffect(() => {
-    void updateStatus();
-  }, [status, updateStatus]);
-
-
-
-  useEffect(() => {
-    (async () => {
-      await readStorage();
-      await fetchUser();
-    })().catch(console.error);
-  }, [status, fetchUser, readStorage]);
+    update().catch(console.error);
+  }, [update]);
 
 
 
 
 
   const value = useMemo(() => ({
-    status,
+    status: getStatus(),
     user,
+    isAdmin: user ? user.scope.includes("dabih:admin") : false,
     key,
+    saveKey,
+    dropKey,
     token,
     signIn,
-    fetchUser,
-  }), [status, user, key, signIn, token, fetchUser]);
+    signOut,
+    update,
+  }), [
+    user,
+    key,
+    saveKey,
+    dropKey,
+    signIn,
+    signOut,
+    token,
+    update,
+    getStatus
+  ]);
 
   return (
     <SessionContext.Provider value={value}>

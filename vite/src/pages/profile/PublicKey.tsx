@@ -1,6 +1,5 @@
-import React from 'react';
 import { Trash2, Key } from 'react-feather';
-import { Switch, LocalDate } from '@/app/util';
+import { Switch, LocalDate } from '@/util';
 
 import type { PublicKey, UserResponse } from '@/lib/api/types';
 
@@ -15,7 +14,7 @@ export default function PublicKey({ publicKey, user, isAdmin, show, onRemove, on
     onEnable: (enabled: boolean) => void
   }
 ) {
-  const { name, sub, email } = user;
+  const { sub, email } = user;
   const { hash, enabled, createdAt, isRootKey } = publicKey;
   const isEnabled = !!enabled || isRootKey;
 
@@ -50,9 +49,6 @@ export default function PublicKey({ publicKey, user, isAdmin, show, onRemove, on
   return (
     <div className="flex items-center flex-wrap p-1 m-2 text-sm bg-white border border-gray-400 rounded-xl space-x-4">
       {getIcon()}
-      <div className="font-medium text-black">
-        {name}
-      </div>
       <div>
         <a className="text-blue pl-1 font-bold" href={`mailto:${email}`}>
           {email}

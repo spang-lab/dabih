@@ -12,12 +12,6 @@ const apps = [
     script: "npm start",
     autorestart: false,
   },
-  {
-    name: "next",
-    cwd: "./next",
-    script: "npm run dev",
-    autorestart: false,
-  },
 ];
 
 module.exports = { apps };

@@ -29,7 +29,7 @@ type PageStatus = 'complete' | 'enabled' | 'disabled' | 'active';
 
 
 export default function Header() {
-  const { user, key } = useSession();
+  const { user, key, signOut } = useSession();
   const page = usePage();
 
 
@@ -52,7 +52,7 @@ export default function Header() {
       return (
         <>
           <NavLine />
-          <button onClick={() => { }} type="button">
+          <button onClick={() => signOut()} type="button">
             <NavItem href="" state="enabled" label="Sign Out">
               <LogOut size={24} />
             </NavItem>

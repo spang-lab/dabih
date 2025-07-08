@@ -1,24 +1,37 @@
 'use client';
 
-import useKey from '@/lib/hooks/key';
-import React from 'react';
-import Link from 'next/link';
-import storage from '@/lib/storage';
 
+import useSession from '@/Session';
+import crypto from '@/lib/crypto';
+import { useEffect, useState } from 'react';
 import {
   Key, XCircle,
 } from 'react-feather';
+import { Link } from 'react-router';
 
 export default function LocalKey() {
-  const key = useKey();
+  const { key, status, dropKey } = useSession();
 
-  const { status, hash } = key;
+  const [hash, setHash] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!key) {
+      setHash(null);
+      return;
+    }
+    crypto.privateKey.toHash(key)
+      .then(setHash)
+      .catch(console.error);
+  }, [key]);
+
+
+
 
   if (status === 'loading') {
     return null;
   }
 
-  if (status === 'unregistered' || status === 'no_key') {
+  if (status === "registered_without_key") {
     return (
       <div className="flex grow flex-row flex-wrap items-center">
         <div className="bg-red text-white font-extrabold rounded-full px-2 py-1 mx-3">
@@ -28,7 +41,7 @@ export default function LocalKey() {
           Go to the
           <Link
             className="text-blue hover:underline inline-flex items-center mx-2"
-            href="/key"
+            to="/key"
           >
             <Key className="mr-1" />
             Key page
@@ -39,7 +52,7 @@ export default function LocalKey() {
     );
   }
 
-  if (status === 'unloaded') {
+  if (status === 'registered') {
     return (
       <div className="flex grow flex-row flex-wrap items-center">
         <div className="bg-gray-700 text-white font-extrabold rounded-full px-2 py-1 mx-3">
@@ -49,7 +62,7 @@ export default function LocalKey() {
           Go to the
           <Link
             className="text-blue hover:underline inline-flex items-center mx-2"
-            href="/key"
+            to="/key"
           >
             <Key className="mr-1" />
             Key page
@@ -59,7 +72,7 @@ export default function LocalKey() {
       </div>
     );
   }
-  if (status === 'disabled' || status === 'no_enabled_key') {
+  if (status === 'registered_key_disabled') {
     return (
       <div className="flex grow flex-row flex-wrap items-center">
         <div className="bg-red text-white font-extrabold rounded-full px-2 py-1 mx-3">
@@ -69,7 +82,7 @@ export default function LocalKey() {
           Please contact the
           <Link
             className="text-blue hover:underline inline-flex items-center mx-2"
-            href="/docs/contact"
+            to="/docs/contact"
           >
             <Key className="mr-1" />
             admin
@@ -97,9 +110,7 @@ export default function LocalKey() {
         <button
           type="button"
           className="bg-blue text-white py-1 px-2 rounded-md inline-flex items-center"
-          onClick={() => {
-            storage.deleteKey();
-          }}
+          onClick={() => dropKey()}
         >
           <XCircle className="mr-2" />
           Unload

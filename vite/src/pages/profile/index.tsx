@@ -1,15 +1,17 @@
 import Tokens from './Tokens';
 import User from './User';
 import PublicKeys from './PublicKeys';
-import { auth } from '@/lib/auth/auth';
+import useSession from '@/Session';
+import { Navigate } from 'react-router';
 
-export default async function Profile() {
-  const session = await auth();
-  if (!session) {
-    return null;
+export default function Profile() {
+  const { user } = useSession();
+
+  if (!user) {
+    return (
+      <Navigate to="/signin" />
+    );
   }
-  const { user } = session;
-
 
 
   return (
@@ -28,7 +30,7 @@ export default async function Profile() {
       <p className="text-gray-500">
         This is the data dabih has about you.
       </p>
-      <User session={session} />
+      <User />
       <h2 className="text-xl pt-5 font-extrabold tracking-tight sm:text-2xl md:text-3xl">
         <span className="text-blue">Access </span>
         Tokens

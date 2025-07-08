@@ -1,22 +1,23 @@
 import {
   User, Key
 } from 'react-feather';
-import { LocalDate } from '@/app/util';
+import { LocalDate } from '@/util';
 
 import LocalKey from './LocalKey';
-import { Session } from 'next-auth';
+import useSession from '@/Session';
 
 
 
-export default function Account({ session }: { session: Session }) {
-  if (!session?.user) {
+export default function Account() {
+  const { user, isAdmin } = useSession();
+  if (!user) {
     return null;
   }
-  const { user, expires } = session;
 
   const {
-    sub, name, email, scopes, isAdmin,
+    sub, email, scope,
   } = user;
+  const scopes = scope.split(' ');
 
   return (
     <div>
@@ -26,9 +27,6 @@ export default function Account({ session }: { session: Session }) {
           Account
         </div>
         <div>
-          <span className="text-lg font-bold pl-2">
-            {name}
-          </span>
           <a className="text-blue px-2 font-bold" href={`mailto:${email}`}>
             {email}
           </a>
@@ -46,7 +44,7 @@ export default function Account({ session }: { session: Session }) {
           <p className="text-gray-500">
             Session expires:
           </p>
-          <LocalDate value={expires} showTime />
+          <LocalDate value={null} showTime />
         </div>
         <div>
           Scopes:

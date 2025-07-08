@@ -1,6 +1,7 @@
 import crypto from '#lib/crypto/index';
 import { getSecret, getSecrets, SECRET } from '#lib/redis/secrets';
 import db from '#lib/db';
+import logger from '#lib/logger';
 
 export default async function verifyEmail(tokenStr: string): Promise<string> {
   const secrets = await getSecrets(SECRET.EMAIL);
@@ -44,19 +45,33 @@ export default async function verifyEmail(tokenStr: string): Promise<string> {
     return token;
   }
 
-  const defaultScope = ['dabih:upload', 'dabih:api'].join(' ');
-  const newUser = await db.user.create({
+  const scopes = ['dabih:upload', 'dabih:api'];
+  const adminUser = await db.user.findFirst({
+    where: {
+      scope: {
+        contains: 'dabih:admin',
+      },
+    },
+  });
+  if (!adminUser) {
+    logger.warn(
+      `No admin user found, creating new user with admin scope for ${email}`,
+    );
+    scopes.push('dabih:admin');
+  }
+  const scope = scopes.join(' ');
+
+  await db.user.create({
     data: {
       sub,
-      email: email,
-      scope: defaultScope,
+      email,
+      scope,
       lastAuthAt: new Date(),
     },
     include: {
       keys: true,
     },
   });
-  const { scope } = newUser;
   const token = crypto.jwt.signWithSecret(
     {
       sub,

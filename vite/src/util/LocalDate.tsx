@@ -2,7 +2,10 @@ export default function LocalDate({ value, showTime = true }) {
   if (!value) {
     return null;
   }
-  const locale = process.env.LOCALE || 'de-DE';
+
+  const locale = typeof window !== 'undefined' ? window.navigator.language : 'de-DE';
+
+
   let date: Date | null = null;
   if (typeof value === 'number') {
     date = new Date(value);
