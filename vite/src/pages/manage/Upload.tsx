@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { UploadCloud } from "react-feather";
-import UploadDialog from "@/app/dialog/Upload";
+import UploadDialog from "@/dialog/Upload";
 import useFiles from "@/lib/hooks/files";
 
 export default function Upload() {

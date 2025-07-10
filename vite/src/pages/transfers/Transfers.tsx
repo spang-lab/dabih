@@ -6,6 +6,7 @@ import { ChevronRight } from "react-feather";
 import { useEffect, useRef } from "react";
 import api from "@/lib/api";
 import useFiles from "@/lib/hooks/files";
+import transferWorker from "@/lib/transferWorker?worker";
 
 
 import UploadTransfer from "./Upload";
@@ -25,7 +26,7 @@ function Transfer({ data }: { data: TransferType }) {
 }
 
 export default function Transfers() {
-  const { status } = useSession();
+  const { status, token } = useSession();
   const workerRef = useRef<Worker | null>(null);
   const transfers = useTransfers((state) => state.transfers);
   const updateTransfer = useTransfers((state) => state.updateTransfer);
@@ -44,7 +45,7 @@ export default function Transfers() {
     if (status !== "authenticated") {
       return;
     }
-    workerRef.current ??= new Worker(new URL("@/lib/transferWorker", import.meta.url));
+    workerRef.current ??= new transferWorker();
     const worker = workerRef.current;
     worker.onmessage = async (e: MessageEvent<TransferType>) => {
       const transfer = e.data;
@@ -56,6 +57,7 @@ export default function Transfers() {
         await list(cwd)
       }
     };
+    worker.postMessage(token);
 
     void (async () => {
       const { data: incomplete } = await api.upload.unfinished();
@@ -68,10 +70,9 @@ export default function Transfers() {
         status: "interrupted",
         inode,
       })) as TransferType[];
-      console.log("incomplete transfers", transfers);
       transfers.forEach(addTransfer);
     })();
-  }, [addTransfer, cwd, list, updateTransfer, status]);
+  }, [addTransfer, cwd, list, updateTransfer, status, token]);
 
 
   useEffect(() => {
@@ -80,6 +81,7 @@ export default function Transfers() {
     if (!transfer || !worker) {
       return;
     }
+    console.log("Sending transfer to worker", transfer);
     worker.postMessage(transfer);
   }, [transfers, workerRef]);
 

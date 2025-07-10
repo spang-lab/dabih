@@ -1,19 +1,16 @@
 "use client";
 
-import React, { createContext, useState, useContext, useMemo, useCallback, useEffect, useRef } from 'react';
+import React, { createContext, useState, useContext, useMemo, useCallback, useEffect } from 'react';
 import { DndContext, DragStartEvent, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import api from '@/lib/api';
-import useKey from '@/lib/hooks/key';
 import crypto from '@/lib/crypto';
 
 import { UserResponse } from '@/lib/api/types';
 import Menu from './Menu';
-import useUsers from '@/lib/hooks/users';
-import { User } from 'next-auth';
 import useFiles from '@/lib/hooks/files';
+import useSession from '@/Session';
 
 interface FinderContextType {
-  user: User | null,
   users: Record<string, UserResponse> | null,
   selected: string[],
   setSelected: (selected: string[]) => void,
@@ -28,12 +25,11 @@ interface FinderContextType {
 
 const FinderContext = createContext<FinderContextType>({} as FinderContextType);
 
-export function FinderWrapper({ user, children }: {
-  user: User,
+export function FinderWrapper({ children }: {
   children: React.ReactNode,
 }) {
-  const key = useKey();
-  const users = useUsers();
+  const { key } = useSession();
+  const [users, setUsers] = useState<Record<string, UserResponse>>({});
   const [selected, setSelected] = useState<string[]>([]);
   const [menu, setMenu] = useState({ left: 0, top: 0, open: false });
 
@@ -43,18 +39,32 @@ export function FinderWrapper({ user, children }: {
   const list = useFiles((state) => state.list);
 
 
+  const fetchUsers = useCallback(async () => {
+    const { data, error } = await api.user.list();
+    if (error || !data) {
+      console.error(error);
+      return;
+    }
+    const usersMap = data.reduce((acc: Record<string, UserResponse>, user: UserResponse) => {
+      acc[user.sub] = user;
+      return acc;
+    }, {});
+    setUsers(usersMap);
+  }, []);
+
+
   const getKeys = useCallback(async (mnemonic: string) => {
     const { data, error } = await api.fs.listFiles(mnemonic);
     if (!data || error) {
       console.error(error);
       return;
     }
-    if (key.status !== "active") {
-      console.error("Key not active");
+    if (!key) {
+      console.error("No key available for decryption");
       return;
     }
     const keyPromises = data.map(async (file) => {
-      const aesKey = await crypto.file.decryptKey(key.key, file)
+      const aesKey = await crypto.file.decryptKey(key, file)
       return {
         mnemonic: file.mnemonic,
         key: await crypto.aesKey.toBase64(aesKey),
@@ -122,11 +132,11 @@ export function FinderWrapper({ user, children }: {
       if (!files || error) {
         return;
       }
-      if (key.status !== "active") {
+      if (!key) {
         return;
       }
       const keyPromises = files.map(async (file) => {
-        const aesKey = await crypto.file.decryptKey(key.key, file)
+        const aesKey = await crypto.file.decryptKey(key, file)
         return {
           mnemonic: file.mnemonic,
           key: await crypto.aesKey.toBase64(aesKey),
@@ -177,8 +187,11 @@ export function FinderWrapper({ user, children }: {
     list(null).catch(console.error);
   }, [list]);
 
+  useEffect(() => {
+    fetchUsers().catch(console.error);
+  }, [fetchUsers]);
+
   const value = useMemo(() => ({
-    user,
     users,
     selected,
     setSelected,
@@ -190,7 +203,6 @@ export function FinderWrapper({ user, children }: {
     menu,
     setMenu,
   }), [
-    user,
     users,
     selected,
     setSelected,

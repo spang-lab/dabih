@@ -6,7 +6,7 @@ import {
   Upload,
 } from "@/lib/hooks/transfers";
 
-import api from "./api";
+import api, { setAPIToken } from "./api";
 import crypto from "./crypto";
 import { FileUpload, InodeTree, InodeType, InodeMembers } from "./api/types";
 import JSZip from "jszip";
@@ -233,7 +233,7 @@ async function handleDownload(transfer: Download) {
     }
     case "creating": {
       const { files, downloads, key } = transfer;
-      if (key.status !== "active" || !key.key) {
+      if (!key) {
         return toError(transfer, "Pivate key is not valid");
       }
       if (!files || !downloads) {
@@ -250,7 +250,7 @@ async function handleDownload(transfer: Download) {
       if (!inode || error) {
         return toError(transfer, error ?? "Failed to get inode");
       }
-      const aesKey = await crypto.file.decryptKey(key.key, inode);
+      const aesKey = await crypto.file.decryptKey(key, inode);
       const download = {
         inode,
         aesKey,
@@ -372,7 +372,13 @@ export default async function handleTransfer(
   throw new Error(`Unsupported transfer type`);
 }
 
-self.onmessage = async (event: MessageEvent<Transfer>) => {
+self.onmessage = async (event: MessageEvent<Transfer | string>) => {
+  if (typeof event.data === "string") {
+    const token = event.data;
+    setAPIToken(token);
+    return;
+  }
+
   const transfer = event.data;
   if (!transfer) {
     return;

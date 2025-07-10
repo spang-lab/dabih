@@ -9,15 +9,16 @@ import FileName from "./Filename";
 import { useState } from "react";
 import useFinder from "../Context";
 import useFiles from "@/lib/hooks/files";
+import useSession from "@/Session";
 
 
 export default function Inode({ inode }: { inode: InodeMembers }) {
+  const { isAdmin, user } = useSession();
   const {
     setMenu,
     selected,
     setSelected,
     list,
-    user,
   } = useFinder();
   const searchStatus = useFiles((state) => state.searchStatus);
   const parents = useFiles((state) => state.parents);
@@ -45,7 +46,7 @@ export default function Inode({ inode }: { inode: InodeMembers }) {
         setSelected([inode.mnemonic]);
       }}
       onDoubleClick={() => {
-        if (!isMember && !user?.isAdmin && !isSearch) {
+        if (!isMember && !isAdmin && !isSearch) {
           return;
         }
         list(inode.mnemonic);
@@ -172,6 +173,7 @@ function InodeInner({
       </Draggable>
     );
   }
+
   if (type === InodeType.TRASH || type === InodeType.HOME) {
     return (
       <Droppable id={dropId}>

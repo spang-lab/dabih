@@ -2,9 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { UserResponse } from "./lib/api/types";
 
 import crypto from "./lib/crypto";
-import api from "./lib/api";
+import api, { setAPIToken } from "./lib/api";
 
-const storage = window.localStorage;
 export const KEY = {
   privateKey: "dabih_private_key",
   token: "dabih_token",
@@ -43,9 +42,13 @@ export function SessionWrapper({ children }: {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserResponse | null>(null);
 
+
+
+
   const update = useCallback(async () => {
-    const token = storage.getItem(KEY.token);
+    const token = localStorage.getItem(KEY.token);
     setToken(token);
+    setAPIToken(token);
     if (!token) {
       setUser(null);
       return;
@@ -56,13 +59,13 @@ export function SessionWrapper({ children }: {
       return;
     }
     setUser(data);
-    const base64 = storage.getItem(KEY.privateKey);
+    const base64 = localStorage.getItem(KEY.privateKey);
     if (base64) {
       const key = await crypto.privateKey.fromBase64(base64);
       const hash = await crypto.privateKey.toHash(key);
       const userKey = data.keys.find(k => k.hash === hash);
       if (!userKey || !userKey.enabled) {
-        storage.removeItem(KEY.privateKey);
+        localStorage.removeItem(KEY.privateKey);
         setKey(null);
         return;
       }
@@ -107,7 +110,7 @@ export function SessionWrapper({ children }: {
         console.error("Verification error:", error);
         return;
       }
-      storage.setItem(KEY.token, jwt);
+      localStorage.setItem(KEY.token, jwt);
       await update();
     }
   }, [update]);
@@ -126,19 +129,19 @@ export function SessionWrapper({ children }: {
       throw new Error("This key needs to be enabled first");
     }
     const base64 = await crypto.privateKey.toBase64(privateKey);
-    storage.setItem(KEY.privateKey, base64);
+    localStorage.setItem(KEY.privateKey, base64);
     await update();
   }, [update, user]);
 
   const dropKey = useCallback(async () => {
-    storage.removeItem(KEY.privateKey);
+    localStorage.removeItem(KEY.privateKey);
     await update();
   }, [update]);
 
 
 
   const signOut = useCallback(async () => {
-    storage.removeItem(KEY.token);
+    localStorage.removeItem(KEY.token);
     await update();
   }, [update]);
 
@@ -159,7 +162,6 @@ export function SessionWrapper({ children }: {
     }
     // TODO: Implement token refresh logic
   }, [token]);
-
 
 
 

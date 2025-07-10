@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import type { FileDownload, FileUpload, InodeMembers } from "../api/types";
-import type { KeyState } from "./key";
 
 interface UploadRequest {
   file: File;
@@ -38,7 +37,7 @@ export interface Download {
   id: string;
   type: "download";
   status: DownloadStatus;
-  key: KeyState;
+  key: CryptoKey;
   mnemonic: string;
   files?: InodeMembers[];
   downloads?: SingleDownload[];
@@ -71,7 +70,7 @@ interface State {
 interface Actions {
   addTransfer: (transfer: Transfer) => void;
   upload: (req: UploadRequest) => void;
-  download: (mnemonic: string, key: KeyState) => void;
+  download: (mnemonic: string, key: CryptoKey) => void;
   updateTransfer: (transfer: Transfer) => void;
   clearTransfer: (id: string) => void;
 }
@@ -95,7 +94,7 @@ const useTransfers = create<State & Actions>((set) => ({
     };
     set((state) => ({ transfers: [...state.transfers, transfer] }));
   },
-  download: (mnemonic: string, key: KeyState) => {
+  download: (mnemonic: string, key: CryptoKey) => {
     const id = Math.random().toString(36).substring(7);
     const transfer: Transfer = {
       id,

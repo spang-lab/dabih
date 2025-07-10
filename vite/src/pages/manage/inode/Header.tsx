@@ -1,6 +1,6 @@
 'use client';
 
-import { Spinner } from "@/app/util";
+import { Spinner } from "@/util";
 import { X, Search, Folder } from "react-feather";
 import { useState, useEffect } from "react";
 import useFiles from "@/lib/hooks/files";
@@ -27,7 +27,7 @@ export default function Header() {
     return () => {
       clearInterval(interval);
     };
-  }, [searchStatus]);
+  }, [searchStatus, fetchResults]);
 
   useEffect(() => {
     if (searchStatus === "complete") {

@@ -49,10 +49,16 @@ export const getHome = async (sub: string) => {
     return home;
   }
   const root = await getRoot();
+  const user = await db.user.findUnique({
+    where: {
+      sub,
+    },
+  });
+
   return db.inode.create({
     data: {
       mnemonic: await generateMnemonic(),
-      name: sub,
+      name: user?.email ?? sub,
       parent: {
         connect: {
           id: root.id,

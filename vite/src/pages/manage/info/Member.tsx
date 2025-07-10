@@ -1,7 +1,7 @@
 import { InodeMembers, Member, Permission } from "@/lib/api/types";
 import useFinder from "../Context";
 import { Folder, Trash2, User } from "react-feather";
-import { Switch } from "@/app/util";
+import { Switch } from "@/util";
 
 const getPermission = (permission: Permission) => {
   switch (permission) {

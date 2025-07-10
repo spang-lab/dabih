@@ -5,7 +5,7 @@ import {
   User,
 } from "react-feather";
 import { InodeMembers, InodeType } from "@/lib/api/types";
-import { Spinner } from "@/app/util";
+import { Spinner } from "@/util";
 
 
 

@@ -48,7 +48,7 @@ export default function CreateKeyDialog({ show, onClose, onSubmit }:
       const publicJWK = await crypto.privateKey.toJWK(publicKey);
       const pemData = await crypto.privateKey.toPEM(privateKey);
       const pemFile = new Blob([pemData], { type: 'text/plain' });
-      const pemUrl = window.URL.createObjectURL(pemFile);
+      const pemUrl = URL.createObjectURL(pemFile);
       const hexData = await crypto.privateKey.toHex(privateKey);
       const json = await crypto.privateKey.toJSON(privateKey);
       const qrCode = await QRCode.toDataURL(json, {

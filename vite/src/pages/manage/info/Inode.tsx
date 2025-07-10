@@ -2,7 +2,7 @@
 import api from "@/lib/api";
 import { FileKeys, InodeMembers, InodeType } from "@/lib/api/types";
 import { useState, useEffect, useMemo } from "react";
-import { Bytes, LocalDate } from "@/app/util";
+import { Bytes, LocalDate } from "@/util";
 import ListItem from "./ListItem";
 import Icon from "../inode/Icon";
 import FileName from "../inode/Filename";
@@ -91,7 +91,7 @@ export default function InodeInfo({ inode }: { inode: InodeMembers }) {
       setFiles(data);
     };
     list().catch(console.error);
-  }, [inode]);
+  }, [inode, isDir]);
 
 
   const totalSize = useMemo(() => {

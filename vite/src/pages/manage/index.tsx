@@ -1,17 +1,17 @@
-import { auth } from "@/lib/auth/auth";
-import { redirect } from "next/navigation";
+import useSession from "@/Session";
 import { FinderWrapper } from "./Context";
 
 import Files from "./Files";
 import Info from "./Info";
 import Upload from "./Upload";
+import { Navigate } from "react-router";
 
-export default async function Manage() {
-  const session = await auth();
+export default function Manage() {
+  const { status } = useSession();
 
 
-  if (!session?.user) {
-    redirect("/signin");
+  if (status !== "authenticated") {
+    return <Navigate to="/signin" />;
   }
 
   return (
@@ -21,7 +21,7 @@ export default async function Manage() {
         <span className="text-blue"> your files</span>
       </h1>
 
-      <FinderWrapper user={session.user}>
+      <FinderWrapper>
         <Upload />
         <div className="flex flex-row">
           <div className="grow">

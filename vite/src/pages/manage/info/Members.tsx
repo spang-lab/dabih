@@ -2,18 +2,18 @@ import { InodeMembers, InodeType, Permission } from "@/lib/api/types";
 import Member from "./Member";
 import useFinder from "../Context";
 import AddMember from "./AddMember";
-import { Pluralize } from "@/app/util";
+import { Pluralize } from "@/util";
 import { DownloadCloud, Trash2 } from "react-feather";
 import useFiles from "@/lib/hooks/files";
 import useTransfers from "@/lib/hooks/transfers";
-import useKey from "@/lib/hooks/key";
+import useSession from "@/Session";
 
 export default function Members({ inode }: { inode: InodeMembers }) {
+  const { user, key } = useSession();
   const parents = useFiles((state) => state.parents);
   const searchStatus = useFiles((state) => state.searchStatus);
-  const { user, remove } = useFinder();
+  const { remove } = useFinder();
   const download = useTransfers((state => state.download));
-  const key = useKey();
   if (!user || searchStatus !== "idle") {
     return null;
   }

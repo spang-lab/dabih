@@ -1,7 +1,6 @@
 import createClient from 'openapi-fetch';
 
 import type { components, paths } from './schema';
-import refresh from 'src/api/auth/refresh';
 type schemas = components['schemas'];
 
 type ChunkUpload = {

@@ -1,8 +1,7 @@
-import createClient from 'openapi-fetch';
+import createClient from "openapi-fetch";
 
-import type { components, paths } from './schema';
-import refresh from 'src/api/auth/refresh';
-type schemas = components['schemas'];
+import type { components, paths } from "./schema";
+type schemas = components["schemas"];
 
 type ChunkUpload = {
   mnemonic: string;
@@ -25,41 +24,41 @@ const init = (baseUrl: string) => {
     baseUrl,
   });
   const auth = {
-    info: () => c.GET('/auth/info'),
+    info: () => c.GET("/auth/info"),
     refresh: (token: string) =>
-      c.POST('/auth/refresh', {
+      c.POST("/auth/refresh", {
         headers: { Authorization: `Bearer ${token}` },
       }),
-    signIn: (email: string) => c.POST('/auth/signIn', { body: { email } }),
-    verify: (token: string) => c.POST('/auth/verify', { body: { token } }),
+    signIn: (email: string) => c.POST("/auth/signIn", { body: { email } }),
+    verify: (token: string) => c.POST("/auth/verify", { body: { token } }),
   };
 
   const token = {
-    add: (body: schemas['TokenAddBody']) => c.POST('/token/add', { body }),
-    remove: (id: string) => c.POST('/token/remove', { body: { tokenId: id } }),
-    list: () => c.GET('/token/list'),
+    add: (body: schemas["TokenAddBody"]) => c.POST("/token/add", { body }),
+    remove: (id: string) => c.POST("/token/remove", { body: { tokenId: id } }),
+    list: () => c.GET("/token/list"),
   };
   const user = {
-    add: (body: schemas['UserAddBody']) => c.POST('/user/add', { body }),
-    me: () => c.GET('/user/me'),
-    find: (sub: string) => c.POST('/user/find', { body: { sub } }),
-    list: () => c.GET('/user/list'),
-    remove: (sub: string) => c.POST('/user/remove', { body: { sub } }),
-    addKey: (body: schemas['KeyAddBody']) => c.POST('/user/key/add', { body }),
-    enableKey: (body: schemas['KeyEnableBody']) =>
-      c.POST('/user/key/enable', { body }),
-    removeKey: (body: schemas['KeyRemoveBody']) =>
-      c.POST('/user/key/remove', { body }),
+    add: (body: schemas["UserAddBody"]) => c.POST("/user/add", { body }),
+    me: () => c.GET("/user/me"),
+    find: (sub: string) => c.POST("/user/find", { body: { sub } }),
+    list: () => c.GET("/user/list"),
+    remove: (sub: string) => c.POST("/user/remove", { body: { sub } }),
+    addKey: (body: schemas["KeyAddBody"]) => c.POST("/user/key/add", { body }),
+    enableKey: (body: schemas["KeyEnableBody"]) =>
+      c.POST("/user/key/enable", { body }),
+    removeKey: (body: schemas["KeyRemoveBody"]) =>
+      c.POST("/user/key/remove", { body }),
   };
   const upload = {
-    start: (body: schemas['UploadStartBody']) =>
-      c.POST('/upload/start', { body }),
+    start: (body: schemas["UploadStartBody"]) =>
+      c.POST("/upload/start", { body }),
     chunk: (ck: ChunkUpload) => {
-      return c.PUT('/upload/{mnemonic}/chunk', {
+      return c.PUT("/upload/{mnemonic}/chunk", {
         params: {
           path: { mnemonic: ck.mnemonic },
           header: {
-            'content-range': contentRange(ck),
+            "content-range": contentRange(ck),
             digest: `sha-256=${ck.hash}`,
           },
         },
@@ -69,85 +68,85 @@ const init = (baseUrl: string) => {
         bodySerializer: (body) => {
           const fd = new FormData();
           if (body?.chunk) {
-            fd.append('chunk', body.chunk);
+            fd.append("chunk", body.chunk);
           }
           return fd;
         },
       });
     },
     cancel: (mnemonic: string) =>
-      c.POST('/upload/{mnemonic}/cancel', { params: { path: { mnemonic } } }),
+      c.POST("/upload/{mnemonic}/cancel", { params: { path: { mnemonic } } }),
     finish: (mnemonic: string) =>
-      c.POST('/upload/{mnemonic}/finish', { params: { path: { mnemonic } } }),
-    unfinished: () => c.GET('/upload/unfinished'),
+      c.POST("/upload/{mnemonic}/finish", { params: { path: { mnemonic } } }),
+    unfinished: () => c.GET("/upload/unfinished"),
   };
 
   const fs = {
     file: (mnemonic: string) =>
-      c.GET('/fs/{mnemonic}/file', { params: { path: { mnemonic } } }),
+      c.GET("/fs/{mnemonic}/file", { params: { path: { mnemonic } } }),
     listParents: (mnemonic: string) =>
-      c.GET('/fs/{mnemonic}/parent/list', { params: { path: { mnemonic } } }),
+      c.GET("/fs/{mnemonic}/parent/list", { params: { path: { mnemonic } } }),
     listFiles: (mnemonic: string) =>
-      c.GET('/fs/{mnemonic}/file/list', { params: { path: { mnemonic } } }),
-    addMember: (mnemonic: string, body: schemas['MemberAddBody']) =>
-      c.POST('/fs/{mnemonic}/member/add', {
+      c.GET("/fs/{mnemonic}/file/list", { params: { path: { mnemonic } } }),
+    addMember: (mnemonic: string, body: schemas["MemberAddBody"]) =>
+      c.POST("/fs/{mnemonic}/member/add", {
         params: { path: { mnemonic } },
         body,
       }),
     addDirectory: (name: string, parent?: string) =>
-      c.POST('/fs/directory/add', { body: { name, parent } }),
-    move: (body: schemas['MoveInodeBody']) => c.POST('/fs/move', { body }),
+      c.POST("/fs/directory/add", { body: { name, parent } }),
+    move: (body: schemas["MoveInodeBody"]) => c.POST("/fs/move", { body }),
     remove: (mnemonic: string) =>
-      c.POST('/fs/{mnemonic}/remove', { params: { path: { mnemonic } } }),
+      c.POST("/fs/{mnemonic}/remove", { params: { path: { mnemonic } } }),
     duplicate: (mnemonic: string) =>
-      c.POST('/fs/{mnemonic}/duplicate', { params: { path: { mnemonic } } }),
+      c.POST("/fs/{mnemonic}/duplicate", { params: { path: { mnemonic } } }),
     tree: (mnemonic: string) =>
-      c.GET('/fs/{mnemonic}/tree', { params: { path: { mnemonic } } }),
+      c.GET("/fs/{mnemonic}/tree", { params: { path: { mnemonic } } }),
     list: (mnemonic: string | null) => {
       if (!mnemonic) {
-        return c.GET('/fs/list');
+        return c.GET("/fs/list");
       }
-      return c.GET('/fs/{mnemonic}/list', { params: { path: { mnemonic } } });
+      return c.GET("/fs/{mnemonic}/list", { params: { path: { mnemonic } } });
     },
-    searchStart: (body: schemas['InodeSearchBody']) =>
-      c.POST('/fs/search', { body }),
+    searchStart: (body: schemas["InodeSearchBody"]) =>
+      c.POST("/fs/search", { body }),
     searchResults: (jobId: string) =>
-      c.POST('/fs/search/{jobId}', {
+      c.POST("/fs/search/{jobId}", {
         params: { path: { jobId } },
       }),
     searchCancel: (jobId: string) =>
-      c.POST('/fs/search/{jobId}/cancel', {
+      c.POST("/fs/search/{jobId}/cancel", {
         params: { path: { jobId } },
       }),
   };
 
   const download = {
     decrypt: (mnemonic: string, key: string) =>
-      c.POST('/download/{mnemonic}/decrypt', {
+      c.POST("/download/{mnemonic}/decrypt", {
         params: { path: { mnemonic } },
         body: { key },
       }),
     get: (token: string) =>
-      c.GET('/download', {
+      c.GET("/download", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        parseAs: 'stream',
+        parseAs: "stream",
       }),
     chunk: (uid: string, hash: string) =>
-      c.GET('/download/{uid}/chunk/{hash}', {
-        parseAs: 'stream',
+      c.GET("/download/{uid}/chunk/{hash}", {
+        parseAs: "stream",
         params: { path: { uid, hash } },
       }),
     chunkBuf: (uid: string, hash: string) =>
-      c.GET('/download/{uid}/chunk/{hash}', {
-        parseAs: 'arrayBuffer',
+      c.GET("/download/{uid}/chunk/{hash}", {
+        parseAs: "arrayBuffer",
         params: { path: { uid, hash } },
       }),
   };
   const util = {
-    healthy: () => c.GET('/healthy'),
-    info: () => c.GET('/info'),
+    healthy: () => c.GET("/healthy"),
+    info: () => c.GET("/info"),
   };
 
   return {
