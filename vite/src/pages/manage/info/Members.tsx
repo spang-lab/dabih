@@ -41,7 +41,7 @@ export default function Members({ inode }: { inode: InodeMembers }) {
   }).sort((m1, m2) => m1.member.sub.localeCompare(m2.member.sub));
 
   const hasWrite = writeIdx !== -1;
-  const isFileOrDir = [InodeType.FILE, InodeType.DIRECTORY].includes(inode.type);
+  const isFileOrDir = inode.type === InodeType.FILE || inode.type === InodeType.DIRECTORY;
 
 
   return (
@@ -73,9 +73,9 @@ export default function Members({ inode }: { inode: InodeMembers }) {
       <div className="flex space-x-2 mt-2">
         <button
           type="button"
-          disabled={!hasRead || !isFileOrDir}
+          disabled={!hasRead || !isFileOrDir || !key}
           className="w-full p-2 text-white bg-blue rounded-sm disabled:bg-blue/50 disabled:cursor-not-allowed inline-flex items-center"
-          onClick={() => download(inode.mnemonic, key)}
+          onClick={() => download(inode.mnemonic, key!)}
         >
           <DownloadCloud className="mr-2" size={24} />
           Download

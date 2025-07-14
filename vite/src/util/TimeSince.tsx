@@ -1,4 +1,4 @@
-export default function TimeSince({ value }) {
+export default function TimeSince({ value }: { value: string | Date }) {
   const now = new Date();
   const date = new Date(value);
 

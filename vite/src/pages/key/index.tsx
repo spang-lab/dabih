@@ -6,7 +6,7 @@ import { Clock } from 'react-feather';
 import { Spinner } from '@/util';
 
 function KeyContent() {
-  const { user, status } = useSession();
+  const { status } = useSession();
   if (status === "registered_key_disabled") {
     return (
       <div className="py-10 text-center">

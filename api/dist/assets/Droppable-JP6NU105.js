@@ -1,0 +1,1 @@
+import{j as t}from"./index-D81WwACb.js";import{d as p}from"./core.esm-DQkDfR73.js";import"./index-BLzTb_JD.js";function u({id:e,children:r}){const{setNodeRef:o,isOver:s}=p({id:e});return t.jsx("div",{ref:o,className:`rounded-lg ${s?"bg-blue/20":""}`,children:r})}export{u as default};

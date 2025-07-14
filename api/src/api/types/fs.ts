@@ -1,4 +1,4 @@
-import { Mnemonic, InodeType, Permission } from './base';
+import { Mnemonic } from './base';
 
 /**
  * The AES-256 encryption key used to encrypt and decrypt datasets.
@@ -86,7 +86,7 @@ export interface Inode {
    */
   id: unknown;
   mnemonic: string;
-  type: InodeType;
+  type: number;
   name: string;
   tag: string | null;
   data?: FileData | null;
@@ -160,7 +160,7 @@ export interface Member {
    * @format bigint
    */
   inodeId: unknown;
-  permission: Permission;
+  permission: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -222,7 +222,7 @@ export interface SetAccessBody {
   /**
    * The permission to set
    */
-  permission: Permission;
+  permission: number;
 }
 
 export interface ListResponse {

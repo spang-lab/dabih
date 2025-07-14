@@ -3,7 +3,7 @@ import useFinder from "../Context";
 import { Folder, Trash2, User } from "react-feather";
 import { Switch } from "@/util";
 
-const getPermission = (permission: Permission) => {
+const getPermission = (permission: number) => {
   switch (permission) {
     case Permission.READ:
       return "Read";
@@ -28,12 +28,11 @@ export default function MemberItem({
   isParent: boolean,
 }) {
   const { users } = useFinder();
-
-  const memberInfo = users[member.sub];
-  if (!memberInfo) {
+  if (!users || !users[member.sub]) {
     return null;
   }
-  const { sub, name, email } = memberInfo;
+
+  const { email } = users[member.sub];
   const enabled = member.permission === Permission.WRITE;
 
   const toggle = async () => {
@@ -99,8 +98,6 @@ export default function MemberItem({
         <User size={20} />
       </div>
       <div className="font-medium grow">
-        {name}
-        {' '}
         <a href={`mailto:${email}`} className="text-blue hover:underline text-xs">
           {email}
         </a>

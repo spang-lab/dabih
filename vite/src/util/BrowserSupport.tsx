@@ -1,7 +1,5 @@
-'use client';
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 
 
@@ -72,12 +70,15 @@ export default function BrowserSupport() {
         Web Storage API is not supported. Dabih needs this API to store private
         keys.
         <p>
-          <Link
+
+          <a
             className="text-blue hover:underline"
             href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             More Info
-          </Link>
+          </a>
         </p>
       </div>
     );
@@ -97,12 +98,14 @@ export default function BrowserSupport() {
         Web Crypto API is not supported or cannot be used (no SSL connection?).
         Dabih needs this API to decrypt the data.
         <p>
-          <Link
+          <a
             className="text-blue hover:underline"
             href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             More Info
-          </Link>
+          </a>
         </p>
       </div>
     );
@@ -138,12 +141,14 @@ export default function BrowserSupport() {
         </p>
         The Origin private file system API is not supported. Dabih needs this API to download files.
         <p>
-          <Link
+          <a
             className="text-blue hover:underline"
             href="https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             More Info
-          </Link>
+          </a>
         </p>
       </div>
     );

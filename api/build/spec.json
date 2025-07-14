@@ -363,18 +363,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"InodeType": {
-				"description": "InodeType is used to represent the type of an Inode.\nFILE: a file\nDIRECTORY: a directory\nUPLOAD: a file that is being uploaded\nTRASH: the special directory that holds deleted files\nROOT: the global root directory\nHOME: the user's home directory\nUSERS: the directory that holds all user directories",
-				"enum": [
-					0,
-					1,
-					2,
-					10,
-					11,
-					12
-				],
-				"type": "number"
-			},
 			"FileData": {
 				"properties": {
 					"id": {
@@ -439,7 +427,8 @@
 						"type": "string"
 					},
 					"type": {
-						"$ref": "#/components/schemas/InodeType"
+						"type": "number",
+						"format": "double"
 					},
 					"name": {
 						"type": "string"
@@ -835,15 +824,6 @@
 					}
 				]
 			},
-			"Permission": {
-				"description": "The Permission type is used to represent the permissions a user has on a Inode.\nNONE: No permissions\nREAD: user may only read the file or directory\nWRITE: user can read, share, edit, and delete the file or directory",
-				"enum": [
-					0,
-					1,
-					2
-				],
-				"type": "number"
-			},
 			"Member": {
 				"properties": {
 					"id": {
@@ -858,7 +838,8 @@
 						"format": "bigint"
 					},
 					"permission": {
-						"$ref": "#/components/schemas/Permission"
+						"type": "number",
+						"format": "double"
 					},
 					"createdAt": {
 						"type": "string",

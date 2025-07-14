@@ -129,11 +129,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "InodeType": {
-        "dataType": "refEnum",
-        "enums": [0,1,2,10,11,12],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileData": {
         "dataType": "refObject",
         "properties": {
@@ -156,7 +151,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": {"dataType":"any","required":true},
             "mnemonic": {"dataType":"string","required":true},
-            "type": {"ref":"InodeType","required":true},
+            "type": {"dataType":"double","required":true},
             "name": {"dataType":"string","required":true},
             "tag": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "data": {"dataType":"union","subSchemas":[{"ref":"FileData"},{"dataType":"enum","enums":[null]}]},
@@ -280,18 +275,13 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"intersection","subSchemas":[{"ref":"File"},{"dataType":"nestedObjectLiteral","nestedProperties":{"keys":{"dataType":"array","array":{"dataType":"refObject","ref":"Key"},"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Permission": {
-        "dataType": "refEnum",
-        "enums": [0,1,2],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Member": {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"any","required":true},
             "sub": {"dataType":"string","required":true},
             "inodeId": {"dataType":"any","required":true},
-            "permission": {"ref":"Permission","required":true},
+            "permission": {"dataType":"double","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },

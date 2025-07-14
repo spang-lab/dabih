@@ -40,7 +40,7 @@ export default function Profile() {
         {' '}
         <span className="text-blue font-bold">dabih</span>
       </p>
-      <Tokens user={user} />
+      <Tokens />
       <h2 className="text-xl pt-5 font-extrabold tracking-tight sm:text-2xl md:text-3xl">
         <span className="text-blue">Public </span>
         Keys
@@ -53,7 +53,7 @@ export default function Profile() {
       <p className="text-gray-500">
         The owners root keys are able to recover data.
       </p>
-      <PublicKeys user={user} />
+      <PublicKeys />
     </div>
   );
 }

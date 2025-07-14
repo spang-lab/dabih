@@ -12,11 +12,11 @@ export type Mnemonic = string;
  * READ: user may only read the file or directory
  * WRITE: user can read, share, edit, and delete the file or directory
  */
-export enum Permission {
-  NONE = 0,
-  READ = 1,
-  WRITE = 2,
-}
+export const Permission = {
+  NONE: 0,
+  READ: 1,
+  WRITE: 2,
+} as const;
 
 /**
  * PermissionString is a string representation of the Permission enum.
@@ -33,14 +33,14 @@ export type PermissionString = 'none' | 'read' | 'write';
  * HOME: the user's home directory
  * USERS: the directory that holds all user directories
  */
-export enum InodeType {
-  FILE = 0,
-  DIRECTORY = 1,
-  UPLOAD = 2,
-  TRASH = 10,
-  ROOT = 11,
-  HOME = 12,
-}
+export const InodeType = {
+  FILE: 0,
+  DIRECTORY: 1,
+  UPLOAD: 2,
+  TRASH: 10,
+  ROOT: 11,
+  HOME: 12,
+} as const;
 
 /**
  * User is the type that represents a user in the system.

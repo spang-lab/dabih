@@ -1,0 +1,1 @@
+import{j as a}from"./index-D81WwACb.js";import{c as i}from"./core.esm-DQkDfR73.js";import"./index-BLzTb_JD.js";function u({id:t,children:e}){const{attributes:r,listeners:s,setNodeRef:o}=i({id:t});return a.jsx("div",{ref:o,...r,...s,children:e})}export{u as default};

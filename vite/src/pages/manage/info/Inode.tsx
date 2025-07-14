@@ -8,7 +8,7 @@ import Icon from "../inode/Icon";
 import FileName from "../inode/Filename";
 import { Copy } from "react-feather";
 
-const getKind = (type: InodeType) => {
+const getKind = (type: number) => {
   switch (type) {
     case InodeType.DIRECTORY:
       return "Folder";
@@ -18,6 +18,8 @@ const getKind = (type: InodeType) => {
       return "Bin";
     case InodeType.UPLOAD:
       return "Upload";
+    default:
+      return "Unknown";
   }
 };
 
@@ -77,7 +79,7 @@ function FileInfo({ inode }: { inode: InodeMembers }) {
 export default function InodeInfo({ inode }: { inode: InodeMembers }) {
   const [files, setFiles] = useState<FileKeys[]>([]);
   const { name, type, mnemonic } = inode;
-  const isDir = [InodeType.DIRECTORY, InodeType.TRASH].includes(type);
+  const isDir = type === InodeType.DIRECTORY || type === InodeType.TRASH;
 
   useEffect(() => {
     const list = async () => {

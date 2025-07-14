@@ -10,8 +10,8 @@ import Transfers from './pages/transfers/Transfers'
 
 function Container({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-gray-50 h-full">
-      <div className="container mx-auto h-full p-4 shadow-lg bg-white rounded-lg">
+    <div className="bg-gray-100 flex grow">
+      <div className="container mx-auto p-4  bg-white">
         {children}
       </div>
       <Transfers />
@@ -25,7 +25,7 @@ function Container({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div className="h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Header />
       <Suspense fallback={<div>Loading...</div>}>
         <Container>

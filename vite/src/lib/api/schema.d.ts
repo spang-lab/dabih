@@ -777,18 +777,6 @@ export interface components {
             /** @description The hash of the key */
             hash: string;
         };
-        /**
-         * @description InodeType is used to represent the type of an Inode.
-         *     FILE: a file
-         *     DIRECTORY: a directory
-         *     UPLOAD: a file that is being uploaded
-         *     TRASH: the special directory that holds deleted files
-         *     ROOT: the global root directory
-         *     HOME: the user's home directory
-         *     USERS: the directory that holds all user directories
-         * @enum {number}
-         */
-        InodeType: 0 | 1 | 2 | 10 | 11 | 12;
         FileData: {
             /**
              * Format: bigint
@@ -818,7 +806,8 @@ export interface components {
              */
             id: string;
             mnemonic: string;
-            type: components["schemas"]["InodeType"];
+            /** Format: double */
+            type: number;
             name: string;
             tag: string | null;
             data?: components["schemas"]["FileData"] | null;
@@ -960,14 +949,6 @@ export interface components {
         FileKeys: components["schemas"]["File"] & {
             keys: components["schemas"]["Key"][];
         };
-        /**
-         * @description The Permission type is used to represent the permissions a user has on a Inode.
-         *     NONE: No permissions
-         *     READ: user may only read the file or directory
-         *     WRITE: user can read, share, edit, and delete the file or directory
-         * @enum {number}
-         */
-        Permission: 0 | 1 | 2;
         Member: {
             /**
              * Format: bigint
@@ -980,7 +961,8 @@ export interface components {
              * @description The database id of the inode
              */
             inodeId: string;
-            permission: components["schemas"]["Permission"];
+            /** Format: double */
+            permission: number;
             /** Format: date-time */
             createdAt: Date;
             /** Format: date-time */
