@@ -5,13 +5,21 @@ import { LocalDate } from '@/util';
 
 import LocalKey from './LocalKey';
 import useSession from '@/Session';
+import crypto from '@/lib/crypto';
 
 
 
 export default function Account() {
-  const { user, isAdmin } = useSession();
+  const { user, isAdmin, token } = useSession();
   if (!user) {
     return null;
+  }
+  let exp = null;
+  if (token) {
+    const payload = crypto.jwt.decode(token);
+    if (payload && payload.exp) {
+      exp = payload.exp * 1000; // Convert to milliseconds
+    }
   }
 
   const {
@@ -44,7 +52,7 @@ export default function Account() {
           <p className="text-gray-500">
             Session expires:
           </p>
-          <LocalDate value={null} showTime />
+          <LocalDate value={exp} showTime />
         </div>
         <div>
           Scopes:

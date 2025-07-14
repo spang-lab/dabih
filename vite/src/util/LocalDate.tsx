@@ -1,9 +1,18 @@
-export default function LocalDate({ value, showTime = true }) {
+export default function LocalDate({ value, showTime = true }:
+  { value: number | string | Date | null, showTime?: boolean }) {
   if (!value) {
     return null;
   }
 
-  const locale = typeof window !== 'undefined' ? window.navigator.language : 'de-DE';
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    hour12: false,
+    minute: '2-digit',
+    second: '2-digit',
+  };
 
 
   let date: Date | null = null;
@@ -19,7 +28,7 @@ export default function LocalDate({ value, showTime = true }) {
       <span>
         Invalid date value
         {' '}
-        {value}
+        {value.toString()}
       </span>
     );
   }
@@ -28,7 +37,7 @@ export default function LocalDate({ value, showTime = true }) {
     return (
       <span>
         {' '}
-        {date.toLocaleString(locale)}
+        {date.toLocaleString("de", options)}
         {' '}
       </span>
     );
@@ -36,7 +45,7 @@ export default function LocalDate({ value, showTime = true }) {
   return (
     <span>
       {' '}
-      {date.toLocaleDateString(locale)}
+      {date.toLocaleDateString("de", options)}
       {' '}
     </span>
   );

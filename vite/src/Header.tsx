@@ -63,11 +63,9 @@ export default function Header() {
     return (
       <>
         <NavLine />
-        <button onClick={() => { }} type="button">
-          <NavItem href="" state="enabled" label="Sign In">
-            <UserIcon size={24} />
-          </NavItem>
-        </button>
+        <NavItem href="/signin" state="enabled" label="Sign In">
+          <UserIcon size={24} />
+        </NavItem>
       </>
     );
   };

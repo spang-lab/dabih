@@ -53,6 +53,7 @@ export function SessionWrapper({ children }: {
       setUser(null);
       return;
     }
+
     const { data, error } = await api.user.me();
     if (error || !data) {
       setUser(null);
@@ -158,10 +159,23 @@ export function SessionWrapper({ children }: {
     const now = Math.floor(Date.now() / 1000);
     const thirtyMinutes = 30 * 60;
     if (exp - now > thirtyMinutes) {
+      // Token is still valid no need to refresh
       return;
     }
-    // TODO: Implement token refresh logic
-  }, [token]);
+    if (!key) {
+      return;
+    }
+    const signingKey = await crypto.privateKey.toSigningKey(key);
+    const signedToken = await crypto.jwt.signWithRSA({ sub }, signingKey);
+
+    const { data: newToken, error } = await api.auth.refresh(signedToken);
+    if (error || !newToken) {
+      console.error("Token refresh error:", error);
+      return;
+    }
+    localStorage.setItem(KEY.token, newToken);
+    await update();
+  }, [token, key, update]);
 
 
 
