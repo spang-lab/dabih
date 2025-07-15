@@ -7,11 +7,12 @@ import {
   Body,
   Request,
   OperationId,
+  Response,
 } from '@tsoa/runtime';
 
 import { rateLimit } from '#lib/redis/rateLimit';
 import { Request as KoaRequest } from 'koa';
-import { RequestWithUser, SignInResponse } from '../types';
+import { RequestWithUser, SignInResponse, ErrorResponse } from '../types';
 import signIn from './signIn';
 import refresh from './refresh';
 
@@ -39,6 +40,7 @@ export class AuthController extends Controller {
     return signIn(email);
   }
   @Post('verify')
+  @Response<ErrorResponse>(500, 'Unknown error')
   @OperationId('verifyEmail')
   public async verify(@Body() requestBody: { token: string }): Promise<string> {
     const { token } = requestBody;

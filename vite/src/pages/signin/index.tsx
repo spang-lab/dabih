@@ -1,12 +1,13 @@
 import { Mail } from "react-feather";
 import useSession from "@/Session";
 import { useState } from "react";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
-  const { signIn, user } = useSession();
+  const { signIn, user, error, clearError } = useSession();
 
   if (user) {
     return <Navigate to="/key" />
@@ -15,15 +16,29 @@ export default function SignIn() {
 
   return (
     <div>
+      {error && (
+        <div className="bg-red/30 border border-red text-red px-4 py-3 rounded relative mb-4">
+          <strong className="font-bold">Error: </strong>
+          <span className="block px-4 sm:inline">{error}</span>
+          <button
+            onClick={clearError}
+            className="absolute top-0 bottom-0 right-0 px-4 py-3"
+          >
+            <span className="text-red-500">&times;</span>
+          </button>
+        </div>
+      )}
+
       <h1 className="text-4xl pb-4 font-extrabold tracking-tight sm:text-5xl md:text-6xl">
         Sign in to
         {' '}
         <span className="text-blue">your account</span>
       </h1>
       <div className="flex max-w-md mx-auto my-10">
-        <form onSubmit={(e) => {
+        <form onSubmit={async (e) => {
           e.preventDefault()
-          signIn(email);
+          await signIn(email);
+          navigate("/email");
         }}>
           <label htmlFor="email">
             <p className="font-extrabold m-1 text-xl">

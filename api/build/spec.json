@@ -1166,6 +1166,18 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"ErrorResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -2529,6 +2541,16 @@
 							"application/json": {
 								"schema": {
 									"type": "string"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Unknown error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
 								}
 							}
 						}

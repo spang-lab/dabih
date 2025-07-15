@@ -16,19 +16,32 @@ export function initEmail() {
     logger.warn('RESEND_EMAIL is not set, email functionality will not work');
     return;
   }
+  const host = getEnv('HOST');
+  if (!host) {
+    logger.warn(
+      'HOST is not set, email functionality may not work as expected',
+    );
+  }
+
+  logger.info(`Initializing email service with email ${fromEmail}`);
   resend = new Resend(token);
 }
 
-export async function sendEmail(
-  to: string | string[],
-  subject: string,
-  html: string,
-) {
+export async function sendEmail({
+  to,
+  subject,
+  html,
+}: {
+  to: string | string[];
+  subject: string;
+  html: string;
+}) {
   if (!resend || !fromEmail) {
     throw new Error('Email service is not initialized');
   }
+  const from = `dabih <${fromEmail}>`;
   const email = await resend.emails.send({
-    from: fromEmail,
+    from,
     to,
     subject,
     html,

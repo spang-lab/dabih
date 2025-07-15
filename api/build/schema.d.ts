@@ -1055,6 +1055,9 @@ export interface components {
             status: "success" | "email_sent" | "error";
             token?: string;
         };
+        ErrorResponse: {
+            message: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -1913,6 +1916,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": string;
+                };
+            };
+            /** @description Unknown error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

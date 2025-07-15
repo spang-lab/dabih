@@ -18,6 +18,10 @@ export const Permission = {
   WRITE: 2,
 } as const;
 
+export interface ErrorResponse {
+  message: string;
+}
+
 /**
  * PermissionString is a string representation of the Permission enum.
  */

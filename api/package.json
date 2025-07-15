@@ -13,7 +13,7 @@
     "dev:stopdb": "docker stop pg-dabih && docker rm pg-dabih",
     "dev:startredis": "docker start redis-dabih || docker run -d --name redis-dabih -p 6379:6379 redis:alpine",
     "dev:stopredis": "docker stop redis-dabih && docker rm redis-dabih",
-    "dev:start": "dotenv -e .env.dev -- node --import tsx/esm src/server.ts",
+    "dev:start": "dotenv -e .env.local -e .env.dev -- node --import tsx/esm src/server.ts",
     "dev": "npm run build && npm run dev:startdb && sleep 1 && npm run dev:startredis && npm run dev:start",
     "dev:migrate": "dotenv -e .env.dev -- prisma migrate dev",
     "test:startdb": "docker run -d --name pg-dabih-test -p 15432:5432 --env-file .env.test postgres:16-alpine",

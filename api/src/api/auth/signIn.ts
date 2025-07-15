@@ -1,9 +1,10 @@
 import crypto from '#lib/crypto/index';
 import logger from '#lib/logger';
 import db from '#lib/db';
-import { hasEmail } from '#lib/email';
+import { hasEmail, sendEmail } from '#lib/email';
 import { getSecret, SECRET } from '#lib/redis/secrets';
 import { SignInResponse } from '../types';
+import { requireEnv } from '#lib/env';
 
 export default async function signIn(email: string): Promise<SignInResponse> {
   const existingUser = await db.user.findUnique({
@@ -43,8 +44,17 @@ export default async function signIn(email: string): Promise<SignInResponse> {
   if (!existingUser) {
     logger.info(`New user registration attempt for email: ${email}`);
   }
+  const host = requireEnv('HOST');
 
-  throw new Error(
-    'Unimplemented auth flow, email service is required for this operation',
-  );
+  const content = {
+    to: email,
+    subject: `Sign in to Dabih`,
+    html: `<p>Click the link below to sign in to Dabih:</p>
+       <p><a href="${host}/verify/${token}">Sign in</a></p>
+       <p>If you did not request this, please ignore this email.</p>`,
+  };
+  await sendEmail(content);
+  return {
+    status: 'email_sent',
+  };
 }

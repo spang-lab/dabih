@@ -22,11 +22,14 @@ type AuthStatus =
 
 interface SessionContextType {
   status: AuthStatus;
+  error: string | null;
   isAdmin: boolean;
   user: UserResponse | null;
   key: CryptoKey | null;
   token: string | null;
+  clearError: () => void;
   signIn: (email: string) => Promise<void>;
+  verifyToken: (token: string) => Promise<void>;
   signOut: () => Promise<void>;
   saveKey: (privateKey: CryptoKey) => Promise<void>;
   dropKey: () => Promise<void>;
@@ -41,6 +44,7 @@ export function SessionWrapper({ children }: {
   const [key, setKey] = useState<CryptoKey | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
 
 
@@ -96,25 +100,31 @@ export function SessionWrapper({ children }: {
     return "authenticated";
   }, [user, key]);
 
+  const verifyToken = useCallback(async (token: string) => {
+    const { data: jwt, error } = await api.auth.verify(token);
+    if (error || !jwt) {
+      setError(`Verification failed with error: ${error!.message}`);
+      return;
+    }
+    localStorage.setItem(KEY.token, jwt);
+    await update();
+  }, [update]);
 
 
   const signIn = useCallback(async (email: string) => {
     const { data, error } = await api.auth.signIn(email);
     if (error || !data) {
-      console.error("Sign in error:", error);
+      setError(`Sign in failed for`);
       return;
     }
     const { status, token } = data;
     if (status === "success" && token) {
-      const { data: jwt, error } = await api.auth.verify(token);
-      if (error || !jwt) {
-        console.error("Verification error:", error);
-        return;
-      }
-      localStorage.setItem(KEY.token, jwt);
-      await update();
+      await verifyToken(token);
     }
-  }, [update]);
+  }, [verifyToken]);
+
+
+
 
 
   const saveKey = useCallback(async (privateKey: CryptoKey) => {
@@ -193,20 +203,25 @@ export function SessionWrapper({ children }: {
 
   const value = useMemo(() => ({
     status: getStatus(),
+    error,
+    clearError: () => setError(null),
     user,
     isAdmin: user ? user.scope.includes("dabih:admin") : false,
     key,
     saveKey,
     dropKey,
     token,
+    verifyToken,
     signIn,
     signOut,
     update,
   }), [
     user,
     key,
+    error,
     saveKey,
     dropKey,
+    verifyToken,
     signIn,
     signOut,
     token,
