@@ -100,6 +100,14 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UserSub": {
+        "dataType": "refObject",
+        "properties": {
+            "sub": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "KeyAddBody": {
         "dataType": "refObject",
         "properties": {
@@ -543,7 +551,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUserController_get: Record<string, TsoaRoute.ParameterSchema> = {
-                undefined: {"in":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"sub":{"dataType":"string","required":true}}},
+                body: {"in":"body","name":"body","required":true,"ref":"UserSub"},
         };
         router.post('/user/find',
             authenticateMiddleware([{"api_key":["dabih:api"]}]),
@@ -605,7 +613,7 @@ export function RegisterRoutes(router: KoaRouter) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUserController_remove: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                undefined: {"in":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"sub":{"dataType":"string","required":true}}},
+                body: {"in":"body","name":"body","required":true,"ref":"UserSub"},
         };
         router.post('/user/remove',
             authenticateMiddleware([{"api_key":["dabih:api"]}]),

@@ -19,6 +19,7 @@ import {
   KeyEnableBody,
   KeyRemoveBody,
   PublicKey,
+  UserSub,
 } from '../types';
 import get from './get';
 import add from './add';
@@ -55,9 +56,8 @@ export class UserController extends Controller {
 
   @Post('find')
   @OperationId('findUser')
-  public async get(
-    @Body() { sub }: { sub: string },
-  ): Promise<UserResponse | null> {
+  public async get(@Body() body: UserSub): Promise<UserResponse | null> {
+    const { sub } = body;
     return get(sub);
   }
 
@@ -70,8 +70,9 @@ export class UserController extends Controller {
   @OperationId('removeUser')
   public async remove(
     @Request() request: RequestWithUser,
-    @Body() { sub }: { sub: string },
+    @Body() body: UserSub,
   ) {
+    const { sub } = body;
     const { user } = request;
     await remove(user, sub);
   }

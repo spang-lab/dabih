@@ -61,6 +61,10 @@ export interface KeyRemoveBody {
   hash: string;
 }
 
+export interface UserSub {
+  sub: string;
+}
+
 export interface UserAddBody {
   /**
    * The unique user sub

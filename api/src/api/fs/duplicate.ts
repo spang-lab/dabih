@@ -85,7 +85,7 @@ export default async function duplicate(user: User, mnemonic: string) {
   if (!root) {
     throw new NotFoundError(`No inode found for mnemonic ${mnemonic}`);
   }
-  if (![InodeType.DIRECTORY, InodeType.FILE].includes(root.type)) {
+  if (root.type !== InodeType.DIRECTORY && root.type !== InodeType.FILE) {
     throw new RequestError(
       `Unexpected: Inode ${mnemonic} is not a directory or file`,
     );

@@ -1,0 +1,33 @@
+import db from "#lib/db";
+import { AuthorizationError } from "../errors";
+import { convertKey } from "./util";
+export default async function addKey(user, body) {
+    const { isAdmin } = user;
+    if (!isAdmin && user.sub !== body.sub) {
+        throw new AuthorizationError('Not authorized to this user');
+    }
+    const isRootKey = body.isRootKey ?? false;
+    if (isRootKey && !isAdmin) {
+        throw new AuthorizationError('Not authorized to add root key');
+    }
+    const key = convertKey(user, body.data, isRootKey);
+    const result = await db.user.update({
+        where: {
+            sub: body.sub,
+        },
+        data: {
+            keys: {
+                create: key,
+            }
+        },
+        include: {
+            keys: true,
+        }
+    });
+    const keyData = result.keys.find(k => k.hash === key.hash);
+    if (!keyData) {
+        throw new Error('Should never happen, key not found after create');
+    }
+    return keyData;
+}
+//# sourceMappingURL=addKey.js.map

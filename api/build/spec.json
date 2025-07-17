@@ -299,6 +299,18 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"UserSub": {
+				"properties": {
+					"sub": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"sub"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"KeyAddBody": {
 				"properties": {
 					"sub": {
@@ -1340,15 +1352,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"sub": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"sub"
-								],
-								"type": "object"
+								"$ref": "#/components/schemas/UserSub"
 							}
 						}
 					}
@@ -1410,15 +1414,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"sub": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"sub"
-								],
-								"type": "object"
+								"$ref": "#/components/schemas/UserSub"
 							}
 						}
 					}

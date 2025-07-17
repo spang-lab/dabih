@@ -28,8 +28,10 @@ function inodeMatchesQuery(inode: InodeMembers, query: string) {
 }
 
 function isDir(inode: InodeMembers) {
-  return [InodeType.DIRECTORY, InodeType.TRASH, InodeType.HOME].includes(
-    inode.type,
+  return (
+    InodeType.DIRECTORY === inode.type ||
+    InodeType.TRASH === inode.type ||
+    InodeType.HOME === inode.type
   );
 }
 

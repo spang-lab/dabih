@@ -77,7 +77,12 @@ async function fetchResults(jobId: string, sub: string) {
     .lRange(jobKey, 0, 99)
     .lTrim(jobKey, 100, -1)
     .exec();
-  const entries = results[0] as string[];
+
+  const rResult = results[0];
+  if (!rResult || !Array.isArray(rResult)) {
+    throw new Error('No results found for this job');
+  }
+  const entries = rResult as string[];
   await touch(jobId);
 
   return {

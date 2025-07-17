@@ -3,6 +3,8 @@
     "incremental": true,
     "target": "ESNext",
     "module": "ESNext",
+    "rootDir": ".",
+    "outDir": "build",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -17,23 +19,13 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "Bundler",
     "baseUrl": ".",
-    "paths": {
-      "#lib/*": [
-        "./src/lib/*"
-      ],
-      "#crypto": [
-        "./src/lib/crypto/index.ts"
-      ],
-      "#ava": [
-        "./src/lib/ava.ts"
-      ]
-    },
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "sourceMap": true,
     "declaration": false,
-    "removeComments": true
+    "removeComments": true,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*",
@@ -42,7 +34,5 @@
   "exclude": [
     "node_modules",
     "dist",
-    "compiled",
-    "**/*.test.ts"
   ]
 }
