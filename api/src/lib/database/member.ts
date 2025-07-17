@@ -3,7 +3,7 @@ import { Member, Permission, PermissionString } from 'src/api/types';
 
 import { AuthorizationError, NotFoundError } from 'src/api/errors';
 
-export const parsePermission = (permission: string): Permission => {
+export const parsePermission = (permission: string): number => {
   switch (permission.toLowerCase()) {
     case 'r':
     case 'read':
@@ -18,9 +18,7 @@ export const parsePermission = (permission: string): Permission => {
       throw new Error(`Invalid permission string ${permission}`);
   }
 };
-export const toPermissionString = (
-  permission: Permission,
-): PermissionString => {
+export const toPermissionString = (permission: number): PermissionString => {
   switch (permission) {
     case Permission.READ:
       return 'read';
@@ -28,6 +26,8 @@ export const toPermissionString = (
       return 'write';
     case Permission.NONE:
       return 'none';
+    default:
+      throw new Error(`Invalid permission ${permission}`);
   }
 };
 
@@ -163,7 +163,7 @@ export const requireWrite = async (mnemonic: string, sub: string) => {
 const getPermissionRecursive = async (
   inodeId: bigint | null,
   sub: string,
-): Promise<Permission> => {
+): Promise<number> => {
   if (!inodeId) {
     return Permission.NONE;
   }
@@ -184,7 +184,7 @@ const getPermissionRecursive = async (
   }
   const member = inode.members[0];
   if (member) {
-    return member.permission as Permission;
+    return member.permission;
   }
   return getPermissionRecursive(inode.parentId, sub);
 };
@@ -207,7 +207,7 @@ export const getPermission = async (mnemonic: string, sub: string) => {
   }
   const member = inode.members[0];
   if (member) {
-    return member.permission as Permission;
+    return member.permission;
   }
   return getPermissionRecursive(inode.parentId, sub);
 };

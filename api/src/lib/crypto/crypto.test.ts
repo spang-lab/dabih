@@ -88,10 +88,10 @@ test('aesKey string encrypt/decrypt', async (t) => {
 
 test('aesKey derive', async (t) => {
   const secret = await random.getToken(10);
-  const key = await aesKey.derive(secret, 'test_salt');
+  const key = aesKey.derive(secret, 'test_salt');
   const hash = aesKey.toHash(key);
 
-  const other = await aesKey.derive(secret, 'other_salt');
+  const other = aesKey.derive(secret, 'other_salt');
   const otherHash = aesKey.toHash(other);
   t.not(hash, otherHash);
 });

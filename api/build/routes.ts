@@ -316,14 +316,9 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "InodeMembersParent": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"InodeMembers"},{"dataType":"nestedObjectLiteral","nestedProperties":{"parent":{"dataType":"union","subSchemas":[{"ref":"InodeMembersParent"},{"dataType":"enum","enums":[null]}],"required":true}}}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeTree": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"InodeMembersParent"},{"dataType":"nestedObjectLiteral","nestedProperties":{"keys":{"dataType":"array","array":{"dataType":"refObject","ref":"Key"},"required":true},"children":{"dataType":"array","array":{"dataType":"refAlias","ref":"InodeTree"}}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"InodeMembers"},{"dataType":"nestedObjectLiteral","nestedProperties":{"keys":{"dataType":"array","array":{"dataType":"refObject","ref":"Key"},"required":true},"children":{"dataType":"array","array":{"dataType":"refAlias","ref":"InodeTree"}}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MoveInodeBody": {
@@ -1570,6 +1565,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/auth/info',
+            authenticateMiddleware([{"api_key":[]}]),
             ...(fetchMiddlewares<Middleware>(AuthController)),
             ...(fetchMiddlewares<Middleware>(AuthController.prototype.info)),
 

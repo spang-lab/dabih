@@ -926,33 +926,10 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"InodeMembersParent": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/InodeMembers"
-					},
-					{
-						"properties": {
-							"parent": {
-								"allOf": [
-									{
-										"$ref": "#/components/schemas/InodeMembersParent"
-									}
-								],
-								"nullable": true
-							}
-						},
-						"required": [
-							"parent"
-						],
-						"type": "object"
-					}
-				]
-			},
 			"InodeTree": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/InodeMembersParent"
+						"$ref": "#/components/schemas/InodeMembers"
 					},
 					{
 						"properties": {
@@ -2487,7 +2464,11 @@
 				"tags": [
 					"Auth"
 				],
-				"security": [],
+				"security": [
+					{
+						"api_key": []
+					}
+				],
 				"parameters": []
 			}
 		},

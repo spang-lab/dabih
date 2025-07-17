@@ -47,7 +47,7 @@ export const listFiles = async (mnemonic: string): Promise<File[]> => {
   if (!inode) {
     return [];
   }
-  const type = inode.type as InodeType;
+  const { type } = inode;
   if (type === InodeType.UPLOAD) {
     return [];
   }
@@ -114,7 +114,7 @@ const getParentsRecursive = async (
   if (!inode) {
     throw new Error(`Inode ${inodeId} not found`);
   }
-  if ([InodeType.FILE, InodeType.UPLOAD].includes(inode.type)) {
+  if (inode.type === InodeType.FILE || inode.type === InodeType.UPLOAD) {
     throw new Error(`Unexpected: Inode ${inode.mnemonic} is not a directory`);
   }
   const parents = await getParentsRecursive(inode.parentId);

@@ -13,8 +13,7 @@ export default async function setAccess(
   const inode = await requireWrite(mnemonic, sub);
   const { members } = inode;
 
-  const permission = members.find((m) => m.sub === body.sub)
-    ?.permission as Permission;
+  const permission = members.find((m) => m.sub === body.sub)?.permission;
   if (!permission) {
     throw new RequestError(
       `User ${body.sub} is not a direct member of ${mnemonic}`,

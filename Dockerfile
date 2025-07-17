@@ -1,47 +1,50 @@
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
-
+# Build stage for API (generates OpenAPI types)
+FROM base AS api-builder
 WORKDIR /app
-
-COPY next/package.json next/package-lock.json ./ 
+COPY api/package*.json ./
 RUN npm ci
-
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY next .
-
-ENV NEXT_TELEMETRY_DISABLED 1
+COPY api .
 RUN npm run build
 
-
-# Production image, copy all the files and run next
-FROM base AS runner
-RUN npm install pm2 -g
-
-WORKDIR /app/next
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-WORKDIR /app/api
-COPY api .
-RUN npm ci
-
+# Build stage for Vite client
+FROM base AS vite-builder
 WORKDIR /app
-COPY helpers.cjs helpers.cjs
-COPY prod.config.cjs prod.config.cjs
+COPY vite/package*.json ./vite/
+RUN cd vite && npm ci
+COPY vite ./vite
+# Copy generated API types from api-builder to expected location
+COPY --from=api-builder /app/build ./api/build
+COPY --from=api-builder /app/src/api/types ./api/src/api/types
+# Build the vite client
+RUN cd vite && npm run build
+
+# Production runner stage
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Install API dependencies
+COPY api/package*.json ./
+RUN npm ci --only=production
+
+# Copy compiled JavaScript from api-builder
+COPY --from=api-builder /app/compiled ./compiled
+
+# Copy generated build files from api-builder
+COPY --from=api-builder /app/build ./build
+
+# Copy Prisma schema and other runtime files
+COPY --from=api-builder /app/prisma ./prisma
+
+# Copy Vite build output to API's dist directory
+COPY --from=vite-builder /app/vite/dist ./dist
 
 EXPOSE 3000
-ENV PORT 3000
+ENV PORT=3000
 
-CMD ["pm2-runtime", "pm2.prod.config.cjs"]
+CMD ["npm", "start"]
 
 
 

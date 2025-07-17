@@ -6,7 +6,7 @@ import pages from "vite-plugin-pages";
 export default defineConfig({
   plugins: [react(), tailwindcss(), pages()],
   build: {
-    outDir: "../api/dist",
+    outDir: "./dist",
     emptyOutDir: true,
   },
   resolve: {

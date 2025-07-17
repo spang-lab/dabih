@@ -38,7 +38,7 @@ export const listKeys = async (
   if (!inode) {
     return [];
   }
-  const type = inode.type as InodeType;
+  const { type } = inode;
   if (type === InodeType.FILE || type === InodeType.UPLOAD) {
     return [inode as FileKeys];
   }
@@ -129,7 +129,7 @@ const removeKeysRecursive = async (
     .map((m) => m.sub);
   const userKeys = (await publicKey.listUsers(newSubs)) as PublicKey[];
   const publicKeys = userKeys.concat(validKeys);
-  const type = inode.type as InodeType;
+  const { type } = inode;
   if (type === InodeType.FILE || type === InodeType.UPLOAD) {
     const hashes = publicKeys.map((k) => k.hash);
     await db.inode.update({

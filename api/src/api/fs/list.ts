@@ -5,7 +5,7 @@ import { getParents } from '#lib/database/inode';
 import { getHome } from '#lib/database/inodes';
 
 function isListable(inode: InodeMembers) {
-  if ([InodeType.FILE, InodeType.UPLOAD].includes(inode.type)) {
+  if (inode.type === InodeType.FILE || inode.type === InodeType.UPLOAD) {
     return false;
   }
   return true;

@@ -1,1 +1,0 @@
-import{j as s}from"./index-D81WwACb.js";function d({label:e,hidden:t,children:a}){return t?null:s.jsxs("div",{className:"grid gap-4 grid-cols-3 py-2",children:[s.jsx("dt",{className:"text-sm font-medium leading-6",children:e}),s.jsx("dd",{className:"col-span-2 leading-6",children:a})]})}export{d as default};

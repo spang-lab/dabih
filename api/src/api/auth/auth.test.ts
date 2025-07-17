@@ -32,18 +32,18 @@ test('valid access token', async (t) => {
   t.falsy(data2!.isAdmin);
 });
 
-test('user rsa access token', async (t) => {
+test('refresh access token', async (t) => {
   const api = await client(t, 'test_auth_user');
   const key = t.context.users.test_auth_user;
   const payload = {
-    email: 'test_auth_user@test.com',
+    sub: 'test_auth_user',
   };
   const token = crypto.jwt.signWithRSA(payload, key);
   const {
     response,
     data: jwt,
     error,
-  } = await api.client.POST('/auth/token', {
+  } = await api.client.POST('/auth/refresh', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -56,37 +56,35 @@ test('user rsa access token', async (t) => {
   t.truthy(jwt);
 });
 
-test('invalid signature', async (t) => {
+test('invalid refresh signature', async (t) => {
   const api = await client(t, 'test_auth_user');
   const key = await crypto.privateKey.generate();
   const payload = {
-    email: 'test_auth_user@test.com',
+    sub: 'test_auth_user',
   };
   const token = crypto.jwt.signWithRSA(payload, key);
-  const { response, error } = await api.client.GET('/auth/info', {
+  const { response, error } = await api.client.POST('/auth/refresh', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  t.log(error);
   t.is(response.status, 401);
   t.truthy(error);
 });
 
-test('invalid email', async (t) => {
+test('invalid sub', async (t) => {
   const api = await client(t, 'test_auth_user');
   const key = t.context.users.test_auth_user;
   const payload = {
-    email: 'invalid_email',
+    sub: 'invalid_user',
   };
   const token = crypto.jwt.signWithRSA(payload, key);
-  const { response, error } = await api.client.GET('/auth/info', {
+  const { response, error } = await api.client.POST('/auth/refresh', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  t.log(error);
-  t.is(response.status, 401);
+  t.is(response.status, 404);
   t.truthy(error);
 });
 
@@ -104,14 +102,14 @@ test('user with 2 keys', async (t) => {
   t.is(response.status, 201);
 
   const payload = {
-    email: 'test_auth_user@test.com',
+    sub: 'test_auth_user',
   };
   const token = crypto.jwt.signWithRSA(payload, privateKey);
   const {
     response: response2,
     data: info,
     error,
-  } = await api.client.POST('/auth/token', {
+  } = await api.client.POST('/auth/refresh', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -122,31 +120,6 @@ test('user with 2 keys', async (t) => {
   }
   t.is(response2.status, 200);
   t.truthy(info);
-});
-
-test('get a token', async (t) => {
-  const api = await client(t, 'test_auth_user');
-  const key = t.context.users.test_auth_user;
-  const payload = {
-    email: 'test_auth_user@test.com',
-  };
-  const token = crypto.jwt.signWithRSA(payload, key);
-
-  const { data, error } = await api.client.POST('/auth/token', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  t.falsy(error);
-  t.truthy(data);
-});
-
-test('try to get a token with a token', async (t) => {
-  const api = await client(t, 'test_auth_user');
-  const { response, data, error } = await api.auth.token();
-  t.falsy(error);
-  t.is(data, undefined);
-  t.is(response.status, 401);
 });
 
 test('sign in with email', async (t) => {

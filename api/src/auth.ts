@@ -8,10 +8,6 @@ import { getSecrets, SECRET } from '#lib/redis/secrets';
 import crypto from './lib/crypto';
 
 export const parseRequest = (request: Request): string => {
-  const authCookie = request.ctx.cookies.get('auth_token');
-  if (authCookie) {
-    return authCookie;
-  }
   const authHeader = request.get('Authorization');
   if (!authHeader) {
     throw new AuthenticationError('No Authorization header');

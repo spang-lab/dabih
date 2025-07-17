@@ -8,6 +8,7 @@ import {
   Request,
   OperationId,
   Response,
+  Security,
 } from '@tsoa/runtime';
 
 import { rateLimit } from '#lib/redis/rateLimit';
@@ -23,6 +24,7 @@ import verifyEmail from './verifyEmail';
 @Tags('Auth')
 export class AuthController extends Controller {
   @Get('info')
+  @Security('api_key', [])
   @OperationId('authInfo')
   public info(@Request() request: RequestWithUser) {
     const { user } = request;

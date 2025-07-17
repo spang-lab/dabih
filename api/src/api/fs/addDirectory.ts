@@ -25,7 +25,7 @@ export default async function addDirectory(user: User, body: AddDirectoryBody) {
     if (!dir) {
       throw new RequestError(`No directory found for mnemonic ${body.parent}`);
     }
-    if ([InodeType.FILE, InodeType.UPLOAD].includes(dir.type)) {
+    if (dir.type === InodeType.FILE || dir.type === InodeType.UPLOAD) {
       throw new RequestError(`Parent ${body.parent} is not a directory`);
     }
     parentId = dir.id;

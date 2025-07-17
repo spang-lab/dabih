@@ -3,7 +3,6 @@ import {
   generateKeyPair,
   createPublicKey,
   privateDecrypt,
-  createSign,
   constants,
   createHash,
 } from 'node:crypto';

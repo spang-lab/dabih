@@ -5,7 +5,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['build/**'],
+    ignores: ['build/**', '**/*.cjs', '**/*.test.ts'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -15,8 +15,8 @@ export default tseslint.config(
       parserOptions: {
         project: true,
         tsconfigRootDir: import.meta.dirname,
-      }
-    }
+      },
+    },
   },
   {
     files: ['*.js'],

@@ -1,7 +1,6 @@
 import { TokenResponse } from 'src/api/types';
 import { Token } from '@prisma/client';
 import random from '#lib/crypto/random';
-import db from '#lib/db';
 
 const TOKEN_PREFIX = 'dabih_at_';
 

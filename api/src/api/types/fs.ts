@@ -98,11 +98,8 @@ export interface Inode {
 export type InodeMembers = Inode & {
   members: Member[];
 };
-export type InodeMembersParent = InodeMembers & {
-  parent: InodeMembersParent | null;
-};
 
-export type InodeTree = InodeMembersParent & {
+export type InodeTree = InodeMembers & {
   children?: InodeTree[];
   keys: Key[];
 };
