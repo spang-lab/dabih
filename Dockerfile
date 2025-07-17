@@ -37,22 +37,12 @@ ENV NODE_ENV=production
 COPY api/package*.json ./
 RUN npm ci 
 
-# Copy compiled JavaScript from api-builder
-COPY --from=api-builder /app/compiled ./compiled
-
-# Copy generated build files from api-builder
-COPY --from=api-builder /app/build ./build
-
-# Copy Prisma schema and other runtime files
-COPY --from=api-builder /app/prisma ./prisma
-
-# Copy Vite build output to API's dist directory
-COPY --from=vite-builder /app/vite/dist ./dist
 
 EXPOSE 3000
 ENV PORT=3000
 
-CMD ["npm", "start"]
+CMD ["node", "build/server.cjs"]
+
 
 
 
