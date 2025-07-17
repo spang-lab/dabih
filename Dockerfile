@@ -8,15 +8,23 @@ RUN npm ci
 COPY api .
 RUN npm run build
 
+
+
 # Build stage for Vite client
 FROM base AS vite-builder
 WORKDIR /app
 COPY vite/package*.json ./vite/
 RUN cd vite && npm ci
 COPY vite ./vite
+
+
 # Copy generated API types from api-builder to expected location
-COPY --from=api-builder /app/build ./api/build
-COPY --from=api-builder /app/src/api/types ./api/src/api/types
+COPY --from=api-builder /app/build/api.ts /app/src/lib/api/
+COPY --from=api-builder /app/build/schema.d.ts /app/src/lib/api/
+COPY --from=api-builder /app/src/api/types /app/src/lib/api/types
+
+
+
 # Build the vite client
 RUN cd vite && npm run build
 
@@ -27,7 +35,7 @@ ENV NODE_ENV=production
 
 # Install API dependencies
 COPY api/package*.json ./
-RUN npm ci --only=production
+RUN npm ci 
 
 # Copy compiled JavaScript from api-builder
 COPY --from=api-builder /app/compiled ./compiled

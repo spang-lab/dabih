@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "compile": "tsc && tsc-alias",
+    "compile": "tsc -b",
     "build:tsoa": "tsoa spec-and-routes --basePath /api/v1",
     "build:docs": "redocly build-docs -o ./dist/openapi.html ./build/spec.json",
     "build:client": "node --import tsx/esm src/client.ts",
@@ -45,7 +45,6 @@
     "eslint": "^9.31.0",
     "openapi-typescript": "^7.8.0",
     "prisma": "^6.12.0",
-    "tsc-alias": "^1.8.10",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.37.0"
