@@ -1,6 +1,5 @@
 FROM node:24-alpine AS base
 
-# Build stage for API (generates OpenAPI types)
 FROM base AS api-builder
 WORKDIR /app
 COPY api/package*.json ./
@@ -12,36 +11,36 @@ RUN npm run build
 
 # Build stage for Vite client
 FROM base AS vite-builder
-WORKDIR /app
-COPY vite/package*.json ./vite/
-RUN cd vite && npm ci
-COPY vite ./vite
+WORKDIR /vite
+COPY vite/package*.json .
+RUN npm ci
+COPY vite .
 
 
 # Copy generated API types from api-builder to expected location
-COPY --from=api-builder /app/build/api.ts /app/src/lib/api/
-COPY --from=api-builder /app/build/schema.d.ts /app/src/lib/api/
-COPY --from=api-builder /app/src/api/types /app/src/lib/api/types
+COPY --from=api-builder /app/build/api.ts /vite/src/lib/api/
+COPY --from=api-builder /app/build/schema.d.ts /vite/src/lib/api/
+COPY --from=api-builder /app/src/api/types /vite/src/lib/api/types
+
+RUN npm run build
 
 
-
-# Build the vite client
-RUN cd vite && npm run build
 
 # Production runner stage
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Install API dependencies
-COPY api/package*.json ./
-RUN npm ci 
+
+COPY --from=api-builder /app/node_modules /app/node_modules
+COPY --from=api-builder /app/build /app
+COPY --from=vite-builder /vite/dist /app/dist
 
 
 EXPOSE 3000
 ENV PORT=3000
 
-CMD ["node", "build/server.cjs"]
+CMD ["node", "server.cjs"]
 
 
 
