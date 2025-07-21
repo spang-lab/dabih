@@ -755,6 +755,9 @@ export interface components {
             /** @description If true the key is a root key, used to decrypt all datasets */
             isRootKey?: boolean;
         };
+        UserSub: {
+            sub: string;
+        };
         KeyAddBody: {
             /** @description The user the key should belong to */
             sub: string;
@@ -984,10 +987,7 @@ export interface components {
             /** @description The list of AES-256 keys required to decrypt all child datasets */
             keys: components["schemas"]["FileDecryptionKey"][];
         };
-        InodeMembersParent: components["schemas"]["InodeMembers"] & {
-            parent: components["schemas"]["InodeMembersParent"] | null;
-        };
-        InodeTree: components["schemas"]["InodeMembersParent"] & {
+        InodeTree: components["schemas"]["InodeMembers"] & {
             keys: components["schemas"]["Key"][];
             children?: components["schemas"]["InodeTree"][];
         };
@@ -1162,9 +1162,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    sub: string;
-                };
+                "application/json": components["schemas"]["UserSub"];
             };
         };
         responses: {
@@ -1208,9 +1206,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    sub: string;
-                };
+                "application/json": components["schemas"]["UserSub"];
             };
         };
         responses: {

@@ -11,7 +11,7 @@ import {
   SuccessResponse,
 } from '@tsoa/runtime';
 
-import {
+import type {
   RequestWithUser,
   UserAddBody,
   UserResponse,

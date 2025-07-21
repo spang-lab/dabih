@@ -13,7 +13,7 @@ import {
 
 import { rateLimit } from '#lib/redis/rateLimit';
 import { Request as KoaRequest } from 'koa';
-import { RequestWithUser, SignInResponse, ErrorResponse } from '../types';
+import type { RequestWithUser, SignInResponse, ErrorResponse } from '../types';
 import signIn from './signIn';
 import refresh from './refresh';
 

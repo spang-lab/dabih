@@ -25,7 +25,7 @@ import searchStart from './searchStart';
 import searchResults from './searchResults';
 import searchCancel from './searchCancel';
 
-import {
+import type {
   AddDirectoryBody,
   Directory,
   FileDownload,

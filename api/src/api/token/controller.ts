@@ -10,7 +10,7 @@ import {
   OperationId,
 } from '@tsoa/runtime';
 
-import { RequestWithUser, TokenAddBody, TokenResponse } from '../types';
+import type { RequestWithUser, TokenAddBody, TokenResponse } from '../types';
 
 import add from './add';
 import list from './list';

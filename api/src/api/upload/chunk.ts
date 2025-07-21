@@ -7,7 +7,7 @@ import { head, store } from '#lib/fs';
 import Busboy, { BusboyHeaders } from '@fastify/busboy';
 
 import { Request } from 'koa';
-export type RequestWithHeaders = Request & RequestWithUser;
+type RequestWithHeaders = Request & RequestWithUser;
 
 export default async function chunk(
   body: ChunkAddBody,

@@ -12,7 +12,6 @@ import { initFilesystem } from '#lib/fs';
 import { initInodes } from '#lib/database/inodes';
 import redis, { initRedis } from '#lib/redis';
 import { initEmail } from '#lib/email';
-import { resolve } from 'path';
 
 const app = async (port?: number) => {
   await initFilesystem();
@@ -35,11 +34,9 @@ const app = async (port?: number) => {
   RegisterRoutes(apiRouter);
 
   const appRouter = new Router();
-  const baseDir = new URL('.', import.meta.url).pathname;
-  const staticPath = resolve(baseDir, '../dist');
   appRouter.use('/api/v1', apiRouter.routes(), apiRouter.allowedMethods());
 
-  app.use(serve(staticPath, {}));
+  app.use(serve('dist', {}));
   app.use(appRouter.routes()).use(appRouter.allowedMethods());
 
   const lPort = port?.toString() ?? getEnv('PORT', '3001');

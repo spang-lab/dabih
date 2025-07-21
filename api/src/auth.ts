@@ -1,5 +1,5 @@
 import { Request } from 'koa';
-import { User } from './api/types';
+import type { User } from './api/types';
 import { isToken, convertToken } from './lib/database/token';
 import db from './lib/db';
 

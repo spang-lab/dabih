@@ -12,14 +12,17 @@ import {
   Produces,
 } from '@tsoa/runtime';
 
-import { Mnemonic, AESKey, RequestWithUser } from '../types';
+import type {
+  Mnemonic,
+  AESKey,
+  RequestWithUser,
+  TokenResponse,
+} from '../types';
 
 import chunk from './chunk';
 import decrypt from './decrypt';
 import download from './mnemonic';
 import { Readable } from 'stream';
-
-import { TokenResponse } from '../types';
 
 @Route('download')
 @Tags('Download')

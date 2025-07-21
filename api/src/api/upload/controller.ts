@@ -13,14 +13,16 @@ import {
   Path,
   Header,
 } from '@tsoa/runtime';
+import { Request as KoaRequest } from 'koa';
+type RequestWithHeaders = KoaRequest & RequestWithUser;
 
 import start from './start';
 import cancel from './cancel';
-import { default as chunk, RequestWithHeaders } from './chunk';
+import chunk from './chunk';
 import finish from './finish';
 import unfinished from './unfinished';
 
-import {
+import type {
   Mnemonic,
   UploadStartBody,
   File,

@@ -33,14 +33,17 @@ ENV NODE_ENV=production
 
 
 COPY --from=api-builder /app/node_modules /app/node_modules
-COPY --from=api-builder /app/build /app
+COPY --from=api-builder /app/build/app /app
+COPY --from=api-builder /app/package.json /app/package.json
+COPY --from=api-builder /app/prisma /app/prisma
+COPY --from=api-builder /app/info.yaml /app/info.yaml
 COPY --from=vite-builder /vite/dist /app/dist
 
 
 EXPOSE 3000
 ENV PORT=3000
 
-CMD ["node", "server.cjs"]
+CMD ["npm", "start"]
 
 
 
