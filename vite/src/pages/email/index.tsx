@@ -1,8 +1,16 @@
+import useSession from "@/Session";
 import { Mail } from "react-feather";
-import { Link } from "react-router";
+import { Link, Navigate } from "react-router";
 
 
 export default function Email() {
+
+  const { user } = useSession();
+  if (user) {
+    return <Navigate to="/key" />
+  }
+
+
   return (
     <div className="flex flex-col items-center pt-10">
       <Mail size={80} className="text-blue mb-4" />
