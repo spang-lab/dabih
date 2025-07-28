@@ -1,10 +1,9 @@
 [package]
 name = "dabih"
-<<<<<<< HEAD
 description = "Command Line Interface for dabih"
 authors = ["Michael Huttner<michael@mhuttner.com>"]
 version = "1.15.6"
-edition = "2021"
+edition = "2024"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/spang-lab/dabih"
@@ -25,11 +24,6 @@ path = "src/main.rs"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-=======
-authors = ["Michael Huttner <michael@mhuttner.com>"]
-version = "0.1.0"
-edition = "2024"
->>>>>>> v2
 
 [dependencies]
 futures = "0.3"
