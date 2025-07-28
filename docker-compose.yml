@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: dabih-postgres
+    environment:
+      POSTGRES_USER: dabih
+      POSTGRES_PASSWORD: dabih
+      POSTGRES_DB: dabih
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dabih"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: dabih-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    container_name: dabih-app
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DB_URL: postgres://dabih:dabih@postgres:5432/dabih
+      REDIS_URL: redis://redis:6379
+      PORT: 3000
+      SECRET: ${SECRET:-change_me_in_production}
+      STORAGE_URL: fs:/app/data
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      HOST: ${HOST:-http://localhost:3000}
+    volumes:
+      - app_data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  app_data:

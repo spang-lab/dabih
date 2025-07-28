@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model User {
+  id         BigInt      @id @default(autoincrement())
+  sub        String      @unique
+  email      String      @unique
+  scope      String
+  keys       PublicKey[]
+  lastAuthAt DateTime    @default(now())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model PublicKey {
+  id        BigInt    @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id])
+  userId    BigInt
+  hash      String    @unique
+  data      String
+  isRootKey Boolean
+  enabled   DateTime?
+  enabledBy String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model FileData {
+  id        BigInt   @id @default(autoincrement())
+  uid       String   @unique
+  createdBy String
+  fileName  String
+  filePath  String?
+  hash      String?
+  size      BigInt?
+  keyHash   String
+  chunks    Chunk[]
+  inodes    Inode[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Chunk {
+  id        BigInt   @id @default(autoincrement())
+  data      FileData @relation(fields: [dataId], references: [id])
+  dataId    BigInt
+  hash      String
+  iv        String
+  start     BigInt
+  end       BigInt
+  crc       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Inode {
+  id        BigInt    @id @default(autoincrement())
+  mnemonic  String    @unique
+  type      Int
+  name      String
+  tag       String?
+  data      FileData? @relation(fields: [dataId], references: [id])
+  dataId    BigInt?
+  parent    Inode?    @relation("InodeTree", fields: [parentId], references: [id])
+  parentId  BigInt?
+  children  Inode[]   @relation("InodeTree")
+  members   Member[]
+  keys      Key[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Member {
+  id         BigInt   @id @default(autoincrement())
+  sub        String
+  Inode      Inode    @relation(fields: [inodeId], references: [id])
+  inodeId    BigInt
+  permission Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([sub, inodeId])
+}
+
+model Key {
+  id        BigInt   @id @default(autoincrement())
+  inode     Inode    @relation(fields: [inodeId], references: [id])
+  inodeId   BigInt
+  hash      String
+  key       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Token {
+  id        BigInt    @id @default(autoincrement())
+  value     String    @unique
+  sub       String
+  scope     String
+  exp       DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

@@ -1,3 +1,3 @@
 #!/usr/bin/env zsh
 
-pm2-runtime dev.config.cjs
+pm2-runtime pm2.config.cjs

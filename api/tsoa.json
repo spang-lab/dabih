@@ -1,0 +1,48 @@
+{
+  "entryFile": "src/server.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": [
+    "src/api/**/controller.ts"
+  ],
+  "spec": {
+    "outputDirectory": "build",
+    "specFileBaseName": "spec",
+    "specVersion": 3,
+    "securityDefinitions": {
+      "api_key": {
+        "type": "http",
+        "name": "Authorization",
+        "scheme": "bearer"
+      }
+    },
+    "specMerging": "recursive",
+    "spec": {
+      "paths": {
+        "/upload/{mnemonic}/chunk": {
+          "put": {
+            "requestBody": {
+              "content": {
+                "multipart/form-data": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "chunk": {
+                        "type": "string",
+                        "format": "binary"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routes": {
+    "routesDir": "build",
+    "middleware": "koa",
+    "authenticationModule": "./src/auth.ts"
+  }
+}

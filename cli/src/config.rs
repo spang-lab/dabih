@@ -1,157 +1,147 @@
-use anyhow::{bail, Result};
-use rand::{distributions::Alphanumeric, Rng};
-use reqwest::{header, Client};
-use serde::{Deserialize, Serialize};
-use std::env;
-use std::fs;
-use std::io::Write;
-use std::path::PathBuf;
-use url::Url;
+use std::fs::File;
+use std::path::{self, PathBuf};
 
-use crate::crypto::Key;
+use openapi::apis::{user_api, util_api};
+use serde::{Deserialize, Serialize};
+
+use crate::error::{CliError, Result};
+use crate::private_key::PrivateKey;
+use openapi::apis::configuration::Configuration;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
     pub url: String,
     pub token: String,
-    pub name: Option<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Context {
-    pub url: Url,
-    pub token: String,
-    pub key: Option<Key>,
-    pub client: Client,
-    pub path: PathBuf,
-    pub tmp_path: PathBuf,
-    pub name: Option<String>,
+    path: PathBuf,
+    config: Config,
+    private_key: Option<PrivateKey>,
+    openapi_config: Configuration,
+}
+
+fn find_key(path: &PathBuf, fingerprints: Vec<String>) -> Result<Option<PrivateKey>> {
+    for entry in path.read_dir()? {
+        let entry = entry?;
+        if entry.path().extension() == Some(std::ffi::OsStr::new("pem")) {
+            let key = PrivateKey::from(entry.path())?;
+            let fingerprint = key.hash()?;
+            if fingerprints.contains(&fingerprint) {
+                return Ok(Some(key));
+            }
+        }
+    }
+    Ok(None)
+}
+
+fn normalize_url(url: &str) -> String {
+    let mut normalized_url = url.to_string();
+    if normalized_url.ends_with('/') {
+        normalized_url.pop();
+    }
+    if !normalized_url.ends_with("/api/v1") {
+        normalized_url.push_str("/api/v1");
+    }
+    normalized_url
 }
 
 impl Context {
-    pub fn default_path() -> Result<PathBuf> {
-        let filename = "config.yaml";
-        let key = "XDG_CONFIG_HOME";
-        let config_folder = match env::var(key) {
-            Ok(v) => PathBuf::from(v).join("dabih"),
-            Err(_) => match home::home_dir() {
-                Some(v) => v.join(".dabih"),
-                None => bail!("Could not get home dir"),
-            },
+    pub fn new(url: String, token: String) -> Self {
+        let base_path = normalize_url(&url);
+        let openapi_config = Configuration {
+            base_path: base_path.clone(),
+            user_agent: Some("dabih-cli".to_string()),
+            bearer_access_token: Some(token.clone()),
+            ..Default::default()
         };
-        let path = config_folder.join(filename);
-        Ok(path)
-    }
-    pub fn default_tmp_path() -> Result<PathBuf> {
-        Ok(std::env::temp_dir())
-    }
-    pub fn get_tmp_dir(&self) -> Result<PathBuf> {
-        let dirname: String = rand::thread_rng()
-            .sample_iter(&Alphanumeric)
-            .take(16)
-            .map(char::from)
-            .collect();
-        let path = self.tmp_path.join(dirname);
-        fs::create_dir_all(&path)?;
-        Ok(path)
+        Self {
+            path: path::PathBuf::new(),
+            config: Config { url, token },
+            private_key: None,
+            openapi_config,
+        }
     }
 
-    pub fn from(
-        path: PathBuf,
-        url: String,
-        token: String,
-        name: Option<String>,
-    ) -> Result<Context> {
-        let authorization = format!("Bearer dabih_{}", token);
-        let mut headers = header::HeaderMap::new();
-        headers.insert(
-            header::AUTHORIZATION,
-            header::HeaderValue::from_str(&authorization)?,
-        );
-        let client = Client::builder().default_headers(headers).build()?;
-        let tmp_path = Self::default_tmp_path()?;
+    pub fn from(path: PathBuf) -> Result<Self> {
+        if !path.is_dir() {
+            return Err(CliError::ConfigDirNotFound);
+        }
+        let config_path = path.join("config.yaml");
+        let config_file = File::open(config_path)?;
+        let config: Config = serde_yaml::from_reader(config_file)?;
+        let url = normalize_url(&config.url);
 
-        Ok(Context {
-            url: Url::parse(&url)?,
-            token,
-            key: None,
-            client,
+        println!("api url: {}", url);
+
+        let openapi_config = Configuration {
+            base_path: url,
+            user_agent: Some("dabih-cli".to_string()),
+            bearer_access_token: Some(config.token.clone()),
+            ..Default::default()
+        };
+
+        Ok(Self {
             path,
-            tmp_path,
-            name,
+            config,
+            private_key: None,
+            openapi_config,
         })
     }
-    pub fn read_without_key(path: PathBuf) -> Result<Context> {
-        if !path.exists() {
-            bail!("Config file {} does not exist.", path.display())
-        }
-        let file = match fs::File::open(&path) {
-            Ok(f) => f,
-            Err(_) => bail!("Failed to open config file {}", path.to_string_lossy()),
-        };
-        let Config { url, token, name } = serde_yaml::from_reader(file)?;
-        Self::from(path, url, token, name)
-    }
-    pub fn read(path: PathBuf) -> Result<Context> {
-        let mut ctx = Self::read_without_key(path.clone())?;
-        let folder = match path.parent() {
-            Some(p) => PathBuf::from(p),
-            None => bail!("Could not get parent folder of {}", path.display()),
-        };
-        let key = Key::find_in(folder)?;
-        ctx.key = key;
-        Ok(ctx)
-    }
-    pub fn set_tmp_path(&mut self, tmp_path: PathBuf) {
-        self.tmp_path = tmp_path;
-    }
-    pub fn build(
-        path: PathBuf,
-        url: String,
-        token: String,
-        key_file: Option<String>,
-        name: Option<String>,
-    ) -> Result<Context> {
-        let mut ctx = Self::from(path, url, token, name)?;
-        if let Some(kfile) = key_file {
-            let path = PathBuf::from(kfile);
-            let key = Key::from(path)?;
-            ctx.key = Some(key);
-        }
-        Ok(ctx)
-    }
-    pub fn key(&self) -> Result<Key> {
-        match self.key.clone() {
-            Some(k) => Ok(k),
-            None => bail!("Private Key is required but not in config folder"),
-        }
-    }
-    pub fn set_name(&mut self, name: Option<String>) {
-        self.name = name;
+    pub fn openapi(&self) -> &Configuration {
+        &self.openapi_config
     }
 
-    pub fn write(&self) -> Result<()> {
-        let config = Config {
-            url: self.url.clone().into(),
-            token: self.token.clone(),
-            name: self.name.clone(),
-        };
-        let yaml = serde_yaml::to_string(&config)?;
-
-        if let Some(parent_dir) = &self.path.parent() {
-            fs::create_dir_all(parent_dir)?;
+    pub async fn init(&mut self) -> Result<()> {
+        match user_api::me(self.openapi()).await {
+            Ok(user) => {
+                let fingerprints = user
+                    .keys
+                    .iter()
+                    .map(|key| key.hash.clone())
+                    .collect::<Vec<_>>();
+                let key = find_key(&self.path, fingerprints)?;
+                dbg!(&key);
+            }
+            Err(_) => match util_api::healthy(self.openapi()).await {
+                Ok(_) => {
+                    return Err(CliError::AuthenticationError);
+                }
+                Err(e) => {
+                    println!("Error: {:?}", e);
+                    return Err(CliError::ConnectionError {
+                        url: self.config.url.clone(),
+                    });
+                }
+            },
         }
-        let mut file = fs::File::create(&self.path)?;
-        file.write_all(yaml.as_bytes())?;
-
-        if let Some(key) = self.key.clone() {
-            let folder = match &self.path.parent() {
-                Some(p) => PathBuf::from(p),
-                None => bail!("Could not get parent folder of {}", self.path.display()),
-            };
-            key.write_to(folder)?;
-        }
-
         Ok(())
     }
+}
+
+#[tokio::test]
+async fn test_invalid_url() -> Result<()> {
+    let url = "http://non.existing.host:3000".to_string();
+    let mut ctx = Context::new(url, "token".to_string());
+    let result = ctx.init().await;
+    dbg!(&result);
+    assert!(result.is_err());
+    assert!(matches!(result, Err(CliError::ConnectionError { url: _ })));
+    Ok(())
+}
+#[tokio::test]
+async fn test_invalid_token() -> Result<()> {
+    let mut ctx = Context::new(
+        "http://localhost:3000".to_string(),
+        "invalid_token".to_string(),
+    );
+    dbg!(&ctx);
+    let result = ctx.init().await;
+    dbg!(&result);
+    //is AuthenticationError
+    assert!(result.is_err());
+    assert!(matches!(result, Err(CliError::AuthenticationError)));
+
+    Ok(())
 }

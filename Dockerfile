@@ -1,47 +1,50 @@
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
-
+FROM base AS api-builder
 WORKDIR /app
-
-COPY client/package.json client/package-lock.json ./ 
+COPY api/package*.json ./
 RUN npm ci
-
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY client .
-
-ENV NEXT_TELEMETRY_DISABLED 1
+COPY api .
 RUN npm run build
 
 
-# Production image, copy all the files and run next
-FROM base AS runner
-RUN npm install pm2 -g
 
-WORKDIR /app/next
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-WORKDIR /app/api
-COPY api .
+# Build stage for Vite client
+FROM base AS vite-builder
+WORKDIR /vite
+COPY vite/package*.json .
 RUN npm ci
+COPY vite .
 
+
+# Copy generated API types from api-builder to expected location
+COPY --from=api-builder /app/build/api.ts /vite/src/lib/api/
+COPY --from=api-builder /app/build/schema.d.ts /vite/src/lib/api/
+COPY --from=api-builder /app/src/api/types /vite/src/lib/api/types
+
+RUN npm run build
+
+
+
+# Production runner stage
+FROM base AS runner
 WORKDIR /app
-COPY helpers.cjs helpers.cjs
-COPY prod.config.cjs prod.config.cjs
+ENV NODE_ENV=production
+
+
+COPY --from=api-builder /app/node_modules /app/node_modules
+COPY --from=api-builder /app/build/app /app
+COPY --from=api-builder /app/package.json /app/package.json
+COPY --from=api-builder /app/prisma /app/prisma
+COPY --from=api-builder /app/info.yaml /app/info.yaml
+COPY --from=vite-builder /vite/dist /app/dist
+
 
 EXPOSE 3000
-ENV PORT 3000
+ENV PORT=3000
 
-CMD ["pm2-runtime", "prod.config.cjs"]
+CMD ["npm", "start"]
+
 
 
 

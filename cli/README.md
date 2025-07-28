@@ -1,1 +1,0 @@
-# Dabih CLI
