@@ -9,8 +9,8 @@
 
 Start a demo version of dabih:
 
-```
-    docker run -p 3000:3000 thespanglab/dabih:latest
+```bash
+  docker compose up
 ```
 
 ## Development

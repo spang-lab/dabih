@@ -41,6 +41,7 @@ import type {
   InodeSearchBody,
   InodeSearchResults,
 } from '../types';
+import destroy from './destroy';
 
 @Route('fs')
 @Tags('Filesystem')
@@ -107,6 +108,15 @@ export class FilesystemController extends Controller {
   ): Promise<void> {
     const { user } = request;
     return remove(user, mnemonic);
+  }
+  @Post('{mnemonic}/destroy')
+  @OperationId('destroyInode')
+  public async destroy(
+    @Path() mnemonic: Mnemonic,
+    @Request() request: RequestWithUser,
+  ): Promise<void> {
+    const { user } = request;
+    return destroy(user, mnemonic);
   }
 
   @Get('{mnemonic}/tree')

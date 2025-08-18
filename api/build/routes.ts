@@ -1218,6 +1218,38 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_destroy: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        router.post('/fs/:mnemonic/destroy',
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
+            ...(fetchMiddlewares<Middleware>(FilesystemController)),
+            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.destroy)),
+
+            async function FilesystemController_destroy(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_destroy, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new FilesystemController();
+
+            return templateService.apiHandler({
+              methodName: 'destroy',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_tree: Record<string, TsoaRoute.ParameterSchema> = {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},

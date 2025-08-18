@@ -1179,7 +1179,8 @@
 	},
 	"info": {
 		"title": "dabih-api",
-		"version": "0.1.0",
+		"version": "2.0.1",
+		"description": "Dabih API Server",
 		"license": {
 			"name": "MIT"
 		},
@@ -2003,6 +2004,36 @@
 		"/fs/{mnemonic}/remove": {
 			"post": {
 				"operationId": "removeInode",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/Mnemonic"
+						}
+					}
+				]
+			}
+		},
+		"/fs/{mnemonic}/destroy": {
+			"post": {
+				"operationId": "destroyInode",
 				"responses": {
 					"204": {
 						"description": "No content"

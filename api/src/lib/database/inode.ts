@@ -177,3 +177,44 @@ export const isChildOf = async (mnemonic: string, parent: string) => {
   }
   return isChildOfRecursive(inode.parentId, parentInode.id);
 };
+
+const deleteInodeRecursive = async (inodeId: bigint | null) => {
+  if (!inodeId) {
+    return;
+  }
+  const children = await db.inode.findMany({
+    where: {
+      parentId: inodeId,
+    },
+  });
+  for (const child of children) {
+    await deleteInodeRecursive(child.id);
+  }
+
+  await db.member.deleteMany({
+    where: {
+      inodeId,
+    },
+  });
+  await db.key.deleteMany({
+    where: {
+      inodeId,
+    },
+  });
+  await db.inode.delete({
+    where: {
+      id: inodeId,
+    },
+  });
+};
+export const deleteInode = async (mnemonic: string) => {
+  const inode = await db.inode.findUnique({
+    where: {
+      mnemonic,
+    },
+  });
+  if (!inode) {
+    throw new Error(`Inode ${mnemonic} not found`);
+  }
+  await deleteInodeRecursive(inode.id);
+};

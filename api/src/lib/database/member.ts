@@ -160,7 +160,7 @@ export const requireWrite = async (mnemonic: string, sub: string) => {
   );
 };
 
-const getPermissionRecursive = async (
+export const getPermissionRecursive = async (
   inodeId: bigint | null,
   sub: string,
 ): Promise<number> => {

@@ -19,19 +19,19 @@ export default function OptionsMenu() {
     top: menu.top,
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    const node = event.target as Node;
-    const elem = ref.current;
-    if (elem && !elem.contains(node)) {
-      setMenu({ top: 0, left: 0, open: false });
-    }
-  }
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const node = event.target as Node;
+      const elem = ref.current;
+      if (elem && !elem.contains(node)) {
+        setMenu({ top: 0, left: 0, open: false });
+      }
+    }
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, []);
+  }, [setMenu]);
 
   const onRemove = () => {
     remove();

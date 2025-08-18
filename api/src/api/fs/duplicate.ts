@@ -1,6 +1,6 @@
 import { User, Permission, InodeMembers, InodeType } from '../types';
 import { AuthorizationError, NotFoundError, RequestError } from '../errors';
-import { getPermission } from '#lib/database/member';
+import { getPermission, getPermissionRecursive } from '#lib/database/member';
 import { generateMnemonic } from '#lib/database/inode';
 import db from '#lib/db';
 
@@ -66,7 +66,16 @@ const duplicateRecursive = async (
 export default async function duplicate(user: User, mnemonic: string) {
   const { sub, isAdmin } = user;
   if (!isAdmin) {
-    const permission = await getPermission(mnemonic, sub);
+    // We new write permission in the parent directory to duplicate
+    const inode = await db.inode.findUnique({
+      where: {
+        mnemonic,
+      },
+    });
+    if (!inode) {
+      throw new NotFoundError(`Inode with mnemonic ${mnemonic} not found`);
+    }
+    const permission = await getPermissionRecursive(inode.parentId, sub);
     if (permission !== Permission.WRITE) {
       throw new AuthorizationError(
         `You do not have permission to duplicate ${mnemonic}`,

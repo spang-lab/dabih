@@ -27,6 +27,9 @@ pushd cli
   $SED_COMMAND -i "s/^version = .*/version = \"${VERSION#v}\"/" Cargo.toml
 popd
 
+# Update the version in the README
+
+
 
 git add -A
 git commit --message "$VERSION"

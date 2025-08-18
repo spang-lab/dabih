@@ -98,6 +98,8 @@ const init = (baseUrl: string) => {
     move: (body: schemas['MoveInodeBody']) => c.POST('/fs/move', { body }),
     remove: (mnemonic: string) =>
       c.POST('/fs/{mnemonic}/remove', { params: { path: { mnemonic } } }),
+    destroy: (mnemonic: string) =>
+      c.POST('/fs/{mnemonic}/destroy', { params: { path: { mnemonic } } }),
     duplicate: (mnemonic: string) =>
       c.POST('/fs/{mnemonic}/duplicate', { params: { path: { mnemonic } } }),
     tree: (mnemonic: string) =>

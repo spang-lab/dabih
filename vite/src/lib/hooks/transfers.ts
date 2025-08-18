@@ -70,7 +70,7 @@ interface State {
 interface Actions {
   addTransfer: (transfer: Transfer) => void;
   upload: (req: UploadRequest) => void;
-  download: (mnemonic: string, key: CryptoKey) => void;
+  download: (mnemonic: string | string[], key: CryptoKey) => void;
   updateTransfer: (transfer: Transfer) => void;
   clearTransfer: (id: string) => void;
 }
@@ -94,16 +94,21 @@ const useTransfers = create<State & Actions>((set) => ({
     };
     set((state) => ({ transfers: [...state.transfers, transfer] }));
   },
-  download: (mnemonic: string, key: CryptoKey) => {
-    const id = Math.random().toString(36).substring(7);
-    const transfer: Transfer = {
-      id,
-      type: "download",
-      status: "preparing",
-      key,
-      mnemonic,
-    };
-    set((state) => ({ transfers: [...state.transfers, transfer] }));
+  download: (mnemonics: string | string[], key: CryptoKey) => {
+    if (typeof mnemonics === "string") {
+      mnemonics = [mnemonics];
+    }
+    const transfers = mnemonics.map((mnemonic) => {
+      const id = Math.random().toString(36).substring(7);
+      return {
+        id,
+        type: "download",
+        status: "preparing",
+        key,
+        mnemonic,
+      } as Transfer;
+    });
+    set((state) => ({ transfers: [...state.transfers, ...transfers] }));
   },
   updateTransfer: (transfer) => {
     set((state) => ({

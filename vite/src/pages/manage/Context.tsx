@@ -14,11 +14,12 @@ interface FinderContextType {
   users: Record<string, UserResponse> | null,
   selected: string[],
   setSelected: (selected: string[]) => void,
-  addFolder: () => void,
-  addMember: (mnemonic: string, sub: string) => void,
-  remove: () => void,
-  rename: (mnemonic: string, name: string) => void,
-  list: (mnemonic: string | null) => void,
+  addFolder: () => Promise<void>,
+  addMember: (mnemonic: string, sub: string) => Promise<void>,
+  remove: () => Promise<void>,
+  destroy: () => Promise<void>,
+  rename: (mnemonic: string, name: string) => Promise<void>,
+  list: (mnemonic: string | null) => Promise<void>,
   menu: { left: number, top: number, open: boolean },
   setMenu: (position: { left: number, top: number, open: boolean }) => void,
 }
@@ -103,6 +104,14 @@ export function FinderWrapper({ children }: {
   const remove = useCallback(async () => {
     const promises = selected.map(async (mnemonic) => {
       await api.fs.remove(mnemonic);
+    });
+    await Promise.all(promises);
+    await list(cwd);
+  }, [list, selected, cwd]);
+
+  const destroy = useCallback(async () => {
+    const promises = selected.map(async (mnemonic) => {
+      await api.fs.destroy(mnemonic);
     });
     await Promise.all(promises);
     await list(cwd);
@@ -198,6 +207,7 @@ export function FinderWrapper({ children }: {
     addFolder,
     addMember,
     remove,
+    destroy,
     rename,
     list,
     menu,
@@ -209,6 +219,7 @@ export function FinderWrapper({ children }: {
     addFolder,
     addMember,
     remove,
+    destroy,
     rename,
     list,
     menu,

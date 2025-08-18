@@ -386,6 +386,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fs/{mnemonic}/destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["destroyInode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/fs/{mnemonic}/tree": {
         parameters: {
             query?: never;
@@ -1576,6 +1592,26 @@ export interface operations {
         };
     };
     removeInode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: components["schemas"]["Mnemonic"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    destroyInode: {
         parameters: {
             query?: never;
             header?: never;

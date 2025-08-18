@@ -8,9 +8,25 @@ const timeToString = (timeMs: number) => {
   return `${Math.round(timeMs / 1000)}s`;
 };
 
+const shouldIgnore = (url: string) => {
+  if (url.startsWith('/api/v1/healthy')) {
+    return true;
+  }
+  if (url.endsWith('/chunk')) {
+    return true;
+  }
+  return false;
+};
+
 const log = async (ctx: Context, next: Next) => {
   const start = Date.now();
   const { url, method } = ctx.request;
+
+  if (shouldIgnore(url)) {
+    await next();
+    return;
+  }
+
   await next();
   const timeMs = Date.now() - start;
 

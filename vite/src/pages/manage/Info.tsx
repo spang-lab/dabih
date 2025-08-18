@@ -4,6 +4,7 @@ import useFiles from "@/lib/hooks/files";
 import useFinder from "./Context";
 import InodeInfo from "./info/Inode";
 import Members from "./info/Members";
+import Buttons from "./info/Buttons";
 
 
 export default function Info() {
@@ -22,16 +23,24 @@ export default function Info() {
       <div>
         <InodeInfo inode={node} />
         <Members inode={node} />
+        <Buttons />
       </div>
     );
   }
 
-
+  const n = selectedNodes.length;
   return (
     <div>
-      <pre>
-        {JSON.stringify(selectedNodes, null, 2)}
-      </pre>
+      <div className="flex justify-center">
+        <h3 className="text-lg font-semibold">
+          <span className="text-white bg-blue px-2 py-1 rounded">
+            {n}
+          </span>
+          {" "}
+          Items Selected
+        </h3>
+      </div>
+      <Buttons />
     </div>
   );
 }
