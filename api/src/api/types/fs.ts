@@ -1,3 +1,4 @@
+import { type } from 'node:os';
 import { Mnemonic } from './base';
 
 /**
@@ -97,6 +98,9 @@ export interface Inode {
 
 export type InodeMembers = Inode & {
   members: Member[];
+};
+export type InodeMembersKeys = InodeMembers & {
+  keys: Key[];
 };
 
 export type InodeTree = InodeMembers & {

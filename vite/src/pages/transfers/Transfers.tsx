@@ -39,8 +39,6 @@ export default function Transfers() {
     !["complete", "error", "interrupted"].includes(transfer.status);
 
 
-
-
   useEffect(() => {
     if (status !== "authenticated") {
       return;
@@ -81,7 +79,6 @@ export default function Transfers() {
     if (!transfer || !worker) {
       return;
     }
-    console.log("Sending transfer to worker", transfer);
     worker.postMessage(transfer);
   }, [transfers, workerRef]);
 

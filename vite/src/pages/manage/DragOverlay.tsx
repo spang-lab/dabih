@@ -9,8 +9,8 @@ import useFiles from "@/lib/hooks/files";
 export default function Overlay() {
   const { selected } = useFinder();
   const nodes = useFiles((state) => state.nodes);
-  if (!selected.length) {
-    <DragOverlay />
+  if (!selected?.length) {
+    return <DragOverlay />
   }
   if (selected.length === 1) {
     const inode = nodes.find((inode) => inode.mnemonic === selected[0]);

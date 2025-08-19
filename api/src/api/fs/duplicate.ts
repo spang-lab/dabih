@@ -1,13 +1,13 @@
-import { User, Permission, InodeMembers, InodeType } from '../types';
+import { User, Permission, InodeMembersKeys, InodeType } from '../types';
 import { AuthorizationError, NotFoundError, RequestError } from '../errors';
-import { getPermission, getPermissionRecursive } from '#lib/database/member';
+import { getPermissionRecursive } from '#lib/database/member';
 import { generateMnemonic } from '#lib/database/inode';
 import db from '#lib/db';
 
 const duplicateRecursive = async (
-  inode: InodeMembers,
+  inode: InodeMembersKeys,
   parentId: bigint | null,
-): Promise<InodeMembers> => {
+): Promise<InodeMembersKeys> => {
   const children = await db.inode.findMany({
     where: {
       parentId: inode.id as bigint,
@@ -15,6 +15,7 @@ const duplicateRecursive = async (
     include: {
       data: true,
       members: true,
+      keys: true,
     },
   });
   const data = inode.data
@@ -49,10 +50,19 @@ const duplicateRecursive = async (
           })),
         },
       },
+      keys: {
+        createMany: {
+          data: inode.keys.map((key) => ({
+            key: key.key,
+            hash: key.hash,
+          })),
+        },
+      },
     },
     include: {
       data: true,
       members: true,
+      keys: true,
     },
   });
 
@@ -89,6 +99,7 @@ export default async function duplicate(user: User, mnemonic: string) {
     include: {
       data: true,
       members: true,
+      keys: true,
     },
   });
   if (!root) {
@@ -99,8 +110,9 @@ export default async function duplicate(user: User, mnemonic: string) {
       `Unexpected: Inode ${mnemonic} is not a directory or file`,
     );
   }
+  const [base, extension] = root.name.split('.', 2);
+  const new_name = extension ? `${base}_copy.${extension}` : `${base}_copy`;
 
-  const new_name = `${root.name}_copy`;
   const newRoot = await duplicateRecursive(root, root.parentId);
   await db.inode.update({
     where: {

@@ -5,19 +5,83 @@ import { DndContext, DragStartEvent, DragEndEvent, KeyboardSensor, PointerSensor
 import api from '@/lib/api';
 import crypto from '@/lib/crypto';
 
-import { UserResponse } from '@/lib/api/types';
+import { InodeMembers, InodeType, Permission, UserResponse } from '@/lib/api/types';
 import Menu from './Menu';
 import useFiles from '@/lib/hooks/files';
 import useSession from '@/Session';
 
+
+type Action = "addFolder" | "addMember" | "remove" | "destroy" | "rename" | "download" | "duplicate";
+
+const getActions = (selected: InodeMembers[], parents: InodeMembers[], user: UserResponse | null): Set<Action> => {
+  const actions = new Set<Action>();
+  if (!user) {
+    return new Set();
+  }
+  const isFileOrFolder = selected.every((node) => node.type === InodeType.FILE || node.type === InodeType.DIRECTORY);
+  const isInTrash = parents.some(p => p.type === InodeType.TRASH);
+
+  const parentPermissions = new Set(
+    parents.flatMap((parent) =>
+      parent.members
+        .filter((member) => member.sub === user.sub)
+        .map((member) => member.permission)
+    )
+  );
+  if (!isFileOrFolder || selected.length === 0) {
+    if (parentPermissions.has(Permission.WRITE)) {
+      actions.add("addFolder");
+    }
+    return actions;
+  }
+  if (parentPermissions.has(Permission.WRITE)) {
+    actions.add("addFolder");
+    actions.add("duplicate");
+  }
+  const nodesPermissions = selected.map((node) => {
+    return new Set(
+      node.members
+        .filter((member) => member.sub === user.sub)
+        .map((member) => member.permission)
+    );
+  });
+  const nodePermissions = nodesPermissions.reduce((acc, permissions) => {
+    acc.intersection(permissions);
+    return acc;
+  }, new Set(nodesPermissions[0]));
+
+  if (nodePermissions.has(Permission.WRITE) || parentPermissions.has(Permission.WRITE)) {
+    if (selected.length === 1) {
+      actions.add("addMember");
+      actions.add("rename");
+    }
+    if (isInTrash) {
+      actions.add("destroy");
+    } else {
+      actions.add("remove");
+    }
+  }
+  if (
+    nodePermissions.has(Permission.WRITE) || parentPermissions.has(Permission.WRITE) ||
+    nodePermissions.has(Permission.READ) || parentPermissions.has(Permission.READ)) {
+    actions.add("download");
+  }
+  return actions;
+}
+
+
+
+
 interface FinderContextType {
   users: Record<string, UserResponse> | null,
   selected: string[],
+  actions: Set<Action>,
   setSelected: (selected: string[]) => void,
   addFolder: () => Promise<void>,
   addMember: (mnemonic: string, sub: string) => Promise<void>,
   remove: () => Promise<void>,
   destroy: () => Promise<void>,
+  duplicate: () => Promise<void>,
   rename: (mnemonic: string, name: string) => Promise<void>,
   list: (mnemonic: string | null) => Promise<void>,
   menu: { left: number, top: number, open: boolean },
@@ -29,15 +93,27 @@ const FinderContext = createContext<FinderContextType>({} as FinderContextType);
 export function FinderWrapper({ children }: {
   children: React.ReactNode,
 }) {
-  const { key } = useSession();
+  const { user, key } = useSession();
   const [users, setUsers] = useState<Record<string, UserResponse>>({});
   const [selected, setSelected] = useState<string[]>([]);
   const [menu, setMenu] = useState({ left: 0, top: 0, open: false });
 
 
   const nodes = useFiles((state) => state.nodes);
+  const parents = useFiles((state) => state.parents);
   const cwd = useFiles((state) => state.cwd);
   const list = useFiles((state) => state.list);
+
+
+  const actions = useMemo(() => {
+    const set = new Set(selected);
+    const selectedNodes = nodes.filter((node) => set.has(node.mnemonic));
+    return getActions(selectedNodes, parents, user);
+  }, [selected, nodes, parents, user]);
+
+
+
+
 
 
   const fetchUsers = useCallback(async () => {
@@ -122,6 +198,15 @@ export function FinderWrapper({ children }: {
     await list(cwd);
   }, [list, cwd]);
 
+  const duplicate = useCallback(async () => {
+    const promises = selected.map(async (mnemonic) => {
+      await api.fs.duplicate(mnemonic)
+    });
+    await Promise.all(promises);
+    await list(cwd);
+  }, [selected, list, cwd]);
+
+
 
 
   const move = useCallback(async (mnemonics: string[], target: string | null) => {
@@ -203,11 +288,13 @@ export function FinderWrapper({ children }: {
   const value = useMemo(() => ({
     users,
     selected,
+    actions,
     setSelected,
     addFolder,
     addMember,
     remove,
     destroy,
+    duplicate,
     rename,
     list,
     menu,
@@ -215,11 +302,13 @@ export function FinderWrapper({ children }: {
   }), [
     users,
     selected,
+    actions,
     setSelected,
     addFolder,
     addMember,
     remove,
     destroy,
+    duplicate,
     rename,
     list,
     menu,
@@ -234,6 +323,7 @@ export function FinderWrapper({ children }: {
         onDragEnd={onDragEnd}
         sensors={sensors}
       >
+        <pre> {Array.from(actions).join(", ")} </pre>
         {children}
       </DndContext>
     </FinderContext.Provider>

@@ -62,7 +62,7 @@ export default function Inode({ inode }: { inode: InodeMembers }) {
     >
       <InodeInner
         inode={inode}
-        selected={selected.includes(inode.mnemonic)}
+        selected={selected?.includes(inode.mnemonic)}
         disabled={!isMember && !isSearch}
       />
     </div>

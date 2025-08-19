@@ -1,19 +1,24 @@
 
-import { Copy, Download, Edit3, FolderPlus, Trash2 } from "react-feather";
+import { AlertOctagon, Copy, Download, FolderPlus, Trash2 } from "react-feather";
 import useFinder from "./Context";
 import { useEffect, useRef } from "react";
+import useTransfers from "@/lib/hooks/transfers";
+import useSession from "@/Session";
 
 export default function OptionsMenu() {
+  const { key } = useSession();
   const {
     menu,
     setMenu,
     selected,
     addFolder,
     remove,
+    destroy,
+    duplicate,
+    actions,
   } = useFinder();
-  const noneSelected = selected.length === 0;
-  const oneSelected = selected.length === 1;
   const ref = useRef<HTMLDivElement>(null);
+  const download = useTransfers((state => state.download));
   const position = {
     left: menu.left,
     top: menu.top,
@@ -33,14 +38,6 @@ export default function OptionsMenu() {
     };
   }, [setMenu]);
 
-  const onRemove = () => {
-    remove();
-    setMenu({ top: 0, left: 0, open: false });
-  }
-  const onAddFolder = () => {
-    addFolder();
-    setMenu({ top: 0, left: 0, open: false });
-  }
 
   if (!menu.open) {
     return null;
@@ -54,7 +51,10 @@ export default function OptionsMenu() {
         style={position}>
         <div>
           <button
-            onClick={onAddFolder}
+            onClick={() => {
+              addFolder();
+              setMenu({ top: 0, left: 0, open: false });
+            }}
             className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 hover:bg-blue/40">
             <FolderPlus className="text-blue" />
             New Folder
@@ -62,8 +62,11 @@ export default function OptionsMenu() {
         </div>
         <div>
           <button
-            //onClick={onDownload}
-            disabled={noneSelected}
+            onClick={() => {
+              download(selected, key!);
+              setMenu({ top: 0, left: 0, open: false });
+            }}
+            disabled={!actions.has("download") || !key}
             className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 hover:bg-blue/40 disabled:bg-white disabled:text-blue/40">
             <Download />
             Download
@@ -71,17 +74,11 @@ export default function OptionsMenu() {
         </div>
         <div>
           <button
-            //onClick={onRename}
-            disabled={!oneSelected}
-            className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 hover:bg-blue/40 disabled:bg-white disabled:text-blue/40">
-            <Edit3 />
-            Rename
-          </button>
-        </div>
-        <div>
-          <button
-            //onClick={onDuplicate}
-            disabled={!oneSelected}
+            onClick={() => {
+              duplicate();
+              setMenu({ top: 0, left: 0, open: false });
+            }}
+            disabled={!actions.has("duplicate")}
             className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 hover:bg-blue/40 disabled:bg-white disabled:text-blue/40">
             <Copy />
             Duplicate
@@ -89,13 +86,34 @@ export default function OptionsMenu() {
         </div>
         <div className="my-1 h-px bg-gray-300" />
         <div>
-          <button
-            onClick={onRemove}
-            disabled={noneSelected}
-            className="group flex w-full items-center text-red gap-2 rounded-lg py-1.5 px-3 hover:bg-blue/40 disabled:bg-white disabled:text-red/40">
-            <Trash2 />
-            Delete
-          </button>
+          {actions.has("destroy") ? (
+            <button
+              type="button"
+              disabled={!actions.has("destroy")}
+              onClick={() => {
+                destroy()
+                setMenu({ top: 0, left: 0, open: false });
+              }}
+              className="group flex w-full items-center text-red gap-2 rounded-lg py-1.5 px-3 hover:bg-blue/40 disabled:bg-white disabled:text-red/40"
+            >
+              <Trash2 size={24} />
+              Delete forever
+              <AlertOctagon className="stroke-3" size={18} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={!actions.has("remove")}
+              onClick={() => {
+                remove()
+                setMenu({ top: 0, left: 0, open: false });
+              }}
+              className="group flex w-full items-center text-red gap-2 rounded-lg py-1.5 px-3 hover:bg-blue/40 disabled:bg-white disabled:text-red/40"
+            >
+              <Trash2 className="mr-2" size={24} />
+              Delete
+            </button>
+          )}
         </div>
       </div>
     </div>
