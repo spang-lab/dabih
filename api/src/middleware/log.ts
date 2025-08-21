@@ -12,7 +12,7 @@ const shouldIgnore = (url: string) => {
   if (url.startsWith('/api/v1/healthy')) {
     return true;
   }
-  if (url.endsWith('/chunk')) {
+  if (url.includes('/chunk')) {
     return true;
   }
   return false;
