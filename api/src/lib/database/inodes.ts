@@ -4,10 +4,10 @@ import { InodeType, Permission } from 'src/api/types';
 import { generateMnemonic } from './inode';
 
 export const initInodes = async () => {
-  logger.info('Initializing root inode');
   try {
     await getRoot();
   } catch {
+    logger.info('Initializing root inode');
     await db.inode.create({
       data: {
         mnemonic: await generateMnemonic(),
