@@ -93,6 +93,11 @@ const init = (baseUrl: string) => {
         params: { path: { mnemonic } },
         body,
       }),
+    setAccess: (mnemonic: string, sub: string, permission: number) =>
+      c.POST('/fs/{mnemonic}/member/set', {
+        params: { path: { mnemonic } },
+        body: { sub, permission },
+      }),
     addDirectory: (name: string, parent?: string) =>
       c.POST('/fs/directory/add', { body: { name, parent } }),
     move: (body: schemas['MoveInodeBody']) => c.POST('/fs/move', { body }),

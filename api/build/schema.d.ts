@@ -354,6 +354,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fs/{mnemonic}/member/set": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["setAccess"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/fs/{mnemonic}/duplicate": {
         parameters: {
             query?: never;
@@ -1003,6 +1019,15 @@ export interface components {
             /** @description The list of AES-256 keys required to decrypt all child datasets */
             keys: components["schemas"]["FileDecryptionKey"][];
         };
+        SetAccessBody: {
+            /** @description The user to set the permission for */
+            sub: string;
+            /**
+             * Format: double
+             * @description The permission to set
+             */
+            permission: number;
+        };
         InodeTree: components["schemas"]["InodeMembers"] & {
             keys: components["schemas"]["Key"][];
             children?: components["schemas"]["InodeTree"][];
@@ -1557,6 +1582,30 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["MemberAddBody"];
+            };
+        };
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    setAccess: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mnemonic: components["schemas"]["Mnemonic"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetAccessBody"];
             };
         };
         responses: {

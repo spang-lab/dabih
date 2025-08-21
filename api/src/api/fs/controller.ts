@@ -40,8 +40,10 @@ import type {
   InodeMembers,
   InodeSearchBody,
   InodeSearchResults,
+  SetAccessBody,
 } from '../types';
 import destroy from './destroy';
+import setAccess from './setAccess';
 
 @Route('fs')
 @Tags('Filesystem')
@@ -91,6 +93,17 @@ export class FilesystemController extends Controller {
     const { user } = request;
     return addMembers(user, mnemonic, body);
   }
+  @Post('{mnemonic}/member/set')
+  @OperationId('setAccess')
+  public async setAccess(
+    @Path() mnemonic: Mnemonic,
+    @Body() body: SetAccessBody,
+    @Request() request: RequestWithUser,
+  ): Promise<void> {
+    const { user } = request;
+    return setAccess(user, mnemonic, body);
+  }
+
   @Post('{mnemonic}/duplicate')
   @OperationId('duplicateInode')
   public async duplicate(

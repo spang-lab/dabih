@@ -324,6 +324,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SetAccessBody": {
+        "dataType": "refObject",
+        "properties": {
+            "sub": {"dataType":"string","required":true},
+            "permission": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeTree": {
         "dataType": "refAlias",
         "type": {"dataType":"intersection","subSchemas":[{"ref":"InodeMembers"},{"dataType":"nestedObjectLiteral","nestedProperties":{"keys":{"dataType":"array","array":{"dataType":"refObject","ref":"Key"},"required":true},"children":{"dataType":"array","array":{"dataType":"refAlias","ref":"InodeTree"}}}}],"validators":{}},
@@ -1147,6 +1156,39 @@ export function RegisterRoutes(router: KoaRouter) {
 
             return templateService.apiHandler({
               methodName: 'addMembers',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_setAccess: Record<string, TsoaRoute.ParameterSchema> = {
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                body: {"in":"body","name":"body","required":true,"ref":"SetAccessBody"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        router.post('/fs/:mnemonic/member/set',
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
+            ...(fetchMiddlewares<Middleware>(FilesystemController)),
+            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.setAccess)),
+
+            async function FilesystemController_setAccess(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_setAccess, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new FilesystemController();
+
+            return templateService.apiHandler({
+              methodName: 'setAccess',
               controller,
               context,
               validatedArgs,

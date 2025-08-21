@@ -10,7 +10,17 @@ export default async function setAccess(
   body: SetAccessBody,
 ) {
   const { sub } = user;
-  const inode = await requireWrite(mnemonic, sub);
+  await requireWrite(mnemonic, sub);
+  const inode = await db.inode.findUnique({
+    where: { mnemonic },
+    include: {
+      members: true,
+    },
+  });
+  if (!inode) {
+    throw new RequestError(`Inode ${mnemonic} not found`);
+  }
+
   const { members } = inode;
 
   const permission = members.find((m) => m.sub === body.sub)?.permission;
@@ -20,6 +30,18 @@ export default async function setAccess(
     );
   }
   const desiredPermission = body.permission;
+
+  const validPermissions = [
+    Permission.NONE as number,
+    Permission.READ as number,
+    Permission.WRITE as number,
+  ];
+  if (!validPermissions.includes(desiredPermission)) {
+    throw new RequestError(
+      `Invalid permission: ${desiredPermission}. Valid permissions are: ${validPermissions.join(', ')}`,
+    );
+  }
+
   if (permission === desiredPermission) {
     return;
   }

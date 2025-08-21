@@ -27,7 +27,7 @@ export default function MemberItem({
   readOnly: boolean,
   isParent: boolean,
 }) {
-  const { users } = useFinder();
+  const { users, setAccess } = useFinder();
   if (!users || !users[member.sub]) {
     return null;
   }
@@ -36,19 +36,31 @@ export default function MemberItem({
   const enabled = member.permission === Permission.WRITE;
 
   const toggle = async () => {
-    if (readOnly) {
+    if (readOnly || isParent) {
       return;
     }
     if (member.permission === Permission.WRITE) {
+      await setAccess(inode.mnemonic, member.sub, Permission.READ);
       console.log('new permission read');
     }
     if (member.permission === Permission.READ) {
+      await setAccess(inode.mnemonic, member.sub, Permission.WRITE);
       console.log('new permission write');
     }
   }
 
+  const remove = async () => {
+    if (readOnly || isParent) {
+      return;
+    }
+    await setAccess(inode.mnemonic, member.sub, Permission.NONE);
+  }
+
+
+
+
   const getEdit = () => {
-    if (readOnly) {
+    if (readOnly || isParent) {
       return <div className="text-gray-400 whitespace-nowrap">
         {getPermission(member.permission)}
       </div>;
@@ -64,6 +76,7 @@ export default function MemberItem({
         <div>
           <button
             type="button"
+            onClick={remove}
             aria-label="Delete Member"
             className="bg-red text-white ml-1 px-2 py-1 rounded-lg"
           >

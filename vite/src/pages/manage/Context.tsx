@@ -79,6 +79,7 @@ interface FinderContextType {
   setSelected: (selected: string[]) => void,
   addFolder: () => Promise<void>,
   addMember: (mnemonic: string, sub: string) => Promise<void>,
+  setAccess: (mnemonic: string, sub: string, permission: number) => Promise<void>,
   remove: () => Promise<void>,
   destroy: () => Promise<void>,
   duplicate: () => Promise<void>,
@@ -175,6 +176,15 @@ export function FinderWrapper({ children }: {
     });
     await list(cwd);
   }, [getKeys, cwd, list]);
+
+  const setAccess = useCallback(async (mnemonic: string, sub: string, permission: number) => {
+    await api.fs.setAccess(
+      mnemonic,
+      sub,
+      permission,
+    );
+    await list(cwd);
+  }, [cwd, list]);
 
 
   const remove = useCallback(async () => {
@@ -292,6 +302,7 @@ export function FinderWrapper({ children }: {
     setSelected,
     addFolder,
     addMember,
+    setAccess,
     remove,
     destroy,
     duplicate,
@@ -306,6 +317,7 @@ export function FinderWrapper({ children }: {
     setSelected,
     addFolder,
     addMember,
+    setAccess,
     remove,
     destroy,
     duplicate,
@@ -323,7 +335,6 @@ export function FinderWrapper({ children }: {
         onDragEnd={onDragEnd}
         sensors={sensors}
       >
-        <pre> {Array.from(actions).join(", ")} </pre>
         {children}
       </DndContext>
     </FinderContext.Provider>
