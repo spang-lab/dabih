@@ -1,7 +1,7 @@
 import { open, access, mkdir, rm, constants, stat } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import logger from '#lib/logger';
-import { requireEnv } from '#lib/env';
+import { StorageBackend } from '.';
 
 let basePath = '';
 
@@ -23,7 +23,7 @@ const isWriteable = async (path: string) => {
   }
 };
 
-export const get = async (bucket: string, key: string) => {
+const get = async (bucket: string, key: string) => {
   const path = join(basePath, bucket, key);
   try {
     const file = await open(path, 'r');
@@ -34,7 +34,7 @@ export const get = async (bucket: string, key: string) => {
   }
 };
 
-export const store = async (bucket: string, key: string) => {
+const store = async (bucket: string, key: string) => {
   const path = join(basePath, bucket, key);
   try {
     const file = await open(path, 'w');
@@ -45,7 +45,7 @@ export const store = async (bucket: string, key: string) => {
   }
 };
 
-export const head = async (bucket: string, key: string) => {
+const head = async (bucket: string, key: string) => {
   const path = join(basePath, bucket, key);
   try {
     const meta = await stat(path);
@@ -55,7 +55,7 @@ export const head = async (bucket: string, key: string) => {
   }
 };
 
-export const removeBucket = async (bucket: string) => {
+const removeBucket = async (bucket: string) => {
   const path = join(basePath, bucket);
   if (!(await exists(path))) {
     return;
@@ -63,17 +63,12 @@ export const removeBucket = async (bucket: string) => {
   await rm(path, { recursive: true });
 };
 
-export const createBucket = async (bucket: string) => {
+const createBucket = async (bucket: string) => {
   const path = join(basePath, bucket);
   await mkdir(path);
 };
 
-export const initFilesystem = async () => {
-  const storageUrl = requireEnv('STORAGE_URL');
-  const [backend, path] = storageUrl.split(':', 2);
-  if (backend !== 'fs') {
-    throw new Error(`Invalid storage backend "${backend}", options are "fs"`);
-  }
+const init = async (path: string): Promise<StorageBackend> => {
   if (!path) {
     throw new Error('fs storage provider needs config.storage.path');
   }
@@ -94,4 +89,14 @@ export const initFilesystem = async () => {
     throw new Error(`No write permission for storage.path "${basePath}"`);
   }
   logger.info(`Writing data to ${basePath}`);
+
+  return {
+    get,
+    store,
+    head,
+    removeBucket,
+    createBucket,
+  };
 };
+
+export default init;

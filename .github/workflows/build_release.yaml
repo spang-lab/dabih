@@ -3,7 +3,7 @@ name: Dabih Release
 on:
   push:
     tags:
-      - "v*"
+      - "vdisabled*"
 
 jobs:
   create-release:

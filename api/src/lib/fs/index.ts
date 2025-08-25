@@ -1,0 +1,61 @@
+import { requireEnv } from '#lib/env';
+import { Stats } from 'node:fs';
+import initFilesystem from './fs';
+import initSmb from './smb';
+
+export interface StorageBackend {
+  get: (bucket: string, key: string) => Promise<NodeJS.ReadableStream>;
+  store: (bucket: string, key: string) => Promise<NodeJS.WritableStream>;
+  head: (bucket: string, key: string) => Promise<Stats | null>;
+  removeBucket: (bucket: string) => Promise<void>;
+  createBucket: (bucket: string) => Promise<void>;
+}
+
+let backend: StorageBackend | null = null;
+
+export const init = async () => {
+  const storageUrl = requireEnv('STORAGE_URL');
+
+  if (storageUrl.startsWith('fs:')) {
+    const [, path] = storageUrl.split('fs:', 2);
+    backend = await initFilesystem(path);
+    return;
+  }
+  if (storageUrl.startsWith('smb:')) {
+    backend = await initSmb(storageUrl);
+    return;
+  }
+
+  throw new Error(`Invalid storage uri "${storageUrl}"`);
+};
+
+export const get = (bucket: string, key: string) => {
+  if (!backend) {
+    throw new Error('Storage backend not initialized');
+  }
+  return backend.get(bucket, key);
+};
+export const store = (bucket: string, key: string) => {
+  if (!backend) {
+    throw new Error('Storage backend not initialized');
+  }
+  return backend.store(bucket, key);
+};
+export const head = (bucket: string, key: string) => {
+  if (!backend) {
+    throw new Error('Storage backend not initialized');
+  }
+  return backend.head(bucket, key);
+};
+export const removeBucket = (bucket: string) => {
+  if (!backend) {
+    throw new Error('Storage backend not initialized');
+  }
+  return backend.removeBucket(bucket);
+};
+export const createBucket = (bucket: string) => {
+  if (!backend) {
+    throw new Error('Storage backend not initialized');
+  }
+  return backend.createBucket(bucket);
+};

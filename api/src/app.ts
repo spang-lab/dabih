@@ -8,7 +8,7 @@ import serve from 'koa-static';
 import { RegisterRoutes } from '../build/routes';
 
 import { error, log, serialize } from './middleware';
-import { initFilesystem } from '#lib/fs';
+import { init as initFilesystem } from '#lib/fs';
 import { initInodes } from '#lib/database/inodes';
 import redis, { initRedis } from '#lib/redis';
 import { initEmail } from '#lib/email';

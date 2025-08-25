@@ -28,6 +28,8 @@
     "test:clean": "rm -rf ./data/__test__/",
     "test:prepare": "dotenv -e .env.test prisma migrate deploy",
     "test:api": "dotenv -e .env.test ava --serial",
+    "test:crypto": "ava src/lib/crypto/crypto.test.ts --serial",
+    "test:smb": "ava src/lib/fs/smb.test.ts --serial",
     "test": "npm run test:clean && npm run test:startdb && sleep 1 && npm run test:startredis && npm run test:prepare && npm run test:api ; npm run test:stopdb && npm run test:stopredis",
     "studio": "dotenv -e .env.dev prisma studio",
     "lint": "eslint .",
@@ -54,12 +56,11 @@
   },
   "dependencies": {
     "@ava/get-port": "^2.0.0",
+    "@awo00/smb2": "^1.1.1",
     "@fastify/busboy": "^3.1.1",
     "@koa/router": "^13.1.1",
     "@prisma/client": "^6.12.0",
     "@redocly/cli": "^2.0.1",
-    "tsx": "^4.20.3",
-    "openapi-typescript": "^7.8.0",
     "crc": "^4.3.2",
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -67,10 +68,12 @@
     "koa-body": "^6.0.1",
     "koa-static": "^5.0.0",
     "openapi-fetch": "^0.14.0",
+    "openapi-typescript": "^7.8.0",
     "piscina": "^5.1.3",
     "redis": "^5.6.1",
     "resend": "^4.7.0",
     "tsoa": "^6.6.0",
+    "tsx": "^4.20.3",
     "winston": "^3.17.0"
   },
   "ava": {
@@ -91,6 +94,7 @@
   },
   "imports": {
     "#lib/*": "./src/lib/*.ts",
+    "#lib/fs": "./src/lib/fs/index.ts",
     "#crypto": "./src/lib/crypto/index.ts",
     "#ava": "./src/lib/ava.ts"
   }

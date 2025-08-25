@@ -27,7 +27,8 @@ pushd cli
   $SED_COMMAND -i "s/^version = .*/version = \"${VERSION#v}\"/" Cargo.toml
 popd
 
-# Update the version in the README
+# Update the version in the docker-compose file
+$SED_COMMAND -i "s#image: thespanglab/dabih:.*#image: thespanglab/dabih:${VERSION#v}#" docker-compose.yml
 
 
 
