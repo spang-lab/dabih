@@ -1,7 +1,6 @@
 import { requireEnv } from '#lib/env';
 import { Stats } from 'node:fs';
 import initFilesystem from './fs';
-import initSmb from './smb';
 
 export interface StorageBackend {
   get: (bucket: string, key: string) => Promise<NodeJS.ReadableStream>;
@@ -19,10 +18,6 @@ export const init = async () => {
   if (storageUrl.startsWith('fs:')) {
     const [, path] = storageUrl.split('fs:', 2);
     backend = await initFilesystem(path);
-    return;
-  }
-  if (storageUrl.startsWith('smb:')) {
-    backend = await initSmb(storageUrl);
     return;
   }
 
