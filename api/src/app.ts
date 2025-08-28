@@ -7,7 +7,7 @@ import serve from 'koa-static';
 
 import { RegisterRoutes } from '../build/routes';
 
-import { error, log, serialize } from './middleware';
+import { error, indexFallback, log, serialize } from './middleware';
 import { init as initFilesystem } from '#lib/fs';
 import { initInodes } from '#lib/database/inodes';
 import redis, { initRedis } from '#lib/redis';
@@ -38,6 +38,8 @@ const app = async (port?: number) => {
 
   app.use(serve('dist', {}));
   app.use(appRouter.routes()).use(appRouter.allowedMethods());
+
+  app.use(indexFallback());
 
   const lPort = port?.toString() ?? getEnv('PORT', '3001');
   const state = app.listen(lPort);

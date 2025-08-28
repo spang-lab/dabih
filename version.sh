@@ -28,7 +28,7 @@ pushd cli
 popd
 
 # Update the version in the docker-compose file
-$SED_COMMAND -i "s#image: thespanglab/dabih:.*#image: thespanglab/dabih:${VERSION#v}#" docker-compose.yml
+$SED_COMMAND -i "s#image: thespanglab/dabih:.*#image: thespanglab/dabih:${VERSION}#" docker-compose.yml
 
 
 
