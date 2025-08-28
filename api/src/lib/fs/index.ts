@@ -1,10 +1,11 @@
 import { requireEnv } from '#lib/env';
-import { Stats } from 'node:fs';
+import { Stats, WriteStream } from 'node:fs';
 import initFilesystem from './fs';
+import { Readable } from 'node:stream';
 
 export interface StorageBackend {
-  get: (bucket: string, key: string) => Promise<NodeJS.ReadableStream>;
-  store: (bucket: string, key: string) => Promise<NodeJS.WritableStream>;
+  get: (bucket: string, key: string) => Promise<Readable>;
+  store: (bucket: string, key: string) => Promise<WriteStream>;
   head: (bucket: string, key: string) => Promise<Stats | null>;
   removeBucket: (bucket: string) => Promise<void>;
   createBucket: (bucket: string) => Promise<void>;
