@@ -17,6 +17,5 @@ async fn main() -> Result<()> {
     };
     let mut ctx = Context::from(ctx_path)?;
     ctx.init().await?;
-
     Ok(())
 }
