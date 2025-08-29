@@ -30,7 +30,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -61,7 +61,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -89,7 +89,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -117,7 +117,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -142,7 +142,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 

@@ -6,8 +6,9 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | Option<[**serde_json::Value**](.md)> | The database id of the user | 
 **sub** | **String** | The unique user sub | 
-**name** | **String** | The name of the user | 
 **email** | **String** | The email of the user | 
+**scope** | **String** | the list of scopes the user has | 
+**last_auth_at** | **String** | The time of the last authentication | 
 **created_at** | **String** | The date the user was created | 
 **updated_at** | **String** | The date the user was last updated | 
 **keys** | [**Vec<models::PublicKey>**](PublicKey.md) | The public keys of the user | 

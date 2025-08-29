@@ -33,7 +33,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -61,7 +61,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -89,7 +89,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -101,7 +101,7 @@ Name | Type | Description  | Required | Notes
 
 ## find_user
 
-> models::UserResponse find_user(find_user_request)
+> models::UserResponse find_user(user_sub)
 
 
 ### Parameters
@@ -109,7 +109,7 @@ Name | Type | Description  | Required | Notes
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**find_user_request** | [**FindUserRequest**](FindUserRequest.md) |  | [required] |
+**user_sub** | [**UserSub**](UserSub.md) |  | [required] |
 
 ### Return type
 
@@ -117,7 +117,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -142,7 +142,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -167,7 +167,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -195,7 +195,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -207,7 +207,7 @@ Name | Type | Description  | Required | Notes
 
 ## remove_user
 
-> remove_user(find_user_request)
+> remove_user(user_sub)
 
 
 ### Parameters
@@ -215,7 +215,7 @@ Name | Type | Description  | Required | Notes
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**find_user_request** | [**FindUserRequest**](FindUserRequest.md) |  | [required] |
+**user_sub** | [**UserSub**](UserSub.md) |  | [required] |
 
 ### Return type
 
@@ -223,7 +223,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 

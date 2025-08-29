@@ -111,6 +111,7 @@ impl From<&str> for ContentType {
     }
 }
 
+pub mod auth_api;
 pub mod download_api;
 pub mod filesystem_api;
 pub mod job_api;

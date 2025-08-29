@@ -7,7 +7,6 @@ Method | HTTP request | Description
 [**add_token**](TokenApi.md#add_token) | **POST** /token/add | 
 [**list_tokens**](TokenApi.md#list_tokens) | **GET** /token/list | 
 [**remove_token**](TokenApi.md#remove_token) | **POST** /token/remove | 
-[**token_info**](TokenApi.md#token_info) | **GET** /token/info | 
 
 
 
@@ -29,7 +28,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -54,7 +53,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -82,37 +81,12 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
 - **Content-Type**: application/json
 - **Accept**: Not defined
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-
-## token_info
-
-> models::User token_info()
-
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-[**models::User**](User.md)
-
-### Authorization
-
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

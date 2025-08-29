@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | Option<[**serde_json::Value**](.md)> | The database id of the inode | 
 **mnemonic** | **String** |  | 
-**r#type** | [**models::InodeType**](InodeType.md) |  | 
+**r#type** | **f64** |  | 
 **name** | **String** |  | 
 **tag** | Option<**String**> |  | 
 **data** | Option<[**models::FileData**](FileData.md)> |  | [optional]
@@ -14,7 +14,6 @@ Name | Type | Description | Notes
 **created_at** | **String** |  | 
 **updated_at** | **String** |  | 
 **members** | [**Vec<models::Member>**](Member.md) |  | 
-**parent** | Option<[**models::InodeMembersParent**](InodeMembersParent.md)> |  | 
 **keys** | [**Vec<models::Key>**](Key.md) |  | 
 **children** | Option<[**Vec<models::InodeTree>**](InodeTree.md)> |  | [optional]
 

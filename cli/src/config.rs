@@ -26,7 +26,15 @@ fn find_key(path: &PathBuf, fingerprints: Vec<String>) -> Result<Option<PrivateK
     for entry in path.read_dir()? {
         let entry = entry?;
         if entry.path().extension() == Some(std::ffi::OsStr::new("pem")) {
-            let key = PrivateKey::from(entry.path())?;
+            println!("Checking key: {:?}", entry.path());
+            let key = match PrivateKey::from(entry.path()) {
+                Ok(k) => k,
+                Err(e) => {
+                    println!("Failed to read key from {:?}. Skipping", entry.path());
+                    println!("Error: {:?}", e);
+                    continue;
+                }
+            };
             let fingerprint = key.hash()?;
             if fingerprints.contains(&fingerprint) {
                 return Ok(Some(key));
@@ -101,6 +109,7 @@ impl Context {
                     .iter()
                     .map(|key| key.hash.clone())
                     .collect::<Vec<_>>();
+                dbg!(&fingerprints);
                 let key = find_key(&self.path, fingerprints)?;
                 dbg!(&key);
             }
@@ -133,7 +142,7 @@ async fn test_invalid_url() -> Result<()> {
 #[tokio::test]
 async fn test_invalid_token() -> Result<()> {
     let mut ctx = Context::new(
-        "http://localhost:3000".to_string(),
+        "http://localhost:3001".to_string(),
         "invalid_token".to_string(),
     );
     dbg!(&ctx);

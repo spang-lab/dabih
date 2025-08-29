@@ -6,6 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**add_directory**](FilesystemApi.md#add_directory) | **POST** /fs/directory/add | 
 [**add_members**](FilesystemApi.md#add_members) | **POST** /fs/{mnemonic}/member/add | 
+[**destroy_inode**](FilesystemApi.md#destroy_inode) | **POST** /fs/{mnemonic}/destroy | 
 [**duplicate_inode**](FilesystemApi.md#duplicate_inode) | **POST** /fs/{mnemonic}/duplicate | 
 [**file_info**](FilesystemApi.md#file_info) | **GET** /fs/{mnemonic}/file | 
 [**inode_tree**](FilesystemApi.md#inode_tree) | **GET** /fs/{mnemonic}/tree | 
@@ -18,6 +19,7 @@ Method | HTTP request | Description
 [**search_cancel**](FilesystemApi.md#search_cancel) | **POST** /fs/search/{jobId}/cancel | 
 [**search_fs**](FilesystemApi.md#search_fs) | **POST** /fs/search | 
 [**search_results**](FilesystemApi.md#search_results) | **POST** /fs/search/{jobId} | 
+[**set_access**](FilesystemApi.md#set_access) | **POST** /fs/{mnemonic}/member/set | 
 
 
 
@@ -39,7 +41,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -68,11 +70,39 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
 - **Content-Type**: application/json
+- **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## destroy_inode
+
+> destroy_inode(mnemonic)
+
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**mnemonic** | **String** |  | [required] |
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
 - **Accept**: Not defined
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
@@ -96,7 +126,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -126,7 +156,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -154,7 +184,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -184,7 +214,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -209,7 +239,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -237,7 +267,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -265,7 +295,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -293,7 +323,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -321,7 +351,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -349,7 +379,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -377,7 +407,7 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -405,12 +435,41 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-[api_key](../README.md#api_key), [jwt](../README.md#jwt)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
 - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## set_access
+
+> set_access(mnemonic, set_access_body)
+
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**mnemonic** | **String** |  | [required] |
+**set_access_body** | [**SetAccessBody**](SetAccessBody.md) |  | [required] |
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: Not defined
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

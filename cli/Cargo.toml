@@ -30,14 +30,14 @@ futures = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.8"
-tokio = { version = "1.21", features = ["fs", "io-util", "macros", "rt-multi-thread"] }
+tokio = { version = "1.47", features = ["fs", "io-util", "macros", "rt-multi-thread"] }
 reqwest = { version = "0.10", features = ["stream", "json"] }
-openapi = { version = "0.1.0", path = "openapi" }
+openapi = { path = "openapi" }
 rsa = "0.9.8"
 sha2 = "0.10.9"
 aes = "0.8.4"
 cbc = "0.1.2"
-thiserror = "2.0.12"
-base64ct = "1.7.3"
+thiserror = "2.0.16"
+base64ct = "1.8.0"
 
 

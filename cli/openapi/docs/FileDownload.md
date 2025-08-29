@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | Option<[**serde_json::Value**](.md)> | The database id of the inode | 
 **mnemonic** | **String** |  | 
-**r#type** | [**models::InodeType**](InodeType.md) |  | 
+**r#type** | **f64** |  | 
 **name** | **String** |  | 
 **tag** | Option<**String**> |  | 
 **data** | [**models::ChunkData**](ChunkData.md) |  | 

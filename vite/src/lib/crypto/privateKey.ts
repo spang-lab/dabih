@@ -39,11 +39,13 @@ const toUint8 = async (privateKey: CryptoKey) =>
 
 const toBase64 = async (privateKey: CryptoKey) => {
   const buffer = await toUint8(privateKey);
-  return base64url.fromUint8(buffer);
+  const uintArray = new Uint8Array(buffer);
+  const base64 = btoa(String.fromCharCode(...uintArray));
+  return base64;
 };
 const toPEM = async (privateKey: CryptoKey) => {
   const keyString = await toBase64(privateKey);
-  const content = base64url.toBase64(keyString).replace(/.{64}/g, "$&\n");
+  const content = keyString.replace(/.{64}/g, "$&\n");
   return `${pkcs8Header}\n${content}\n${pkcs8Footer}`;
 };
 
