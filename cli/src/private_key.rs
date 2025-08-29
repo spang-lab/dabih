@@ -1,7 +1,7 @@
 use std::{fs::File, io::Read, path::PathBuf};
 
-use base64ct::{Base64Url, Encoding};
-use rsa::{RsaPrivateKey, pkcs1::EncodeRsaPrivateKey, pkcs8::DecodePrivateKey};
+use base64ct::{Base64UrlUnpadded, Encoding};
+use rsa::{RsaPrivateKey, pkcs8::DecodePrivateKey, pkcs8::EncodePublicKey};
 use sha2::Digest;
 
 use crate::error::Result;
@@ -19,10 +19,12 @@ impl PrivateKey {
         Ok(Self { key: key })
     }
     pub fn hash(&self) -> Result<String> {
-        let data = self.key.to_pkcs1_der()?;
-        let bytes = data.to_bytes();
+        let pub_key = self.key.to_public_key();
+        let data = pub_key.to_public_key_der()?;
+        let bytes = data.as_bytes();
+
         let digest = sha2::Sha256::digest(&bytes);
-        let base64 = Base64Url::encode_string(&digest);
+        let base64 = Base64UrlUnpadded::encode_string(&digest);
         return Ok(base64);
     }
 }

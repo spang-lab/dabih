@@ -16,6 +16,8 @@ pub struct Config {
 
 #[derive(Debug)]
 pub struct Context {
+    verbose: u8,
+    quiet: bool,
     path: PathBuf,
     config: Config,
     private_key: Option<PrivateKey>,
@@ -26,12 +28,10 @@ fn find_key(path: &PathBuf, fingerprints: Vec<String>) -> Result<Option<PrivateK
     for entry in path.read_dir()? {
         let entry = entry?;
         if entry.path().extension() == Some(std::ffi::OsStr::new("pem")) {
-            println!("Checking key: {:?}", entry.path());
             let key = match PrivateKey::from(entry.path()) {
                 Ok(k) => k,
-                Err(e) => {
+                Err(_) => {
                     println!("Failed to read key from {:?}. Skipping", entry.path());
-                    println!("Error: {:?}", e);
                     continue;
                 }
             };
@@ -65,6 +65,8 @@ impl Context {
             ..Default::default()
         };
         Self {
+            verbose: 0,
+            quiet: false,
             path: path::PathBuf::new(),
             config: Config { url, token },
             private_key: None,
@@ -81,8 +83,6 @@ impl Context {
         let config: Config = serde_yaml::from_reader(config_file)?;
         let url = normalize_url(&config.url);
 
-        println!("api url: {}", url);
-
         let openapi_config = Configuration {
             base_path: url,
             user_agent: Some("dabih-cli".to_string()),
@@ -91,6 +91,8 @@ impl Context {
         };
 
         Ok(Self {
+            verbose: 0,
+            quiet: false,
             path,
             config,
             private_key: None,
@@ -99,6 +101,10 @@ impl Context {
     }
     pub fn openapi(&self) -> &Configuration {
         &self.openapi_config
+    }
+    pub fn set_verbose(&mut self, verbose: u8, quiet: bool) {
+        self.quiet = quiet;
+        self.verbose = verbose;
     }
 
     pub async fn init(&mut self) -> Result<()> {
@@ -109,9 +115,8 @@ impl Context {
                     .iter()
                     .map(|key| key.hash.clone())
                     .collect::<Vec<_>>();
-                dbg!(&fingerprints);
                 let key = find_key(&self.path, fingerprints)?;
-                dbg!(&key);
+                self.private_key = key;
             }
             Err(_) => match util_api::healthy(self.openapi()).await {
                 Ok(_) => {

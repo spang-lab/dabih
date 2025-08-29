@@ -26,8 +26,8 @@ pub enum CliError {
     #[error("Authentication error")]
     AuthenticationError,
 
-    #[error("Failed to convert key to pkcs1")]
-    KeyToPkcs1Error(#[from] rsa::pkcs1::Error),
+    #[error("Failed to convert key to spki")]
+    KeyToPkcs1Error(#[from] rsa::pkcs8::spki::Error),
 
     #[error("Failed to deserialize response")]
     ResponseDeserializationError(#[from] serde_json::Error),
