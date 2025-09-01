@@ -2,24 +2,26 @@ use std::fs::File;
 use std::path::{self, PathBuf};
 
 use openapi::apis::{user_api, util_api};
+use openapi::models::UserResponse;
 use serde::{Deserialize, Serialize};
 
 use crate::error::{CliError, Result};
 use crate::private_key::PrivateKey;
 use openapi::apis::configuration::Configuration;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
     pub url: String,
     pub token: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Context {
     verbose: u8,
     quiet: bool,
     path: PathBuf,
     config: Config,
+    user: Option<UserResponse>,
     private_key: Option<PrivateKey>,
     openapi_config: Configuration,
 }
@@ -69,6 +71,7 @@ impl Context {
             quiet: false,
             path: path::PathBuf::new(),
             config: Config { url, token },
+            user: None,
             private_key: None,
             openapi_config,
         }
@@ -95,6 +98,7 @@ impl Context {
             quiet: false,
             path,
             config,
+            user: None,
             private_key: None,
             openapi_config,
         })
@@ -102,6 +106,13 @@ impl Context {
     pub fn openapi(&self) -> &Configuration {
         &self.openapi_config
     }
+    pub fn user(&self) -> Option<&UserResponse> {
+        self.user.as_ref()
+    }
+    pub fn private_key(&self) -> Option<&PrivateKey> {
+        self.private_key.as_ref()
+    }
+
     pub fn set_verbose(&mut self, verbose: u8, quiet: bool) {
         self.quiet = quiet;
         self.verbose = verbose;
@@ -110,6 +121,7 @@ impl Context {
     pub async fn init(&mut self) -> Result<()> {
         match user_api::me(self.openapi()).await {
             Ok(user) => {
+                self.user = Some(user.clone());
                 let fingerprints = user
                     .keys
                     .iter()

@@ -1,0 +1,56 @@
+use crate::config::Context;
+use crate::error::Result;
+use crate::uploader::{UploadState, Uploader};
+use clap::Args;
+use pbr::ProgressBar;
+
+#[derive(Args, Debug)]
+pub struct Upload {
+    /// The files that should be uploaded to dabih, this can also be a glob pattern
+    pub paths: Vec<String>,
+
+    /// The target path in dabih where the files should be uploaded to
+    pub directory: Option<String>,
+
+    /// Set the tag for the dataset
+    #[arg(short, long)]
+    pub tag: Option<String>,
+
+    /// If set, chunk size in bytes
+    #[arg(short, long, default_value_t = 2 * 1024 * 1024)]
+    pub chunk_size: u64,
+}
+
+pub async fn run(ctx: Context, args: Upload) -> Result<()> {
+    let mut uploader = Uploader::from(&ctx, args)?;
+    let mut pb = ProgressBar::new(0);
+    loop {
+        match uploader.next().await? {
+            UploadState::File => {}
+            UploadState::Started {
+                name,
+                mnemonic,
+                file_size,
+            } => {
+                println!("Uploading {} as {}", name, mnemonic);
+                pb = ProgressBar::new(file_size);
+                let msg = format!("Uploading {} ", mnemonic);
+                pb.set_units(pbr::Units::Bytes);
+                pb.message(&msg)
+            }
+            UploadState::Chunk {
+                mnemonic: _,
+                current,
+                total: _,
+            } => {
+                pb.set(current);
+            }
+            UploadState::Complete => {
+                pb.finish();
+                println!("Done.");
+                return Ok(());
+            }
+            _ => return Ok(()),
+        }
+    }
+}

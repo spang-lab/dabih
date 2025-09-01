@@ -31,5 +31,14 @@ pub enum CliError {
 
     #[error("Failed to deserialize response")]
     ResponseDeserializationError(#[from] serde_json::Error),
+
+    #[error("Invalid glob pattern: {0}")]
+    GlobPatternError(#[from] glob::PatternError),
+
+    #[error("Glob matching error: {0}")]
+    GlobMatchError(#[from] glob::GlobError),
+
+    #[error("Invalid arguments: {0}")]
+    InvalidArgumentError(String),
 }
 pub type Result<T> = std::result::Result<T, CliError>;

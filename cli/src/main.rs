@@ -1,10 +1,12 @@
 use std::{env, path::PathBuf};
 
+mod chunked_reader;
 mod command;
 mod config;
 mod error;
 mod log;
 mod private_key;
+mod uploader;
 
 use clap::Parser;
 use config::Context;
@@ -45,6 +47,7 @@ async fn main() -> Result<()> {
 
     match cli.command {
         Commands::Status(_) => status::run(ctx).await?,
+        Commands::Upload(args) => command::upload::run(ctx, args).await?,
     }
     Ok(())
 }

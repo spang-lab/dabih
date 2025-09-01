@@ -6,7 +6,7 @@ use sha2::Digest;
 
 use crate::error::Result;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PrivateKey {
     key: RsaPrivateKey,
 }
