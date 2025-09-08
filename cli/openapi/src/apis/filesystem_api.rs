@@ -99,6 +99,13 @@ pub enum RemoveInodeError {
     UnknownValue(serde_json::Value),
 }
 
+/// struct for typed errors of method [`resolve_path`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ResolvePathError {
+    UnknownValue(serde_json::Value),
+}
+
 /// struct for typed errors of method [`search_cancel`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -130,7 +137,7 @@ pub enum SetAccessError {
 
 pub async fn add_directory(configuration: &configuration::Configuration, add_directory_body: models::AddDirectoryBody) -> Result<models::Directory, Error<AddDirectoryError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_add_directory_body = add_directory_body;
+    let p_body_add_directory_body = add_directory_body;
 
     let uri_str = format!("{}/fs/directory/add", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -141,7 +148,7 @@ pub async fn add_directory(configuration: &configuration::Configuration, add_dir
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_add_directory_body);
+    req_builder = req_builder.json(&p_body_add_directory_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -170,10 +177,10 @@ pub async fn add_directory(configuration: &configuration::Configuration, add_dir
 
 pub async fn add_members(configuration: &configuration::Configuration, mnemonic: &str, member_add_body: models::MemberAddBody) -> Result<(), Error<AddMembersError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
-    let p_member_add_body = member_add_body;
+    let p_path_mnemonic = mnemonic;
+    let p_body_member_add_body = member_add_body;
 
-    let uri_str = format!("{}/fs/{mnemonic}/member/add", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/member/add", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -182,7 +189,7 @@ pub async fn add_members(configuration: &configuration::Configuration, mnemonic:
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_member_add_body);
+    req_builder = req_builder.json(&p_body_member_add_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -200,9 +207,9 @@ pub async fn add_members(configuration: &configuration::Configuration, mnemonic:
 
 pub async fn destroy_inode(configuration: &configuration::Configuration, mnemonic: &str) -> Result<(), Error<DestroyInodeError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/fs/{mnemonic}/destroy", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/destroy", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -228,9 +235,9 @@ pub async fn destroy_inode(configuration: &configuration::Configuration, mnemoni
 
 pub async fn duplicate_inode(configuration: &configuration::Configuration, mnemonic: &str) -> Result<models::Inode, Error<DuplicateInodeError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/fs/{mnemonic}/duplicate", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/duplicate", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -268,9 +275,9 @@ pub async fn duplicate_inode(configuration: &configuration::Configuration, mnemo
 /// Get all the file information required to download a single file
 pub async fn file_info(configuration: &configuration::Configuration, mnemonic: &str) -> Result<models::FileDownload, Error<FileInfoError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/fs/{mnemonic}/file", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/file", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -307,9 +314,9 @@ pub async fn file_info(configuration: &configuration::Configuration, mnemonic: &
 
 pub async fn inode_tree(configuration: &configuration::Configuration, mnemonic: &str) -> Result<models::InodeTree, Error<InodeTreeError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/fs/{mnemonic}/tree", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/tree", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -347,9 +354,9 @@ pub async fn inode_tree(configuration: &configuration::Configuration, mnemonic: 
 /// Recursively list all files in a directory
 pub async fn list_files(configuration: &configuration::Configuration, mnemonic: &str) -> Result<Vec<models::FileKeys>, Error<ListFilesError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/fs/{mnemonic}/file/list", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/file/list", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -423,9 +430,9 @@ pub async fn list_home(configuration: &configuration::Configuration, ) -> Result
 
 pub async fn list_inodes(configuration: &configuration::Configuration, mnemonic: &str) -> Result<models::ListResponse, Error<ListInodesError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/fs/{mnemonic}/list", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/list", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -462,9 +469,9 @@ pub async fn list_inodes(configuration: &configuration::Configuration, mnemonic:
 
 pub async fn list_parents(configuration: &configuration::Configuration, mnemonic: &str) -> Result<Vec<models::InodeMembers>, Error<ListParentsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/fs/{mnemonic}/parent/list", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/parent/list", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -501,7 +508,7 @@ pub async fn list_parents(configuration: &configuration::Configuration, mnemonic
 
 pub async fn move_inode(configuration: &configuration::Configuration, move_inode_body: models::MoveInodeBody) -> Result<(), Error<MoveInodeError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_move_inode_body = move_inode_body;
+    let p_body_move_inode_body = move_inode_body;
 
     let uri_str = format!("{}/fs/move", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -512,7 +519,7 @@ pub async fn move_inode(configuration: &configuration::Configuration, move_inode
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_move_inode_body);
+    req_builder = req_builder.json(&p_body_move_inode_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -530,9 +537,9 @@ pub async fn move_inode(configuration: &configuration::Configuration, move_inode
 
 pub async fn remove_inode(configuration: &configuration::Configuration, mnemonic: &str) -> Result<(), Error<RemoveInodeError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/fs/{mnemonic}/remove", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/remove", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -556,11 +563,50 @@ pub async fn remove_inode(configuration: &configuration::Configuration, mnemonic
     }
 }
 
+pub async fn resolve_path(configuration: &configuration::Configuration, path: &str) -> Result<models::Inode, Error<ResolvePathError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_path = path;
+
+    let uri_str = format!("{}/fs/resolve/{path}", configuration.base_path, path=crate::apis::urlencode(p_path_path));
+    let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::Inode`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::Inode`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<ResolvePathError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
 pub async fn search_cancel(configuration: &configuration::Configuration, job_id: &str) -> Result<(), Error<SearchCancelError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_job_id = job_id;
+    let p_path_job_id = job_id;
 
-    let uri_str = format!("{}/fs/search/{jobId}/cancel", configuration.base_path, jobId=crate::apis::urlencode(p_job_id));
+    let uri_str = format!("{}/fs/search/{jobId}/cancel", configuration.base_path, jobId=crate::apis::urlencode(p_path_job_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -586,7 +632,7 @@ pub async fn search_cancel(configuration: &configuration::Configuration, job_id:
 
 pub async fn search_fs(configuration: &configuration::Configuration, inode_search_body: models::InodeSearchBody) -> Result<models::SearchFs200Response, Error<SearchFsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_inode_search_body = inode_search_body;
+    let p_body_inode_search_body = inode_search_body;
 
     let uri_str = format!("{}/fs/search", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -597,7 +643,7 @@ pub async fn search_fs(configuration: &configuration::Configuration, inode_searc
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_inode_search_body);
+    req_builder = req_builder.json(&p_body_inode_search_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -626,9 +672,9 @@ pub async fn search_fs(configuration: &configuration::Configuration, inode_searc
 
 pub async fn search_results(configuration: &configuration::Configuration, job_id: &str) -> Result<models::InodeSearchResults, Error<SearchResultsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_job_id = job_id;
+    let p_path_job_id = job_id;
 
-    let uri_str = format!("{}/fs/search/{jobId}", configuration.base_path, jobId=crate::apis::urlencode(p_job_id));
+    let uri_str = format!("{}/fs/search/{jobId}", configuration.base_path, jobId=crate::apis::urlencode(p_path_job_id));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -665,10 +711,10 @@ pub async fn search_results(configuration: &configuration::Configuration, job_id
 
 pub async fn set_access(configuration: &configuration::Configuration, mnemonic: &str, set_access_body: models::SetAccessBody) -> Result<(), Error<SetAccessError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
-    let p_set_access_body = set_access_body;
+    let p_path_mnemonic = mnemonic;
+    let p_body_set_access_body = set_access_body;
 
-    let uri_str = format!("{}/fs/{mnemonic}/member/set", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/fs/{mnemonic}/member/set", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -677,7 +723,7 @@ pub async fn set_access(configuration: &configuration::Configuration, mnemonic: 
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_set_access_body);
+    req_builder = req_builder.json(&p_body_set_access_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;

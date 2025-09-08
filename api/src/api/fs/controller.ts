@@ -151,6 +151,14 @@ export class FilesystemController extends Controller {
     const { user } = request;
     return resolve(user, path);
   }
+  @Get('resolve')
+  @OperationId('resolveHome')
+  public async resolveHome(
+    @Request() request: RequestWithUser,
+  ): Promise<Inode> {
+    const { user } = request;
+    return resolve(user, '');
+  }
 
   @Post('move')
   @OperationId('moveInode')

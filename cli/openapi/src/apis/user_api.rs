@@ -74,7 +74,7 @@ pub enum RemoveUserError {
 
 pub async fn add_key(configuration: &configuration::Configuration, key_add_body: models::KeyAddBody) -> Result<models::PublicKey, Error<AddKeyError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_key_add_body = key_add_body;
+    let p_body_key_add_body = key_add_body;
 
     let uri_str = format!("{}/user/key/add", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -85,7 +85,7 @@ pub async fn add_key(configuration: &configuration::Configuration, key_add_body:
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_key_add_body);
+    req_builder = req_builder.json(&p_body_key_add_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -114,7 +114,7 @@ pub async fn add_key(configuration: &configuration::Configuration, key_add_body:
 
 pub async fn add_user(configuration: &configuration::Configuration, user_add_body: models::UserAddBody) -> Result<models::UserResponse, Error<AddUserError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_user_add_body = user_add_body;
+    let p_body_user_add_body = user_add_body;
 
     let uri_str = format!("{}/user/add", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -125,7 +125,7 @@ pub async fn add_user(configuration: &configuration::Configuration, user_add_bod
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_user_add_body);
+    req_builder = req_builder.json(&p_body_user_add_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -154,7 +154,7 @@ pub async fn add_user(configuration: &configuration::Configuration, user_add_bod
 
 pub async fn enable_key(configuration: &configuration::Configuration, key_enable_body: models::KeyEnableBody) -> Result<models::PublicKey, Error<EnableKeyError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_key_enable_body = key_enable_body;
+    let p_body_key_enable_body = key_enable_body;
 
     let uri_str = format!("{}/user/key/enable", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -165,7 +165,7 @@ pub async fn enable_key(configuration: &configuration::Configuration, key_enable
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_key_enable_body);
+    req_builder = req_builder.json(&p_body_key_enable_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -194,7 +194,7 @@ pub async fn enable_key(configuration: &configuration::Configuration, key_enable
 
 pub async fn find_user(configuration: &configuration::Configuration, user_sub: models::UserSub) -> Result<models::UserResponse, Error<FindUserError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_user_sub = user_sub;
+    let p_body_user_sub = user_sub;
 
     let uri_str = format!("{}/user/find", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -205,7 +205,7 @@ pub async fn find_user(configuration: &configuration::Configuration, user_sub: m
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_user_sub);
+    req_builder = req_builder.json(&p_body_user_sub);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -308,7 +308,7 @@ pub async fn me(configuration: &configuration::Configuration, ) -> Result<models
 
 pub async fn remove_key(configuration: &configuration::Configuration, key_remove_body: models::KeyRemoveBody) -> Result<(), Error<RemoveKeyError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_key_remove_body = key_remove_body;
+    let p_body_key_remove_body = key_remove_body;
 
     let uri_str = format!("{}/user/key/remove", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -319,7 +319,7 @@ pub async fn remove_key(configuration: &configuration::Configuration, key_remove
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_key_remove_body);
+    req_builder = req_builder.json(&p_body_key_remove_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -337,7 +337,7 @@ pub async fn remove_key(configuration: &configuration::Configuration, key_remove
 
 pub async fn remove_user(configuration: &configuration::Configuration, user_sub: models::UserSub) -> Result<(), Error<RemoveUserError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_user_sub = user_sub;
+    let p_body_user_sub = user_sub;
 
     let uri_str = format!("{}/user/remove", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -348,7 +348,7 @@ pub async fn remove_user(configuration: &configuration::Configuration, user_sub:
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_user_sub);
+    req_builder = req_builder.json(&p_body_user_sub);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;

@@ -13,6 +13,8 @@ use reqwest;
 use serde::{Deserialize, Serialize, de::Error as _};
 use crate::{apis::ResponseContent, models};
 use super::{Error, configuration, ContentType};
+use tokio::fs::File as TokioFile;
+use tokio_util::codec::{BytesCodec, FramedRead};
 
 
 /// struct for typed errors of method [`cancel_upload`]
@@ -53,9 +55,9 @@ pub enum UnfinishedUploadsError {
 
 pub async fn cancel_upload(configuration: &configuration::Configuration, mnemonic: &str) -> Result<(), Error<CancelUploadError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/upload/{mnemonic}/cancel", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/upload/{mnemonic}/cancel", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -81,24 +83,24 @@ pub async fn cancel_upload(configuration: &configuration::Configuration, mnemoni
 
 pub async fn chunk_upload(configuration: &configuration::Configuration, mnemonic: &str, content_range: &str, digest: &str, chunk: Vec<u8>) -> Result<models::Chunk, Error<ChunkUploadError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
-    let p_content_range = content_range;
-    let p_digest = digest;
-    let p_chunk = chunk;
+    let p_path_mnemonic = mnemonic;
+    let p_header_content_range = content_range;
+    let p_header_digest = digest;
+    let p_form_chunk = chunk;
 
-    let uri_str = format!("{}/upload/{mnemonic}/chunk", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/upload/{mnemonic}/chunk", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::PUT, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
         req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
     }
-    req_builder = req_builder.header("content-range", p_content_range.to_string());
-    req_builder = req_builder.header("digest", p_digest.to_string());
+    req_builder = req_builder.header("content-range", p_header_content_range.to_string());
+    req_builder = req_builder.header("digest", p_header_digest.to_string());
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
     let mut multipart_form = reqwest::multipart::Form::new();
-let part = reqwest::multipart::Part::bytes(p_chunk).file_name("chunk.bin");
+let part = reqwest::multipart::Part::bytes(p_form_chunk).file_name("chunk.bin");
 multipart_form = multipart_form.part("chunk", part);
     req_builder = req_builder.multipart(multipart_form);
 
@@ -129,9 +131,9 @@ multipart_form = multipart_form.part("chunk", part);
 
 pub async fn finish_upload(configuration: &configuration::Configuration, mnemonic: &str) -> Result<models::File, Error<FinishUploadError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
+    let p_path_mnemonic = mnemonic;
 
-    let uri_str = format!("{}/upload/{mnemonic}/finish", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/upload/{mnemonic}/finish", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -168,7 +170,7 @@ pub async fn finish_upload(configuration: &configuration::Configuration, mnemoni
 
 pub async fn start_upload(configuration: &configuration::Configuration, upload_start_body: models::UploadStartBody) -> Result<models::File, Error<StartUploadError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_upload_start_body = upload_start_body;
+    let p_body_upload_start_body = upload_start_body;
 
     let uri_str = format!("{}/upload/start", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -179,7 +181,7 @@ pub async fn start_upload(configuration: &configuration::Configuration, upload_s
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_upload_start_body);
+    req_builder = req_builder.json(&p_body_upload_start_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;

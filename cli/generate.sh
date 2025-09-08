@@ -10,7 +10,7 @@ file="openapi/src/apis/upload_api.rs"
 
 # Replace the TODO line with a multiline block
 sed -i '' "/\/\/ TODO: support file upload for 'chunk' parameter/{
-    s/.*/let part = reqwest::multipart::Part::bytes(p_chunk).file_name(\"chunk.bin\");\\
+    s/.*/let part = reqwest::multipart::Part::bytes(p_form_chunk).file_name(\"chunk.bin\");\\
 multipart_form = multipart_form.part(\"chunk\", part);/
 }" "$file"
 

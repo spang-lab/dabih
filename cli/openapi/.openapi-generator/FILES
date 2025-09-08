@@ -6,7 +6,7 @@ docs/AddDirectoryBody.md
 docs/AuthApi.md
 docs/Chunk.md
 docs/ChunkData.md
-docs/CryptoPeriodJsonWebKey.md
+docs/CryptoJsonWebKey.md
 docs/DabihInfo.md
 docs/DabihInfoBranding.md
 docs/DabihInfoBrandingAdmin.md
@@ -75,7 +75,7 @@ src/lib.rs
 src/models/add_directory_body.rs
 src/models/chunk.rs
 src/models/chunk_data.rs
-src/models/crypto_period_json_web_key.rs
+src/models/crypto_json_web_key.rs
 src/models/dabih_info.rs
 src/models/dabih_info_branding.rs
 src/models/dabih_info_branding_admin.rs

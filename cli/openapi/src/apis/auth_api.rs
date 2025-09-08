@@ -118,7 +118,7 @@ pub async fn refresh_token(configuration: &configuration::Configuration, ) -> Re
 
 pub async fn sign_in(configuration: &configuration::Configuration, sign_in_request: models::SignInRequest) -> Result<models::SignInResponse, Error<SignInError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_sign_in_request = sign_in_request;
+    let p_body_sign_in_request = sign_in_request;
 
     let uri_str = format!("{}/auth/signIn", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -126,7 +126,7 @@ pub async fn sign_in(configuration: &configuration::Configuration, sign_in_reque
     if let Some(ref user_agent) = configuration.user_agent {
         req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
     }
-    req_builder = req_builder.json(&p_sign_in_request);
+    req_builder = req_builder.json(&p_body_sign_in_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -155,7 +155,7 @@ pub async fn sign_in(configuration: &configuration::Configuration, sign_in_reque
 
 pub async fn verify_email(configuration: &configuration::Configuration, verify_email_request: models::VerifyEmailRequest) -> Result<String, Error<VerifyEmailError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_verify_email_request = verify_email_request;
+    let p_body_verify_email_request = verify_email_request;
 
     let uri_str = format!("{}/auth/verify", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -163,7 +163,7 @@ pub async fn verify_email(configuration: &configuration::Configuration, verify_e
     if let Some(ref user_agent) = configuration.user_agent {
         req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
     }
-    req_builder = req_builder.json(&p_verify_email_request);
+    req_builder = req_builder.json(&p_body_verify_email_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;

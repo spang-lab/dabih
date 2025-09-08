@@ -1356,6 +1356,37 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFilesystemController_resolveHome: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        router.get('/fs/resolve',
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
+            ...(fetchMiddlewares<Middleware>(FilesystemController)),
+            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.resolveHome)),
+
+            async function FilesystemController_resolveHome(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_resolveHome, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new FilesystemController();
+
+            return templateService.apiHandler({
+              methodName: 'resolveHome',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_move: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"MoveInodeBody"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},

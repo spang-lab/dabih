@@ -15,8 +15,9 @@ export default async function resolve(
   } else {
     nodes.push(await getHome(user.sub));
   }
-  const parts = resolvePath('/', path).split('/');
-  parts.shift();
+  const parts = resolvePath('/', path)
+    .split('/')
+    .filter((p) => p && p !== '.');
 
   for (const part of parts) {
     const promises = nodes.map(async (node) => {

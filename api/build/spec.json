@@ -1198,7 +1198,7 @@
 	},
 	"info": {
 		"title": "dabih-api",
-		"version": "2.1.0",
+		"version": "2.1.1",
 		"description": "Dabih API Server",
 		"license": {
 			"name": "MIT"
@@ -2192,6 +2192,34 @@
 						}
 					}
 				]
+			}
+		},
+		"/fs/resolve": {
+			"get": {
+				"operationId": "resolveHome",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Inode"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Filesystem"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:api"
+						]
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/fs/move": {

@@ -17,14 +17,14 @@ pub struct KeyAddBody {
     #[serde(rename = "sub")]
     pub sub: String,
     #[serde(rename = "data")]
-    pub data: models::CryptoPeriodJsonWebKey,
+    pub data: models::CryptoJsonWebKey,
     /// If true the key is a root key, used to decrypt all datasets
     #[serde(rename = "isRootKey")]
     pub is_root_key: bool,
 }
 
 impl KeyAddBody {
-    pub fn new(sub: String, data: models::CryptoPeriodJsonWebKey, is_root_key: bool) -> KeyAddBody {
+    pub fn new(sub: String, data: models::CryptoJsonWebKey, is_root_key: bool) -> KeyAddBody {
         KeyAddBody {
             sub,
             data,

@@ -20,14 +20,14 @@ pub struct UserAddBody {
     #[serde(rename = "email")]
     pub email: String,
     #[serde(rename = "key")]
-    pub key: models::CryptoPeriodJsonWebKey,
+    pub key: models::CryptoJsonWebKey,
     /// If true the key is a root key, used to decrypt all datasets
     #[serde(rename = "isRootKey", skip_serializing_if = "Option::is_none")]
     pub is_root_key: Option<bool>,
 }
 
 impl UserAddBody {
-    pub fn new(email: String, key: models::CryptoPeriodJsonWebKey) -> UserAddBody {
+    pub fn new(email: String, key: models::CryptoJsonWebKey) -> UserAddBody {
         UserAddBody {
             sub: None,
             email,

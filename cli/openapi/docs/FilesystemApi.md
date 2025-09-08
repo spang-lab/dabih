@@ -16,6 +16,7 @@ Method | HTTP request | Description
 [**list_parents**](FilesystemApi.md#list_parents) | **GET** /fs/{mnemonic}/parent/list | 
 [**move_inode**](FilesystemApi.md#move_inode) | **POST** /fs/move | 
 [**remove_inode**](FilesystemApi.md#remove_inode) | **POST** /fs/{mnemonic}/remove | 
+[**resolve_path**](FilesystemApi.md#resolve_path) | **GET** /fs/resolve/{path} | 
 [**search_cancel**](FilesystemApi.md#search_cancel) | **POST** /fs/search/{jobId}/cancel | 
 [**search_fs**](FilesystemApi.md#search_fs) | **POST** /fs/search | 
 [**search_results**](FilesystemApi.md#search_results) | **POST** /fs/search/{jobId} | 
@@ -357,6 +358,34 @@ Name | Type | Description  | Required | Notes
 
 - **Content-Type**: Not defined
 - **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## resolve_path
+
+> models::Inode resolve_path(path)
+
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**path** | **String** |  | [required] |
+
+### Return type
+
+[**models::Inode**](Inode.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

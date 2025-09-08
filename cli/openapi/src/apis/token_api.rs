@@ -39,7 +39,7 @@ pub enum RemoveTokenError {
 
 pub async fn add_token(configuration: &configuration::Configuration, token_add_body: models::TokenAddBody) -> Result<models::TokenResponse, Error<AddTokenError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_token_add_body = token_add_body;
+    let p_body_token_add_body = token_add_body;
 
     let uri_str = format!("{}/token/add", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -50,7 +50,7 @@ pub async fn add_token(configuration: &configuration::Configuration, token_add_b
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_token_add_body);
+    req_builder = req_builder.json(&p_body_token_add_body);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -116,7 +116,7 @@ pub async fn list_tokens(configuration: &configuration::Configuration, ) -> Resu
 
 pub async fn remove_token(configuration: &configuration::Configuration, remove_token_request: models::RemoveTokenRequest) -> Result<(), Error<RemoveTokenError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_remove_token_request = remove_token_request;
+    let p_body_remove_token_request = remove_token_request;
 
     let uri_str = format!("{}/token/remove", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
@@ -127,7 +127,7 @@ pub async fn remove_token(configuration: &configuration::Configuration, remove_t
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_remove_token_request);
+    req_builder = req_builder.json(&p_body_remove_token_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;

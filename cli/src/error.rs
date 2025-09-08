@@ -26,7 +26,7 @@ pub enum CliError {
     #[error("Authentication error")]
     AuthenticationError,
 
-    #[error("Error calling the API: {0}")]
+    #[error("API Error: {0}")]
     ApiError(String),
 
     #[error("Failed to convert key to spki")]

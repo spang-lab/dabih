@@ -94,8 +94,11 @@ test('resolve path', async (t) => {
   t.is(file.type, InodeType.FILE);
   t.is(file.mnemonic, t.context.files.File_A);
 
-  const { data: absdir } = await api.fs.resolve(`/owner/test_dir/test_dir_B`);
+  const { data: absdir, error: error3 } = await api.fs.resolve(
+    `/owner/test_dir/test_dir_B`,
+  );
   if (!absdir) {
+    t.log(error3);
     t.fail();
     return;
   }
@@ -103,9 +106,27 @@ test('resolve path', async (t) => {
   t.is(absdir.type, InodeType.DIRECTORY);
   t.is(absdir.mnemonic, t.context.directories.test_dir_B);
 
-  const { response, error: error3 } = await api.fs.resolve('invalid/path');
+  const { response, error: error4 } = await api.fs.resolve('invalid/path');
   t.is(response.status, 404);
-  t.truthy(error3);
+  t.truthy(error4);
+
+  const { data: home, error: error5 } = await api.fs.resolve('.');
+  if (!home || error5) {
+    t.log(error5);
+    t.fail();
+    return;
+  }
+  t.is(home.name, 'owner');
+  t.is(home.type, InodeType.HOME);
+
+  const { data: root, error: error6 } = await api.fs.resolve('/');
+  if (!root || error6) {
+    t.log(error6);
+    t.fail();
+    return;
+  }
+  t.is(root.name, 'root');
+  t.is(root.type, InodeType.ROOT);
 });
 
 test('invalid mnemonic', async (t) => {

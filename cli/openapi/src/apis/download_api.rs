@@ -39,10 +39,10 @@ pub enum DownloadDatasetError {
 
 pub async fn decrypt_dataset(configuration: &configuration::Configuration, mnemonic: &str, decrypt_dataset_request: models::DecryptDatasetRequest) -> Result<models::TokenResponse, Error<DecryptDatasetError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_mnemonic = mnemonic;
-    let p_decrypt_dataset_request = decrypt_dataset_request;
+    let p_path_mnemonic = mnemonic;
+    let p_body_decrypt_dataset_request = decrypt_dataset_request;
 
-    let uri_str = format!("{}/download/{mnemonic}/decrypt", configuration.base_path, mnemonic=crate::apis::urlencode(p_mnemonic));
+    let uri_str = format!("{}/download/{mnemonic}/decrypt", configuration.base_path, mnemonic=crate::apis::urlencode(p_path_mnemonic));
     let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -51,7 +51,7 @@ pub async fn decrypt_dataset(configuration: &configuration::Configuration, mnemo
     if let Some(ref token) = configuration.bearer_access_token {
         req_builder = req_builder.bearer_auth(token.to_owned());
     };
-    req_builder = req_builder.json(&p_decrypt_dataset_request);
+    req_builder = req_builder.json(&p_body_decrypt_dataset_request);
 
     let req = req_builder.build()?;
     let resp = configuration.client.execute(req).await?;
@@ -80,10 +80,10 @@ pub async fn decrypt_dataset(configuration: &configuration::Configuration, mnemo
 
 pub async fn download_chunk(configuration: &configuration::Configuration, uid: &str, hash: &str) -> Result<String, Error<DownloadChunkError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_uid = uid;
-    let p_hash = hash;
+    let p_path_uid = uid;
+    let p_path_hash = hash;
 
-    let uri_str = format!("{}/download/{uid}/chunk/{hash}", configuration.base_path, uid=crate::apis::urlencode(p_uid), hash=crate::apis::urlencode(p_hash));
+    let uri_str = format!("{}/download/{uid}/chunk/{hash}", configuration.base_path, uid=crate::apis::urlencode(p_path_uid), hash=crate::apis::urlencode(p_path_hash));
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
     if let Some(ref user_agent) = configuration.user_agent {
