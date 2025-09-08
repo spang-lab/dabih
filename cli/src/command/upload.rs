@@ -7,13 +7,11 @@ use pbr::ProgressBar;
 #[derive(Args, Debug)]
 pub struct Upload {
     /// The files that should be uploaded to dabih, this can also be a glob pattern
+    #[arg(required = true)]
     pub paths: Vec<String>,
 
-    /// The target path in dabih where the files should be uploaded to
-    pub directory: Option<String>,
-
     /// Set the tag for the dataset
-    #[arg(short, long)]
+    #[arg(long)]
     pub tag: Option<String>,
 
     /// If set, chunk size in bytes

@@ -1,8 +1,12 @@
 use crate::error::Result;
-use std::{fs::File, io::BufReader, io::Read};
+use std::{
+    fs::File,
+    io::{BufReader, Read},
+    path::PathBuf,
+};
 
 #[derive(Debug)]
-struct Chunk {
+pub struct Chunk {
     // byte offset, 0 based, inclusive
     start: u64,
     // byte offset, 0 based, inclusive
@@ -12,7 +16,8 @@ struct Chunk {
     data: Vec<u8>,
 }
 
-struct ChunkedReader {
+pub struct ChunkedReader {
+    path: PathBuf,
     inner: BufReader<File>,
     size: usize,
     buf: Vec<u8>,
@@ -21,11 +26,12 @@ struct ChunkedReader {
 }
 
 impl ChunkedReader {
-    pub fn from_file(path: &std::path::Path, chunk_size: usize) -> Result<Self> {
-        let file = std::fs::File::open(path)?;
+    pub fn from_file(path: PathBuf, chunk_size: usize) -> Result<Self> {
+        let file = std::fs::File::open(&path)?;
         let metadata = file.metadata()?;
 
         Ok(Self {
+            path: path,
             inner: std::io::BufReader::new(file),
             buf: vec![0; chunk_size],
             size: metadata.len() as usize,

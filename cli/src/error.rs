@@ -26,6 +26,9 @@ pub enum CliError {
     #[error("Authentication error")]
     AuthenticationError,
 
+    #[error("Error calling the API: {0}")]
+    ApiError(String),
+
     #[error("Failed to convert key to spki")]
     KeyToPkcs1Error(#[from] rsa::pkcs8::spki::Error),
 
@@ -40,5 +43,8 @@ pub enum CliError {
 
     #[error("Invalid arguments: {0}")]
     InvalidArgumentError(String),
+
+    #[error("Unexpected error: {0}")]
+    UnexpectedError(String),
 }
 pub type Result<T> = std::result::Result<T, CliError>;

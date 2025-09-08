@@ -4,8 +4,6 @@ use std::io::{Read, Seek, SeekFrom};
 use std::path::PathBuf;
 use tracing::{info, warn};
 
-use openapi::apis::filesystem_api;
-
 use crate::chunked_reader::ChunkedReader;
 use crate::command::upload::Upload;
 use crate::config::Context;
@@ -113,22 +111,18 @@ impl Uploader {
     }
     pub async fn next(&mut self) -> Result<UploadState> {
         let new_state = match self.state {
-            UploadState::Init => self.init().await,
+            UploadState::Init => self.init(),
             UploadState::Folder => self.folder().await,
             UploadState::File => self.file().await,
+            UploadState::Started { .. } => self.upload_chunk().await,
+            UploadState::Chunk { .. } => self.upload_chunk().await,
             _ => Ok(self.state.clone()),
         }?;
         self.state = new_state.clone();
         return Ok(new_state);
     }
 
-    async fn init(&mut self) -> Result<UploadState> {
-        // call list api
-        let response = filesystem_api::list_home(self.ctx.openapi())
-            .await
-            .map_err(|e| CliError::ApiError(e.to_string()))?;
-        dbg!(response);
-
+    fn init(&mut self) -> Result<UploadState> {
         if self.idx >= self.paths.len() {
             return Ok(UploadState::Complete);
         }
@@ -154,7 +148,7 @@ impl Uploader {
     }
 
     async fn file(&mut self) -> Result<UploadState> {
-        let (path, target) = &self.paths[self.idx];
+        let path = &self.paths[self.idx];
         let cs = self.args.chunk_size as usize;
         let reader = ChunkedReader::from_file(path.clone(), cs)?;
         self.reader = Some(reader);
@@ -162,7 +156,101 @@ impl Uploader {
         Ok(UploadState::Init)
     }
 
+    fn read_chunk(&mut self) -> Result<Option<Chunk>> {
+        let mut file = self.file.take().unwrap();
+        let file_size = self.file_size.unwrap();
+        let size = self.chunk_size;
+
+        let mut chunk_buf = vec![0u8; size as usize];
+        let start = file.seek(SeekFrom::Current(0))?;
+
+        let bytes = file.read(&mut chunk_buf)?;
+        if bytes == 0 {
+            return Ok(None);
+        }
+        let data = chunk_buf[0..bytes].to_vec();
+        let chunk = Chunk::new(start, data, file_size);
+
+        self.file = Some(file);
+        Ok(Some(chunk))
+    }
+
     async fn start(&mut self) -> Result<UploadState> {
-        unimplemented!();
+        self.open()?;
+        let chunk = match self.read_chunk()? {
+            Some(c) => c,
+            None => return Ok(UploadState::Skipped),
+        };
+        // reset the file
+        self.open()?;
+        let api::Upload {
+            mnemonic,
+            duplicate,
+        } = api::upload_start(
+            &self.ctx,
+            self.filename.clone(),
+            self.path_str.clone(),
+            chunk.file_size.clone(),
+            chunk.hash.clone(),
+            self.name.clone(),
+        )
+        .await?;
+        if !self.allow_duplicate {
+            if let Some(hash) = duplicate {
+                return self.check_for_duplicate(hash, mnemonic).await;
+            }
+        }
+        self.mnemonic = Some(mnemonic.clone());
+        self.hashes = Some(Vec::new());
+        Ok(UploadState::Started {
+            mnemonic,
+            file_size: self.file_size.unwrap(),
+        })
+    }
+
+    async fn upload_chunk(&mut self) -> Result<UploadState> {
+        let chunk = match self.read_chunk()? {
+            Some(c) => c,
+            None => return self.upload_finish().await,
+        };
+        match &mut self.hashes {
+            Some(hashes) => hashes.push(chunk.hash.clone()),
+            None => bail!("Hashes not initialized"),
+        };
+
+        let mnemonic = self.mnemonic.clone().unwrap();
+        chunk.upload(&self.ctx, &mnemonic).await?;
+        Ok(UploadState::Chunk {
+            mnemonic,
+            current: chunk.end,
+            total: chunk.file_size,
+        })
+    }
+    fn hash(&self) -> Result<String> {
+        let hashes = match self.hashes.as_ref() {
+            Some(h) => h,
+            None => bail!("no self.hashes"),
+        };
+        let mut bytes = Vec::new();
+        for hash in hashes {
+            let mut data = decode_base64(&hash)?;
+            bytes.append(&mut data)
+        }
+        let hash = sha256(&bytes);
+        Ok(hash)
+    }
+
+    async fn upload_finish(&mut self) -> Result<UploadState> {
+        let mnemonic = self.mnemonic.clone().unwrap();
+        let server_hash = api::upload_finish(&self.ctx, &mnemonic).await?;
+        let local_hash = self.hash()?;
+        if server_hash != local_hash {
+            bail!(
+                "Hash mismatch: local:'{}' remote: '{}'",
+                local_hash,
+                server_hash
+            );
+        }
+        Ok(UploadState::Complete)
     }
 }

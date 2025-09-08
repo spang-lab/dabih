@@ -44,6 +44,7 @@ import type {
 } from '../types';
 import destroy from './destroy';
 import setAccess from './setAccess';
+import resolve from './resolve';
 
 @Route('fs')
 @Tags('Filesystem')
@@ -140,6 +141,15 @@ export class FilesystemController extends Controller {
   ): Promise<InodeTree> {
     const { user } = request;
     return tree(user, mnemonic);
+  }
+  @Get('resolve/{path}')
+  @OperationId('resolvePath')
+  public async resolve(
+    @Path() path: string,
+    @Request() request: RequestWithUser,
+  ): Promise<Inode> {
+    const { user } = request;
+    return resolve(user, path);
   }
 
   @Post('move')

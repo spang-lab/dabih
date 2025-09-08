@@ -71,6 +71,43 @@ test('file', async (t) => {
   t.is(data.size, '9');
 });
 
+test('resolve path', async (t) => {
+  const api = await client(t, 'owner');
+
+  const { data: dir, error } = await api.fs.resolve('test_dir/test_dir_A');
+  if (error || !dir) {
+    t.fail(error);
+    return;
+  }
+  t.is(dir.name, 'test_dir_A');
+  t.is(dir.type, InodeType.DIRECTORY);
+  t.is(dir.mnemonic, t.context.directories.test_dir_A);
+
+  const { data: file, error: error2 } = await api.fs.resolve(
+    'test_dir/test_dir_B/../test_dir_A/test.txt',
+  );
+  if (error2 || !file) {
+    t.fail(error2);
+    return;
+  }
+  t.is(file.name, 'test.txt');
+  t.is(file.type, InodeType.FILE);
+  t.is(file.mnemonic, t.context.files.File_A);
+
+  const { data: absdir } = await api.fs.resolve(`/owner/test_dir/test_dir_B`);
+  if (!absdir) {
+    t.fail();
+    return;
+  }
+  t.is(absdir.name, 'test_dir_B');
+  t.is(absdir.type, InodeType.DIRECTORY);
+  t.is(absdir.mnemonic, t.context.directories.test_dir_B);
+
+  const { response, error: error3 } = await api.fs.resolve('invalid/path');
+  t.is(response.status, 404);
+  t.truthy(error3);
+});
+
 test('invalid mnemonic', async (t) => {
   const api = await client(t, 'owner');
   const { response } = await api.fs.file('invalid_mnemonic');
