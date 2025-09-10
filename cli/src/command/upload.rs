@@ -26,6 +26,7 @@ pub async fn run(ctx: Context, args: Upload) -> Result<()> {
     loop {
         match uploader.next().await? {
             UploadState::File => {}
+            UploadState::Folder => {}
             UploadState::Started {
                 name,
                 mnemonic,

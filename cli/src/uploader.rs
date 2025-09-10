@@ -1,7 +1,8 @@
 use glob::glob;
+use openapi::models::AddDirectoryBody;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use tracing::{info, warn};
+use tracing::{debug, info, warn};
 
 use openapi::apis::filesystem_api;
 
@@ -102,13 +103,16 @@ impl Uploader {
             mnemonics: HashMap::new(),
         })
     }
-    pub async fn resolve_target(&self, target: String) -> Result<String> {
-        dbg!(&target);
+    pub async fn resolve_target(&mut self, target: String) -> Result<(String, String)> {
         let (base, filename) = match target.rsplit_once('/') {
             Some((b, f)) => (b.to_string(), f.to_string()),
-            None => ("".to_string(), target),
+            None => (".".to_string(), target),
         };
-        dbg!(&base, &filename);
+        let cached = self.mnemonics.get(&base);
+        if let Some(mnemonic) = cached {
+            return Ok((mnemonic.clone(), filename));
+        }
+
         let inode = match filesystem_api::resolve_path(self.ctx.openapi(), &base).await {
             Ok(resp) => resp,
             Err(e) => {
@@ -118,8 +122,8 @@ impl Uploader {
                 )));
             }
         };
-        dbg!(base, filename, &inode.mnemonic);
-        Ok(inode.mnemonic)
+        self.mnemonics.insert(base.clone(), inode.mnemonic.clone());
+        Ok((inode.mnemonic, filename))
     }
 
     pub async fn next(&mut self) -> Result<UploadState> {
@@ -129,18 +133,17 @@ impl Uploader {
             UploadState::File => self.file().await,
             _ => Ok(self.state.clone()),
         }?;
+        debug!("Transitioning from {:?} to {:?}", self.state, new_state);
         self.state = new_state.clone();
         return Ok(new_state);
     }
 
     async fn init(&mut self) -> Result<UploadState> {
-        // call list api
-
         if self.idx >= self.paths.len() {
             return Ok(UploadState::Complete);
         }
-        let (path, target) = &self.paths[self.idx];
-        dbg!(path, self.resolve_target(target.clone()).await?);
+        let (path, _) = &self.paths[self.idx];
+        debug!("Processing path {}", path.display());
 
         if path.is_file() {
             return Ok(UploadState::File);
@@ -155,7 +158,31 @@ impl Uploader {
     }
 
     async fn folder(&mut self) -> Result<UploadState> {
-        let (path, target) = &self.paths[self.idx];
+        let (path, target) = self.paths[self.idx].clone();
+        let (mnemonic, name) = self.resolve_target(target.clone()).await?;
+
+        let inode = match filesystem_api::add_directory(
+            self.ctx.openapi(),
+            AddDirectoryBody {
+                name: name.clone(),
+                parent: Some(mnemonic.clone()),
+                tag: self.args.tag.clone(),
+            },
+        )
+        .await
+        {
+            Ok(resp) => resp,
+            Err(e) => {
+                return Err(CliError::ApiError(format!(
+                    "Failed to create directory {}: {}",
+                    target, e
+                )));
+            }
+        };
+        debug!(
+            "Created directory {} with mnemonic {}",
+            target, inode.mnemonic
+        );
 
         self.idx += 1;
         Ok(UploadState::Init)
