@@ -117,7 +117,7 @@ async function handleUpload(transfer: Upload) {
       const { chunks } = inode.data;
       const buffers = chunks.map((chunk) =>
         crypto.base64url.toUint8(chunk.hash),
-      );
+      ) as BlobPart[];
       const merged = await new Blob([...buffers]).arrayBuffer();
       const hash = await crypto.hash(merged);
       const { data: result, error } = await api.upload.finish(inode.mnemonic);
@@ -139,7 +139,20 @@ async function handleUpload(transfer: Upload) {
       };
     }
     case "canceling": {
-      throw new Error("Not implemented");
+      const { inode } = transfer;
+      if (!inode) {
+        return invalidStateError(transfer);
+      }
+      const { error } = await api.upload.cancel(inode.mnemonic);
+      if (error) {
+        return toError(transfer, error || "Failed to cancel upload");
+      }
+      return {
+        ...transfer,
+        status: "complete" as UploadStatus,
+        file: undefined,
+        requiresList: true,
+      };
     }
     default:
       return invalidStateError(transfer);

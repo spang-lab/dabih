@@ -520,8 +520,9 @@
 					},
 					"size": {
 						"type": "integer",
-						"format": "int32",
-						"description": "The size of the file in bytes"
+						"format": "int64",
+						"description": "The size of the file in bytes",
+						"minimum": 0
 					},
 					"tag": {
 						"type": "string",
@@ -718,9 +719,10 @@
 					},
 					"lifetime": {
 						"type": "integer",
-						"format": "int32",
+						"format": "int64",
 						"nullable": true,
-						"description": "The time in seconds the token should be valid for\nIf null the token will never expire"
+						"description": "The time in seconds the token should be valid for\nIf null the token will never expire",
+						"minimum": 0
 					}
 				},
 				"required": [

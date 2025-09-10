@@ -16,6 +16,7 @@ Method | HTTP request | Description
 [**list_parents**](FilesystemApi.md#list_parents) | **GET** /fs/{mnemonic}/parent/list | 
 [**move_inode**](FilesystemApi.md#move_inode) | **POST** /fs/move | 
 [**remove_inode**](FilesystemApi.md#remove_inode) | **POST** /fs/{mnemonic}/remove | 
+[**resolve_home**](FilesystemApi.md#resolve_home) | **GET** /fs/resolve | 
 [**resolve_path**](FilesystemApi.md#resolve_path) | **GET** /fs/resolve/{path} | 
 [**search_cancel**](FilesystemApi.md#search_cancel) | **POST** /fs/search/{jobId}/cancel | 
 [**search_fs**](FilesystemApi.md#search_fs) | **POST** /fs/search | 
@@ -358,6 +359,31 @@ Name | Type | Description  | Required | Notes
 
 - **Content-Type**: Not defined
 - **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## resolve_home
+
+> models::Inode resolve_home()
+
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**models::Inode**](Inode.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

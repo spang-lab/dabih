@@ -15,7 +15,8 @@ export interface UploadStartBody {
   filePath?: string;
   /**
    * The size of the file in bytes
-   * @isInt
+   * @isLong
+   * @minimum 0
    */
   size?: number;
   /**
@@ -27,8 +28,20 @@ export interface UploadStartBody {
 export interface ChunkAddBody {
   mnemonic: Mnemonic;
   hash: string;
+  /**
+   * @isLong
+   * @minimum 0
+   */
   start: number;
+  /**
+   * @isLong
+   * @minimum 0
+   */
   end: number;
+  /**
+   * @isLong
+   * @minimum 0
+   */
   size?: number;
 }
 
@@ -39,5 +52,9 @@ export type ChunkUpload = ChunkAddBody & {
 export interface ExistingFileBody {
   chunkHash: string;
   fileName: string;
+  /**
+   * @isLong
+   * @minimum 0
+   */
   size: number;
 }

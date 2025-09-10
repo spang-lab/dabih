@@ -31,6 +31,7 @@ export default function Transfers() {
   const transfers = useTransfers((state) => state.transfers);
   const updateTransfer = useTransfers((state) => state.updateTransfer);
   const addTransfer = useTransfers((state) => state.addTransfer);
+  const clearTransfers = useTransfers((state) => state.clearTransfers);
   const list = useFiles((state) => state.list);
   const cwd = useFiles((state) => state.cwd);
 
@@ -56,21 +57,32 @@ export default function Transfers() {
       }
     };
     worker.postMessage(token);
+  }, [cwd, list, updateTransfer, status, token]);
 
+  useEffect(() => {
     void (async () => {
+      if (status !== "authenticated") {
+        return;
+      }
+
       const { data: incomplete } = await api.upload.unfinished();
       if (!incomplete || incomplete.length === 0) {
         return;
       }
-      const transfers = incomplete.map((inode) => ({
-        id: inode.id,
-        type: "upload",
-        status: "interrupted",
-        inode,
-      })) as TransferType[];
-      transfers.forEach(addTransfer);
+      clearTransfers();
+      const newTransfers = incomplete
+        .map((inode) => ({
+          id: inode.id,
+          type: "upload",
+          status: "interrupted",
+          inode,
+        })) as TransferType[];
+      newTransfers.forEach(addTransfer);
     })();
-  }, [addTransfer, cwd, list, updateTransfer, status, token]);
+  }, [addTransfer, clearTransfers, status]);
+
+
+
 
 
   useEffect(() => {

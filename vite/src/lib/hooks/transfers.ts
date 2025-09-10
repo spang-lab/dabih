@@ -72,7 +72,9 @@ interface Actions {
   upload: (req: UploadRequest) => void;
   download: (mnemonic: string | string[], key: CryptoKey) => void;
   updateTransfer: (transfer: Transfer) => void;
+  cancelTransfer: (id: string) => void;
   clearTransfer: (id: string) => void;
+  clearTransfers: () => void;
 }
 
 const useTransfers = create<State & Actions>((set) => ({
@@ -117,10 +119,22 @@ const useTransfers = create<State & Actions>((set) => ({
       ),
     }));
   },
+  cancelTransfer: (id: string) => {
+    set((state) => {
+      const t = state.transfers.find((t) => t.id === id);
+      const nt = { ...t, status: "canceling" } as Transfer;
+      return {
+        transfers: state.transfers.map((t) => (t.id === id ? nt : t)),
+      };
+    });
+  },
   clearTransfer: (id: string) => {
     set((state) => ({
       transfers: state.transfers.filter((t) => t.id !== id),
     }));
+  },
+  clearTransfers: () => {
+    set({ transfers: [] });
   },
 }));
 

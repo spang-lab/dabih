@@ -186,7 +186,7 @@ const models: TsoaRoute.Models = {
             "fileName": {"dataType":"string","required":true},
             "directory": {"ref":"Mnemonic"},
             "filePath": {"dataType":"string"},
-            "size": {"dataType":"integer"},
+            "size": {"dataType":"long","validators":{"minimum":{"value":0}}},
             "tag": {"dataType":"string"},
         },
         "additionalProperties": false,
@@ -241,7 +241,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
-            "lifetime": {"dataType":"union","subSchemas":[{"dataType":"integer"},{"dataType":"enum","enums":[null]}],"required":true},
+            "lifetime": {"dataType":"union","subSchemas":[{"dataType":"long"},{"dataType":"enum","enums":[null]}],"required":true,"validators":{"minimum":{"value":0}}},
         },
         "additionalProperties": false,
     },

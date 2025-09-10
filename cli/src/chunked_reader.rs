@@ -1,4 +1,6 @@
 use crate::error::Result;
+use base64ct::{Base64UrlUnpadded, Encoding};
+use sha2::Digest;
 
 use std::{
     fs::File,
@@ -15,15 +17,36 @@ pub struct Chunk {
     // total size of the file in bytes
     file_size: u64,
     data: Vec<u8>,
+    digest: String,
+}
+
+impl Chunk {
+    pub fn content_range(&self) -> String {
+        format!("bytes {}-{}/{}", self.start, self.end, self.file_size)
+    }
+    pub fn digest(&self) -> &str {
+        &self.digest
+    }
+    pub fn data(&self) -> &[u8] {
+        &self.data
+    }
+    pub fn start(&self) -> u64 {
+        self.start
+    }
+    pub fn end(&self) -> u64 {
+        self.end
+    }
+    pub fn file_size(&self) -> u64 {
+        self.file_size
+    }
 }
 
 pub struct ChunkedReader {
-    path: PathBuf,
     inner: BufReader<File>,
     size: usize,
     buf: Vec<u8>,
     pos: usize,
-    chunk_size: usize,
+    hashes: Vec<u8>,
 }
 
 impl ChunkedReader {
@@ -32,27 +55,40 @@ impl ChunkedReader {
         let metadata = file.metadata()?;
 
         Ok(Self {
-            path: path,
             inner: std::io::BufReader::new(file),
             buf: vec![0; chunk_size],
             size: metadata.len() as usize,
             pos: 0,
-            chunk_size,
+            hashes: Vec::new(),
         })
     }
-    fn read_chunk(&mut self) -> Result<Option<Chunk>> {
+    pub fn read_chunk(&mut self) -> Result<Option<Chunk>> {
         let bytes_read = self.inner.read(&mut self.buf)?;
         if bytes_read == 0 {
             return Ok(None);
         }
+        let data = self.buf[..bytes_read].to_vec();
+        let digest = sha2::Sha256::digest(&data);
+        self.hashes.extend_from_slice(&digest);
+        let base64 = Base64UrlUnpadded::encode_string(&digest);
+
         let chunk = Chunk {
             start: self.pos as u64,
             end: (self.pos + bytes_read - 1) as u64,
             file_size: self.size as u64,
-            data: self.buf[..bytes_read].to_vec(),
+            digest: base64,
+            data,
         };
         self.pos += bytes_read;
         Ok(Some(chunk))
+    }
+    pub fn file_size(&self) -> usize {
+        self.size
+    }
+
+    pub fn digest(&self) -> String {
+        let digest = sha2::Sha256::digest(&self.hashes);
+        Base64UrlUnpadded::encode_string(&digest)
     }
 }
 

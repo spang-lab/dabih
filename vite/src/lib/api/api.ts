@@ -100,6 +100,8 @@ const init = (baseUrl: string) => {
       }),
     addDirectory: (name: string, parent?: string) =>
       c.POST('/fs/directory/add', { body: { name, parent } }),
+    resolve: (path: string) =>
+      c.GET('/fs/resolve/{path}', { params: { path: { path } } }),
     move: (body: schemas['MoveInodeBody']) => c.POST('/fs/move', { body }),
     remove: (mnemonic: string) =>
       c.POST('/fs/{mnemonic}/remove', { params: { path: { mnemonic } } }),

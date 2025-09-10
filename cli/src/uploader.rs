@@ -1,10 +1,10 @@
 use glob::glob;
-use openapi::models::AddDirectoryBody;
+use openapi::models::{AddDirectoryBody, UploadStartBody};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use tracing::{debug, info, warn};
 
-use openapi::apis::filesystem_api;
+use openapi::apis::{filesystem_api, upload_api};
 
 use crate::chunked_reader::ChunkedReader;
 use crate::command::upload::Upload;
@@ -26,6 +26,7 @@ pub enum UploadState {
         current: u64,
         total: u64,
     },
+    Finish,
     Complete,
 }
 
@@ -36,6 +37,7 @@ pub struct Uploader {
 
     paths: Vec<(PathBuf, String)>,
     idx: usize,
+    mnemonic: Option<String>,
     reader: Option<ChunkedReader>,
     mnemonics: HashMap<String, String>,
 }
@@ -99,6 +101,7 @@ impl Uploader {
             args,
             paths,
             idx: 0,
+            mnemonic: None,
             reader: None,
             mnemonics: HashMap::new(),
         })
@@ -131,6 +134,9 @@ impl Uploader {
             UploadState::Init => self.init().await,
             UploadState::Folder => self.folder().await,
             UploadState::File => self.file().await,
+            UploadState::Started { .. } => self.chunk().await,
+            UploadState::Chunk { .. } => self.chunk().await,
+            UploadState::Finish => self.finish().await,
             _ => Ok(self.state.clone()),
         }?;
         debug!("Transitioning from {:?} to {:?}", self.state, new_state);
@@ -142,8 +148,8 @@ impl Uploader {
         if self.idx >= self.paths.len() {
             return Ok(UploadState::Complete);
         }
-        let (path, _) = &self.paths[self.idx];
-        debug!("Processing path {}", path.display());
+        let (path, target) = &self.paths[self.idx];
+        debug!("Processing path {} with target {}", path.display(), target);
 
         if path.is_file() {
             return Ok(UploadState::File);
@@ -158,7 +164,7 @@ impl Uploader {
     }
 
     async fn folder(&mut self) -> Result<UploadState> {
-        let (path, target) = self.paths[self.idx].clone();
+        let (_path, target) = self.paths[self.idx].clone();
         let (mnemonic, name) = self.resolve_target(target.clone()).await?;
 
         let inode = match filesystem_api::add_directory(
@@ -183,21 +189,119 @@ impl Uploader {
             "Created directory {} with mnemonic {}",
             target, inode.mnemonic
         );
+        self.mnemonics
+            .insert(target.clone(), inode.mnemonic.clone());
 
         self.idx += 1;
         Ok(UploadState::Init)
     }
 
     async fn file(&mut self) -> Result<UploadState> {
-        let (path, target) = &self.paths[self.idx];
+        let (path, target) = self.paths[self.idx].clone();
+        let (mnemonic, name) = self.resolve_target(target.clone()).await?;
+
         let cs = self.args.chunk_size as usize;
         let reader = ChunkedReader::from_file(path.clone(), cs)?;
+        let fs = reader.file_size() as i64;
         self.reader = Some(reader);
 
-        Ok(UploadState::Init)
+        let inode = match upload_api::start_upload(
+            self.ctx.openapi(),
+            UploadStartBody {
+                file_name: name.clone(),
+                directory: Some(mnemonic),
+                file_path: Some(stringify(&path)),
+                size: Some(fs),
+                tag: self.args.tag.clone(),
+            },
+        )
+        .await
+        {
+            Ok(resp) => resp,
+            Err(e) => {
+                return Err(CliError::ApiError(format!(
+                    "Failed to start upload for file {}: {}",
+                    target, e
+                )));
+            }
+        };
+        self.mnemonic = Some(inode.mnemonic.clone());
+        Ok(UploadState::Started {
+            name: name.clone(),
+            mnemonic: inode.mnemonic.clone(),
+            file_size: fs as u64,
+        })
     }
+    async fn chunk(&mut self) -> Result<UploadState> {
+        let reader = self.reader.as_mut().unwrap();
+        let mnemonic = self.mnemonic.as_ref().unwrap();
 
-    async fn start(&mut self) -> Result<UploadState> {
-        unimplemented!();
+        let chunk = match reader.read_chunk() {
+            Ok(Some(c)) => c,
+            Ok(None) => {
+                self.idx += 1;
+                return Ok(UploadState::Finish);
+            }
+            Err(e) => {
+                return Err(CliError::UnexpectedError(format!(
+                    "Failed to read chunk: {}",
+                    e
+                )));
+            }
+        };
+        let digest = chunk.digest();
+        let digest_header = format!("sha-256={}", digest);
+
+        let hash = match upload_api::chunk_upload(
+            self.ctx.openapi(),
+            mnemonic,
+            &chunk.content_range(),
+            &digest_header,
+            chunk.data().to_vec(),
+        )
+        .await
+        {
+            Ok(c) => c.hash,
+            Err(e) => {
+                return Err(CliError::ApiError(format!(
+                    "Failed to upload chunk for file {}: {}",
+                    mnemonic, e
+                )));
+            }
+        };
+
+        if hash != digest {
+            return Err(CliError::UnexpectedError(format!(
+                "Hash mismatch for chunk in file {}: expected {}, got {}",
+                mnemonic, digest, hash
+            )));
+        }
+        return Ok(UploadState::Chunk {
+            mnemonic: mnemonic.clone(),
+            current: chunk.end() + 1,
+            total: chunk.file_size(),
+        });
+    }
+    pub async fn finish(&mut self) -> Result<UploadState> {
+        let hash = self.reader.as_ref().unwrap().digest();
+
+        let mnemonic = self.mnemonic.as_ref().unwrap();
+        let inode = match upload_api::finish_upload(self.ctx.openapi(), mnemonic).await {
+            Ok(resp) => resp,
+            Err(e) => {
+                return Err(CliError::ApiError(format!(
+                    "Failed to finish upload for file {}: {}",
+                    mnemonic, e
+                )));
+            }
+        };
+        let server_hash = inode.data.hash.clone().unwrap_or_default();
+        if hash != server_hash {
+            return Err(CliError::UnexpectedError(format!(
+                "Hash mismatch for file {}: expected {}, got {}",
+                mnemonic, hash, server_hash
+            )));
+        }
+        return Ok(UploadState::Init);
     }
 }

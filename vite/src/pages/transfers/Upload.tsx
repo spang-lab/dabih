@@ -1,7 +1,7 @@
 import { Bytes } from "@/util";
 import useTransfers from "@/lib/hooks/transfers";
 import type { Upload } from "@/lib/hooks/transfers";
-import { Upload as UploadIcon, X } from "react-feather";
+import { Trash2, Upload as UploadIcon, X } from "react-feather";
 import FileName from "../manage/inode/Filename";
 
 
@@ -9,6 +9,7 @@ export default function UploadTransfer({ data }: { data: Upload }) {
   const { status } = data;
 
   const clearTransfer = useTransfers((state) => state.clearTransfer);
+  const cancelTransfer = useTransfers((state) => state.cancelTransfer);
 
 
   const getStatus = () => {
@@ -37,6 +38,16 @@ export default function UploadTransfer({ data }: { data: Upload }) {
             <span className="font-mono py-1">
               <FileName fileName={fileName} />
             </span>
+            <button
+              type="button"
+              className="bg-red text-white font-bold px-2 py-1 mx-2 rounded"
+              onClick={() => {
+                void cancelTransfer(data.id);
+              }}
+            >
+              <Trash2 size={12} className="" />
+            </button>
+
 
           </div >
         );

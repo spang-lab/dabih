@@ -901,7 +901,7 @@ export interface components {
             /** @description The original path of the file */
             filePath?: string;
             /**
-             * Format: int32
+             * Format: int64
              * @description The size of the file in bytes
              */
             size?: number;
@@ -979,7 +979,7 @@ export interface components {
             /** @description The array of scopes the token should have */
             scopes: string[];
             /**
-             * Format: int32
+             * Format: int64
              * @description The time in seconds the token should be valid for
              *     If null the token will never expire
              */

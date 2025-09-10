@@ -1,6 +1,6 @@
 [package]
 name = "openapi"
-version = "2.1.0"
+version = "2.1.1"
 authors = ["OpenAPI Generator team and contributors"]
 description = "Dabih API Server"
 license = "MIT"

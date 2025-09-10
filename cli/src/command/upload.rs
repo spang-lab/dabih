@@ -25,8 +25,13 @@ pub async fn run(ctx: Context, args: Upload) -> Result<()> {
     let mut pb = ProgressBar::new(0);
     loop {
         match uploader.next().await? {
+            UploadState::Init => {}
             UploadState::File => {}
             UploadState::Folder => {}
+            UploadState::Finish => {
+                pb.finish();
+                println!("Done.");
+            }
             UploadState::Started {
                 name,
                 mnemonic,
@@ -46,8 +51,6 @@ pub async fn run(ctx: Context, args: Upload) -> Result<()> {
                 pb.set(current);
             }
             UploadState::Complete => {
-                pb.finish();
-                println!("Done.");
                 return Ok(());
             }
             _ => return Ok(()),

@@ -56,7 +56,7 @@ export default async function finish(user: User, mnemonic: string) {
   }
   const { chunks, size } = data;
   const end = validChunkEnd(chunks);
-  if (end === BigInt(-1)) {
+  if (end === BigInt(-1) && chunks.length > 0) {
     throw new RequestError(`Chunks are not complete for dataset ${mnemonic}`);
   }
   if (size && size !== end + BigInt(1)) {
