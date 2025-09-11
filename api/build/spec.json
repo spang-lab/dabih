@@ -439,8 +439,10 @@
 						"type": "string"
 					},
 					"type": {
-						"type": "number",
-						"format": "double"
+						"type": "integer",
+						"format": "int32",
+						"description": "The type of the inode",
+						"minimum": 0
 					},
 					"name": {
 						"type": "string"

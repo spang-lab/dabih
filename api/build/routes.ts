@@ -159,7 +159,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": {"dataType":"any","required":true},
             "mnemonic": {"dataType":"string","required":true},
-            "type": {"dataType":"double","required":true},
+            "type": {"dataType":"integer","required":true,"validators":{"minimum":{"value":0}}},
             "name": {"dataType":"string","required":true},
             "tag": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "data": {"dataType":"union","subSchemas":[{"ref":"FileData"},{"dataType":"enum","enums":[null]}]},

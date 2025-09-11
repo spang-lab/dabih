@@ -89,7 +89,7 @@ export interface Inode {
   type: number;
   name: string;
   tag: string | null;
-  data: FileData | null;
+  data?: FileData | null;
   parentId: unknown;
   createdAt: Date;
   updatedAt: Date;

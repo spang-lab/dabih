@@ -86,6 +86,11 @@ export interface Inode {
    */
   id: unknown;
   mnemonic: string;
+  /**
+   * The type of the inode
+   * @isInt
+   * @minimum 0
+   */
   type: number;
   name: string;
   tag: string | null;

@@ -18,8 +18,9 @@ pub struct Inode {
     pub id: Option<serde_json::Value>,
     #[serde(rename = "mnemonic")]
     pub mnemonic: String,
+    /// The type of the inode
     #[serde(rename = "type")]
-    pub r#type: f64,
+    pub r#type: i32,
     #[serde(rename = "name")]
     pub name: String,
     #[serde(rename = "tag", deserialize_with = "Option::deserialize")]
@@ -35,7 +36,7 @@ pub struct Inode {
 }
 
 impl Inode {
-    pub fn new(id: Option<serde_json::Value>, mnemonic: String, r#type: f64, name: String, tag: Option<String>, parent_id: Option<serde_json::Value>, created_at: String, updated_at: String) -> Inode {
+    pub fn new(id: Option<serde_json::Value>, mnemonic: String, r#type: i32, name: String, tag: Option<String>, parent_id: Option<serde_json::Value>, created_at: String, updated_at: String) -> Inode {
         Inode {
             id,
             mnemonic,

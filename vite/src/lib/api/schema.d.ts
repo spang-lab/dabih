@@ -877,7 +877,7 @@ export interface components {
             type: number;
             name: string;
             tag: string | null;
-            data: components["schemas"]["FileData"] | null;
+            data?: components["schemas"]["FileData"] | null;
             parentId: unknown;
             /** Format: date-time */
             createdAt: Date;

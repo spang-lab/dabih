@@ -4,10 +4,27 @@ use crate::chunked_reader;
 use openapi::{
     apis::{configuration::Configuration, filesystem_api, upload_api, user_api, util_api},
     models::{
-        AddDirectoryBody, Chunk, Directory, File, Healthy200Response, Inode, UploadStartBody,
-        UserResponse,
+        AddDirectoryBody, Chunk, Directory, File, Healthy200Response, Inode, ListResponse,
+        UploadStartBody, UserResponse,
     },
 };
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum InodeType {
+    File = 0,
+    Directory = 1,
+    Upload = 2,
+    Trash = 10,
+    Root = 11,
+    Home = 12,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Permission {
+    None = 0,
+    Read = 1,
+    Write = 2,
+}
 
 use crate::error::{CliError, Result};
 
@@ -75,6 +92,16 @@ impl FileSystemApi {
         filesystem_api::add_directory(&self.config, AddDirectoryBody { name, parent, tag })
             .await
             .map_err(|e| CliError::ApiError(format!("Failed to add directory: {}", e)))
+    }
+    pub async fn list(&self, mnemonic: Option<String>) -> Result<ListResponse> {
+        match mnemonic {
+            Some(m) => filesystem_api::list_inodes(&self.config, &m)
+                .await
+                .map_err(|e| CliError::ApiError(format!("Failed to list inodes: {}", e))),
+            None => filesystem_api::list_home(&self.config)
+                .await
+                .map_err(|e| CliError::ApiError(format!("Failed to list home: {}", e))),
+        }
     }
 }
 

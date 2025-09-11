@@ -1,4 +1,7 @@
-use std::{env, path::PathBuf};
+use std::{
+    env::{self, args},
+    path::PathBuf,
+};
 
 mod api;
 mod chunked_reader;
@@ -49,6 +52,7 @@ async fn main() -> Result<()> {
     match cli.command {
         Commands::Status(_) => status::run(ctx).await?,
         Commands::Upload(args) => command::upload::run(ctx, args).await?,
+        Commands::List(args) => command::list::run(ctx, args).await?,
     }
     Ok(())
 }

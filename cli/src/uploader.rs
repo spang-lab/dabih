@@ -204,17 +204,19 @@ impl Uploader {
             if !self.args.rename_existing {
                 let hash = ChunkedReader::digest_only(path.clone(), self.args.chunk_size as usize)?;
                 for inode in existing {
-                    if let Some(data) = inode.data {
-                        if let Some(existing_hash) = data.hash {
-                            if existing_hash == hash {
-                                info!(
-                                    "File {} already exists with same hash, skipping upload",
-                                    target
-                                );
-                                self.idx += 1;
-                                return Ok(UploadState::Init);
-                            }
-                        }
+                    let existing_hash = inode
+                        .data
+                        .unwrap_or_default()
+                        .unwrap_or_default()
+                        .hash
+                        .unwrap_or_default();
+                    if existing_hash == hash {
+                        info!(
+                            "File {} already exists with same hash, skipping upload",
+                            target
+                        );
+                        self.idx += 1;
+                        return Ok(UploadState::Init);
                     }
                 }
             }
