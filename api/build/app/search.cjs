@@ -5,7 +5,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -40,22 +39,22 @@ module.exports = __toCommonJS(search_exports);
 var import_redis2 = require("redis");
 
 // src/lib/env.ts
-var getEnv = /* @__PURE__ */ __name((key, defaultValue = "") => {
+var getEnv = (key, defaultValue = "") => {
   const { env } = process;
   const value = env[key];
   if (value) {
     return value;
   }
   return defaultValue;
-}, "getEnv");
-var requireEnv = /* @__PURE__ */ __name((key) => {
+};
+var requireEnv = (key) => {
   const { env } = process;
   const value = env[key];
   if (value) {
     return value;
   }
   throw new Error(`ENV var "${key}" is required, but was not found.`);
-}, "requireEnv");
+};
 
 // src/lib/logger.ts
 var import_winston = __toESM(require("winston"), 1);
@@ -63,17 +62,19 @@ var { combine, timestamp, json, cli } = import_winston.default.format;
 var logger = import_winston.default.createLogger();
 var level = getEnv("LOG_LEVEL", "info");
 if (getEnv("NODE_ENV", "development") === "production") {
-  logger.add(new import_winston.default.transports.Console({
-    level,
-    format: combine(timestamp(), json())
-  }));
-} else {
-  logger.add(new import_winston.default.transports.Console({
-    level,
-    format: cli({
-      levels: logger.levels
+  logger.add(
+    new import_winston.default.transports.Console({
+      level,
+      format: combine(timestamp(), json())
     })
-  }));
+  );
+} else {
+  logger.add(
+    new import_winston.default.transports.Console({
+      level,
+      format: cli({ levels: logger.levels })
+    })
+  );
 }
 var logger_default = logger;
 
@@ -82,12 +83,12 @@ var import_node_crypto = require("crypto");
 var import_util = require("util");
 
 // src/lib/crypto/base64url.ts
-var toUint8 = /* @__PURE__ */ __name((base64url2) => Buffer.from(base64url2, "base64url"), "toUint8");
-var fromUint8 = /* @__PURE__ */ __name((data) => Buffer.from(data).toString("base64url"), "fromUint8");
-var toBase64 = /* @__PURE__ */ __name((base64url2) => Buffer.from(base64url2, "base64url").toString("base64"), "toBase64");
-var fromBase64 = /* @__PURE__ */ __name((base64) => Buffer.from(base64, "base64").toString("base64url"), "fromBase64");
-var fromUtf8 = /* @__PURE__ */ __name((utf8) => Buffer.from(utf8).toString("base64url"), "fromUtf8");
-var toUtf8 = /* @__PURE__ */ __name((base64url2) => Buffer.from(base64url2, "base64url").toString("utf8"), "toUtf8");
+var toUint8 = (base64url2) => Buffer.from(base64url2, "base64url");
+var fromUint8 = (data) => Buffer.from(data).toString("base64url");
+var toBase64 = (base64url2) => Buffer.from(base64url2, "base64url").toString("base64");
+var fromBase64 = (base64) => Buffer.from(base64, "base64").toString("base64url");
+var fromUtf8 = (utf8) => Buffer.from(utf8).toString("base64url");
+var toUtf8 = (base64url2) => Buffer.from(base64url2, "base64url").toString("utf8");
 var base64url = {
   toUint8,
   fromUint8,
@@ -99,7 +100,7 @@ var base64url = {
 var base64url_default = base64url;
 
 // src/lib/crypto/privateKey.ts
-var generatePair = /* @__PURE__ */ __name(async () => {
+var generatePair = async () => {
   const generateFn = (0, import_util.promisify)(import_node_crypto.generateKeyPair);
   const { publicKey: publicKey2, privateKey: privateKey2 } = await generateFn("rsa", {
     modulusLength: 4096,
@@ -109,18 +110,18 @@ var generatePair = /* @__PURE__ */ __name(async () => {
     publicKey: publicKey2,
     privateKey: privateKey2
   };
-}, "generatePair");
-var generate = /* @__PURE__ */ __name(async () => {
+};
+var generate = async () => {
   const { privateKey: privateKey2 } = await generatePair();
   return privateKey2;
-}, "generate");
-var toJwk = /* @__PURE__ */ __name((key) => {
+};
+var toJwk = (key) => {
   const jwk = key.export({
     format: "jwk"
   });
   return jwk;
-}, "toJwk");
-var toPublicKey = /* @__PURE__ */ __name((key) => {
+};
+var toPublicKey = (key) => {
   const { n, alg, e, kty } = toJwk(key);
   const publicKey2 = (0, import_node_crypto.createPublicKey)({
     key: {
@@ -132,26 +133,26 @@ var toPublicKey = /* @__PURE__ */ __name((key) => {
     format: "jwk"
   });
   return publicKey2;
-}, "toPublicKey");
-var toHash = /* @__PURE__ */ __name((key) => {
+};
+var toHash = (key) => {
   const publicKey2 = toPublicKey(key);
-  const buffer = publicKey2.export({
-    type: "spki",
-    format: "der"
-  });
+  const buffer = publicKey2.export({ type: "spki", format: "der" });
   const hasher = (0, import_node_crypto.createHash)("sha256");
   hasher.update(buffer);
   return hasher.digest("base64url");
-}, "toHash");
-var decrypt = /* @__PURE__ */ __name((key, base64) => {
+};
+var decrypt = (key, base64) => {
   const buffer = base64url_default.toUint8(base64);
-  const result = (0, import_node_crypto.privateDecrypt)({
-    key,
-    oaepHash: "sha256",
-    padding: import_node_crypto.constants.RSA_PKCS1_OAEP_PADDING
-  }, buffer);
+  const result = (0, import_node_crypto.privateDecrypt)(
+    {
+      key,
+      oaepHash: "sha256",
+      padding: import_node_crypto.constants.RSA_PKCS1_OAEP_PADDING
+    },
+    buffer
+  );
   return base64url_default.fromUint8(result);
-}, "decrypt");
+};
 var privateKey = {
   generatePair,
   generate,
@@ -164,28 +165,28 @@ var privateKey_default = privateKey;
 
 // src/lib/crypto/publicKey.ts
 var import_node_crypto2 = require("crypto");
-var fromJwk = /* @__PURE__ */ __name((key) => {
+var fromJwk = (key) => {
   const publicKey2 = (0, import_node_crypto2.createPublicKey)({
     key,
     format: "jwk"
   });
   return publicKey2;
-}, "fromJwk");
-var toJwk2 = /* @__PURE__ */ __name((key) => {
+};
+var toJwk2 = (key) => {
   const jwk = key.export({
     format: "jwk"
   });
   return jwk;
-}, "toJwk");
-var fromString = /* @__PURE__ */ __name((key) => {
+};
+var fromString = (key) => {
   const jwk = JSON.parse(key);
   return fromJwk(jwk);
-}, "fromString");
-var toString = /* @__PURE__ */ __name((key) => {
+};
+var toString = (key) => {
   const jwk = toJwk2(key);
   return JSON.stringify(jwk);
-}, "toString");
-var encrypt = /* @__PURE__ */ __name((key, base64) => {
+};
+var encrypt = (key, base64) => {
   const buffer = base64url_default.toUint8(base64);
   const result = (0, import_node_crypto2.publicEncrypt)({
     key,
@@ -193,16 +194,13 @@ var encrypt = /* @__PURE__ */ __name((key, base64) => {
     padding: import_node_crypto2.constants.RSA_PKCS1_OAEP_PADDING
   }, buffer);
   return base64url_default.fromUint8(result);
-}, "encrypt");
-var toHash2 = /* @__PURE__ */ __name((key) => {
+};
+var toHash2 = (key) => {
   const hasher = (0, import_node_crypto2.createHash)("sha256");
-  const buffer = key.export({
-    type: "spki",
-    format: "der"
-  });
+  const buffer = key.export({ type: "spki", format: "der" });
   hasher.update(buffer);
   return hasher.digest("base64url");
-}, "toHash");
+};
 var publicKey = {
   fromJwk,
   toJwk: toJwk2,
@@ -130039,22 +130037,22 @@ var firstNames_default = [
 ];
 
 // src/lib/crypto/random.ts
-var getBytes = /* @__PURE__ */ __name(async (n) => {
+var getBytes = async (n) => {
   const rFill = (0, import_node_util.promisify)(import_node_crypto3.randomFill);
   const data = new Uint8Array(n);
   const buffer = await rFill(data);
   return buffer;
-}, "getBytes");
-var getToken = /* @__PURE__ */ __name(async (len = 8) => {
+};
+var getToken = async (len = 8) => {
   const bitsPerChar = 6;
   const bitsPerByte = 8;
   const requiredBits = len * bitsPerChar;
   const requiredBytes = Math.ceil(requiredBits / bitsPerByte);
   const bytes = await getBytes(requiredBytes);
   return base64url_default.fromUint8(bytes);
-}, "getToken");
-var sample = /* @__PURE__ */ __name((list2) => list2[Math.floor(Math.random() * list2.length)], "sample");
-var getMnemonic = /* @__PURE__ */ __name(() => `${sample(adjectives_default)}_${sample(firstNames_default)}`, "getMnemonic");
+};
+var sample = (list2) => list2[Math.floor(Math.random() * list2.length)];
+var getMnemonic = () => `${sample(adjectives_default)}_${sample(firstNames_default)}`;
 var random_default = {
   getToken,
   getBytes,
@@ -130063,57 +130061,57 @@ var random_default = {
 
 // src/lib/crypto/aesKey.ts
 var import_crypto = require("crypto");
-var derive = /* @__PURE__ */ __name((secret2, salt) => {
+var derive = (secret2, salt) => {
   const keyBytes = 32;
   const key = (0, import_crypto.scryptSync)(secret2, salt, keyBytes);
   return base64url_default.fromUint8(key);
-}, "derive");
-var generate2 = /* @__PURE__ */ __name(async () => {
+};
+var generate2 = async () => {
   const bytes = await random_default.getBytes(32);
   return base64url_default.fromUint8(bytes);
-}, "generate");
-var generateIv = /* @__PURE__ */ __name(async () => {
+};
+var generateIv = async () => {
   const bytes = await random_default.getBytes(16);
   return base64url_default.fromUint8(bytes);
-}, "generateIv");
-var encrypt2 = /* @__PURE__ */ __name((key, iv) => {
+};
+var encrypt2 = (key, iv) => {
   const rawKey = base64url_default.toUint8(key);
   const rawIv = base64url_default.toUint8(iv);
   const algorithm = "aes-256-cbc";
   return (0, import_crypto.createCipheriv)(algorithm, rawKey, rawIv);
-}, "encrypt");
-var decrypt2 = /* @__PURE__ */ __name((key, iv) => {
+};
+var decrypt2 = (key, iv) => {
   const rawKey = base64url_default.toUint8(key);
   const rawIv = base64url_default.toUint8(iv);
   const algorithm = "aes-256-cbc";
   return (0, import_crypto.createDecipheriv)(algorithm, rawKey, rawIv);
-}, "decrypt");
-var encryptString = /* @__PURE__ */ __name((key, iv, data) => {
+};
+var encryptString = (key, iv, data) => {
   const cipher = encrypt2(key, iv);
   const encrypted = cipher.update(data, "utf8", "base64url");
   return encrypted + cipher.final("base64url");
-}, "encryptString");
-var encryptSecret = /* @__PURE__ */ __name((key, iv, data) => {
+};
+var encryptSecret = (key, iv, data) => {
   const cipher = encrypt2(key, iv);
   const encrypted = cipher.update(data, "base64url", "base64url");
   return encrypted + cipher.final("base64url");
-}, "encryptSecret");
-var decryptSecret = /* @__PURE__ */ __name((key, iv, data) => {
+};
+var decryptSecret = (key, iv, data) => {
   const decipher = decrypt2(key, iv);
   const decrypted = decipher.update(data, "base64url", "base64url");
   return decrypted + decipher.final("base64url");
-}, "decryptSecret");
-var decryptString = /* @__PURE__ */ __name((key, iv, data) => {
+};
+var decryptString = (key, iv, data) => {
   const decipher = decrypt2(key, iv);
   const decrypted = decipher.update(data, "base64url", "utf8");
   return decrypted + decipher.final("utf8");
-}, "decryptString");
-var toHash3 = /* @__PURE__ */ __name((key) => {
+};
+var toHash3 = (key) => {
   const hasher = (0, import_crypto.createHash)("sha256");
   const buffer = base64url_default.toUint8(key);
   hasher.update(buffer);
   return hasher.digest("base64url");
-}, "toHash");
+};
 var aesKey = {
   derive,
   generate: generate2,
@@ -130132,10 +130130,7 @@ var aesKey_default = aesKey;
 var import_node_stream = require("stream");
 var import_node_crypto4 = require("crypto");
 var import_crc32 = __toESM(require("crc/calculators/crc32"), 1);
-var ValidationStream = class ValidationStream2 extends import_node_stream.Transform {
-  static {
-    __name(this, "ValidationStream");
-  }
+var ValidationStream = class extends import_node_stream.Transform {
   hash;
   byteCount;
   constructor() {
@@ -130161,10 +130156,7 @@ var ValidationStream = class ValidationStream2 extends import_node_stream.Transf
     };
   }
 };
-var Crc32 = class Crc322 extends import_node_stream.Transform {
-  static {
-    __name(this, "Crc32");
-  }
+var Crc32 = class extends import_node_stream.Transform {
   checksum;
   constructor() {
     super();
@@ -130188,19 +130180,19 @@ var Crc32 = class Crc322 extends import_node_stream.Transform {
   }
 };
 var stream_default = {
-  validate: /* @__PURE__ */ __name(() => new ValidationStream(), "validate"),
-  crc32: /* @__PURE__ */ __name(() => new Crc32(), "crc32")
+  validate: () => new ValidationStream(),
+  crc32: () => new Crc32()
 };
 
 // src/lib/crypto/hash.ts
 var import_crypto2 = require("crypto");
-var create = /* @__PURE__ */ __name(() => (0, import_crypto2.createHash)("sha256"), "create");
-var blob = /* @__PURE__ */ __name(async (data) => {
+var create = () => (0, import_crypto2.createHash)("sha256");
+var blob = async (data) => {
   const hash2 = create();
   const buffer = Buffer.from(await data.arrayBuffer());
   hash2.update(buffer);
   return hash2.digest("base64url");
-}, "blob");
+};
 var hash = {
   create,
   blob
@@ -130208,21 +130200,25 @@ var hash = {
 var hash_default = hash;
 
 // src/lib/crypto/fileData.ts
-var decryptKey = /* @__PURE__ */ __name((privKey, file) => {
+var decryptKey = (privKey, file) => {
   const { keys, data } = file;
   const pubKey = privateKey_default.toPublicKey(privKey);
   const hash2 = publicKey_default.toHash(pubKey);
   const encryptedKey = keys.find((k) => k.hash === hash2);
   if (!encryptedKey) {
-    throw new Error(`Failed to decrypt: Key with hash ${hash2} not found in keys`);
+    throw new Error(
+      `Failed to decrypt: Key with hash ${hash2} not found in keys`
+    );
   }
   const key = privateKey_default.decrypt(privKey, encryptedKey.key);
   const keyHash = aesKey_default.toHash(key);
   if (keyHash !== data.keyHash) {
-    throw new Error(`Failed to decrypt: Hash mismatch: ${keyHash} !== ${encryptedKey.hash}`);
+    throw new Error(
+      `Failed to decrypt: Hash mismatch: ${keyHash} !== ${encryptedKey.hash}`
+    );
   }
   return key;
-}, "decryptKey");
+};
 var fileData = {
   decryptKey
 };
@@ -130230,47 +130226,43 @@ var fileData_default = fileData;
 
 // src/lib/crypto/jwt.ts
 var import_jsonwebtoken = __toESM(require("jsonwebtoken"), 1);
-var decode = /* @__PURE__ */ __name((token) => import_jsonwebtoken.default.decode(token), "decode");
-var signWithRSA = /* @__PURE__ */ __name((data, privateKey2, expiresIn) => {
+var decode = (token) => import_jsonwebtoken.default.decode(token);
+var signWithRSA = (data, privateKey2, expiresIn) => {
   const token = import_jsonwebtoken.default.sign(data, privateKey2, {
     algorithm: "RS256",
     expiresIn: expiresIn ?? "1h"
   });
   return token;
-}, "signWithRSA");
-var verifyWithRSA = /* @__PURE__ */ __name((token, publicKeys) => {
+};
+var verifyWithRSA = (token, publicKeys) => {
   for (const publicKey2 of publicKeys) {
     try {
       return import_jsonwebtoken.default.verify(token, publicKey2, {
-        algorithms: [
-          "RS256"
-        ]
+        algorithms: ["RS256"]
       });
     } catch {
     }
   }
   throw new Error("Token verification failed with all provided public keys");
-}, "verifyWithRSA");
-var signWithSecret = /* @__PURE__ */ __name((data, secret2, expiresIn) => {
+};
+var signWithSecret = (data, secret2, expiresIn) => {
   const token = import_jsonwebtoken.default.sign(data, secret2, {
     algorithm: "HS256",
     expiresIn: expiresIn ?? "1h"
   });
   return token;
-}, "signWithSecret");
-var verifyWithSecrets = /* @__PURE__ */ __name((token, secrets) => {
+};
+var verifyWithSecrets = (token, secrets) => {
   for (const secret2 of secrets) {
     try {
       return import_jsonwebtoken.default.verify(token, secret2, {
-        algorithms: [
-          "HS256"
-        ]
+        algorithms: ["HS256"]
       });
     } catch {
     }
   }
   throw new Error("Token verification failed with all provided secrets");
-}, "verifyWithSecrets");
+};
 var jsonWebToken = {
   decode,
   signWithRSA,
@@ -130307,7 +130299,6 @@ async function init() {
   await getSecret(SECRET.AUTH, oneDay);
   await getSecret(SECRET.EMAIL, oneDay);
 }
-__name(init, "init");
 async function getSecret(secretName, ttl) {
   const key = `${prefix}:${secretName}`;
   const secrets = await redis_default.lRange(key, 0, 0);
@@ -130326,10 +130317,11 @@ async function getSecret(secretName, ttl) {
     const decrypted = crypto_default.aesKey.decryptString(aesKey2, iv, encrypted);
     return decrypted;
   } catch {
-    throw new Error(`Failed to decrypt secret, aesKey: ${aesKey2}, iv: ${iv}, encrypted: ${encrypted}`);
+    throw new Error(
+      `Failed to decrypt secret, aesKey: ${aesKey2}, iv: ${iv}, encrypted: ${encrypted}`
+    );
   }
 }
-__name(getSecret, "getSecret");
 async function generateSecret(secretName, ttl) {
   const key = `${prefix}:${secretName}`;
   const now = Math.floor(Date.now() / 1e3);
@@ -130348,7 +130340,6 @@ async function generateSecret(secretName, ttl) {
   await redis_default.lTrim(key, 0, maxSecrets - 1);
   return secret2;
 }
-__name(generateSecret, "generateSecret");
 
 // src/lib/redis.ts
 var redisUrl = requireEnv("REDIS_URL");
@@ -130362,7 +130353,6 @@ async function initRedis() {
   await client.connect();
   await init();
 }
-__name(initRedis, "initRedis");
 var redis_default = client;
 
 // src/api/types/base.ts
@@ -130387,14 +130377,12 @@ async function create2(sub) {
   });
   return jobId;
 }
-__name(create2, "create");
 async function list() {
   const keys = await redis_default.keys("job:*:meta");
   const jobIds = keys.map((key) => key.split(":")[1]);
   const jobs = await Promise.all(jobIds.map(getMeta));
   return jobs;
 }
-__name(list, "list");
 async function complete(jobId) {
   const jobKey = `job:${jobId}:meta`;
   await redis_default.hSet(jobKey, {
@@ -130402,20 +130390,17 @@ async function complete(jobId) {
     updatedAt: Date.now()
   });
 }
-__name(complete, "complete");
 async function touch(jobId) {
   const jobKey = `job:${jobId}:meta`;
   await redis_default.hSet(jobKey, {
     updatedAt: Date.now()
   });
 }
-__name(touch, "touch");
 async function addResult(jobId, json2) {
   const jobKey = `job:${jobId}:data`;
   await redis_default.rPush(jobKey, json2);
   await touch(jobId);
 }
-__name(addResult, "addResult");
 async function addResults(jobId, jsons) {
   if (jsons.length === 0) {
     return;
@@ -130424,7 +130409,6 @@ async function addResults(jobId, jsons) {
   await redis_default.rPush(jobKey, jsons);
   await touch(jobId);
 }
-__name(addResults, "addResults");
 async function getMeta(jobId) {
   const jobKey = `job:${jobId}:meta`;
   const meta = await redis_default.hGetAll(jobKey);
@@ -130436,7 +130420,6 @@ async function getMeta(jobId) {
     updatedAt: parseInt(meta.updatedAt, 10)
   };
 }
-__name(getMeta, "getMeta");
 async function fetchResults(jobId, sub) {
   const jobKey = `job:${jobId}:data`;
   const meta = await getMeta(jobId);
@@ -130455,14 +130438,12 @@ async function fetchResults(jobId, sub) {
     ...meta
   };
 }
-__name(fetchResults, "fetchResults");
 async function remove(jobId) {
   const jobKey = `job:${jobId}:meta`;
   await redis_default.del(jobKey);
   const dataKey = `job:${jobId}:data`;
   await redis_default.del(dataKey);
 }
-__name(remove, "remove");
 var job = {
   create: create2,
   complete,
@@ -130481,44 +130462,37 @@ var prisma = new import_client.PrismaClient();
 var db_default = prisma;
 
 // src/middleware/serialize.ts
-var convertBigInts = /* @__PURE__ */ __name((_key, value) => {
+var convertBigInts = (_key, value) => {
   if (typeof value === "bigint") {
     return value.toString();
   }
   return value;
-}, "convertBigInts");
+};
 
 // src/worker/search.ts
 async function initalize() {
   await initRedis();
 }
-__name(initalize, "initalize");
 var search_default = initalize();
 function toJson(inode) {
   return JSON.stringify(inode, convertBigInts);
 }
-__name(toJson, "toJson");
 function inodeMatchesQuery(inode, query) {
   const { name, tag, mnemonic, data } = inode;
-  const fields = [
-    name,
-    tag,
-    mnemonic,
-    data?.fileName,
-    data?.uid,
-    data?.hash
-  ].map((field) => field?.toLowerCase()).filter((field) => field);
+  const fields = [name, tag, mnemonic, data?.fileName, data?.uid, data?.hash].map((field) => field?.toLowerCase()).filter((field) => field);
   if (fields.some((field) => field?.includes(query.toLowerCase()))) {
     return true;
   }
   return false;
 }
-__name(inodeMatchesQuery, "inodeMatchesQuery");
 function isDir(inode) {
   return InodeType.DIRECTORY === inode.type || InodeType.TRASH === inode.type || InodeType.HOME === inode.type;
 }
-__name(isDir, "isDir");
-async function search({ user, body, jobId }) {
+async function search({
+  user,
+  body,
+  jobId
+}) {
   const { query } = body;
   const startPoints = await db_default.inode.findMany({
     where: {
@@ -130561,7 +130535,6 @@ async function search({ user, body, jobId }) {
   await job_default.complete(jobId);
   return;
 }
-__name(search, "search");
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   search

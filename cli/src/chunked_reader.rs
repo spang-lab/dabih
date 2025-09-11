@@ -62,6 +62,12 @@ impl ChunkedReader {
             hashes: Vec::new(),
         })
     }
+    pub fn digest_only(path: PathBuf, chunk_size: usize) -> Result<String> {
+        let mut reader = Self::from_file(path, chunk_size)?;
+        while let Some(_) = reader.read_chunk()? {}
+        Ok(reader.digest())
+    }
+
     pub fn read_chunk(&mut self) -> Result<Option<Chunk>> {
         let bytes_read = self.inner.read(&mut self.buf)?;
         if bytes_read == 0 {

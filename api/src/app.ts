@@ -1,5 +1,5 @@
 import Koa from 'koa';
-import { koaBody } from 'koa-body';
+import { bodyParser } from '@koa/bodyparser';
 import Router from '@koa/router';
 import logger from '#lib/logger';
 import { getEnv } from '#lib/env';
@@ -19,7 +19,7 @@ const app = async (port?: number) => {
   await initRedis();
   initEmail();
   const app = new Koa();
-  app.use(koaBody());
+  app.use(bodyParser());
   app.use(log());
   app.use(error());
   app.use(serialize());

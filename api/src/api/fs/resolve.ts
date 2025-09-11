@@ -3,12 +3,12 @@ import { User } from '../types';
 import { getHome, getRoot } from '#lib/database/inodes';
 import { isAbsolute, resolve as resolvePath } from 'path';
 import db from '#lib/db';
-import { NotFoundError, RequestError } from '../errors';
+import { NotFoundError } from '../errors';
 
 export default async function resolve(
   user: User,
   path: string,
-): Promise<Inode> {
+): Promise<Inode[]> {
   let nodes: Inode[] = [];
   if (isAbsolute(path)) {
     nodes.push(await getRoot());
@@ -26,6 +26,9 @@ export default async function resolve(
           parentId: node.id,
           name: part,
         },
+        include: {
+          data: true,
+        },
       });
     });
     const children = (await Promise.all(promises)).flat();
@@ -34,8 +37,5 @@ export default async function resolve(
     }
     nodes = children;
   }
-  if (nodes.length > 1) {
-    throw new RequestError(`Path ${path} is ambiguous`);
-  }
-  return nodes[0];
+  return nodes;
 }

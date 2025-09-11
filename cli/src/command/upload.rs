@@ -15,6 +15,11 @@ pub struct Upload {
     #[arg(long)]
     pub tag: Option<String>,
 
+    /// If set, upload existing files again, appending a number to the filename
+    /// else skip existing files (default)
+    #[arg(short, long)]
+    pub rename_existing: bool,
+
     /// If set, chunk size in bytes
     #[arg(short, long, default_value_t = 2 * 1024 * 1024)]
     pub chunk_size: u64,

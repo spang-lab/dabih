@@ -877,7 +877,7 @@ export interface components {
             type: number;
             name: string;
             tag: string | null;
-            data?: components["schemas"]["FileData"] | null;
+            data: components["schemas"]["FileData"] | null;
             parentId: unknown;
             /** Format: date-time */
             createdAt: Date;
@@ -1751,7 +1751,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Inode"];
+                    "application/json": components["schemas"]["Inode"][];
                 };
             };
         };
@@ -1771,7 +1771,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Inode"];
+                    "application/json": components["schemas"]["Inode"][];
                 };
             };
         };

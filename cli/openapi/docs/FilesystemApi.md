@@ -365,7 +365,7 @@ Name | Type | Description  | Required | Notes
 
 ## resolve_home
 
-> models::Inode resolve_home()
+> Vec<models::Inode> resolve_home()
 
 
 ### Parameters
@@ -374,7 +374,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**models::Inode**](Inode.md)
+[**Vec<models::Inode>**](Inode.md)
 
 ### Authorization
 
@@ -390,7 +390,7 @@ This endpoint does not need any parameter.
 
 ## resolve_path
 
-> models::Inode resolve_path(path)
+> Vec<models::Inode> resolve_path(path)
 
 
 ### Parameters
@@ -402,7 +402,7 @@ Name | Type | Description  | Required | Notes
 
 ### Return type
 
-[**models::Inode**](Inode.md)
+[**Vec<models::Inode>**](Inode.md)
 
 ### Authorization
 

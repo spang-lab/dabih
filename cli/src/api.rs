@@ -61,7 +61,7 @@ pub struct FileSystemApi {
     config: Arc<Configuration>,
 }
 impl FileSystemApi {
-    pub async fn resolve_path(&self, path: &str) -> Result<Inode> {
+    pub async fn resolve_path(&self, path: &str) -> Result<Vec<Inode>> {
         filesystem_api::resolve_path(&self.config, path)
             .await
             .map_err(|e| CliError::ApiError(format!("Failed to resolve path {}: {}", path, e)))

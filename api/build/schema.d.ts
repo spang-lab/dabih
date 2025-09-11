@@ -1751,7 +1751,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Inode"];
+                    "application/json": components["schemas"]["Inode"][];
                 };
             };
         };
@@ -1771,7 +1771,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Inode"];
+                    "application/json": components["schemas"]["Inode"][];
                 };
             };
         };

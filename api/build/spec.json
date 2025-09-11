@@ -2168,7 +2168,10 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Inode"
+									"items": {
+										"$ref": "#/components/schemas/Inode"
+									},
+									"type": "array"
 								}
 							}
 						}
@@ -2205,7 +2208,10 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Inode"
+									"items": {
+										"$ref": "#/components/schemas/Inode"
+									},
+									"type": "array"
 								}
 							}
 						}

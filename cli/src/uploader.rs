@@ -112,10 +112,23 @@ impl Uploader {
         if let Some(mnemonic) = cached {
             return Ok((mnemonic.clone(), filename));
         }
-        let inode = self.ctx.api().fs().resolve_path(&base).await?;
+        let inodes = self.ctx.api().fs().resolve_path(&base).await?;
+        if inodes.len() == 0 {
+            return Err(CliError::ApiError(format!(
+                "Failed to resolve target path {}",
+                base
+            )));
+        }
+        if inodes.len() > 1 {
+            warn!(
+                "Multiple inodes found for path {}, using the first one",
+                base
+            );
+        }
+        let inode = &inodes[0];
 
         self.mnemonics.insert(base.clone(), inode.mnemonic.clone());
-        Ok((inode.mnemonic, filename))
+        Ok((inode.mnemonic.clone(), filename))
     }
 
     pub async fn next(&mut self) -> Result<UploadState> {
@@ -154,8 +167,17 @@ impl Uploader {
 
     async fn folder(&mut self) -> Result<UploadState> {
         let (_path, target) = self.paths[self.idx].clone();
-        let (mnemonic, name) = self.resolve_target(target.clone()).await?;
 
+        let existing = self.ctx.api().fs().resolve_path(&target).await?;
+        if existing.len() > 0 {
+            debug!("Directory {} already exists, skipping creation", target);
+            self.mnemonics
+                .insert(target.clone(), existing[0].mnemonic.clone());
+            self.idx += 1;
+            return Ok(UploadState::Init);
+        }
+
+        let (mnemonic, name) = self.resolve_target(target.clone()).await?;
         let inode = self
             .ctx
             .api()
@@ -176,6 +198,28 @@ impl Uploader {
 
     async fn file(&mut self) -> Result<UploadState> {
         let (path, target) = self.paths[self.idx].clone();
+
+        let existing = self.ctx.api().fs().resolve_path(&target).await?;
+        if existing.len() > 0 {
+            if !self.args.rename_existing {
+                let hash = ChunkedReader::digest_only(path.clone(), self.args.chunk_size as usize)?;
+                for inode in existing {
+                    if let Some(data) = inode.data {
+                        if let Some(existing_hash) = data.hash {
+                            if existing_hash == hash {
+                                info!(
+                                    "File {} already exists with same hash, skipping upload",
+                                    target
+                                );
+                                self.idx += 1;
+                                return Ok(UploadState::Init);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         let (mnemonic, name) = self.resolve_target(target.clone()).await?;
 
         let cs = self.args.chunk_size as usize;
