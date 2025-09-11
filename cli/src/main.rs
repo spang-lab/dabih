@@ -1,5 +1,6 @@
 use std::{env, path::PathBuf};
 
+mod api;
 mod chunked_reader;
 mod command;
 mod config;

@@ -1,10 +1,7 @@
 use glob::glob;
-use openapi::models::{AddDirectoryBody, UploadStartBody};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use tracing::{debug, info, warn};
-
-use openapi::apis::{filesystem_api, upload_api};
 
 use crate::chunked_reader::ChunkedReader;
 use crate::command::upload::Upload;
@@ -115,16 +112,8 @@ impl Uploader {
         if let Some(mnemonic) = cached {
             return Ok((mnemonic.clone(), filename));
         }
+        let inode = self.ctx.api().fs().resolve_path(&base).await?;
 
-        let inode = match filesystem_api::resolve_path(self.ctx.openapi(), &base).await {
-            Ok(resp) => resp,
-            Err(e) => {
-                return Err(CliError::ApiError(format!(
-                    "Failed to resolve path {}: {}",
-                    base, e
-                )));
-            }
-        };
         self.mnemonics.insert(base.clone(), inode.mnemonic.clone());
         Ok((inode.mnemonic, filename))
     }
@@ -167,24 +156,13 @@ impl Uploader {
         let (_path, target) = self.paths[self.idx].clone();
         let (mnemonic, name) = self.resolve_target(target.clone()).await?;
 
-        let inode = match filesystem_api::add_directory(
-            self.ctx.openapi(),
-            AddDirectoryBody {
-                name: name.clone(),
-                parent: Some(mnemonic.clone()),
-                tag: self.args.tag.clone(),
-            },
-        )
-        .await
-        {
-            Ok(resp) => resp,
-            Err(e) => {
-                return Err(CliError::ApiError(format!(
-                    "Failed to create directory {}: {}",
-                    target, e
-                )));
-            }
-        };
+        let inode = self
+            .ctx
+            .api()
+            .fs()
+            .add_directory(name.clone(), Some(mnemonic), self.args.tag.clone())
+            .await?;
+
         debug!(
             "Created directory {} with mnemonic {}",
             target, inode.mnemonic
@@ -205,26 +183,19 @@ impl Uploader {
         let fs = reader.file_size() as i64;
         self.reader = Some(reader);
 
-        let inode = match upload_api::start_upload(
-            self.ctx.openapi(),
-            UploadStartBody {
-                file_name: name.clone(),
-                directory: Some(mnemonic),
-                file_path: Some(stringify(&path)),
-                size: Some(fs),
-                tag: self.args.tag.clone(),
-            },
-        )
-        .await
-        {
-            Ok(resp) => resp,
-            Err(e) => {
-                return Err(CliError::ApiError(format!(
-                    "Failed to start upload for file {}: {}",
-                    target, e
-                )));
-            }
-        };
+        let inode = self
+            .ctx
+            .api()
+            .upload()
+            .start_upload(
+                name.clone(),
+                Some(mnemonic.clone()),
+                Some(stringify(&path)),
+                Some(fs),
+                self.args.tag.clone(),
+            )
+            .await?;
+
         self.mnemonic = Some(inode.mnemonic.clone());
         Ok(UploadState::Started {
             name: name.clone(),
@@ -250,30 +221,18 @@ impl Uploader {
             }
         };
         let digest = chunk.digest();
-        let digest_header = format!("sha-256={}", digest);
 
-        let hash = match upload_api::chunk_upload(
-            self.ctx.openapi(),
-            mnemonic,
-            &chunk.content_range(),
-            &digest_header,
-            chunk.data().to_vec(),
-        )
-        .await
-        {
-            Ok(c) => c.hash,
-            Err(e) => {
-                return Err(CliError::ApiError(format!(
-                    "Failed to upload chunk for file {}: {}",
-                    mnemonic, e
-                )));
-            }
-        };
+        let uchunk = self
+            .ctx
+            .api()
+            .upload()
+            .chunk_upload(mnemonic, &chunk)
+            .await?;
 
-        if hash != digest {
+        if uchunk.hash != digest {
             return Err(CliError::UnexpectedError(format!(
                 "Hash mismatch for chunk in file {}: expected {}, got {}",
-                mnemonic, digest, hash
+                mnemonic, digest, uchunk.hash
             )));
         }
         return Ok(UploadState::Chunk {
@@ -286,15 +245,7 @@ impl Uploader {
         let hash = self.reader.as_ref().unwrap().digest();
 
         let mnemonic = self.mnemonic.as_ref().unwrap();
-        let inode = match upload_api::finish_upload(self.ctx.openapi(), mnemonic).await {
-            Ok(resp) => resp,
-            Err(e) => {
-                return Err(CliError::ApiError(format!(
-                    "Failed to finish upload for file {}: {}",
-                    mnemonic, e
-                )));
-            }
-        };
+        let inode = self.ctx.api().upload().finish_upload(mnemonic).await?;
         let server_hash = inode.data.hash.clone().unwrap_or_default();
         if hash != server_hash {
             return Err(CliError::UnexpectedError(format!(

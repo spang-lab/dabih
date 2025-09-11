@@ -1,10 +1,10 @@
 use std::fs::File;
 use std::path::{self, PathBuf};
 
-use openapi::apis::{user_api, util_api};
 use openapi::models::UserResponse;
 use serde::{Deserialize, Serialize};
 
+use crate::api::Api;
 use crate::error::{CliError, Result};
 use crate::private_key::PrivateKey;
 use openapi::apis::configuration::Configuration;
@@ -20,10 +20,9 @@ pub struct Context {
     verbose: u8,
     quiet: bool,
     path: PathBuf,
-    config: Config,
     user: Option<UserResponse>,
     private_key: Option<PrivateKey>,
-    openapi_config: Configuration,
+    api: Api,
 }
 
 fn find_key(path: &PathBuf, fingerprints: Vec<String>) -> Result<Option<PrivateKey>> {
@@ -66,14 +65,14 @@ impl Context {
             bearer_access_token: Some(token.clone()),
             ..Default::default()
         };
+        let api = Api::new(openapi_config);
         Self {
             verbose: 0,
             quiet: false,
             path: path::PathBuf::new(),
-            config: Config { url, token },
             user: None,
             private_key: None,
-            openapi_config,
+            api,
         }
     }
 
@@ -92,19 +91,23 @@ impl Context {
             bearer_access_token: Some(config.token.clone()),
             ..Default::default()
         };
+        let api = Api::new(openapi_config);
 
         Ok(Self {
             verbose: 0,
             quiet: false,
             path,
-            config,
             user: None,
             private_key: None,
-            openapi_config,
+            api,
         })
     }
+    pub fn api(&self) -> &Api {
+        &self.api
+    }
+
     pub fn openapi(&self) -> &Configuration {
-        &self.openapi_config
+        self.api.config()
     }
     pub fn user(&self) -> Option<&UserResponse> {
         self.user.as_ref()
@@ -119,7 +122,7 @@ impl Context {
     }
 
     pub async fn init(&mut self) -> Result<()> {
-        match user_api::me(self.openapi()).await {
+        match self.api().user().me().await {
             Ok(user) => {
                 self.user = Some(user.clone());
                 let fingerprints = user
@@ -129,20 +132,13 @@ impl Context {
                     .collect::<Vec<_>>();
                 let key = find_key(&self.path, fingerprints)?;
                 self.private_key = key;
+                return Ok(());
             }
-            Err(_) => match util_api::healthy(self.openapi()).await {
-                Ok(_) => {
-                    return Err(CliError::AuthenticationError);
-                }
-                Err(e) => {
-                    println!("Error: {:?}", e);
-                    return Err(CliError::ConnectionError {
-                        url: self.config.url.clone(),
-                    });
-                }
-            },
+            Err(e) => {
+                self.api().util().healthy().await?;
+                return Err(e);
+            }
         }
-        Ok(())
     }
 }
 

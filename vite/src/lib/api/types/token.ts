@@ -20,7 +20,8 @@ export interface TokenAddBody {
   /**
    * The time in seconds the token should be valid for
    * If null the token will never expire
-   * @isInt
+   * @isLong
+   * @minimum 0
    */
   lifetime: number | null;
 }
