@@ -14,13 +14,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Member {
     /// The database id of the member
-    #[serde(rename = "id", deserialize_with = "Option::deserialize")]
-    pub id: Option<serde_json::Value>,
+    #[serde(rename = "id")]
+    pub id: String,
     #[serde(rename = "sub")]
     pub sub: String,
     /// The database id of the inode
-    #[serde(rename = "inodeId", deserialize_with = "Option::deserialize")]
-    pub inode_id: Option<serde_json::Value>,
+    #[serde(rename = "inodeId")]
+    pub inode_id: String,
     #[serde(rename = "permission")]
     pub permission: f64,
     #[serde(rename = "createdAt")]
@@ -30,7 +30,7 @@ pub struct Member {
 }
 
 impl Member {
-    pub fn new(id: Option<serde_json::Value>, sub: String, inode_id: Option<serde_json::Value>, permission: f64, created_at: String, updated_at: String) -> Member {
+    pub fn new(id: String, sub: String, inode_id: String, permission: f64, created_at: String, updated_at: String) -> Member {
         Member {
             id,
             sub,

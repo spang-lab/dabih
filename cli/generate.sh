@@ -1,7 +1,13 @@
 #!/usr/bin/env zsh
 
+# add missing types to the spec
+jq 'walk(if type == "object" and .format? == "bigint" then .type = "string" else . end)' ../api/build/spec.json > spec.json
+
+
 openapi-generator generate -g rust \
-  -i ../api/build/spec.json \
+  -i spec.json \
+  --type-mappings bigint=String \
+  --additional-properties=preferUnsignedInt=true\
   -o openapi 
 
 

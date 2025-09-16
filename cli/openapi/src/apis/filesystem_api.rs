@@ -570,7 +570,7 @@ pub async fn remove_inode(configuration: &configuration::Configuration, mnemonic
     }
 }
 
-pub async fn resolve_home(configuration: &configuration::Configuration, ) -> Result<Vec<models::Inode>, Error<ResolveHomeError>> {
+pub async fn resolve_home(configuration: &configuration::Configuration, ) -> Result<models::Inode, Error<ResolveHomeError>> {
 
     let uri_str = format!("{}/fs/resolve", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
@@ -597,8 +597,8 @@ pub async fn resolve_home(configuration: &configuration::Configuration, ) -> Res
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `Vec&lt;models::Inode&gt;`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `Vec&lt;models::Inode&gt;`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::Inode`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::Inode`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -607,7 +607,7 @@ pub async fn resolve_home(configuration: &configuration::Configuration, ) -> Res
     }
 }
 
-pub async fn resolve_path(configuration: &configuration::Configuration, path: &str) -> Result<Vec<models::Inode>, Error<ResolvePathError>> {
+pub async fn resolve_path(configuration: &configuration::Configuration, path: &str) -> Result<models::Inode, Error<ResolvePathError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_path = path;
 
@@ -636,8 +636,8 @@ pub async fn resolve_path(configuration: &configuration::Configuration, path: &s
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `Vec&lt;models::Inode&gt;`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `Vec&lt;models::Inode&gt;`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::Inode`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::Inode`")))),
         }
     } else {
         let content = resp.text().await?;

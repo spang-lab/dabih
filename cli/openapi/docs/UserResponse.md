@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | Option<[**serde_json::Value**](.md)> | The database id of the user | 
+**id** | **String** | The database id of the user | 
 **sub** | **String** | The unique user sub | 
 **email** | **String** | The email of the user | 
 **scope** | **String** | the list of scopes the user has | 

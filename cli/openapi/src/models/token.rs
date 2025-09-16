@@ -14,8 +14,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Token {
     /// The id of the token
-    #[serde(rename = "id", deserialize_with = "Option::deserialize")]
-    pub id: Option<serde_json::Value>,
+    #[serde(rename = "id")]
+    pub id: String,
     #[serde(rename = "value")]
     pub value: String,
     #[serde(rename = "sub")]
@@ -31,7 +31,7 @@ pub struct Token {
 }
 
 impl Token {
-    pub fn new(id: Option<serde_json::Value>, value: String, sub: String, scope: String, exp: Option<String>, created_at: String, updated_at: String) -> Token {
+    pub fn new(id: String, value: String, sub: String, scope: String, exp: Option<String>, created_at: String, updated_at: String) -> Token {
         Token {
             id,
             value,

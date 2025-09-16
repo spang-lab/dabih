@@ -18,11 +18,11 @@ pub struct TokenAddBody {
     pub scopes: Vec<String>,
     /// The time in seconds the token should be valid for If null the token will never expire
     #[serde(rename = "lifetime", deserialize_with = "Option::deserialize")]
-    pub lifetime: Option<i64>,
+    pub lifetime: Option<u64>,
 }
 
 impl TokenAddBody {
-    pub fn new(scopes: Vec<String>, lifetime: Option<i64>) -> TokenAddBody {
+    pub fn new(scopes: Vec<String>, lifetime: Option<u64>) -> TokenAddBody {
         TokenAddBody {
             scopes,
             lifetime,

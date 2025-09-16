@@ -873,7 +873,10 @@ export interface components {
              */
             id: string;
             mnemonic: string;
-            /** Format: double */
+            /**
+             * Format: int32
+             * @description The type of the inode
+             */
             type: number;
             name: string;
             tag: string | null;

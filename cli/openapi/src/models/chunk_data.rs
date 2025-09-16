@@ -14,8 +14,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ChunkData {
     /// The database id of the file data
-    #[serde(rename = "id", deserialize_with = "Option::deserialize")]
-    pub id: Option<serde_json::Value>,
+    #[serde(rename = "id")]
+    pub id: String,
     #[serde(rename = "uid")]
     pub uid: String,
     #[serde(rename = "createdBy")]
@@ -27,8 +27,8 @@ pub struct ChunkData {
     #[serde(rename = "hash", deserialize_with = "Option::deserialize")]
     pub hash: Option<String>,
     /// The size of the file in bytes
-    #[serde(rename = "size", deserialize_with = "Option::deserialize")]
-    pub size: Option<serde_json::Value>,
+    #[serde(rename = "size")]
+    pub size: String,
     #[serde(rename = "keyHash")]
     pub key_hash: String,
     #[serde(rename = "createdAt")]
@@ -40,7 +40,7 @@ pub struct ChunkData {
 }
 
 impl ChunkData {
-    pub fn new(id: Option<serde_json::Value>, uid: String, created_by: String, file_name: String, file_path: Option<String>, hash: Option<String>, size: Option<serde_json::Value>, key_hash: String, created_at: String, updated_at: String, chunks: Vec<models::Chunk>) -> ChunkData {
+    pub fn new(id: String, uid: String, created_by: String, file_name: String, file_path: Option<String>, hash: Option<String>, size: String, key_hash: String, created_at: String, updated_at: String, chunks: Vec<models::Chunk>) -> ChunkData {
         ChunkData {
             id,
             uid,

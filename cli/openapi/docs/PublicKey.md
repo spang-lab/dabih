@@ -4,8 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | Option<[**serde_json::Value**](.md)> | The database id of the public key | 
-**user_id** | Option<[**serde_json::Value**](.md)> | The user id the key belongs to | 
+**id** | **String** | The database id of the public key | 
+**user_id** | **String** | The user id the key belongs to | 
 **hash** | **String** |  | 
 **data** | **String** |  | 
 **is_root_key** | **bool** |  | 

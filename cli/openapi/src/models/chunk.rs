@@ -14,11 +14,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Chunk {
     /// The database id of the chunk
-    #[serde(rename = "id", deserialize_with = "Option::deserialize")]
-    pub id: Option<serde_json::Value>,
+    #[serde(rename = "id")]
+    pub id: String,
     /// The id of the data the chunk belongs to
-    #[serde(rename = "dataId", deserialize_with = "Option::deserialize")]
-    pub data_id: Option<serde_json::Value>,
+    #[serde(rename = "dataId")]
+    pub data_id: String,
     /// The SHA-256 hash of the unencrypted chunk data base64url encoded
     #[serde(rename = "hash")]
     pub hash: String,
@@ -26,11 +26,11 @@ pub struct Chunk {
     #[serde(rename = "iv")]
     pub iv: String,
     /// The start of the chunk as a byte position in the file
-    #[serde(rename = "start", deserialize_with = "Option::deserialize")]
-    pub start: Option<serde_json::Value>,
+    #[serde(rename = "start")]
+    pub start: String,
     /// The end of the chunk as a byte position in the file
-    #[serde(rename = "end", deserialize_with = "Option::deserialize")]
-    pub end: Option<serde_json::Value>,
+    #[serde(rename = "end")]
+    pub end: String,
     /// The CRC32 checksum of the encrypted chunk data base64url encoded
     #[serde(rename = "crc", deserialize_with = "Option::deserialize")]
     pub crc: Option<String>,
@@ -43,7 +43,7 @@ pub struct Chunk {
 }
 
 impl Chunk {
-    pub fn new(id: Option<serde_json::Value>, data_id: Option<serde_json::Value>, hash: String, iv: String, start: Option<serde_json::Value>, end: Option<serde_json::Value>, crc: Option<String>, created_at: String, updated_at: String) -> Chunk {
+    pub fn new(id: String, data_id: String, hash: String, iv: String, start: String, end: String, crc: Option<String>, created_at: String, updated_at: String) -> Chunk {
         Chunk {
             id,
             data_id,

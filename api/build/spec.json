@@ -2170,10 +2170,12 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/Inode"
-									},
-									"type": "array"
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/Inode"
+										}
+									],
+									"nullable": true
 								}
 							}
 						}
@@ -2210,10 +2212,12 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/Inode"
-									},
-									"type": "array"
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/Inode"
+										}
+									],
+									"nullable": true
 								}
 							}
 						}

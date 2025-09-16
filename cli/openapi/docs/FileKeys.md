@@ -4,9 +4,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | Option<[**serde_json::Value**](.md)> | The database id of the inode | 
+**id** | **String** | The database id of the inode | 
 **mnemonic** | **String** |  | 
-**r#type** | **i32** | The type of the inode | 
+**r#type** | **u32** | The type of the inode | 
 **name** | **String** |  | 
 **tag** | Option<**String**> |  | 
 **data** | [**models::FileData**](FileData.md) |  | 

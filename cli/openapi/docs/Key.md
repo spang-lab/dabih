@@ -4,8 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | Option<[**serde_json::Value**](.md)> | The database id of the key | 
-**inode_id** | Option<[**serde_json::Value**](.md)> | The inode id the key belongs to | 
+**id** | **String** | The database id of the key | 
+**inode_id** | **String** | The inode id the key belongs to | 
 **hash** | **String** |  | 
 **key** | **String** |  | 
 **created_at** | **String** |  | 

@@ -14,11 +14,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Key {
     /// The database id of the key
-    #[serde(rename = "id", deserialize_with = "Option::deserialize")]
-    pub id: Option<serde_json::Value>,
+    #[serde(rename = "id")]
+    pub id: String,
     /// The inode id the key belongs to
-    #[serde(rename = "inodeId", deserialize_with = "Option::deserialize")]
-    pub inode_id: Option<serde_json::Value>,
+    #[serde(rename = "inodeId")]
+    pub inode_id: String,
     #[serde(rename = "hash")]
     pub hash: String,
     #[serde(rename = "key")]
@@ -30,7 +30,7 @@ pub struct Key {
 }
 
 impl Key {
-    pub fn new(id: Option<serde_json::Value>, inode_id: Option<serde_json::Value>, hash: String, key: String, created_at: String, updated_at: String) -> Key {
+    pub fn new(id: String, inode_id: String, hash: String, key: String, created_at: String, updated_at: String) -> Key {
         Key {
             id,
             inode_id,

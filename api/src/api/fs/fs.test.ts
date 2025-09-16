@@ -74,8 +74,7 @@ test('file', async (t) => {
 test('resolve path', async (t) => {
   const api = await client(t, 'owner');
 
-  const { data: dirs, error } = await api.fs.resolve('test_dir/test_dir_A');
-  const [dir] = dirs ?? [];
+  const { data: dir, error } = await api.fs.resolve('test_dir/test_dir_A');
   if (error || !dir) {
     t.fail(error);
     return;
@@ -84,10 +83,9 @@ test('resolve path', async (t) => {
   t.is(dir.type, InodeType.DIRECTORY);
   t.is(dir.mnemonic, t.context.directories.test_dir_A);
 
-  const { data: files, error: error2 } = await api.fs.resolve(
+  const { data: file, error: error2 } = await api.fs.resolve(
     'test_dir/test_dir_B/../test_dir_A/test.txt',
   );
-  const [file] = files ?? [];
   if (error2 || !file) {
     t.fail(error2);
     return;
@@ -96,10 +94,9 @@ test('resolve path', async (t) => {
   t.is(file.type, InodeType.FILE);
   t.is(file.mnemonic, t.context.files.File_A);
 
-  const { data: absdirs, error: error3 } = await api.fs.resolve(
+  const { data: absdir, error: error3 } = await api.fs.resolve(
     `/owner/test_dir/test_dir_B`,
   );
-  const [absdir] = absdirs ?? [];
   if (!absdir) {
     t.log(error3);
     t.fail();
@@ -111,11 +108,14 @@ test('resolve path', async (t) => {
   t.is(absdir.mnemonic, t.context.directories.test_dir_B);
 
   const { response, error: error4 } = await api.fs.resolve('invalid/path');
-  t.is(response.status, 404);
-  t.truthy(error4);
+  if (error4) {
+    t.log(error4);
+    t.fail();
+    return;
+  }
+  t.is(response.status, 204);
 
-  const { data: homes, error: error5 } = await api.fs.resolve('.');
-  const [home] = homes ?? [];
+  const { data: home, error: error5 } = await api.fs.resolve('.');
   if (!home || error5) {
     t.log(error5);
     t.fail();
@@ -124,8 +124,7 @@ test('resolve path', async (t) => {
   t.is(home.name, 'owner');
   t.is(home.type, InodeType.HOME);
 
-  const { data: roots, error: error6 } = await api.fs.resolve('/');
-  const [root] = roots ?? [];
+  const { data: root, error: error6 } = await api.fs.resolve('/');
   if (!root || error6) {
     t.log(error6);
     t.fail();
@@ -133,6 +132,19 @@ test('resolve path', async (t) => {
   }
   t.is(root.name, 'root');
   t.is(root.type, InodeType.ROOT);
+});
+
+test('resolve mnemonic', async (t) => {
+  const api = await client(t, 'owner');
+  const mnemonic = t.context.files.File_A;
+  const { data: file, error } = await api.fs.resolve(mnemonic);
+  if (error || !file) {
+    t.fail(error);
+    return;
+  }
+  t.is(file.name, 'test.txt');
+  t.is(file.type, InodeType.FILE);
+  t.is(file.mnemonic, mnemonic);
 });
 
 test('invalid mnemonic', async (t) => {

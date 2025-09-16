@@ -14,8 +14,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct UserResponse {
     /// The database id of the user
-    #[serde(rename = "id", deserialize_with = "Option::deserialize")]
-    pub id: Option<serde_json::Value>,
+    #[serde(rename = "id")]
+    pub id: String,
     /// The unique user sub
     #[serde(rename = "sub")]
     pub sub: String,
@@ -40,7 +40,7 @@ pub struct UserResponse {
 }
 
 impl UserResponse {
-    pub fn new(id: Option<serde_json::Value>, sub: String, email: String, scope: String, last_auth_at: String, created_at: String, updated_at: String, keys: Vec<models::PublicKey>) -> UserResponse {
+    pub fn new(id: String, sub: String, email: String, scope: String, last_auth_at: String, created_at: String, updated_at: String, keys: Vec<models::PublicKey>) -> UserResponse {
         UserResponse {
             id,
             sub,

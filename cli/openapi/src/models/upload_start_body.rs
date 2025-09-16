@@ -24,7 +24,7 @@ pub struct UploadStartBody {
     pub file_path: Option<String>,
     /// The size of the file in bytes
     #[serde(rename = "size", skip_serializing_if = "Option::is_none")]
-    pub size: Option<i64>,
+    pub size: Option<u64>,
     /// A custom searchable tag for the file
     #[serde(rename = "tag", skip_serializing_if = "Option::is_none")]
     pub tag: Option<String>,

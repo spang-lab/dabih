@@ -7,6 +7,7 @@ mod api;
 mod chunked_reader;
 mod command;
 mod config;
+mod downloader;
 mod error;
 mod log;
 mod private_key;
@@ -53,6 +54,7 @@ async fn main() -> Result<()> {
         Commands::Status(_) => status::run(ctx).await?,
         Commands::Upload(args) => command::upload::run(ctx, args).await?,
         Commands::List(args) => command::list::run(ctx, args).await?,
+        Commands::Download(args) => command::download::run(ctx, args).await?,
     }
     Ok(())
 }

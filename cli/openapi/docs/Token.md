@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | Option<[**serde_json::Value**](.md)> | The id of the token | 
+**id** | **String** | The id of the token | 
 **value** | **String** |  | 
 **sub** | **String** |  | 
 **scope** | **String** |  | 

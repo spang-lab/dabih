@@ -4,9 +4,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | Option<[**serde_json::Value**](.md)> | The database id of the member | 
+**id** | **String** | The database id of the member | 
 **sub** | **String** |  | 
-**inode_id** | Option<[**serde_json::Value**](.md)> | The database id of the inode | 
+**inode_id** | **String** | The database id of the inode | 
 **permission** | **f64** |  | 
 **created_at** | **String** |  | 
 **updated_at** | **String** |  | 

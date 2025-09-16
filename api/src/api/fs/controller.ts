@@ -147,7 +147,7 @@ export class FilesystemController extends Controller {
   public async resolve(
     @Path() path: string,
     @Request() request: RequestWithUser,
-  ): Promise<Inode[]> {
+  ): Promise<Inode | null> {
     const { user } = request;
     return resolve(user, path);
   }
@@ -155,7 +155,7 @@ export class FilesystemController extends Controller {
   @OperationId('resolveHome')
   public async resolveHome(
     @Request() request: RequestWithUser,
-  ): Promise<Inode[]> {
+  ): Promise<Inode | null> {
     const { user } = request;
     return resolve(user, '');
   }

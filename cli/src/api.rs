@@ -18,6 +18,43 @@ pub enum InodeType {
     Root = 11,
     Home = 12,
 }
+impl InodeType {
+    pub fn from_u32(value: u32) -> Result<Self> {
+        match value {
+            x if x == InodeType::File as u32 => Ok(InodeType::File),
+            x if x == InodeType::Directory as u32 => Ok(InodeType::Directory),
+            x if x == InodeType::Upload as u32 => Ok(InodeType::Upload),
+            x if x == InodeType::Trash as u32 => Ok(InodeType::Trash),
+            x if x == InodeType::Root as u32 => Ok(InodeType::Root),
+            x if x == InodeType::Home as u32 => Ok(InodeType::Home),
+            _ => Err(CliError::UnexpectedError(format!(
+                "Unknown inode type: {}",
+                value
+            ))),
+        }
+    }
+    pub fn as_char(&self) -> char {
+        match self {
+            InodeType::File => 'f',
+            InodeType::Directory => 'd',
+            InodeType::Upload => 'u',
+            InodeType::Trash => 't',
+            InodeType::Root => 'r',
+            InodeType::Home => 'h',
+        }
+    }
+
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            InodeType::File => "File",
+            InodeType::Directory => "Directory",
+            InodeType::Upload => "Upload",
+            InodeType::Trash => "Trash",
+            InodeType::Root => "Root",
+            InodeType::Home => "Home",
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Permission {
@@ -93,15 +130,16 @@ impl FileSystemApi {
             .await
             .map_err(|e| CliError::ApiError(format!("Failed to add directory: {}", e)))
     }
-    pub async fn list(&self, mnemonic: Option<String>) -> Result<ListResponse> {
-        match mnemonic {
-            Some(m) => filesystem_api::list_inodes(&self.config, &m)
-                .await
-                .map_err(|e| CliError::ApiError(format!("Failed to list inodes: {}", e))),
-            None => filesystem_api::list_home(&self.config)
-                .await
-                .map_err(|e| CliError::ApiError(format!("Failed to list home: {}", e))),
-        }
+    pub async fn list_home(&self) -> Result<ListResponse> {
+        filesystem_api::list_home(&self.config)
+            .await
+            .map_err(|e| CliError::ApiError(format!("Failed to list home: {}", e)))
+    }
+
+    pub async fn list(&self, mnemonic: &str) -> Result<ListResponse> {
+        filesystem_api::list_inodes(&self.config, mnemonic)
+            .await
+            .map_err(|e| CliError::ApiError(format!("Failed to list inodes: {}", e)))
     }
 }
 
@@ -116,7 +154,7 @@ impl UploadApi {
         file_name: String,
         directory: Option<String>,
         file_path: Option<String>,
-        size: Option<i64>,
+        size: Option<u64>,
         tag: Option<String>,
     ) -> Result<File> {
         upload_api::start_upload(

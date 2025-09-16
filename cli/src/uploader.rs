@@ -43,6 +43,14 @@ fn stringify(path: &PathBuf) -> String {
     path.to_string_lossy().replace("\\", "/").to_string()
 }
 
+fn rename_target(target: &str, count: usize) -> String {
+    if let Some((base, ext)) = target.rsplit_once('.') {
+        format!("{}_{}.{}", base, count, ext)
+    } else {
+        format!("{}_{}", target, count)
+    }
+}
+
 impl Uploader {
     pub fn from(ctx: &Context, args: Upload) -> Result<Uploader> {
         let mut paths: Vec<(PathBuf, String)> = Vec::new();
@@ -197,7 +205,7 @@ impl Uploader {
     }
 
     async fn file(&mut self) -> Result<UploadState> {
-        let (path, target) = self.paths[self.idx].clone();
+        let (path, mut target) = self.paths[self.idx].clone();
 
         let existing = self.ctx.api().fs().resolve_path(&target).await?;
         if existing.len() > 0 {
@@ -220,13 +228,27 @@ impl Uploader {
                     }
                 }
             }
+            let mut count = 1;
+            let new_target = loop {
+                let new_name = rename_target(&target, count);
+                let existing = self.ctx.api().fs().resolve_path(&new_name).await?;
+                if existing.len() == 0 {
+                    break new_name;
+                }
+                count += 1;
+            };
+            info!(
+                "Renaming file {} to {} to avoid conflict",
+                target, new_target
+            );
+            target = new_target;
         }
 
         let (mnemonic, name) = self.resolve_target(target.clone()).await?;
 
         let cs = self.args.chunk_size as usize;
         let reader = ChunkedReader::from_file(path.clone(), cs)?;
-        let fs = reader.file_size() as i64;
+        let fs = reader.file_size() as u64;
         self.reader = Some(reader);
 
         let inode = self
