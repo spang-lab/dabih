@@ -4,8 +4,8 @@ use crate::chunked_reader;
 use openapi::{
     apis::{configuration::Configuration, filesystem_api, upload_api, user_api, util_api},
     models::{
-        AddDirectoryBody, Chunk, Directory, File, Healthy200Response, Inode, ListResponse,
-        UploadStartBody, UserResponse,
+        AddDirectoryBody, Chunk, Directory, File, FileDownload, Healthy200Response, Inode,
+        ListResponse, UploadStartBody, UserResponse,
     },
 };
 
@@ -142,6 +142,11 @@ impl FileSystemApi {
         filesystem_api::list_inodes(&self.config, mnemonic)
             .await
             .map_err(|e| CliError::ApiError(format!("Failed to list inodes: {}", e)))
+    }
+    pub async fn file_info(&self, mnemonic: &str) -> Result<FileDownload> {
+        filesystem_api::file_info(&self.config, mnemonic)
+            .await
+            .map_err(|e| CliError::ApiError(format!("Failed to get file: {}", e)))
     }
 }
 

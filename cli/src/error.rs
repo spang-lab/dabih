@@ -1,7 +1,4 @@
-use reqwest::StatusCode;
 use thiserror::Error;
-
-use crate::codegen::types::error::ConversionError;
 
 #[derive(Error, Debug)]
 pub enum CliError {
@@ -29,9 +26,6 @@ pub enum CliError {
     #[error("Authentication error")]
     AuthenticationError,
 
-    #[error("Failed to convert: {0}")]
-    ConversionError(#[from] ConversionError),
-
     #[error("Authorization error")]
     AuthorizationError,
 
@@ -52,53 +46,6 @@ pub enum CliError {
 
     #[error("Unexpected error: {0}")]
     UnexpectedError(String),
-
-    #[error("API returned error response: status {0}")]
-    ErrorResponse(String),
-
-    #[error("Failed to read response body: {0}")]
-    ResponseBodyError(reqwest::Error),
-
-    #[error("Invalid response payload {0}")]
-    InvalidResponsePayload(String),
-
-    #[error("Unexpected response: status {}", .0.status())]
-    UnexpectedResponse(reqwest::Response),
-
-    #[error("Custom error: {0}")]
-    Custom(String),
-
-    #[error("Invalid request: {0}")]
-    InvalidRequest(String),
-
-    #[error("Invalid upgrade: {0}")]
-    InvalidUpgrade(reqwest::Error),
-}
-
-impl<E> From<progenitor_client::Error<E>> for CliError {
-    fn from(err: progenitor_client::Error<E>) -> Self {
-        match err {
-            progenitor_client::Error::CommunicationError(e) => match e.status() {
-                Some(StatusCode::UNAUTHORIZED) => CliError::AuthenticationError,
-                Some(StatusCode::FORBIDDEN) => CliError::AuthorizationError,
-                Some(StatusCode::BAD_REQUEST) => CliError::ApiError(e.to_string()),
-                Some(_) => CliError::ApiError(e.to_string()),
-                None => CliError::ConnectionError(e.to_string()),
-            },
-            progenitor_client::Error::InvalidRequest(s) => CliError::InvalidRequest(s),
-            progenitor_client::Error::InvalidUpgrade(e) => CliError::InvalidUpgrade(e),
-            progenitor_client::Error::ErrorResponse(rv) => {
-                CliError::ErrorResponse(rv.status().to_string())
-            }
-            progenitor_client::Error::ResponseBodyError(e) => CliError::ResponseBodyError(e),
-            progenitor_client::Error::InvalidResponsePayload(b, e) => {
-                dbg!(&b);
-                CliError::InvalidResponsePayload(e.to_string())
-            }
-            progenitor_client::Error::UnexpectedResponse(r) => CliError::UnexpectedResponse(r),
-            progenitor_client::Error::Custom(s) => CliError::Custom(s),
-        }
-    }
 }
 
 pub type Result<T> = std::result::Result<T, CliError>;

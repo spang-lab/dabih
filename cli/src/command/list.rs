@@ -53,7 +53,7 @@ fn size_to_human_readable(size: Option<u64>) -> String {
 }
 
 pub async fn run(ctx: Context, args: List) -> Result<()> {
-    let inode = match ctx.api_().fs().resolve_path(&args.path).await? {
+    let inode = match ctx.api().fs().resolve_path(&args.path).await? {
         Some(inode) => inode,
         None => {
             warn!("Path not found: {}", args.path);
@@ -65,7 +65,7 @@ pub async fn run(ctx: Context, args: List) -> Result<()> {
         warn!("Path is not a directory: {}", args.path);
         return Ok(());
     }
-    let resp = ctx.api_().fs().list(&inode.mnemonic).await?;
+    let resp = ctx.api().fs().list(&inode.mnemonic).await?;
     if args.json {
         println!("{}", serde_json::to_string_pretty(&resp)?);
     } else {
