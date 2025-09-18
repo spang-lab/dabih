@@ -57,29 +57,52 @@ export default async function chunk(
   const validateStream = crypto.stream.validate();
   const encryptStream = crypto.aesKey.encrypt(aesKey, iv);
   const crcStream = crypto.stream.crc32();
-  const busboy = new Busboy({ headers: request.header as BusboyHeaders });
 
-  const { crc32, hash, byteCount } = await new Promise<{
-    crc32: string;
-    hash: string;
-    byteCount: number;
-  }>((resolve, reject) => {
-    busboy.on('file', (_field, file) => {
+  let writeResult = null;
+  if (request.is('application/octet-stream')) {
+    writeResult = await new Promise<{
+      crc32: string;
+      hash: string;
+      byteCount: number;
+    }>((resolve, reject) => {
       writeStream.on('finish', () =>
         resolve({
           crc32: crcStream.digest(),
           ...validateStream.digest(),
         }),
       );
-      file
+      writeStream.on('error', reject);
+      request.req
         .pipe(validateStream)
         .pipe(encryptStream)
         .pipe(crcStream)
         .pipe(writeStream);
     });
-    busboy.on('error', reject);
-    request.req.pipe(busboy);
-  });
+  } else {
+    const busboy = new Busboy({ headers: request.header as BusboyHeaders });
+    writeResult = await new Promise<{
+      crc32: string;
+      hash: string;
+      byteCount: number;
+    }>((resolve, reject) => {
+      busboy.on('file', (_field, file) => {
+        writeStream.on('finish', () =>
+          resolve({
+            crc32: crcStream.digest(),
+            ...validateStream.digest(),
+          }),
+        );
+        file
+          .pipe(validateStream)
+          .pipe(encryptStream)
+          .pipe(crcStream)
+          .pipe(writeStream);
+      });
+      busboy.on('error', reject);
+      request.req.pipe(busboy);
+    });
+  }
+  const { crc32, hash, byteCount } = writeResult;
 
   if (hash !== body.hash) {
     throw new RequestError(

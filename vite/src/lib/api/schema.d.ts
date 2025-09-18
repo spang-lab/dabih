@@ -1754,7 +1754,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Inode"][];
+                    "application/json": components["schemas"]["Inode"] | null;
                 };
             };
         };
@@ -1774,7 +1774,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Inode"][];
+                    "application/json": components["schemas"]["Inode"] | null;
                 };
             };
         };
@@ -2129,6 +2129,7 @@ export interface operations {
                     /** Format: binary */
                     chunk?: Blob;
                 };
+                "application/octet-stream": Blob;
             };
         };
         responses: {

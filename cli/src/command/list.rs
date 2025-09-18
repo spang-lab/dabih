@@ -53,34 +53,32 @@ fn size_to_human_readable(size: Option<u64>) -> String {
 }
 
 pub async fn run(ctx: Context, args: List) -> Result<()> {
-    let inodes = ctx.api().fs().resolve_path(&args.path).await?;
-
-    if inodes.len() > 1 {
-        warn!(
-            "Path {} resolved to multiple entries, showing all of them",
-            args.path
-        );
-    }
-
-    for inode in inodes {
-        if !is_listable(inode.r#type) {
-            continue;
+    let inode = match ctx.api_().fs().resolve_path(&args.path).await? {
+        Some(inode) => inode,
+        None => {
+            warn!("Path not found: {}", args.path);
+            return Ok(());
         }
-        let resp = ctx.api().fs().list(&inode.mnemonic).await?;
-        if args.json {
-            println!("{}", serde_json::to_string_pretty(&resp)?);
-        } else {
-            for entry in resp.children.iter() {
-                let t = InodeType::from_u32(entry.r#type)?;
-                let s = get_size(&entry);
-                println!(
-                    "{} {}\t{:20}\t{}",
-                    t.as_char(),
-                    size_to_human_readable(s),
-                    entry.mnemonic,
-                    entry.name,
-                );
-            }
+    };
+
+    if !is_listable(inode.r#type) {
+        warn!("Path is not a directory: {}", args.path);
+        return Ok(());
+    }
+    let resp = ctx.api_().fs().list(&inode.mnemonic).await?;
+    if args.json {
+        println!("{}", serde_json::to_string_pretty(&resp)?);
+    } else {
+        for entry in resp.children.iter() {
+            let t = InodeType::from_u32(entry.r#type)?;
+            let s = get_size(&entry);
+            println!(
+                "{} {}\t{:20}\t{}",
+                t.as_char(),
+                size_to_human_readable(s),
+                entry.mnemonic,
+                entry.name,
+            );
         }
     }
 

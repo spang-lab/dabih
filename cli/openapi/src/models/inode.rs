@@ -16,6 +16,7 @@ pub struct Inode {
     /// The database id of the inode
     #[serde(rename = "id")]
     pub id: String,
+    /// mnemonics are human readable unique identifiers for datasets mnemonics have the form <random adjective>_<random first name>
     #[serde(rename = "mnemonic")]
     pub mnemonic: String,
     /// The type of the inode
@@ -25,6 +26,9 @@ pub struct Inode {
     pub name: String,
     #[serde(rename = "tag", deserialize_with = "Option::deserialize")]
     pub tag: Option<String>,
+    /// The database id file data if the inode is a file
+    #[serde(rename = "dataId")]
+    pub data_id: String,
     #[serde(rename = "data", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub data: Option<Option<Box<models::FileData>>>,
     #[serde(rename = "parentId", deserialize_with = "Option::deserialize")]
@@ -36,13 +40,14 @@ pub struct Inode {
 }
 
 impl Inode {
-    pub fn new(id: String, mnemonic: String, r#type: u32, name: String, tag: Option<String>, parent_id: Option<serde_json::Value>, created_at: String, updated_at: String) -> Inode {
+    pub fn new(id: String, mnemonic: String, r#type: u32, name: String, tag: Option<String>, data_id: String, parent_id: Option<serde_json::Value>, created_at: String, updated_at: String) -> Inode {
         Inode {
             id,
             mnemonic,
             r#type,
             name,
             tag,
+            data_id,
             data: None,
             parent_id,
             created_at,

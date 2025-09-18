@@ -8,7 +8,8 @@
   "scripts": {
     "compile": "tsup",
     "typecheck": "tsc --noEmit",
-    "build:tsoa": "tsoa spec-and-routes --basePath /api/v1",
+    "build:tsoa": "tsoa spec-and-routes --basePath /api/v1 && npm run build:tsoa:fix",
+    "build:tsoa:fix": "jq 'walk(if type == \"object\" and .format? == \"bigint\" then .type = \"string\" else . end)' build/spec_tsoa.json > build/spec.json",
     "build:docs": "redocly build-docs -o ./dist/openapi.html ./build/spec.json",
     "build:prisma": "prisma generate",
     "build:client": "node --import tsx/esm src/client.ts",

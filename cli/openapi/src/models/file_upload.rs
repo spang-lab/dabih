@@ -16,6 +16,7 @@ pub struct FileUpload {
     /// The database id of the inode
     #[serde(rename = "id")]
     pub id: String,
+    /// mnemonics are human readable unique identifiers for datasets mnemonics have the form <random adjective>_<random first name>
     #[serde(rename = "mnemonic")]
     pub mnemonic: String,
     /// The type of the inode
@@ -25,6 +26,9 @@ pub struct FileUpload {
     pub name: String,
     #[serde(rename = "tag", deserialize_with = "Option::deserialize")]
     pub tag: Option<String>,
+    /// The database id file data if the inode is a file
+    #[serde(rename = "dataId")]
+    pub data_id: String,
     #[serde(rename = "data")]
     pub data: Box<models::ChunkData>,
     #[serde(rename = "parentId", deserialize_with = "Option::deserialize")]
@@ -36,13 +40,14 @@ pub struct FileUpload {
 }
 
 impl FileUpload {
-    pub fn new(id: String, mnemonic: String, r#type: u32, name: String, tag: Option<String>, data: models::ChunkData, parent_id: Option<serde_json::Value>, created_at: String, updated_at: String) -> FileUpload {
+    pub fn new(id: String, mnemonic: String, r#type: u32, name: String, tag: Option<String>, data_id: String, data: models::ChunkData, parent_id: Option<serde_json::Value>, created_at: String, updated_at: String) -> FileUpload {
         FileUpload {
             id,
             mnemonic,
             r#type,
             name,
             tag,
+            data_id,
             data: Box::new(data),
             parent_id,
             created_at,

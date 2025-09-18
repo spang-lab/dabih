@@ -1,8 +1,10 @@
 use std::path::PathBuf;
+use std::str::FromStr;
 
 use tracing::warn;
 
 use crate::Context;
+use crate::codegen::types::Mnemonic;
 use crate::command::download::Download;
 use crate::error::Result;
 
@@ -17,18 +19,14 @@ impl Downloader {
 
         let mut base_nodes = Vec::new();
         for path in &path_strings {
-            let inodes = ctx.api().fs().resolve_path(path).await?;
-            if inodes.len() > 1 {
-                warn!(
-                    "Path {} resolved to multiple entries, downloading the first one",
-                    path
-                );
-            }
-            if inodes.is_empty() {
-                warn!("Path {} did not resolve to any entries, skipping", path);
-                continue;
-            }
-            base_nodes.push(inodes[0].clone());
+            let inode = match ctx.api_().fs().resolve_path(path).await? {
+                Some(inode) => inode,
+                None => {
+                    warn!("Path {} does not exist, skipping", path);
+                    continue;
+                }
+            };
+            base_nodes.push(inode.clone());
         }
         dbg!(&base_nodes);
 
@@ -36,6 +34,14 @@ impl Downloader {
             Some(p) => PathBuf::from(p),
             None => PathBuf::from("."),
         };
+
+        let first = base_nodes[0].clone();
+
+        let info = ctx
+            .api()
+            .file_info(&Mnemonic::from_str(&first.mnemonic)?)
+            .await?;
+        dbg!(&info);
 
         dbg!(&path_strings);
 

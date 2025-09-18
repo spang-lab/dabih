@@ -1,5 +1,7 @@
 FROM node:24-alpine AS base
 
+RUN apk add --no-cache jq
+
 FROM base AS api-builder
 WORKDIR /app
 COPY api/package*.json ./

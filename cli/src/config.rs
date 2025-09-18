@@ -1,10 +1,12 @@
 use std::fs::File;
 use std::path::{self, PathBuf};
 
-use openapi::models::UserResponse;
+use progenitor_client::ResponseValue;
 use serde::{Deserialize, Serialize};
 
 use crate::api::Api;
+use crate::codegen;
+use crate::codegen::types::UserResponse;
 use crate::error::{CliError, Result};
 use crate::private_key::PrivateKey;
 use openapi::apis::configuration::Configuration;
@@ -23,6 +25,7 @@ pub struct Context {
     user: Option<UserResponse>,
     private_key: Option<PrivateKey>,
     api: Api,
+    client: codegen::Client,
 }
 
 fn find_key(path: &PathBuf, fingerprints: Vec<String>) -> Result<Option<PrivateKey>> {
@@ -57,7 +60,7 @@ fn normalize_url(url: &str) -> String {
 }
 
 impl Context {
-    pub fn new(url: String, token: String) -> Self {
+    pub fn new(url: String, token: String, path: PathBuf) -> Result<Self> {
         let base_path = normalize_url(&url);
         let openapi_config = Configuration {
             base_path: base_path.clone(),
@@ -66,14 +69,32 @@ impl Context {
             ..Default::default()
         };
         let api = Api::new(openapi_config);
-        Self {
+
+        let timeout = std::time::Duration::from_secs(5);
+        let mut headers = reqwest::header::HeaderMap::new();
+
+        headers.insert(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", token).parse().unwrap(),
+        );
+
+        let c = reqwest::Client::builder()
+            .user_agent("dabih-cli")
+            .timeout(timeout)
+            .default_headers(headers)
+            .build()?;
+
+        let client = codegen::Client::new_with_client(&base_path, c);
+
+        Ok(Self {
             verbose: 0,
             quiet: false,
-            path: path::PathBuf::new(),
+            path,
             user: None,
             private_key: None,
             api,
-        }
+            client,
+        })
     }
 
     pub fn from(path: PathBuf) -> Result<Self> {
@@ -83,26 +104,13 @@ impl Context {
         let config_path = path.join("config.yaml");
         let config_file = File::open(config_path)?;
         let config: Config = serde_yaml::from_reader(config_file)?;
-        let url = normalize_url(&config.url);
 
-        let openapi_config = Configuration {
-            base_path: url,
-            user_agent: Some("dabih-cli".to_string()),
-            bearer_access_token: Some(config.token.clone()),
-            ..Default::default()
-        };
-        let api = Api::new(openapi_config);
-
-        Ok(Self {
-            verbose: 0,
-            quiet: false,
-            path,
-            user: None,
-            private_key: None,
-            api,
-        })
+        Self::new(config.url, config.token, path)
     }
-    pub fn api(&self) -> &Api {
+    pub fn api(&self) -> &codegen::Client {
+        &self.client
+    }
+    pub fn api_(&self) -> &Api {
         &self.api
     }
 
@@ -122,8 +130,10 @@ impl Context {
     }
 
     pub async fn init(&mut self) -> Result<()> {
-        match self.api().user().me().await {
-            Ok(user) => {
+        let resp = self.client.me().await?;
+
+        match resp.as_ref() {
+            Some(user) => {
                 self.user = Some(user.clone());
                 let fingerprints = user
                     .keys
@@ -134,9 +144,9 @@ impl Context {
                 self.private_key = key;
                 return Ok(());
             }
-            Err(e) => {
-                self.api().util().healthy().await?;
-                return Err(e);
+            None => {
+                self.client.healthy().await?;
+                return Err(CliError::AuthenticationError);
             }
         }
     }
@@ -145,11 +155,11 @@ impl Context {
 #[tokio::test]
 async fn test_invalid_url() -> Result<()> {
     let url = "http://non.existing.host:3000".to_string();
-    let mut ctx = Context::new(url, "token".to_string());
+    let mut ctx = Context::new(url, "token".to_string(), PathBuf::new())?;
     let result = ctx.init().await;
     dbg!(&result);
     assert!(result.is_err());
-    assert!(matches!(result, Err(CliError::ConnectionError { url: _ })));
+    assert!(matches!(result, Err(CliError::ConnectionError(_))));
     Ok(())
 }
 #[tokio::test]
@@ -157,8 +167,8 @@ async fn test_invalid_token() -> Result<()> {
     let mut ctx = Context::new(
         "http://localhost:3001".to_string(),
         "invalid_token".to_string(),
-    );
-    dbg!(&ctx);
+        PathBuf::new(),
+    )?;
     let result = ctx.init().await;
     dbg!(&result);
     //is AuthenticationError

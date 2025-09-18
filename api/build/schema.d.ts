@@ -844,6 +844,12 @@ export interface components {
             /** @description The hash of the key */
             hash: string;
         };
+        /**
+         * @description mnemonics are human readable unique identifiers for datasets
+         *     mnemonics have the form <random adjective>_<random first name>
+         * @example happy_jane
+         */
+        Mnemonic: string;
         FileData: {
             /**
              * Format: bigint
@@ -872,7 +878,7 @@ export interface components {
              * @description The database id of the inode
              */
             id: string;
-            mnemonic: string;
+            mnemonic: components["schemas"]["Mnemonic"];
             /**
              * Format: int32
              * @description The type of the inode
@@ -880,6 +886,11 @@ export interface components {
             type: number;
             name: string;
             tag: string | null;
+            /**
+             * Format: bigint
+             * @description The database id file data if the inode is a file
+             */
+            dataId: string;
             data?: components["schemas"]["FileData"] | null;
             parentId: unknown;
             /** Format: date-time */
@@ -890,12 +901,6 @@ export interface components {
         File: components["schemas"]["Inode"] & {
             data: components["schemas"]["FileData"];
         };
-        /**
-         * @description mnemonics are human readable unique identifiers for datasets
-         *     mnemonics have the form <random adjective>_<random first name>
-         * @example happy_jane
-         */
-        Mnemonic: string;
         UploadStartBody: {
             /** @description The name of the file to upload */
             fileName: string;
@@ -2129,6 +2134,7 @@ export interface operations {
                     /** Format: binary */
                     chunk?: Blob;
                 };
+                "application/octet-stream": Blob;
             };
         };
         responses: {

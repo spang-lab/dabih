@@ -6,7 +6,7 @@
   ],
   "spec": {
     "outputDirectory": "build",
-    "specFileBaseName": "spec",
+    "specFileBaseName": "spec_tsoa",
     "specVersion": 3,
     "securityDefinitions": {
       "api_key": {
@@ -31,6 +31,12 @@
                         "format": "binary"
                       }
                     }
+                  }
+                },
+                "application/octet-stream": {
+                  "schema": {
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }

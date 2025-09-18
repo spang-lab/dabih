@@ -77,6 +77,7 @@ pub struct Api {
 impl Api {
     pub fn new(config: Configuration) -> Self {
         let config = Arc::new(config);
+
         Self {
             fs: FileSystemApi {
                 config: config.clone(),
@@ -115,10 +116,11 @@ pub struct FileSystemApi {
     config: Arc<Configuration>,
 }
 impl FileSystemApi {
-    pub async fn resolve_path(&self, path: &str) -> Result<Vec<Inode>> {
-        filesystem_api::resolve_path(&self.config, path)
-            .await
-            .map_err(|e| CliError::ApiError(format!("Failed to resolve path {}: {}", path, e)))
+    pub async fn resolve_path(&self, path: &str) -> Result<Option<Inode>> {
+        match filesystem_api::resolve_path(&self.config, path).await {
+            Ok(inode) => Ok(Some(inode)),
+            Err(_e) => Ok(None),
+        }
     }
     pub async fn add_directory(
         &self,
@@ -217,8 +219,6 @@ impl UtilApi {
     pub async fn healthy(&self) -> Result<Healthy200Response> {
         util_api::healthy(&self.config)
             .await
-            .map_err(|_e| CliError::ConnectionError {
-                url: self.config.base_path.clone(),
-            })
+            .map_err(|_e| CliError::ConnectionError(self.config.base_path.clone()))
     }
 }

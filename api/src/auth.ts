@@ -45,7 +45,13 @@ const verify = async (
     return token;
   }
   const secrets = await getSecrets(SECRET.AUTH);
-  const decoded = crypto.jwt.verifyWithSecrets(tokenStr, secrets);
+  let decoded;
+  try {
+    decoded = crypto.jwt.verifyWithSecrets(tokenStr, secrets);
+  } catch {
+    throw new AuthenticationError('Invalid jwt signature');
+  }
+
   if (typeof decoded === 'string') {
     throw new AuthenticationError('Invalid jwt');
   }

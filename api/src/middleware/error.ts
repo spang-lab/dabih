@@ -42,7 +42,9 @@ const error = async (ctx: Context, next: Next) => {
       }
       ctx.status = error.code ?? 500;
       logger.error(`${ctx.status}: ${error.message}`);
-      logger.verbose(`Error Details: ${JSON.stringify(error.details)}`);
+      if (error.details) {
+        logger.verbose(`${JSON.stringify(error.details)}`);
+      }
 
       ctx.body = {
         message: error.message,
