@@ -738,6 +738,8 @@ export interface components {
                     name: string;
                 };
             };
+        } & {
+            [key: string]: unknown;
         };
         PublicKey: {
             /**
@@ -760,6 +762,8 @@ export interface components {
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
+        } & {
+            [key: string]: unknown;
         };
         UserResponse: {
             /**
@@ -790,6 +794,8 @@ export interface components {
             updatedAt: Date;
             /** @description The public keys of the user */
             keys: components["schemas"]["PublicKey"][];
+        } & {
+            [key: string]: unknown;
         };
         "crypto.JsonWebKey": {
             crv?: string;
@@ -818,9 +824,13 @@ export interface components {
             key: components["schemas"]["crypto.JsonWebKey"];
             /** @description If true the key is a root key, used to decrypt all datasets */
             isRootKey?: boolean;
+        } & {
+            [key: string]: unknown;
         };
         UserSub: {
             sub: string;
+        } & {
+            [key: string]: unknown;
         };
         KeyAddBody: {
             /** @description The user the key should belong to */
@@ -829,6 +839,8 @@ export interface components {
             data: components["schemas"]["crypto.JsonWebKey"];
             /** @description If true the key is a root key, used to decrypt all datasets */
             isRootKey: boolean;
+        } & {
+            [key: string]: unknown;
         };
         KeyEnableBody: {
             /** @description The user the key belongs to */
@@ -837,12 +849,16 @@ export interface components {
             hash: string;
             /** @description The key status to set */
             enabled: boolean;
+        } & {
+            [key: string]: unknown;
         };
         KeyRemoveBody: {
             /** @description The user the key belongs to */
             sub: string;
             /** @description The hash of the key */
             hash: string;
+        } & {
+            [key: string]: unknown;
         };
         /**
          * @description mnemonics are human readable unique identifiers for datasets
@@ -871,6 +887,8 @@ export interface components {
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
+        } & {
+            [key: string]: unknown;
         };
         Inode: {
             /**
@@ -897,6 +915,8 @@ export interface components {
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
+        } & {
+            [key: string]: unknown;
         };
         File: components["schemas"]["Inode"] & {
             data: components["schemas"]["FileData"];
@@ -915,6 +935,8 @@ export interface components {
             size?: number;
             /** @description A custom searchable tag for the file */
             tag?: string;
+        } & {
+            [key: string]: unknown;
         };
         Chunk: {
             /**
@@ -953,6 +975,8 @@ export interface components {
              * @description chunk last update timestamp
              */
             updatedAt: Date;
+        } & {
+            [key: string]: unknown;
         };
         ChunkData: components["schemas"]["FileData"] & {
             chunks: components["schemas"]["Chunk"][];
@@ -975,6 +999,8 @@ export interface components {
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
+        } & {
+            [key: string]: unknown;
         };
         TokenResponse: components["schemas"]["Token"] & {
             /** @description false if the token has not expired,
@@ -992,12 +1018,16 @@ export interface components {
              *     If null the token will never expire
              */
             lifetime: number | null;
+        } & {
+            [key: string]: unknown;
         };
         /** @enum {string} */
         JobStatus: "running" | "complete" | "failed";
         Job: {
             jobId: string;
             status: components["schemas"]["JobStatus"];
+        } & {
+            [key: string]: unknown;
         };
         Key: {
             /**
@@ -1016,6 +1046,8 @@ export interface components {
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
+        } & {
+            [key: string]: unknown;
         };
         FileDownload: components["schemas"]["File"] & {
             keys: components["schemas"]["Key"][];
@@ -1042,6 +1074,8 @@ export interface components {
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
+        } & {
+            [key: string]: unknown;
         };
         InodeMembers: components["schemas"]["Inode"] & {
             members: components["schemas"]["Member"][];
@@ -1052,12 +1086,16 @@ export interface components {
         FileDecryptionKey: {
             mnemonic: components["schemas"]["Mnemonic"];
             key: components["schemas"]["AESKey"];
+        } & {
+            [key: string]: unknown;
         };
         MemberAddBody: {
             /** @description The users to add to the dataset */
             subs: string[];
             /** @description The list of AES-256 keys required to decrypt all child datasets */
             keys: components["schemas"]["FileDecryptionKey"][];
+        } & {
+            [key: string]: unknown;
         };
         SetAccessBody: {
             /** @description The user to set the permission for */
@@ -1067,6 +1105,8 @@ export interface components {
              * @description The permission to set
              */
             permission: number;
+        } & {
+            [key: string]: unknown;
         };
         InodeTree: components["schemas"]["InodeMembers"] & {
             keys: components["schemas"]["Key"][];
@@ -1083,12 +1123,16 @@ export interface components {
             name?: string;
             /** @description Optional: The new tag of the inode */
             tag?: string;
+        } & {
+            [key: string]: unknown;
         };
         ListResponse: {
             /** @description The list of parent directories */
             parents: components["schemas"]["InodeMembers"][];
             /** @description The list of inodes in the directory */
             children: components["schemas"]["InodeMembers"][];
+        } & {
+            [key: string]: unknown;
         };
         Directory: {
             mnemonic: components["schemas"]["Mnemonic"];
@@ -1097,6 +1141,8 @@ export interface components {
             createdAt: Date;
             /** Format: date-time */
             updatedAt: Date;
+        } & {
+            [key: string]: unknown;
         };
         AddDirectoryBody: {
             /** @description The name of the directory */
@@ -1105,14 +1151,20 @@ export interface components {
             parent?: components["schemas"]["Mnemonic"];
             /** @description A custom searchable tag for the directory */
             tag?: string;
+        } & {
+            [key: string]: unknown;
         };
         InodeSearchBody: {
             query: string;
+        } & {
+            [key: string]: unknown;
         };
         InodeSearchResults: {
             isComplete: boolean;
             /** @description The list of inodes that match the search query */
             inodes: components["schemas"]["Inode"][];
+        } & {
+            [key: string]: unknown;
         };
         /** @description User is the type that represents a user in the system. */
         User: {
@@ -1130,14 +1182,20 @@ export interface components {
             scopes: string[];
             /** @description Does the user have the dabih:admin scope */
             isAdmin: boolean;
+        } & {
+            [key: string]: unknown;
         };
         SignInResponse: {
             /** @enum {string} */
             status: "success" | "email_sent" | "error";
             token?: string;
+        } & {
+            [key: string]: unknown;
         };
         ErrorResponse: {
             message: string;
+        } & {
+            [key: string]: unknown;
         };
     };
     responses: never;

@@ -28,10 +28,12 @@ path = "src/main.rs"
 [dependencies]
 futures = "0.3"
 serde = { version = "1.0", features = ["derive"] }
+progenitor-client = { git = "https://github.com/oxidecomputer/progenitor" }
 serde_json = "1.0"
 serde_yaml = "0.8"
 tokio = { version = "1.47", features = ["fs", "io-util", "macros", "rt-multi-thread"] }
 reqwest = { version = "0.12", features = ["stream", "json"] }
+chrono = { version = "0.4", features = ["serde"] }
 openapi = { path = "openapi" }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
@@ -45,3 +47,11 @@ clap = {version ="4.5.47", features = ["derive"]}
 glob = "0.3.3"
 pbr = "1.1.1"
 regress = "0.10.4"
+
+[build-dependencies]
+prettyplease = "0.2.22"
+progenitor = { git = "https://github.com/oxidecomputer/progenitor" }
+openapiv3 = "2.2.0"
+chrono = { version = "0.4", features = ["serde"] }
+serde_json = "1.0"
+syn = "2.0"

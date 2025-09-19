@@ -35,7 +35,7 @@ const models: TsoaRoute.Models = {
             "version": {"dataType":"string","required":true},
             "branding": {"dataType":"nestedObjectLiteral","nestedProperties":{"organization":{"dataType":"nestedObjectLiteral","nestedProperties":{"logo":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"name":{"dataType":"string","required":true}},"required":true},"department":{"dataType":"nestedObjectLiteral","nestedProperties":{"logo":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"name":{"dataType":"string","required":true}},"required":true},"contact":{"dataType":"nestedObjectLiteral","nestedProperties":{"phone":{"dataType":"string","required":true},"country":{"dataType":"string","required":true},"state":{"dataType":"string","required":true},"city":{"dataType":"string","required":true},"zip":{"dataType":"string","required":true},"street":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true}},"required":true},"admin":{"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true}},"required":true}},"required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PublicKey": {
@@ -51,7 +51,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserResponse": {
@@ -66,7 +66,7 @@ const models: TsoaRoute.Models = {
             "updatedAt": {"dataType":"datetime","required":true},
             "keys": {"dataType":"array","array":{"dataType":"refObject","ref":"PublicKey"},"required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "crypto.JsonWebKey": {
@@ -97,7 +97,7 @@ const models: TsoaRoute.Models = {
             "key": {"ref":"crypto.JsonWebKey","required":true},
             "isRootKey": {"dataType":"boolean"},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserSub": {
@@ -105,7 +105,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "sub": {"dataType":"string","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "KeyAddBody": {
@@ -115,7 +115,7 @@ const models: TsoaRoute.Models = {
             "data": {"ref":"crypto.JsonWebKey","required":true},
             "isRootKey": {"dataType":"boolean","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "KeyEnableBody": {
@@ -125,7 +125,7 @@ const models: TsoaRoute.Models = {
             "hash": {"dataType":"string","required":true},
             "enabled": {"dataType":"boolean","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "KeyRemoveBody": {
@@ -134,7 +134,7 @@ const models: TsoaRoute.Models = {
             "sub": {"dataType":"string","required":true},
             "hash": {"dataType":"string","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Mnemonic": {
@@ -156,7 +156,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Inode": {
@@ -173,7 +173,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "File": {
@@ -190,7 +190,7 @@ const models: TsoaRoute.Models = {
             "size": {"dataType":"long","validators":{"minimum":{"value":0}}},
             "tag": {"dataType":"string"},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Chunk": {
@@ -206,7 +206,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ChunkData": {
@@ -230,7 +230,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TokenResponse": {
@@ -244,7 +244,7 @@ const models: TsoaRoute.Models = {
             "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "lifetime": {"dataType":"union","subSchemas":[{"dataType":"long"},{"dataType":"enum","enums":[null]}],"required":true,"validators":{"minimum":{"value":0}}},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "JobStatus": {
@@ -258,7 +258,7 @@ const models: TsoaRoute.Models = {
             "jobId": {"dataType":"string","required":true},
             "status": {"ref":"JobStatus","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Key": {
@@ -271,7 +271,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileDownload": {
@@ -294,7 +294,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeMembers": {
@@ -313,7 +313,7 @@ const models: TsoaRoute.Models = {
             "mnemonic": {"ref":"Mnemonic","required":true},
             "key": {"ref":"AESKey","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MemberAddBody": {
@@ -322,7 +322,7 @@ const models: TsoaRoute.Models = {
             "subs": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "keys": {"dataType":"array","array":{"dataType":"refObject","ref":"FileDecryptionKey"},"required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SetAccessBody": {
@@ -331,7 +331,7 @@ const models: TsoaRoute.Models = {
             "sub": {"dataType":"string","required":true},
             "permission": {"dataType":"double","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeTree": {
@@ -348,7 +348,7 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string"},
             "tag": {"dataType":"string"},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ListResponse": {
@@ -357,7 +357,7 @@ const models: TsoaRoute.Models = {
             "parents": {"dataType":"array","array":{"dataType":"refAlias","ref":"InodeMembers"},"required":true},
             "children": {"dataType":"array","array":{"dataType":"refAlias","ref":"InodeMembers"},"required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Directory": {
@@ -368,7 +368,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AddDirectoryBody": {
@@ -378,7 +378,7 @@ const models: TsoaRoute.Models = {
             "parent": {"ref":"Mnemonic"},
             "tag": {"dataType":"string"},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeSearchBody": {
@@ -386,7 +386,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "query": {"dataType":"string","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeSearchResults": {
@@ -395,7 +395,7 @@ const models: TsoaRoute.Models = {
             "isComplete": {"dataType":"boolean","required":true},
             "inodes": {"dataType":"array","array":{"dataType":"refObject","ref":"Inode"},"required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "User": {
@@ -405,7 +405,7 @@ const models: TsoaRoute.Models = {
             "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "isAdmin": {"dataType":"boolean","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SignInResponse": {
@@ -414,7 +414,7 @@ const models: TsoaRoute.Models = {
             "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["success"]},{"dataType":"enum","enums":["email_sent"]},{"dataType":"enum","enums":["error"]}],"required":true},
             "token": {"dataType":"string"},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ErrorResponse": {
@@ -422,11 +422,11 @@ const models: TsoaRoute.Models = {
         "properties": {
             "message": {"dataType":"string","required":true},
         },
-        "additionalProperties": false,
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
-const templateService = new KoaTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
+const templateService = new KoaTemplateService(models, {"noImplicitAdditionalProperties":"ignore","bodyCoercion":true});
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 

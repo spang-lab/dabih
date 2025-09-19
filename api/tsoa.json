@@ -1,6 +1,6 @@
 {
   "entryFile": "src/server.ts",
-  "noImplicitAdditionalProperties": "throw-on-extras",
+  "noImplicitAdditionalProperties": "ignore",
   "controllerPathGlobs": [
     "src/api/**/controller.ts"
   ],

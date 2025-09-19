@@ -85,7 +85,7 @@ export interface Inode {
    * @format bigint
    */
   id: unknown;
-  mnemonic: string;
+  mnemonic: Mnemonic;
   /**
    * The type of the inode
    * @isInt
@@ -94,6 +94,11 @@ export interface Inode {
   type: number;
   name: string;
   tag: string | null;
+  /**
+   * The database id file data if the inode is a file
+   * @format bigint
+   */
+  dataId: unknown;
   data?: FileData | null;
   parentId: unknown;
   createdAt: Date;

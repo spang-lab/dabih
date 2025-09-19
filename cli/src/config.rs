@@ -1,10 +1,12 @@
 use std::fs::File;
-use std::path::PathBuf;
+use std::path::{self, PathBuf};
 
-use openapi::models::UserResponse;
+use progenitor_client::ResponseValue;
 use serde::{Deserialize, Serialize};
 
 use crate::api::Api;
+use crate::codegen;
+use crate::codegen::types::UserResponse;
 use crate::error::{CliError, Result};
 use crate::private_key::PrivateKey;
 use openapi::apis::configuration::Configuration;
@@ -23,6 +25,7 @@ pub struct Context {
     user: Option<UserResponse>,
     private_key: Option<PrivateKey>,
     api: Api,
+    client: codegen::Client,
 }
 
 fn find_key(path: &PathBuf, fingerprints: Vec<String>) -> Result<Option<PrivateKey>> {
@@ -67,6 +70,22 @@ impl Context {
         };
         let api = Api::new(openapi_config);
 
+        let timeout = std::time::Duration::from_secs(5);
+        let mut headers = reqwest::header::HeaderMap::new();
+
+        headers.insert(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", token).parse().unwrap(),
+        );
+
+        let c = reqwest::Client::builder()
+            .user_agent("dabih-cli")
+            .timeout(timeout)
+            .default_headers(headers)
+            .build()?;
+
+        let client = codegen::Client::new_with_client(&base_path, c);
+
         Ok(Self {
             verbose: 0,
             quiet: false,
@@ -74,6 +93,7 @@ impl Context {
             user: None,
             private_key: None,
             api,
+            client,
         })
     }
 
@@ -87,7 +107,10 @@ impl Context {
 
         Self::new(config.url, config.token, path)
     }
-    pub fn api(&self) -> &Api {
+    pub fn api(&self) -> &codegen::Client {
+        &self.client
+    }
+    pub fn api_(&self) -> &Api {
         &self.api
     }
 
@@ -107,8 +130,10 @@ impl Context {
     }
 
     pub async fn init(&mut self) -> Result<()> {
-        match self.api().user().me().await {
-            Ok(user) => {
+        let resp = self.client.me().await?;
+
+        match resp.as_ref() {
+            Some(user) => {
                 self.user = Some(user.clone());
                 let fingerprints = user
                     .keys
@@ -119,8 +144,8 @@ impl Context {
                 self.private_key = key;
                 return Ok(());
             }
-            Err(_e) => {
-                self.api().util().healthy().await?;
+            None => {
+                self.client.healthy().await?;
                 return Err(CliError::AuthenticationError);
             }
         }

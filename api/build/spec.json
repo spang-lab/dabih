@@ -121,7 +121,7 @@
           "branding"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "PublicKey": {
         "properties": {
@@ -174,7 +174,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "UserResponse": {
         "properties": {
@@ -229,7 +229,7 @@
           "keys"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "crypto.JsonWebKey": {
         "properties": {
@@ -300,7 +300,7 @@
           "key"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "UserSub": {
         "properties": {
@@ -312,7 +312,7 @@
           "sub"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "KeyAddBody": {
         "properties": {
@@ -335,7 +335,7 @@
           "isRootKey"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "KeyEnableBody": {
         "properties": {
@@ -358,7 +358,7 @@
           "enabled"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "KeyRemoveBody": {
         "properties": {
@@ -376,7 +376,7 @@
           "hash"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "Mnemonic": {
         "type": "string",
@@ -438,7 +438,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "Inode": {
         "properties": {
@@ -498,7 +498,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "File": {
         "allOf": [
@@ -547,7 +547,7 @@
           "fileName"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "Chunk": {
         "properties": {
@@ -607,7 +607,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "ChunkData": {
         "allOf": [
@@ -688,7 +688,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "TokenResponse": {
         "allOf": [
@@ -749,7 +749,7 @@
           "lifetime"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "JobStatus": {
         "type": "string",
@@ -773,7 +773,7 @@
           "status"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "Key": {
         "properties": {
@@ -811,7 +811,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "FileDownload": {
         "allOf": [
@@ -896,7 +896,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "InodeMembers": {
         "allOf": [
@@ -937,7 +937,7 @@
           "key"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "MemberAddBody": {
         "properties": {
@@ -961,7 +961,7 @@
           "keys"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "SetAccessBody": {
         "properties": {
@@ -980,7 +980,7 @@
           "permission"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "InodeTree": {
         "allOf": [
@@ -1044,7 +1044,7 @@
           "mnemonic"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "ListResponse": {
         "properties": {
@@ -1068,7 +1068,7 @@
           "children"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "Directory": {
         "properties": {
@@ -1094,7 +1094,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "AddDirectoryBody": {
         "properties": {
@@ -1115,7 +1115,7 @@
           "name"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "InodeSearchBody": {
         "properties": {
@@ -1127,7 +1127,7 @@
           "query"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "InodeSearchResults": {
         "properties": {
@@ -1147,7 +1147,7 @@
           "inodes"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "User": {
         "description": "User is the type that represents a user in the system.",
@@ -1178,7 +1178,7 @@
           "isAdmin"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "SignInResponse": {
         "properties": {
@@ -1198,7 +1198,7 @@
           "status"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "ErrorResponse": {
         "properties": {
@@ -1210,7 +1210,7 @@
           "message"
         ],
         "type": "object",
-        "additionalProperties": false
+        "additionalProperties": true
       }
     },
     "securitySchemes": {
