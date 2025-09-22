@@ -1,4 +1,12 @@
-import { open, access, mkdir, rm, constants, stat } from 'node:fs/promises';
+import {
+  open,
+  access,
+  mkdir,
+  rm,
+  constants,
+  stat,
+  readdir,
+} from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import logger from '#lib/logger';
 import { StorageBackend } from '.';
@@ -68,6 +76,14 @@ const createBucket = async (bucket: string) => {
   await mkdir(path);
 };
 
+const listBuckets = async (): Promise<string[]> => {
+  const entries = await readdir(basePath, { withFileTypes: true });
+  const buckets = entries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+  return buckets;
+};
+
 const init = async (path: string): Promise<StorageBackend> => {
   if (!path) {
     throw new Error('fs storage provider needs config.storage.path');
@@ -96,6 +112,7 @@ const init = async (path: string): Promise<StorageBackend> => {
     head,
     removeBucket,
     createBucket,
+    listBuckets,
   };
 };
 

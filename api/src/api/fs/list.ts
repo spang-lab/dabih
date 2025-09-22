@@ -1,5 +1,5 @@
 import { AuthorizationError } from '../errors';
-import { Permission, User, Mnemonic, InodeMembers, InodeType } from '../types';
+import { Permission, User, InodeMembers, InodeType } from '../types';
 import db from '#lib/db';
 import { getParents } from '#lib/database/inode';
 import { getHome } from '#lib/database/inodes';
@@ -11,7 +11,7 @@ function isListable(inode: InodeMembers) {
   return true;
 }
 
-export default async function list(user: User, mnemonic?: Mnemonic) {
+export default async function list(user: User, mnemonic?: string) {
   const { sub, isAdmin } = user;
   let parents: InodeMembers[] = [];
   let parentId = null;

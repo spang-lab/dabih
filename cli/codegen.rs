@@ -53,7 +53,8 @@ pub mod types {
     ///      "type": "string"
     ///    },
     ///    "parent": {
-    ///      "$ref": "#/components/schemas/Mnemonic"
+    ///      "description": "The mnemonic of the parent directory",
+    ///      "type": "string"
     ///    },
     ///    "tag": {
     ///      "description": "A custom searchable tag for the directory",
@@ -68,8 +69,9 @@ pub mod types {
     pub struct AddDirectoryBody {
         ///The name of the directory
         pub name: ::std::string::String,
+        ///The mnemonic of the parent directory
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-        pub parent: ::std::option::Option<Mnemonic>,
+        pub parent: ::std::option::Option<::std::string::String>,
         ///A custom searchable tag for the directory
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub tag: ::std::option::Option<::std::string::String>,
@@ -337,7 +339,7 @@ base64url encoded*/
     ///      "type": "string"
     ///    }
     ///  },
-    ///  "additionalProperties": {}
+    ///  "additionalProperties": true
     ///}
     /// ```
     /// </details>
@@ -369,12 +371,29 @@ base64url encoded*/
         pub x: ::std::option::Option<::std::string::String>,
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub y: ::std::option::Option<::std::string::String>,
-        #[serde(flatten)]
-        pub extra: ::serde_json::Map<::std::string::String, ::serde_json::Value>,
     }
     impl ::std::convert::From<&CryptoJsonWebKey> for CryptoJsonWebKey {
         fn from(value: &CryptoJsonWebKey) -> Self {
             value.clone()
+        }
+    }
+    impl ::std::default::Default for CryptoJsonWebKey {
+        fn default() -> Self {
+            Self {
+                crv: Default::default(),
+                d: Default::default(),
+                dp: Default::default(),
+                dq: Default::default(),
+                e: Default::default(),
+                k: Default::default(),
+                kty: Default::default(),
+                n: Default::default(),
+                p: Default::default(),
+                q: Default::default(),
+                qi: Default::default(),
+                x: Default::default(),
+                y: Default::default(),
+            }
         }
     }
     ///`DabihInfo`
@@ -848,7 +867,7 @@ base64url encoded*/
     ///      "format": "date-time"
     ///    },
     ///    "mnemonic": {
-    ///      "$ref": "#/components/schemas/Mnemonic"
+    ///      "type": "string"
     ///    },
     ///    "name": {
     ///      "type": "string"
@@ -866,7 +885,7 @@ base64url encoded*/
     pub struct Directory {
         #[serde(rename = "createdAt")]
         pub created_at: ::chrono::DateTime<::chrono::offset::Utc>,
-        pub mnemonic: Mnemonic,
+        pub mnemonic: ::std::string::String,
         pub name: ::std::string::String,
         #[serde(rename = "updatedAt")]
         pub updated_at: ::chrono::DateTime<::chrono::offset::Utc>,
@@ -936,10 +955,10 @@ base64url encoded*/
         pub data: FileData,
         ///The database id file data if the inode is a file
         #[serde(rename = "dataId")]
-        pub data_id: ::std::string::String,
+        pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
-        pub mnemonic: Mnemonic,
+        pub mnemonic: ::std::string::String,
         pub name: ::std::string::String,
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
@@ -1064,7 +1083,7 @@ base64url encoded*/
     ///      "$ref": "#/components/schemas/AESKey"
     ///    },
     ///    "mnemonic": {
-    ///      "$ref": "#/components/schemas/Mnemonic"
+    ///      "type": "string"
     ///    }
     ///  },
     ///  "additionalProperties": true
@@ -1074,7 +1093,7 @@ base64url encoded*/
     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
     pub struct FileDecryptionKey {
         pub key: AesKey,
-        pub mnemonic: Mnemonic,
+        pub mnemonic: ::std::string::String,
     }
     impl ::std::convert::From<&FileDecryptionKey> for FileDecryptionKey {
         fn from(value: &FileDecryptionKey) -> Self {
@@ -1120,11 +1139,11 @@ base64url encoded*/
         pub data: FileDownloadData,
         ///The database id file data if the inode is a file
         #[serde(rename = "dataId")]
-        pub data_id: ::std::string::String,
+        pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
         pub keys: ::std::vec::Vec<Key>,
-        pub mnemonic: Mnemonic,
+        pub mnemonic: ::std::string::String,
         pub name: ::std::string::String,
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
@@ -1272,11 +1291,11 @@ base64url encoded*/
         pub data: FileKeysData,
         ///The database id file data if the inode is a file
         #[serde(rename = "dataId")]
-        pub data_id: ::std::string::String,
+        pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
         pub keys: ::std::vec::Vec<Key>,
-        pub mnemonic: Mnemonic,
+        pub mnemonic: ::std::string::String,
         pub name: ::std::string::String,
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
@@ -1431,10 +1450,10 @@ base64url encoded*/
         pub data: FileUploadData,
         ///The database id file data if the inode is a file
         #[serde(rename = "dataId")]
-        pub data_id: ::std::string::String,
+        pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
-        pub mnemonic: Mnemonic,
+        pub mnemonic: ::std::string::String,
         pub name: ::std::string::String,
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
@@ -1613,7 +1632,10 @@ base64url encoded*/
     ///    },
     ///    "dataId": {
     ///      "description": "The database id file data if the inode is a file",
-    ///      "type": "string",
+    ///      "type": [
+    ///        "string",
+    ///        "null"
+    ///      ],
     ///      "format": "bigint"
     ///    },
     ///    "id": {
@@ -1622,7 +1644,7 @@ base64url encoded*/
     ///      "format": "bigint"
     ///    },
     ///    "mnemonic": {
-    ///      "$ref": "#/components/schemas/Mnemonic"
+    ///      "type": "string"
     ///    },
     ///    "name": {
     ///      "type": "string"
@@ -1657,10 +1679,10 @@ base64url encoded*/
         pub data: ::std::option::Option<FileData>,
         ///The database id file data if the inode is a file
         #[serde(rename = "dataId")]
-        pub data_id: ::std::string::String,
+        pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
-        pub mnemonic: Mnemonic,
+        pub mnemonic: ::std::string::String,
         pub name: ::std::string::String,
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
@@ -1712,11 +1734,11 @@ base64url encoded*/
         pub data: ::std::option::Option<FileData>,
         ///The database id file data if the inode is a file
         #[serde(rename = "dataId")]
-        pub data_id: ::std::string::String,
+        pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
         pub members: ::std::vec::Vec<Member>,
-        pub mnemonic: Mnemonic,
+        pub mnemonic: ::std::string::String,
         pub name: ::std::string::String,
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
@@ -1843,12 +1865,12 @@ base64url encoded*/
         pub data: ::std::option::Option<FileData>,
         ///The database id file data if the inode is a file
         #[serde(rename = "dataId")]
-        pub data_id: ::std::string::String,
+        pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
         pub keys: ::std::vec::Vec<Key>,
         pub members: ::std::vec::Vec<Member>,
-        pub mnemonic: Mnemonic,
+        pub mnemonic: ::std::string::String,
         pub name: ::std::string::String,
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
@@ -2323,90 +2345,6 @@ base64url encoded*/
             value.clone()
         }
     }
-    /**mnemonics are human readable unique identifiers for datasets
-mnemonics have the form <random adjective>_<random first name>*/
-    ///
-    /// <details><summary>JSON schema</summary>
-    ///
-    /// ```json
-    ///{
-    ///  "description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
-    ///  "examples": [
-    ///    "happy_jane"
-    ///  ],
-    ///  "type": "string",
-    ///  "pattern": "^[a-z_]+$"
-    ///}
-    /// ```
-    /// </details>
-    #[derive(::serde::Serialize, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-    #[serde(transparent)]
-    pub struct Mnemonic(::std::string::String);
-    impl ::std::ops::Deref for Mnemonic {
-        type Target = ::std::string::String;
-        fn deref(&self) -> &::std::string::String {
-            &self.0
-        }
-    }
-    impl ::std::convert::From<Mnemonic> for ::std::string::String {
-        fn from(value: Mnemonic) -> Self {
-            value.0
-        }
-    }
-    impl ::std::convert::From<&Mnemonic> for Mnemonic {
-        fn from(value: &Mnemonic) -> Self {
-            value.clone()
-        }
-    }
-    impl ::std::str::FromStr for Mnemonic {
-        type Err = self::error::ConversionError;
-        fn from_str(
-            value: &str,
-        ) -> ::std::result::Result<Self, self::error::ConversionError> {
-            static PATTERN: ::std::sync::LazyLock<::regress::Regex> = ::std::sync::LazyLock::new(||
-            { ::regress::Regex::new("^[a-z_]+$").unwrap() });
-            if PATTERN.find(value).is_none() {
-                return Err("doesn't match pattern \"^[a-z_]+$\"".into());
-            }
-            Ok(Self(value.to_string()))
-        }
-    }
-    impl ::std::convert::TryFrom<&str> for Mnemonic {
-        type Error = self::error::ConversionError;
-        fn try_from(
-            value: &str,
-        ) -> ::std::result::Result<Self, self::error::ConversionError> {
-            value.parse()
-        }
-    }
-    impl ::std::convert::TryFrom<&::std::string::String> for Mnemonic {
-        type Error = self::error::ConversionError;
-        fn try_from(
-            value: &::std::string::String,
-        ) -> ::std::result::Result<Self, self::error::ConversionError> {
-            value.parse()
-        }
-    }
-    impl ::std::convert::TryFrom<::std::string::String> for Mnemonic {
-        type Error = self::error::ConversionError;
-        fn try_from(
-            value: ::std::string::String,
-        ) -> ::std::result::Result<Self, self::error::ConversionError> {
-            value.parse()
-        }
-    }
-    impl<'de> ::serde::Deserialize<'de> for Mnemonic {
-        fn deserialize<D>(deserializer: D) -> ::std::result::Result<Self, D::Error>
-        where
-            D: ::serde::Deserializer<'de>,
-        {
-            ::std::string::String::deserialize(deserializer)?
-                .parse()
-                .map_err(|e: self::error::ConversionError| {
-                    <D::Error as ::serde::de::Error>::custom(e.to_string())
-                })
-        }
-    }
     ///`MoveInodeBody`
     ///
     /// <details><summary>JSON schema</summary>
@@ -2426,7 +2364,8 @@ mnemonics have the form <random adjective>_<random first name>*/
     ///      }
     ///    },
     ///    "mnemonic": {
-    ///      "$ref": "#/components/schemas/Mnemonic"
+    ///      "description": "The mnemonic of the inode to move",
+    ///      "type": "string"
     ///    },
     ///    "name": {
     ///      "description": "Optional: The new name of the inode",
@@ -2434,17 +2373,9 @@ mnemonics have the form <random adjective>_<random first name>*/
     ///    },
     ///    "parent": {
     ///      "description": "Optional: The mnemonic of the new parent directory",
-    ///      "oneOf": [
-    ///        {
-    ///          "type": "null"
-    ///        },
-    ///        {
-    ///          "allOf": [
-    ///            {
-    ///              "$ref": "#/components/schemas/Mnemonic"
-    ///            }
-    ///          ]
-    ///        }
+    ///      "type": [
+    ///        "string",
+    ///        "null"
     ///      ]
     ///    },
     ///    "tag": {
@@ -2461,13 +2392,14 @@ mnemonics have the form <random adjective>_<random first name>*/
         ///The list of AES-256 keys required to decrypt all child datasets
         #[serde(default, skip_serializing_if = "::std::vec::Vec::is_empty")]
         pub keys: ::std::vec::Vec<FileDecryptionKey>,
-        pub mnemonic: Mnemonic,
+        ///The mnemonic of the inode to move
+        pub mnemonic: ::std::string::String,
         ///Optional: The new name of the inode
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub name: ::std::option::Option<::std::string::String>,
         ///Optional: The mnemonic of the new parent directory
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-        pub parent: ::std::option::Option<Mnemonic>,
+        pub parent: ::std::option::Option<::std::string::String>,
         ///Optional: The new tag of the inode
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub tag: ::std::option::Option<::std::string::String>,
@@ -3049,7 +2981,8 @@ otherwise a string describing how long ago the token expired*/
     ///  ],
     ///  "properties": {
     ///    "directory": {
-    ///      "$ref": "#/components/schemas/Mnemonic"
+    ///      "description": "The mnemonic of the directory to upload the file to",
+    ///      "type": "string"
     ///    },
     ///    "fileName": {
     ///      "description": "The name of the file to upload",
@@ -3076,8 +3009,9 @@ otherwise a string describing how long ago the token expired*/
     /// </details>
     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
     pub struct UploadStartBody {
+        ///The mnemonic of the directory to upload the file to
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-        pub directory: ::std::option::Option<Mnemonic>,
+        pub directory: ::std::option::Option<::std::string::String>,
         ///The name of the file to upload
         #[serde(rename = "fileName")]
         pub file_name: ::std::string::String,
@@ -3798,7 +3732,7 @@ impl Client {
 */
     pub async fn cancel_upload<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<()>, Error<()>> {
         let url = format!(
             "{}/upload/{}/cancel", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -3828,7 +3762,7 @@ impl Client {
 */
     pub async fn finish_upload<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<types::File>, Error<()>> {
         let url = format!(
             "{}/upload/{}/finish", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -4040,7 +3974,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file`
 */
     pub async fn file_info<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<types::FileDownload>, Error<()>> {
         let url = format!(
             "{}/fs/{}/file", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -4080,7 +4014,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
 */
     pub async fn list_files<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<::std::vec::Vec<types::FileKeys>>, Error<()>> {
         let url = format!(
             "{}/fs/{}/file/list", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -4118,7 +4052,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
 */
     pub async fn list_parents<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<::std::vec::Vec<types::InodeMembers>>, Error<()>> {
         let url = format!(
             "{}/fs/{}/parent/list", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -4156,7 +4090,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
 */
     pub async fn add_members<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
         body: &'a types::MemberAddBody,
     ) -> Result<ResponseValue<()>, Error<()>> {
         let url = format!(
@@ -4187,7 +4121,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
 */
     pub async fn set_access<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
         body: &'a types::SetAccessBody,
     ) -> Result<ResponseValue<()>, Error<()>> {
         let url = format!(
@@ -4218,7 +4152,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
 */
     pub async fn duplicate_inode<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<types::Inode>, Error<()>> {
         let url = format!(
             "{}/fs/{}/duplicate", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -4256,7 +4190,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
 */
     pub async fn remove_inode<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<()>, Error<()>> {
         let url = format!(
             "{}/fs/{}/remove", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -4286,7 +4220,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
 */
     pub async fn destroy_inode<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<()>, Error<()>> {
         let url = format!(
             "{}/fs/{}/destroy", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -4316,7 +4250,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
 */
     pub async fn inode_tree<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<types::InodeTree>, Error<()>> {
         let url = format!(
             "{}/fs/{}/tree", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -4490,7 +4424,7 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
 */
     pub async fn list_inodes<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
     ) -> Result<ResponseValue<types::ListResponse>, Error<()>> {
         let url = format!(
             "{}/fs/{}/list", self.baseurl, encode_path(& mnemonic.to_string()),
@@ -4665,12 +4599,79 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
             _ => Err(Error::UnexpectedResponse(response)),
         }
     }
+    /**Find all file data entries that are not referenced by any inode
+
+Sends a `GET` request to `/filedata/orphaned`
+
+*/
+    pub async fn list_orphaned<'a>(
+        &'a self,
+    ) -> Result<ResponseValue<::std::vec::Vec<types::FileData>>, Error<()>> {
+        let url = format!("{}/filedata/orphaned", self.baseurl,);
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
+        header_map
+            .append(
+                ::reqwest::header::HeaderName::from_static("api-version"),
+                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+            );
+        #[allow(unused_mut)]
+        let mut request = self
+            .client
+            .get(url)
+            .header(
+                ::reqwest::header::ACCEPT,
+                ::reqwest::header::HeaderValue::from_static("application/json"),
+            )
+            .headers(header_map)
+            .build()?;
+        let info = OperationInfo {
+            operation_id: "list_orphaned",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            200u16 => ResponseValue::from_response(response).await,
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
+    /**Sends a `POST` request to `/filedata/{uid}/remove`
+
+*/
+    pub async fn remove_file_data<'a>(
+        &'a self,
+        uid: &'a str,
+    ) -> Result<ResponseValue<()>, Error<()>> {
+        let url = format!(
+            "{}/filedata/{}/remove", self.baseurl, encode_path(& uid.to_string()),
+        );
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
+        header_map
+            .append(
+                ::reqwest::header::HeaderName::from_static("api-version"),
+                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+            );
+        #[allow(unused_mut)]
+        let mut request = self.client.post(url).headers(header_map).build()?;
+        let info = OperationInfo {
+            operation_id: "remove_file_data",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            204u16 => Ok(ResponseValue::empty(response)),
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
     /**Sends a `POST` request to `/download/{mnemonic}/decrypt`
 
 */
     pub async fn decrypt_dataset<'a>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
         body: &'a types::DecryptDatasetBody,
     ) -> Result<ResponseValue<types::TokenResponse>, Error<()>> {
         let url = format!(
@@ -4931,7 +4932,7 @@ It should be in the format `sha-256={hash}`
 */
     pub async fn chunk_upload<'a, B: Into<reqwest::Body>>(
         &'a self,
-        mnemonic: &'a types::Mnemonic,
+        mnemonic: &'a str,
         content_range: &'a str,
         digest: &'a str,
         body: B,

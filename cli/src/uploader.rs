@@ -1,11 +1,11 @@
 use glob::glob;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use std::str::FromStr;
 use tracing::{debug, info, warn};
 
+use crate::api::ApiHelpers;
+use crate::api::types::{AddDirectoryBody, UploadStartBody};
 use crate::chunked_reader::ChunkedReader;
-use crate::codegen::types::{Mnemonic, UploadStartBody};
 use crate::command::upload::Upload;
 use crate::config::Context;
 use crate::error::{CliError, Result};
@@ -122,7 +122,8 @@ impl Uploader {
         if let Some(mnemonic) = cached {
             return Ok((mnemonic.clone(), filename));
         }
-        match self.ctx.api_().fs().resolve_path(&base).await? {
+        let response = self.ctx.api().resolve_path_h(&base).await?;
+        match response {
             Some(inode) => {
                 self.mnemonics.insert(base.clone(), inode.mnemonic.clone());
                 return Ok((inode.mnemonic.clone(), filename));
@@ -173,7 +174,8 @@ impl Uploader {
     async fn folder(&mut self) -> Result<UploadState> {
         let (_path, target) = self.paths[self.idx].clone();
 
-        if let Some(existing) = self.ctx.api_().fs().resolve_path(&target).await? {
+        let res = self.ctx.api().resolve_path_h(&target).await?;
+        if let Some(existing) = res {
             debug!("Directory {} already exists, skipping creation", target);
             self.mnemonics
                 .insert(target.clone(), existing.mnemonic.clone());
@@ -182,12 +184,17 @@ impl Uploader {
         }
 
         let (mnemonic, name) = self.resolve_target(target.clone()).await?;
+
         let inode = self
             .ctx
-            .api_()
-            .fs()
-            .add_directory(name.clone(), Some(mnemonic), self.args.tag.clone())
-            .await?;
+            .api()
+            .add_directory(&AddDirectoryBody {
+                name: name.clone(),
+                parent: Some(mnemonic),
+                tag: self.args.tag.clone(),
+            })
+            .await?
+            .into_inner();
 
         debug!(
             "Created directory {} with mnemonic {}",
@@ -203,28 +210,30 @@ impl Uploader {
     async fn file(&mut self) -> Result<UploadState> {
         let (path, mut target) = self.paths[self.idx].clone();
 
-        if let Some(existing) = self.ctx.api_().fs().resolve_path(&target).await? {
+        let res = self.ctx.api().resolve_path_h(&target).await?;
+        if let Some(existing) = res.as_ref() {
             if !self.args.rename_existing {
-                let hash = ChunkedReader::digest_only(path.clone(), self.args.chunk_size as usize)?;
-                let existing_hash = existing
-                    .data
-                    .unwrap_or_default()
-                    .unwrap_or_default()
-                    .hash
-                    .unwrap_or_default();
-                if existing_hash == hash {
-                    info!(
-                        "File {} already exists with same hash, skipping upload",
-                        target
-                    );
-                    self.idx += 1;
-                    return Ok(UploadState::Init);
+                let existing_hash = match existing.data.as_ref() {
+                    Some(data) => data.hash.clone(),
+                    None => None,
+                };
+                if let Some(h) = existing_hash {
+                    let hash =
+                        ChunkedReader::digest_only(path.clone(), self.args.chunk_size as usize)?;
+                    if h == hash {
+                        info!(
+                            "File {} already exists with same hash, skipping upload",
+                            target
+                        );
+                        self.idx += 1;
+                        return Ok(UploadState::Init);
+                    }
                 }
             }
             let mut count = 1;
             let new_target = loop {
                 let new_name = rename_target(&target, count);
-                let existing = self.ctx.api_().fs().resolve_path(&new_name).await?;
+                let existing = self.ctx.api().resolve_path_h(&new_name).await?;
                 if existing.is_none() {
                     break new_name;
                 }
@@ -244,27 +253,14 @@ impl Uploader {
         let fs = reader.file_size() as u64;
         self.reader = Some(reader);
 
-        let inode = self
-            .ctx
-            .api_()
-            .upload()
-            .start_upload(
-                name.clone(),
-                Some(mnemonic.clone()),
-                Some(stringify(&path)),
-                Some(fs),
-                self.args.tag.clone(),
-            )
-            .await?;
-
         let body = UploadStartBody {
             file_name: name.clone(),
-            directory: Some(Mnemonic::from_str(&mnemonic)?),
+            directory: Some(mnemonic),
             file_path: Some(stringify(&path)),
             size: Some(fs as i64),
             tag: self.args.tag.clone(),
         };
-        let inode2 = self.ctx.api().start_upload(&body).await?;
+        let inode = self.ctx.api().start_upload(&body).await?;
 
         self.mnemonic = Some(inode.mnemonic.clone());
         Ok(UploadState::Started {
@@ -291,13 +287,19 @@ impl Uploader {
             }
         };
         let digest = chunk.digest();
+        let digest_header = format!("sha-256={}", digest);
 
         let uchunk = self
             .ctx
-            .api_()
-            .upload()
-            .chunk_upload(mnemonic, &chunk)
-            .await?;
+            .api()
+            .chunk_upload(
+                mnemonic,
+                &chunk.content_range(),
+                &digest_header,
+                chunk.data().to_vec(),
+            )
+            .await?
+            .into_inner();
 
         if uchunk.hash != digest {
             return Err(CliError::UnexpectedError(format!(
@@ -315,7 +317,8 @@ impl Uploader {
         let hash = self.reader.as_ref().unwrap().digest();
 
         let mnemonic = self.mnemonic.as_ref().unwrap();
-        let inode = self.ctx.api_().upload().finish_upload(mnemonic).await?;
+        let inode = self.ctx.api().finish_upload(mnemonic).await?.into_inner();
+
         let server_hash = inode.data.hash.clone().unwrap_or_default();
         if hash != server_hash {
             return Err(CliError::UnexpectedError(format!(

@@ -1,15 +1,12 @@
 use std::fs::File;
-use std::path::{self, PathBuf};
+use std::path::PathBuf;
 
-use progenitor_client::ResponseValue;
 use serde::{Deserialize, Serialize};
 
-use crate::api::Api;
-use crate::codegen;
-use crate::codegen::types::UserResponse;
+use crate::api::types::UserResponse;
+use crate::api::{self, Client};
 use crate::error::{CliError, Result};
 use crate::private_key::PrivateKey;
-use openapi::apis::configuration::Configuration;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
@@ -24,8 +21,7 @@ pub struct Context {
     path: PathBuf,
     user: Option<UserResponse>,
     private_key: Option<PrivateKey>,
-    api: Api,
-    client: codegen::Client,
+    client: Client,
 }
 
 fn find_key(path: &PathBuf, fingerprints: Vec<String>) -> Result<Option<PrivateKey>> {
@@ -62,14 +58,6 @@ fn normalize_url(url: &str) -> String {
 impl Context {
     pub fn new(url: String, token: String, path: PathBuf) -> Result<Self> {
         let base_path = normalize_url(&url);
-        let openapi_config = Configuration {
-            base_path: base_path.clone(),
-            user_agent: Some("dabih-cli".to_string()),
-            bearer_access_token: Some(token.clone()),
-            ..Default::default()
-        };
-        let api = Api::new(openapi_config);
-
         let timeout = std::time::Duration::from_secs(5);
         let mut headers = reqwest::header::HeaderMap::new();
 
@@ -84,7 +72,7 @@ impl Context {
             .default_headers(headers)
             .build()?;
 
-        let client = codegen::Client::new_with_client(&base_path, c);
+        let client = api::Client::new_with_client(&base_path, c);
 
         Ok(Self {
             verbose: 0,
@@ -92,7 +80,6 @@ impl Context {
             path,
             user: None,
             private_key: None,
-            api,
             client,
         })
     }
@@ -107,16 +94,10 @@ impl Context {
 
         Self::new(config.url, config.token, path)
     }
-    pub fn api(&self) -> &codegen::Client {
+    pub fn api(&self) -> &api::Client {
         &self.client
     }
-    pub fn api_(&self) -> &Api {
-        &self.api
-    }
 
-    pub fn openapi(&self) -> &Configuration {
-        self.api.config()
-    }
     pub fn user(&self) -> Option<&UserResponse> {
         self.user.as_ref()
     }

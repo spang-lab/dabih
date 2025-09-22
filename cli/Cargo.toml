@@ -34,7 +34,6 @@ serde_yaml = "0.8"
 tokio = { version = "1.47", features = ["fs", "io-util", "macros", "rt-multi-thread"] }
 reqwest = { version = "0.12", features = ["stream", "json"] }
 chrono = { version = "0.4", features = ["serde"] }
-openapi = { path = "openapi" }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
 rsa = "0.9.8"
@@ -55,3 +54,4 @@ openapiv3 = "2.2.0"
 chrono = { version = "0.4", features = ["serde"] }
 serde_json = "1.0"
 syn = "2.0"
+

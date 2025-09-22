@@ -1,5 +1,3 @@
-import { Mnemonic } from './base';
-
 export interface UploadStartBody {
   /**
    * The name of the file to upload
@@ -8,7 +6,7 @@ export interface UploadStartBody {
   /**
    * The mnemonic of the directory to upload the file to
    */
-  directory?: Mnemonic;
+  directory?: string;
   /**
    * The original path of the file
    */
@@ -26,7 +24,7 @@ export interface UploadStartBody {
 }
 
 export interface ChunkAddBody {
-  mnemonic: Mnemonic;
+  mnemonic: string;
   hash: string;
   /**
    * @isLong

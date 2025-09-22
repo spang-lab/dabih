@@ -13,7 +13,7 @@ export const hasEnv = (key: string) => {
     return false;
   }
   return true;
-}
+};
 
 export const requireEnv = (key: string): string => {
   const { env } = process;
@@ -23,4 +23,3 @@ export const requireEnv = (key: string): string => {
   }
   throw new Error(`ENV var "${key}" is required, but was not found.`);
 };
-

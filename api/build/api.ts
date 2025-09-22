@@ -1,6 +1,7 @@
 import createClient from 'openapi-fetch';
 
 import type { components, paths } from './schema';
+import checkIntegrity from 'src/api/filedata/checkIntegrity';
 type schemas = components['schemas'];
 
 type ChunkUpload = {
@@ -58,6 +59,7 @@ const init = (baseUrl: string) => {
         params: {
           path: { mnemonic: ck.mnemonic },
           header: {
+            'content-type': 'multipart/form-data',
             'content-range': contentRange(ck),
             digest: `sha-256=${ck.hash}`,
           },
@@ -67,7 +69,7 @@ const init = (baseUrl: string) => {
         },
         bodySerializer: (body) => {
           const fd = new FormData();
-          if (body?.chunk) {
+          if (body && 'chunk' in body && body.chunk instanceof Blob) {
             fd.append('chunk', body.chunk);
           }
           return fd;
@@ -128,6 +130,12 @@ const init = (baseUrl: string) => {
         params: { path: { jobId } },
       }),
   };
+  const filedata = {
+    orphaned: () => c.GET('/filedata/orphaned'),
+    remove: (uid: string) =>
+      c.POST('/filedata/{uid}/remove', { params: { path: { uid } } }),
+    checkIntegrity: () => c.GET('/filedata/checkIntegrity'),
+  };
 
   const download = {
     decrypt: (mnemonic: string, key: string) =>
@@ -164,6 +172,7 @@ const init = (baseUrl: string) => {
     token,
     user,
     fs,
+    filedata,
     upload,
     download,
     util,

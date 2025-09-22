@@ -16,6 +16,8 @@ import { JobController } from './../src/api/job/controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FilesystemController } from './../src/api/fs/controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { FileDataController } from './../src/api/filedata/controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { DownloadController } from './../src/api/download/controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../src/api/auth/controller';
@@ -35,7 +37,7 @@ const models: TsoaRoute.Models = {
             "version": {"dataType":"string","required":true},
             "branding": {"dataType":"nestedObjectLiteral","nestedProperties":{"organization":{"dataType":"nestedObjectLiteral","nestedProperties":{"logo":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"name":{"dataType":"string","required":true}},"required":true},"department":{"dataType":"nestedObjectLiteral","nestedProperties":{"logo":{"dataType":"string","required":true},"url":{"dataType":"string","required":true},"name":{"dataType":"string","required":true}},"required":true},"contact":{"dataType":"nestedObjectLiteral","nestedProperties":{"phone":{"dataType":"string","required":true},"country":{"dataType":"string","required":true},"state":{"dataType":"string","required":true},"city":{"dataType":"string","required":true},"zip":{"dataType":"string","required":true},"street":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true}},"required":true},"admin":{"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"name":{"dataType":"string","required":true}},"required":true}},"required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PublicKey": {
@@ -51,7 +53,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserResponse": {
@@ -66,7 +68,7 @@ const models: TsoaRoute.Models = {
             "updatedAt": {"dataType":"datetime","required":true},
             "keys": {"dataType":"array","array":{"dataType":"refObject","ref":"PublicKey"},"required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "crypto.JsonWebKey": {
@@ -97,7 +99,7 @@ const models: TsoaRoute.Models = {
             "key": {"ref":"crypto.JsonWebKey","required":true},
             "isRootKey": {"dataType":"boolean"},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserSub": {
@@ -105,7 +107,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "sub": {"dataType":"string","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "KeyAddBody": {
@@ -115,7 +117,7 @@ const models: TsoaRoute.Models = {
             "data": {"ref":"crypto.JsonWebKey","required":true},
             "isRootKey": {"dataType":"boolean","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "KeyEnableBody": {
@@ -125,7 +127,7 @@ const models: TsoaRoute.Models = {
             "hash": {"dataType":"string","required":true},
             "enabled": {"dataType":"boolean","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "KeyRemoveBody": {
@@ -134,12 +136,7 @@ const models: TsoaRoute.Models = {
             "sub": {"dataType":"string","required":true},
             "hash": {"dataType":"string","required":true},
         },
-        "additionalProperties": true,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Mnemonic": {
-        "dataType": "refAlias",
-        "type": {"dataType":"string","validators":{"pattern":{"value":"^[a-z_]+$"}}},
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileData": {
@@ -156,24 +153,24 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Inode": {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"any","required":true},
-            "mnemonic": {"ref":"Mnemonic","required":true},
+            "mnemonic": {"dataType":"string","required":true},
             "type": {"dataType":"integer","required":true,"validators":{"minimum":{"value":0}}},
             "name": {"dataType":"string","required":true},
             "tag": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
-            "dataId": {"dataType":"any","required":true},
+            "dataId": {"dataType":"union","subSchemas":[{"dataType":"any"},{"dataType":"enum","enums":[null]}],"required":true},
             "data": {"dataType":"union","subSchemas":[{"ref":"FileData"},{"dataType":"enum","enums":[null]}]},
             "parentId": {"dataType":"any","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "File": {
@@ -185,12 +182,12 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "fileName": {"dataType":"string","required":true},
-            "directory": {"ref":"Mnemonic"},
+            "directory": {"dataType":"string"},
             "filePath": {"dataType":"string"},
             "size": {"dataType":"long","validators":{"minimum":{"value":0}}},
             "tag": {"dataType":"string"},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Chunk": {
@@ -206,7 +203,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ChunkData": {
@@ -230,7 +227,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TokenResponse": {
@@ -244,7 +241,7 @@ const models: TsoaRoute.Models = {
             "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "lifetime": {"dataType":"union","subSchemas":[{"dataType":"long"},{"dataType":"enum","enums":[null]}],"required":true,"validators":{"minimum":{"value":0}}},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "JobStatus": {
@@ -258,7 +255,7 @@ const models: TsoaRoute.Models = {
             "jobId": {"dataType":"string","required":true},
             "status": {"ref":"JobStatus","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Key": {
@@ -271,7 +268,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileDownload": {
@@ -294,7 +291,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeMembers": {
@@ -310,10 +307,10 @@ const models: TsoaRoute.Models = {
     "FileDecryptionKey": {
         "dataType": "refObject",
         "properties": {
-            "mnemonic": {"ref":"Mnemonic","required":true},
+            "mnemonic": {"dataType":"string","required":true},
             "key": {"ref":"AESKey","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MemberAddBody": {
@@ -322,7 +319,7 @@ const models: TsoaRoute.Models = {
             "subs": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "keys": {"dataType":"array","array":{"dataType":"refObject","ref":"FileDecryptionKey"},"required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SetAccessBody": {
@@ -331,7 +328,7 @@ const models: TsoaRoute.Models = {
             "sub": {"dataType":"string","required":true},
             "permission": {"dataType":"double","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeTree": {
@@ -342,13 +339,13 @@ const models: TsoaRoute.Models = {
     "MoveInodeBody": {
         "dataType": "refObject",
         "properties": {
-            "mnemonic": {"ref":"Mnemonic","required":true},
-            "parent": {"dataType":"union","subSchemas":[{"ref":"Mnemonic"},{"dataType":"enum","enums":[null]}]},
+            "mnemonic": {"dataType":"string","required":true},
+            "parent": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "keys": {"dataType":"array","array":{"dataType":"refObject","ref":"FileDecryptionKey"}},
             "name": {"dataType":"string"},
             "tag": {"dataType":"string"},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ListResponse": {
@@ -357,28 +354,28 @@ const models: TsoaRoute.Models = {
             "parents": {"dataType":"array","array":{"dataType":"refAlias","ref":"InodeMembers"},"required":true},
             "children": {"dataType":"array","array":{"dataType":"refAlias","ref":"InodeMembers"},"required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Directory": {
         "dataType": "refObject",
         "properties": {
-            "mnemonic": {"ref":"Mnemonic","required":true},
+            "mnemonic": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AddDirectoryBody": {
         "dataType": "refObject",
         "properties": {
             "name": {"dataType":"string","required":true},
-            "parent": {"ref":"Mnemonic"},
+            "parent": {"dataType":"string"},
             "tag": {"dataType":"string"},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeSearchBody": {
@@ -386,7 +383,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "query": {"dataType":"string","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "InodeSearchResults": {
@@ -395,7 +392,16 @@ const models: TsoaRoute.Models = {
             "isComplete": {"dataType":"boolean","required":true},
             "inodes": {"dataType":"array","array":{"dataType":"refObject","ref":"Inode"},"required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IntegrityCheckResult": {
+        "dataType": "refObject",
+        "properties": {
+            "missing": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "unknown": {"dataType":"array","array":{"dataType":"string"},"required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "User": {
@@ -405,7 +411,7 @@ const models: TsoaRoute.Models = {
             "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "isAdmin": {"dataType":"boolean","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SignInResponse": {
@@ -414,7 +420,7 @@ const models: TsoaRoute.Models = {
             "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["success"]},{"dataType":"enum","enums":["email_sent"]},{"dataType":"enum","enums":["error"]}],"required":true},
             "token": {"dataType":"string"},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ErrorResponse": {
@@ -422,11 +428,11 @@ const models: TsoaRoute.Models = {
         "properties": {
             "message": {"dataType":"string","required":true},
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
-const templateService = new KoaTemplateService(models, {"noImplicitAdditionalProperties":"ignore","bodyCoercion":true});
+const templateService = new KoaTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
@@ -783,7 +789,7 @@ export function RegisterRoutes(router: KoaRouter) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUploadController_cancel: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
         };
         router.post('/upload/:mnemonic/cancel',
             authenticateMiddleware([{"api_key":["dabih:upload"]}]),
@@ -814,7 +820,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUploadController_chunk: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
                 contentRange: {"in":"header","name":"content-range","required":true,"dataType":"string"},
                 digest: {"in":"header","name":"digest","required":true,"dataType":"string"},
@@ -849,7 +855,7 @@ export function RegisterRoutes(router: KoaRouter) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUploadController_finish: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
         };
         router.post('/upload/:mnemonic/finish',
             authenticateMiddleware([{"api_key":["dabih:upload"]}]),
@@ -1036,7 +1042,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_file: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/fs/:mnemonic/file',
@@ -1068,7 +1074,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_listFiles: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/fs/:mnemonic/file/list',
@@ -1100,7 +1106,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_listParents: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/fs/:mnemonic/parent/list',
@@ -1132,7 +1138,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_addMembers: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"MemberAddBody"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
@@ -1165,7 +1171,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_setAccess: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"SetAccessBody"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
@@ -1198,7 +1204,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_duplicate: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/:mnemonic/duplicate',
@@ -1230,7 +1236,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_remove: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/:mnemonic/remove',
@@ -1262,7 +1268,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_destroy: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/fs/:mnemonic/destroy',
@@ -1294,7 +1300,7 @@ export function RegisterRoutes(router: KoaRouter) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_tree: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/fs/:mnemonic/tree',
@@ -1453,7 +1459,7 @@ export function RegisterRoutes(router: KoaRouter) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFilesystemController_listInodes: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
         };
         router.get('/fs/:mnemonic/list',
             authenticateMiddleware([{"api_key":["dabih:api"]}]),
@@ -1611,8 +1617,102 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFileDataController_listOrphaned: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        router.get('/filedata/orphaned',
+            authenticateMiddleware([{"api_key":["dabih:admin"]}]),
+            ...(fetchMiddlewares<Middleware>(FileDataController)),
+            ...(fetchMiddlewares<Middleware>(FileDataController.prototype.listOrphaned)),
+
+            async function FileDataController_listOrphaned(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsFileDataController_listOrphaned, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new FileDataController();
+
+            return templateService.apiHandler({
+              methodName: 'listOrphaned',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFileDataController_removeFileData: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                uid: {"in":"path","name":"uid","required":true,"dataType":"string"},
+        };
+        router.post('/filedata/:uid/remove',
+            authenticateMiddleware([{"api_key":["dabih:admin"]}]),
+            ...(fetchMiddlewares<Middleware>(FileDataController)),
+            ...(fetchMiddlewares<Middleware>(FileDataController.prototype.removeFileData)),
+
+            async function FileDataController_removeFileData(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsFileDataController_removeFileData, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new FileDataController();
+
+            return templateService.apiHandler({
+              methodName: 'removeFileData',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFileDataController_checkIntegrity: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        router.get('/filedata/checkIntegrity',
+            authenticateMiddleware([{"api_key":["dabih:admin"]}]),
+            ...(fetchMiddlewares<Middleware>(FileDataController)),
+            ...(fetchMiddlewares<Middleware>(FileDataController.prototype.checkIntegrity)),
+
+            async function FileDataController_checkIntegrity(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsFileDataController_checkIntegrity, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new FileDataController();
+
+            return templateService.apiHandler({
+              methodName: 'checkIntegrity',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsDownloadController_decrypt: Record<string, TsoaRoute.ParameterSchema> = {
-                mnemonic: {"in":"path","name":"mnemonic","required":true,"ref":"Mnemonic"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"ref":"AESKey","required":true}}},
         };

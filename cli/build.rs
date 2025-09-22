@@ -17,12 +17,29 @@ fn remove_multipart_form_data(spec: &mut OpenAPI) {
     }
 }
 
+// progenitor has a problem with merged types when additionalProperties is false
+// so we set it to true for all object schemas
+fn allow_additional_properties(spec: &mut OpenAPI) {
+    if let Some(components) = &mut spec.components {
+        for (_, schema) in &mut components.schemas {
+            if let ReferenceOr::Item(item) = schema {
+                if let openapiv3::SchemaKind::Type(openapiv3::Type::Object(obj)) =
+                    &mut item.schema_kind
+                {
+                    obj.additional_properties = Some(openapiv3::AdditionalProperties::Any(true));
+                }
+            }
+        }
+    }
+}
+
 fn main() {
     let src = "../api/build/spec.json";
     println!("cargo:rerun-if-changed={}", src);
     let file = std::fs::File::open(src).unwrap();
     let mut spec = serde_json::from_reader(file).unwrap();
     remove_multipart_form_data(&mut spec);
+    allow_additional_properties(&mut spec);
 
     let mut generator = progenitor::Generator::default();
 

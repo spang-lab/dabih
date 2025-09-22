@@ -1,12 +1,4 @@
 /**
- * mnemonics are human readable unique identifiers for datasets
- * mnemonics have the form <random adjective>_<random first name>
- * @pattern ^[a-z_]+$
- * @example "happy_jane"
- */
-export type Mnemonic = string;
-
-/**
  * The Permission type is used to represent the permissions a user has on a Inode.
  * NONE: No permissions
  * READ: user may only read the file or directory

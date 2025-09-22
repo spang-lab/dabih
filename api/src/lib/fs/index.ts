@@ -9,6 +9,7 @@ export interface StorageBackend {
   head: (bucket: string, key: string) => Promise<Stats | null>;
   removeBucket: (bucket: string) => Promise<void>;
   createBucket: (bucket: string) => Promise<void>;
+  listBuckets: () => Promise<string[]>;
 }
 
 let backend: StorageBackend | null = null;
@@ -54,4 +55,11 @@ export const createBucket = (bucket: string) => {
     throw new Error('Storage backend not initialized');
   }
   return backend.createBucket(bucket);
+};
+
+export const listBuckets = () => {
+  if (!backend) {
+    throw new Error('Storage backend not initialized');
+  }
+  return backend.listBuckets();
 };

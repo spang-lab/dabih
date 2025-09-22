@@ -578,6 +578,55 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/filedata/orphaned": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Find all file data entries that are not referenced by any inode */
+        get: operations["listOrphaned"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/filedata/{uid}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["removeFileData"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/filedata/checkIntegrity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["checkIntegrity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/download/{mnemonic}/decrypt": {
         parameters: {
             query?: never;
@@ -844,12 +893,6 @@ export interface components {
             /** @description The hash of the key */
             hash: string;
         };
-        /**
-         * @description mnemonics are human readable unique identifiers for datasets
-         *     mnemonics have the form <random adjective>_<random first name>
-         * @example happy_jane
-         */
-        Mnemonic: string;
         FileData: {
             /**
              * Format: bigint
@@ -878,7 +921,7 @@ export interface components {
              * @description The database id of the inode
              */
             id: string;
-            mnemonic: components["schemas"]["Mnemonic"];
+            mnemonic: string;
             /**
              * Format: int32
              * @description The type of the inode
@@ -905,7 +948,7 @@ export interface components {
             /** @description The name of the file to upload */
             fileName: string;
             /** @description The mnemonic of the directory to upload the file to */
-            directory?: components["schemas"]["Mnemonic"];
+            directory?: string;
             /** @description The original path of the file */
             filePath?: string;
             /**
@@ -1050,7 +1093,7 @@ export interface components {
          *     base64url encoded */
         AESKey: string;
         FileDecryptionKey: {
-            mnemonic: components["schemas"]["Mnemonic"];
+            mnemonic: string;
             key: components["schemas"]["AESKey"];
         };
         MemberAddBody: {
@@ -1074,9 +1117,9 @@ export interface components {
         };
         MoveInodeBody: {
             /** @description The mnemonic of the inode to move */
-            mnemonic: components["schemas"]["Mnemonic"];
+            mnemonic: string;
             /** @description Optional: The mnemonic of the new parent directory */
-            parent?: components["schemas"]["Mnemonic"] | null;
+            parent?: string | null;
             /** @description The list of AES-256 keys required to decrypt all child datasets */
             keys?: components["schemas"]["FileDecryptionKey"][];
             /** @description Optional: The new name of the inode */
@@ -1091,7 +1134,7 @@ export interface components {
             children: components["schemas"]["InodeMembers"][];
         };
         Directory: {
-            mnemonic: components["schemas"]["Mnemonic"];
+            mnemonic: string;
             name: string;
             /** Format: date-time */
             createdAt: Date;
@@ -1102,7 +1145,7 @@ export interface components {
             /** @description The name of the directory */
             name: string;
             /** @description The mnemonic of the parent directory */
-            parent?: components["schemas"]["Mnemonic"];
+            parent?: string;
             /** @description A custom searchable tag for the directory */
             tag?: string;
         };
@@ -1113,6 +1156,14 @@ export interface components {
             isComplete: boolean;
             /** @description The list of inodes that match the search query */
             inodes: components["schemas"]["Inode"][];
+        };
+        IntegrityCheckResult: {
+            /** @description list of file data uids that are not referenced by a corresponding bucket
+             *     THIS LIST SHOULD BE EMPTY if not it indicates a serious issue */
+            missing: string[];
+            /** @description list of buckets that do not have corresponding filedata in the database
+             *     this list should be empty, if not these files are orphaned and can be removed */
+            unknown: string[];
         };
         /** @description User is the type that represents a user in the system. */
         User: {
@@ -1399,7 +1450,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1419,7 +1470,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1549,7 +1600,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1571,7 +1622,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1593,7 +1644,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1615,7 +1666,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1639,7 +1690,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1663,7 +1714,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1685,7 +1736,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1705,7 +1756,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1725,7 +1776,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1831,7 +1882,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -1940,12 +1991,72 @@ export interface operations {
             };
         };
     };
+    listOrphaned: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileData"][];
+                };
+            };
+        };
+    };
+    removeFileData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    checkIntegrity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntegrityCheckResult"];
+                };
+            };
+        };
+    };
     decryptDataset: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };
@@ -2124,7 +2235,7 @@ export interface operations {
                 digest: string;
             };
             path: {
-                mnemonic: components["schemas"]["Mnemonic"];
+                mnemonic: string;
             };
             cookie?: never;
         };

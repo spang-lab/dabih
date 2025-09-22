@@ -3,9 +3,10 @@ import User from './User';
 import PublicKeys from './PublicKeys';
 import useSession from '@/Session';
 import { Navigate } from 'react-router';
+import FileData from './FileData';
 
 export default function Profile() {
-  const { user } = useSession();
+  const { user, isAdmin } = useSession();
 
   if (!user) {
     return (
@@ -54,6 +55,18 @@ export default function Profile() {
         The owners root keys are able to recover data.
       </p>
       <PublicKeys />
+      <div hidden={!isAdmin}>
+        <h2 className="text-xl pt-5 font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+          <span className="text-blue">File </span>
+          Data
+        </h2>
+        <p className="text-gray-500">
+          This is the data stored in
+          {' '}
+          <span className="text-blue font-bold">dabih</span>
+        </p>
+        <FileData />
+      </div>
     </div>
   );
 }

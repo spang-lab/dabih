@@ -9,6 +9,8 @@ import {
   Security,
   OperationId,
   Path,
+  SuccessResponse,
+  Response,
 } from '@tsoa/runtime';
 
 import file from './file';
@@ -31,7 +33,6 @@ import type {
   FileDownload,
   FileKeys,
   MemberAddBody,
-  Mnemonic,
   MoveInodeBody,
   RequestWithUser,
   Inode,
@@ -56,7 +57,7 @@ export class FilesystemController extends Controller {
   @Get('{mnemonic}/file')
   @OperationId('fileInfo')
   public file(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Request() request: RequestWithUser,
   ): Promise<FileDownload> {
     const { user } = request;
@@ -68,7 +69,7 @@ export class FilesystemController extends Controller {
   @Get('{mnemonic}/file/list')
   @OperationId('listFiles')
   public async listFiles(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Request() request: RequestWithUser,
   ): Promise<FileKeys[]> {
     const { user } = request;
@@ -78,7 +79,7 @@ export class FilesystemController extends Controller {
   @Get('{mnemonic}/parent/list')
   @OperationId('listParents')
   public async listParents(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Request() request: RequestWithUser,
   ): Promise<InodeMembers[]> {
     const { user } = request;
@@ -87,7 +88,7 @@ export class FilesystemController extends Controller {
   @Post('{mnemonic}/member/add')
   @OperationId('addMembers')
   public async addMembers(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Body() body: MemberAddBody,
     @Request() request: RequestWithUser,
   ): Promise<void> {
@@ -97,7 +98,7 @@ export class FilesystemController extends Controller {
   @Post('{mnemonic}/member/set')
   @OperationId('setAccess')
   public async setAccess(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Body() body: SetAccessBody,
     @Request() request: RequestWithUser,
   ): Promise<void> {
@@ -108,7 +109,7 @@ export class FilesystemController extends Controller {
   @Post('{mnemonic}/duplicate')
   @OperationId('duplicateInode')
   public async duplicate(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Request() request: RequestWithUser,
   ): Promise<Inode> {
     const { user } = request;
@@ -117,7 +118,7 @@ export class FilesystemController extends Controller {
   @Post('{mnemonic}/remove')
   @OperationId('removeInode')
   public async remove(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Request() request: RequestWithUser,
   ): Promise<void> {
     const { user } = request;
@@ -126,7 +127,7 @@ export class FilesystemController extends Controller {
   @Post('{mnemonic}/destroy')
   @OperationId('destroyInode')
   public async destroy(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Request() request: RequestWithUser,
   ): Promise<void> {
     const { user } = request;
@@ -136,7 +137,7 @@ export class FilesystemController extends Controller {
   @Get('{mnemonic}/tree')
   @OperationId('inodeTree')
   public async tree(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Request() request: RequestWithUser,
   ): Promise<InodeTree> {
     const { user } = request;
@@ -183,7 +184,7 @@ export class FilesystemController extends Controller {
   @OperationId('listInodes')
   public async listInodes(
     @Request() request: RequestWithUser,
-    @Path() mnemonic?: Mnemonic,
+    @Path() mnemonic?: string,
   ): Promise<ListResponse> {
     const { user } = request;
     return list(user, mnemonic);

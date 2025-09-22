@@ -1,10 +1,4 @@
-use std::{
-    env::{self, args},
-    path::PathBuf,
-};
-mod codegen {
-    include!(concat!(env!("OUT_DIR"), "/codegen.rs"));
-}
+use std::{env, path::PathBuf};
 
 mod api;
 mod chunked_reader;

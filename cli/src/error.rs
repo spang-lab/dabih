@@ -1,7 +1,7 @@
 use reqwest::StatusCode;
 use thiserror::Error;
 
-use crate::codegen::types::error::ConversionError;
+use crate::api::types::error::ConversionError;
 
 #[derive(Error, Debug)]
 pub enum CliError {

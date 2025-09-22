@@ -1,8 +1,8 @@
-use crate::api::InodeType;
+use crate::api::types::InodeMembers;
+use crate::api::{ApiHelpers, InodeType};
 use crate::config::Context;
 use crate::error::Result;
 use clap::Args;
-use openapi::models::InodeMembers;
 use tracing::warn;
 
 #[derive(Args, Debug)]
@@ -16,8 +16,8 @@ pub struct List {
     json: bool,
 }
 
-fn is_listable(inode_type: u32) -> bool {
-    let t = InodeType::from_u32(inode_type).unwrap();
+fn is_listable(inode_type: i32) -> bool {
+    let t = InodeType::from_i32(inode_type).unwrap();
     if t == InodeType::File {
         return false;
     }
@@ -28,11 +28,9 @@ fn is_listable(inode_type: u32) -> bool {
 }
 fn get_size(inode: &InodeMembers) -> Option<u64> {
     if let Some(data) = &inode.data {
-        if let Some(file_data) = data {
-            match file_data.size.parse::<u64>() {
-                Ok(size) => return Some(size),
-                Err(_) => return None,
-            }
+        match data.size.parse::<u64>() {
+            Ok(size) => return Some(size),
+            Err(_) => return None,
         }
     }
     None
@@ -53,7 +51,7 @@ fn size_to_human_readable(size: Option<u64>) -> String {
 }
 
 pub async fn run(ctx: Context, args: List) -> Result<()> {
-    let inode = match ctx.api_().fs().resolve_path(&args.path).await? {
+    let inode = match ctx.api().resolve_path_h(&args.path).await? {
         Some(inode) => inode,
         None => {
             warn!("Path not found: {}", args.path);
@@ -61,16 +59,16 @@ pub async fn run(ctx: Context, args: List) -> Result<()> {
         }
     };
 
-    if !is_listable(inode.r#type) {
+    if !is_listable(inode.type_) {
         warn!("Path is not a directory: {}", args.path);
         return Ok(());
     }
-    let resp = ctx.api_().fs().list(&inode.mnemonic).await?;
+    let resp = ctx.api().list_inodes(&inode.mnemonic).await?.into_inner();
     if args.json {
         println!("{}", serde_json::to_string_pretty(&resp)?);
     } else {
         for entry in resp.children.iter() {
-            let t = InodeType::from_u32(entry.r#type)?;
+            let t = InodeType::from_i32(entry.type_)?;
             let s = get_size(&entry);
             println!(
                 "{} {}\t{:20}\t{}",

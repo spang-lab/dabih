@@ -1,4 +1,4 @@
-import { Mnemonic } from './base';
+import { join } from 'path';
 
 /**
  * The AES-256 encryption key used to encrypt and decrypt datasets.
@@ -7,7 +7,7 @@ import { Mnemonic } from './base';
 export type AESKey = string;
 
 export interface FileDecryptionKey {
-  mnemonic: Mnemonic;
+  mnemonic: string;
   key: AESKey;
 }
 
@@ -85,7 +85,7 @@ export interface Inode {
    * @format bigint
    */
   id: unknown;
-  mnemonic: Mnemonic;
+  mnemonic: string;
   /**
    * The type of the inode
    * @isInt
@@ -98,7 +98,8 @@ export interface Inode {
    * The database id file data if the inode is a file
    * @format bigint
    */
-  dataId: unknown;
+  /* eslint @typescript-eslint/no-redundant-type-constituents: off */
+  dataId: unknown | null;
   data?: FileData | null;
   parentId: unknown;
   createdAt: Date;
@@ -135,7 +136,7 @@ export type FileDownload = File & {
 };
 
 export interface Directory {
-  mnemonic: Mnemonic;
+  mnemonic: string;
   name: string;
   createdAt: Date;
   updatedAt: Date;
@@ -183,7 +184,7 @@ export interface AddDirectoryBody {
   /**
    * The mnemonic of the parent directory
    */
-  parent?: Mnemonic;
+  parent?: string;
   /**
    * A custom searchable tag for the directory
    */
@@ -194,11 +195,11 @@ export interface MoveInodeBody {
   /**
    * The mnemonic of the inode to move
    */
-  mnemonic: Mnemonic;
+  mnemonic: string;
   /**
    * Optional: The mnemonic of the new parent directory
    */
-  parent?: Mnemonic | null;
+  parent?: string | null;
   /**
    * The list of AES-256 keys required to decrypt all child datasets
    */
@@ -255,4 +256,17 @@ export interface InodeSearchResults {
    * The list of inodes that match the search query
    */
   inodes: Inode[];
+}
+
+export interface IntegrityCheckResult {
+  /**
+   * list of file data uids that are not referenced by a corresponding bucket
+   * THIS LIST SHOULD BE EMPTY if not it indicates a serious issue
+   */
+  missing: string[];
+  /**
+   * list of buckets that do not have corresponding filedata in the database
+   * this list should be empty, if not these files are orphaned and can be removed
+   */
+  unknown: string[];
 }

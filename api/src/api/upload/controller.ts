@@ -23,7 +23,6 @@ import finish from './finish';
 import unfinished from './unfinished';
 
 import type {
-  Mnemonic,
   UploadStartBody,
   File,
   RequestWithUser,
@@ -53,7 +52,7 @@ export class UploadController extends Controller {
   @OperationId('cancelUpload')
   public async cancel(
     @Request() request: RequestWithUser,
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
   ) {
     const { user } = request;
     await cancel(user, mnemonic);
@@ -63,7 +62,7 @@ export class UploadController extends Controller {
   @OperationId('chunkUpload')
   @SuccessResponse('201', 'Created')
   public async chunk(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Request() request: RequestWithHeaders,
     /**
      * The range of bytes in the chunk
@@ -92,7 +91,7 @@ export class UploadController extends Controller {
   @OperationId('finishUpload')
   public async finish(
     @Request() request: RequestWithUser,
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
   ): Promise<File> {
     const { user } = request;
     return finish(user, mnemonic);

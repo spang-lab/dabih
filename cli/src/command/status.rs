@@ -1,6 +1,7 @@
 use crate::config::Context;
 use crate::error::Result;
 use clap::Args;
+use progenitor_client::ClientInfo;
 
 #[derive(Args, Debug)]
 pub struct Status {}
@@ -13,12 +14,12 @@ pub async fn run(ctx: Context) -> Result<()> {
             return Ok(());
         }
     };
-    let openapi = ctx.openapi();
+    let base_url = ctx.api().baseurl();
     let key = ctx.private_key();
 
     // print green connected message
     println!("\x1b[32mConnected\x1b[0m");
-    println!("  Server URL: {}", openapi.base_path);
+    println!("  Server URL: {}", base_url);
 
     println!("\x1b[32mUser:\x1b[0m");
     println!("  ID: {}", user.sub);

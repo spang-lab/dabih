@@ -12,12 +12,7 @@ import {
   Produces,
 } from '@tsoa/runtime';
 
-import type {
-  Mnemonic,
-  AESKey,
-  RequestWithUser,
-  TokenResponse,
-} from '../types';
+import type { AESKey, RequestWithUser, TokenResponse } from '../types';
 
 import chunk from './chunk';
 import decrypt from './decrypt';
@@ -31,7 +26,7 @@ export class DownloadController extends Controller {
   @Security('api_key', ['dabih:api'])
   @OperationId('decryptDataset')
   public decrypt(
-    @Path() mnemonic: Mnemonic,
+    @Path() mnemonic: string,
     @Request() request: RequestWithUser,
     @Body() body: { key: AESKey },
   ): Promise<TokenResponse> {

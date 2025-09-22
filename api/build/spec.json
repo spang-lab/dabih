@@ -121,7 +121,7 @@
           "branding"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "PublicKey": {
         "properties": {
@@ -174,7 +174,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "UserResponse": {
         "properties": {
@@ -229,7 +229,7 @@
           "keys"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "crypto.JsonWebKey": {
         "properties": {
@@ -300,7 +300,7 @@
           "key"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "UserSub": {
         "properties": {
@@ -312,7 +312,7 @@
           "sub"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "KeyAddBody": {
         "properties": {
@@ -335,7 +335,7 @@
           "isRootKey"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "KeyEnableBody": {
         "properties": {
@@ -358,7 +358,7 @@
           "enabled"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "KeyRemoveBody": {
         "properties": {
@@ -376,13 +376,7 @@
           "hash"
         ],
         "type": "object",
-        "additionalProperties": true
-      },
-      "Mnemonic": {
-        "type": "string",
-        "example": "happy_jane",
-        "description": "mnemonics are human readable unique identifiers for datasets\nmnemonics have the form <random adjective>_<random first name>",
-        "pattern": "^[a-z_]+$"
+        "additionalProperties": false
       },
       "FileData": {
         "properties": {
@@ -438,7 +432,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "Inode": {
         "properties": {
@@ -448,7 +442,7 @@
             "type": "string"
           },
           "mnemonic": {
-            "$ref": "#/components/schemas/Mnemonic"
+            "type": "string"
           },
           "type": {
             "type": "integer",
@@ -464,6 +458,7 @@
             "nullable": true
           },
           "dataId": {
+            "nullable": true,
             "description": "The database id file data if the inode is a file",
             "format": "bigint",
             "type": "string"
@@ -498,7 +493,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "File": {
         "allOf": [
@@ -525,7 +520,7 @@
             "description": "The name of the file to upload"
           },
           "directory": {
-            "$ref": "#/components/schemas/Mnemonic",
+            "type": "string",
             "description": "The mnemonic of the directory to upload the file to"
           },
           "filePath": {
@@ -547,7 +542,7 @@
           "fileName"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "Chunk": {
         "properties": {
@@ -607,7 +602,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "ChunkData": {
         "allOf": [
@@ -688,7 +683,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "TokenResponse": {
         "allOf": [
@@ -749,7 +744,7 @@
           "lifetime"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "JobStatus": {
         "type": "string",
@@ -773,7 +768,7 @@
           "status"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "Key": {
         "properties": {
@@ -811,7 +806,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "FileDownload": {
         "allOf": [
@@ -896,7 +891,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "InodeMembers": {
         "allOf": [
@@ -926,7 +921,7 @@
       "FileDecryptionKey": {
         "properties": {
           "mnemonic": {
-            "$ref": "#/components/schemas/Mnemonic"
+            "type": "string"
           },
           "key": {
             "$ref": "#/components/schemas/AESKey"
@@ -937,7 +932,7 @@
           "key"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "MemberAddBody": {
         "properties": {
@@ -961,7 +956,7 @@
           "keys"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "SetAccessBody": {
         "properties": {
@@ -980,7 +975,7 @@
           "permission"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "InodeTree": {
         "allOf": [
@@ -1012,15 +1007,11 @@
       "MoveInodeBody": {
         "properties": {
           "mnemonic": {
-            "$ref": "#/components/schemas/Mnemonic",
+            "type": "string",
             "description": "The mnemonic of the inode to move"
           },
           "parent": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Mnemonic"
-              }
-            ],
+            "type": "string",
             "nullable": true,
             "description": "Optional: The mnemonic of the new parent directory"
           },
@@ -1044,7 +1035,7 @@
           "mnemonic"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "ListResponse": {
         "properties": {
@@ -1068,12 +1059,12 @@
           "children"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "Directory": {
         "properties": {
           "mnemonic": {
-            "$ref": "#/components/schemas/Mnemonic"
+            "type": "string"
           },
           "name": {
             "type": "string"
@@ -1094,7 +1085,7 @@
           "updatedAt"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "AddDirectoryBody": {
         "properties": {
@@ -1103,7 +1094,7 @@
             "description": "The name of the directory"
           },
           "parent": {
-            "$ref": "#/components/schemas/Mnemonic",
+            "type": "string",
             "description": "The mnemonic of the parent directory"
           },
           "tag": {
@@ -1115,7 +1106,7 @@
           "name"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "InodeSearchBody": {
         "properties": {
@@ -1127,7 +1118,7 @@
           "query"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "InodeSearchResults": {
         "properties": {
@@ -1147,7 +1138,31 @@
           "inodes"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
+      },
+      "IntegrityCheckResult": {
+        "properties": {
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "list of file data uids that are not referenced by a corresponding bucket\nTHIS LIST SHOULD BE EMPTY if not it indicates a serious issue"
+          },
+          "unknown": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "list of buckets that do not have corresponding filedata in the database\nthis list should be empty, if not these files are orphaned and can be removed"
+          }
+        },
+        "required": [
+          "missing",
+          "unknown"
+        ],
+        "type": "object",
+        "additionalProperties": false
       },
       "User": {
         "description": "User is the type that represents a user in the system.",
@@ -1178,7 +1193,7 @@
           "isAdmin"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "SignInResponse": {
         "properties": {
@@ -1198,7 +1213,7 @@
           "status"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       },
       "ErrorResponse": {
         "properties": {
@@ -1210,7 +1225,7 @@
           "message"
         ],
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
@@ -1635,7 +1650,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -1672,7 +1687,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -1881,7 +1896,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -1922,7 +1937,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -1962,7 +1977,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -1992,7 +2007,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ],
@@ -2032,7 +2047,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ],
@@ -2079,7 +2094,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -2109,7 +2124,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -2139,7 +2154,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -2176,7 +2191,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -2347,7 +2362,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ]
@@ -2504,6 +2519,96 @@
         ]
       }
     },
+    "/filedata/orphaned": {
+      "get": {
+        "operationId": "listOrphaned",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FileData"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "description": "Find all file data entries that are not referenced by any inode",
+        "tags": [
+          "File Data"
+        ],
+        "security": [
+          {
+            "api_key": [
+              "dabih:admin"
+            ]
+          }
+        ],
+        "parameters": []
+      }
+    },
+    "/filedata/{uid}/remove": {
+      "post": {
+        "operationId": "removeFileData",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "tags": [
+          "File Data"
+        ],
+        "security": [
+          {
+            "api_key": [
+              "dabih:admin"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/filedata/checkIntegrity": {
+      "get": {
+        "operationId": "checkIntegrity",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrityCheckResult"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "File Data"
+        ],
+        "security": [
+          {
+            "api_key": [
+              "dabih:admin"
+            ]
+          }
+        ],
+        "parameters": []
+      }
+    },
     "/download/{mnemonic}/decrypt": {
       "post": {
         "operationId": "decryptDataset",
@@ -2535,7 +2640,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           }
         ],
@@ -2801,7 +2906,7 @@
             "name": "mnemonic",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Mnemonic"
+              "type": "string"
             }
           },
           {
