@@ -194,6 +194,13 @@ export function SessionWrapper({ children }: {
   }, [token, refreshToken]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      void refreshToken();
+    }, 15 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [refreshToken]);
+
+  useEffect(() => {
     update().catch(console.error);
   }, [update]);
 

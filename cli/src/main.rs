@@ -1,20 +1,20 @@
 use std::{env, path::PathBuf};
 
 mod api;
-mod chunked_reader;
 mod command;
 mod config;
+mod crypto;
 mod downloader;
 mod error;
+mod fs;
 mod log;
-mod private_key;
 mod uploader;
 
 use clap::Parser;
 use config::Context;
 use error::Result;
 
-use command::{Commands, status};
+use command::Commands;
 
 use tracing::{debug, trace};
 
@@ -32,10 +32,14 @@ struct Cli {
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
-
     log::init(cli.verbose, cli.quiet);
     debug!("Verbose logging enabled");
     trace!("Debug trace enabled");
+
+    if let Commands::Hash(args) = cli.command {
+        command::hash::run(args).await?;
+        return Ok(());
+    }
 
     let ctx_path = match env::var("XDG_CONFIG_HOME") {
         Ok(v) => PathBuf::from(v).join("dabih"),
@@ -48,10 +52,11 @@ async fn main() -> Result<()> {
     ctx.init().await?;
 
     match cli.command {
-        Commands::Status(_) => status::run(ctx).await?,
+        Commands::Status(_) => command::status::run(ctx).await?,
         Commands::Upload(args) => command::upload::run(ctx, args).await?,
         Commands::List(args) => command::list::run(ctx, args).await?,
         Commands::Download(args) => command::download::run(ctx, args).await?,
+        _ => { /* already handled above */ }
     }
     Ok(())
 }

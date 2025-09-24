@@ -1886,6 +1886,51 @@ base64url encoded*/
             value.clone()
         }
     }
+    ///`IntegrityCheckResult`
+    ///
+    /// <details><summary>JSON schema</summary>
+    ///
+    /// ```json
+    ///{
+    ///  "type": "object",
+    ///  "required": [
+    ///    "missing",
+    ///    "unknown"
+    ///  ],
+    ///  "properties": {
+    ///    "missing": {
+    ///      "description": "list of file data uids that are not referenced by a corresponding bucket\nTHIS LIST SHOULD BE EMPTY if not it indicates a serious issue",
+    ///      "type": "array",
+    ///      "items": {
+    ///        "type": "string"
+    ///      }
+    ///    },
+    ///    "unknown": {
+    ///      "description": "list of buckets that do not have corresponding filedata in the database\nthis list should be empty, if not these files are orphaned and can be removed",
+    ///      "type": "array",
+    ///      "items": {
+    ///        "type": "string"
+    ///      }
+    ///    }
+    ///  },
+    ///  "additionalProperties": true
+    ///}
+    /// ```
+    /// </details>
+    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+    pub struct IntegrityCheckResult {
+        /**list of file data uids that are not referenced by a corresponding bucket
+THIS LIST SHOULD BE EMPTY if not it indicates a serious issue*/
+        pub missing: ::std::vec::Vec<::std::string::String>,
+        /**list of buckets that do not have corresponding filedata in the database
+this list should be empty, if not these files are orphaned and can be removed*/
+        pub unknown: ::std::vec::Vec<::std::string::String>,
+    }
+    impl ::std::convert::From<&IntegrityCheckResult> for IntegrityCheckResult {
+        fn from(value: &IntegrityCheckResult) -> Self {
+            value.clone()
+        }
+    }
     ///`Job`
     ///
     /// <details><summary>JSON schema</summary>
@@ -3830,6 +3875,31 @@ impl Client {
             _ => Err(Error::UnexpectedResponse(response)),
         }
     }
+    /**Sends a `POST` request to `/upload/cleanup`
+
+*/
+    pub async fn cleanup_uploads<'a>(&'a self) -> Result<ResponseValue<()>, Error<()>> {
+        let url = format!("{}/upload/cleanup", self.baseurl,);
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
+        header_map
+            .append(
+                ::reqwest::header::HeaderName::from_static("api-version"),
+                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+            );
+        #[allow(unused_mut)]
+        let mut request = self.client.post(url).headers(header_map).build()?;
+        let info = OperationInfo {
+            operation_id: "cleanup_uploads",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            204u16 => Ok(ResponseValue::empty(response)),
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
     /**Sends a `POST` request to `/token/add`
 
 */
@@ -4663,6 +4733,41 @@ Sends a `GET` request to `/filedata/orphaned`
         let response = result?;
         match response.status().as_u16() {
             204u16 => Ok(ResponseValue::empty(response)),
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
+    /**Sends a `GET` request to `/filedata/checkIntegrity`
+
+*/
+    pub async fn check_integrity<'a>(
+        &'a self,
+    ) -> Result<ResponseValue<types::IntegrityCheckResult>, Error<()>> {
+        let url = format!("{}/filedata/checkIntegrity", self.baseurl,);
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
+        header_map
+            .append(
+                ::reqwest::header::HeaderName::from_static("api-version"),
+                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+            );
+        #[allow(unused_mut)]
+        let mut request = self
+            .client
+            .get(url)
+            .header(
+                ::reqwest::header::ACCEPT,
+                ::reqwest::header::HeaderValue::from_static("application/json"),
+            )
+            .headers(header_map)
+            .build()?;
+        let info = OperationInfo {
+            operation_id: "check_integrity",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            200u16 => ResponseValue::from_response(response).await,
             _ => Err(Error::UnexpectedResponse(response)),
         }
     }

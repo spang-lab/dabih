@@ -6,6 +6,7 @@ use clap::Args;
 use tracing::warn;
 
 #[derive(Args, Debug)]
+#[clap(alias("ls"))]
 pub struct List {
     /// List files in the given path
     #[clap(default_value = ".")]

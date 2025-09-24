@@ -30,6 +30,7 @@ import type {
   FileUpload,
 } from '../types';
 import { parseDigest, parseContentRange } from './util';
+import cleanup from './cleanup';
 
 @Route('upload')
 @Tags('Upload')
@@ -104,5 +105,11 @@ export class UploadController extends Controller {
   ): Promise<FileUpload[]> {
     const { user } = request;
     return unfinished(user);
+  }
+  @Post('cleanup')
+  @OperationId('cleanupUploads')
+  public async cleanup(@Request() request: RequestWithUser): Promise<void> {
+    const { user } = request;
+    await cleanup(user);
   }
 }

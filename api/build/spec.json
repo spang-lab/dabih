@@ -1724,6 +1724,27 @@
         "parameters": []
       }
     },
+    "/upload/cleanup": {
+      "post": {
+        "operationId": "cleanupUploads",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "tags": [
+          "Upload"
+        ],
+        "security": [
+          {
+            "api_key": [
+              "dabih:upload"
+            ]
+          }
+        ],
+        "parameters": []
+      }
+    },
     "/token/add": {
       "post": {
         "operationId": "addToken",

@@ -65,6 +65,7 @@ export default function Transfers() {
         return;
       }
 
+      await api.upload.cleanup();
       const { data: incomplete } = await api.upload.unfinished();
       if (!incomplete || incomplete.length === 0) {
         return;

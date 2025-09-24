@@ -5,10 +5,10 @@ use tracing::{debug, info, warn};
 
 use crate::api::ApiHelpers;
 use crate::api::types::{AddDirectoryBody, UploadStartBody};
-use crate::chunked_reader::ChunkedReader;
 use crate::command::upload::Upload;
 use crate::config::Context;
 use crate::error::{CliError, Result};
+use crate::fs::ChunkedReader;
 
 #[derive(Debug, Clone)]
 pub enum UploadState {

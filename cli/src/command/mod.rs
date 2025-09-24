@@ -1,4 +1,5 @@
 pub mod download;
+pub mod hash;
 pub mod list;
 pub mod status;
 pub mod upload;
@@ -11,4 +12,5 @@ pub enum Commands {
     Upload(upload::Upload),
     List(list::List),
     Download(download::Download),
+    Hash(hash::Hash),
 }

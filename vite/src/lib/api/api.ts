@@ -59,7 +59,6 @@ const init = (baseUrl: string) => {
         params: {
           path: { mnemonic: ck.mnemonic },
           header: {
-            'content-type': 'multipart/form-data',
             'content-range': contentRange(ck),
             digest: `sha-256=${ck.hash}`,
           },
@@ -81,6 +80,7 @@ const init = (baseUrl: string) => {
     finish: (mnemonic: string) =>
       c.POST('/upload/{mnemonic}/finish', { params: { path: { mnemonic } } }),
     unfinished: () => c.GET('/upload/unfinished'),
+    cleanup: () => c.POST('/upload/cleanup'),
   };
 
   const fs = {

@@ -1,4 +1,5 @@
 use crate::error::Result;
+use crate::fs::Chunk;
 use base64ct::{Base64UrlUnpadded, Encoding};
 use sha2::Digest;
 
@@ -7,39 +8,6 @@ use std::{
     io::{BufReader, Read},
     path::PathBuf,
 };
-
-#[derive(Debug)]
-pub struct Chunk {
-    // byte offset, 0 based, inclusive
-    start: u64,
-    // byte offset, 0 based, inclusive
-    end: u64,
-    // total size of the file in bytes
-    file_size: u64,
-    data: Vec<u8>,
-    digest: String,
-}
-
-impl Chunk {
-    pub fn content_range(&self) -> String {
-        format!("bytes {}-{}/{}", self.start, self.end, self.file_size)
-    }
-    pub fn digest(&self) -> &str {
-        &self.digest
-    }
-    pub fn data(&self) -> &[u8] {
-        &self.data
-    }
-    pub fn start(&self) -> u64 {
-        self.start
-    }
-    pub fn end(&self) -> u64 {
-        self.end
-    }
-    pub fn file_size(&self) -> u64 {
-        self.file_size
-    }
-}
 
 pub struct ChunkedReader {
     inner: BufReader<File>,
@@ -78,13 +46,14 @@ impl ChunkedReader {
         self.hashes.extend_from_slice(&digest);
         let base64 = Base64UrlUnpadded::encode_string(&digest);
 
-        let chunk = Chunk {
-            start: self.pos as u64,
-            end: (self.pos + bytes_read - 1) as u64,
-            file_size: self.size as u64,
-            digest: base64,
+        let chunk = Chunk::new(
+            self.pos as u64,
+            (self.pos + bytes_read - 1) as u64,
+            self.size as u64,
+            base64,
             data,
-        };
+        );
+
         self.pos += bytes_read;
         Ok(Some(chunk))
     }

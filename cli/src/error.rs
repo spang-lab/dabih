@@ -8,11 +8,14 @@ pub enum CliError {
     #[error("Failed to parse the configuration file")]
     ConfigParseError(#[from] serde_yaml::Error),
 
-    #[error("Failed to read the private key")]
-    PrivateKeyReadError(#[from] std::io::Error),
+    #[error("IO error: {0}")]
+    IoError(#[from] std::io::Error),
 
     #[error("Failed to parse the private key")]
     PrivateKeyParseError(#[from] rsa::errors::Error),
+
+    #[error("No private key set in the current context")]
+    NoPrivateKey,
 
     #[error("Failed to parse pkcs8 private key")]
     PrivateKeyPkcs8ParseError(#[from] rsa::pkcs8::Error),
@@ -37,6 +40,9 @@ pub enum CliError {
 
     #[error("API Error: {0}")]
     ApiError(String),
+
+    #[error("Path not found: {0}")]
+    PathNotFound(std::path::PathBuf),
 
     #[error("Failed to convert key to spki")]
     KeyToPkcs1Error(#[from] rsa::pkcs8::spki::Error),
@@ -70,6 +76,12 @@ pub enum CliError {
 
     #[error("Invalid request: {0}")]
     InvalidRequest(String),
+
+    #[error("No encrypted AES key found for file {0}")]
+    NoDecryptionKey(String),
+
+    #[error("Base64 decoding error: {0}")]
+    Base64DecodingError(#[from] base64ct::Error),
 
     #[error("Invalid upgrade: {0}")]
     InvalidUpgrade(reqwest::Error),

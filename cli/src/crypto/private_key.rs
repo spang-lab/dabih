@@ -1,7 +1,10 @@
 use std::{fs::File, io::Read, path::PathBuf};
 
 use base64ct::{Base64UrlUnpadded, Encoding};
-use rsa::{RsaPrivateKey, pkcs8::DecodePrivateKey, pkcs8::EncodePublicKey};
+use rsa::{
+    Oaep, RsaPrivateKey,
+    pkcs8::{DecodePrivateKey, EncodePublicKey},
+};
 use sha2::Digest;
 
 use crate::error::Result;
@@ -26,5 +29,11 @@ impl PrivateKey {
         let digest = sha2::Sha256::digest(&bytes);
         let base64 = Base64UrlUnpadded::encode_string(&digest);
         return Ok(base64);
+    }
+    pub fn decrypt(&self, encrypted: &str) -> Result<Vec<u8>> {
+        let encrypted_bytes = Base64UrlUnpadded::decode_vec(encrypted)?;
+        let padding = Oaep::new::<sha2::Sha256>();
+        let decrypted_data = self.key.decrypt(padding, &encrypted_bytes)?;
+        Ok(decrypted_data)
     }
 }

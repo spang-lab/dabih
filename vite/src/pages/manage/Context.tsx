@@ -291,6 +291,19 @@ export function FinderWrapper({ children }: {
     list(null).catch(console.error);
   }, [list]);
 
+  // list cwd every 10s
+  useEffect(() => {
+    if (!cwd) {
+      return;
+    }
+    const interval = setInterval(() => {
+      list(cwd).catch(console.error);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [list, cwd]);
+
+
+
   useEffect(() => {
     fetchUsers().catch(console.error);
   }, [fetchUsers]);

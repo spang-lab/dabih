@@ -3,6 +3,7 @@ mod codegen {
 }
 pub use codegen::Client;
 pub use codegen::types;
+use futures::StreamExt;
 use reqwest::StatusCode;
 
 use crate::api::types::Inode;
@@ -53,6 +54,13 @@ impl InodeType {
             InodeType::Home => "Home",
         }
     }
+    pub fn is_dir(&self) -> bool {
+        match self {
+            InodeType::File => false,
+            InodeType::Upload => false,
+            _ => true,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -64,6 +72,7 @@ pub enum Permission {
 
 pub trait ApiHelpers {
     async fn resolve_path_h(&self, path: &str) -> Result<Option<Inode>>;
+    async fn download_chunk_h(&self, uid: &str, hash: &str) -> Result<Vec<u8>>;
 }
 
 impl ApiHelpers for Client {
@@ -81,5 +90,14 @@ impl ApiHelpers for Client {
                 _ => Err(e.into()),
             },
         }
+    }
+    async fn download_chunk_h(&self, uid: &str, hash: &str) -> Result<Vec<u8>> {
+        let mut resp = self.download_chunk(uid, hash).await?.into_inner();
+        let mut buf: Vec<u8> = Vec::new();
+        while let Some(res) = resp.next().await {
+            let part = res?;
+            buf.extend_from_slice(&part);
+        }
+        Ok(buf)
     }
 }

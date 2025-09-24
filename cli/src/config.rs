@@ -5,8 +5,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::api::types::UserResponse;
 use crate::api::{self, Client};
+use crate::crypto::PrivateKey;
 use crate::error::{CliError, Result};
-use crate::private_key::PrivateKey;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
