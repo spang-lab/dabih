@@ -28,7 +28,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: `${process.env.TAG}`,
-              name: `Dabih ${GITHUB_REF_NAME}`,
+              name: `Dabih ${process.env.TAG}`,
               body: 'Download dabih binaries here.',
               draft: true,
               prerelease: false
