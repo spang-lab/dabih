@@ -336,7 +336,7 @@ dependencies = [
 
 [[package]]
 name = "dabih"
-version = "2.2.1"
+version = "2.2.2"
 dependencies = [
  "aes",
  "base64ct",
@@ -1324,7 +1324,8 @@ dependencies = [
 [[package]]
 name = "progenitor"
 version = "0.11.1"
-source = "git+https://github.com/oxidecomputer/progenitor#d38cd709808c94e42dd6c360e431b141b88266b3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "135a23fcb9ad36a46ef4be323d006e195ad5121779c9da64ef95cf0600771b77"
 dependencies = [
  "progenitor-client",
  "progenitor-impl",
@@ -1334,7 +1335,8 @@ dependencies = [
 [[package]]
 name = "progenitor-client"
 version = "0.11.1"
-source = "git+https://github.com/oxidecomputer/progenitor#d38cd709808c94e42dd6c360e431b141b88266b3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "920f044db9ec07a3339175729794d3701e11d338dcf8cfd946df838102307780"
 dependencies = [
  "bytes",
  "futures-core",
@@ -1348,7 +1350,8 @@ dependencies = [
 [[package]]
 name = "progenitor-impl"
 version = "0.11.1"
-source = "git+https://github.com/oxidecomputer/progenitor#d38cd709808c94e42dd6c360e431b141b88266b3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8276d558f1dfd4cc7fc4cceee0a51dab482b5a4be2e69e7eab8c57fbfb1472f4"
 dependencies = [
  "heck",
  "http",
@@ -1369,7 +1372,8 @@ dependencies = [
 [[package]]
 name = "progenitor-macro"
 version = "0.11.1"
-source = "git+https://github.com/oxidecomputer/progenitor#d38cd709808c94e42dd6c360e431b141b88266b3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5dd79317ec8ab905738484d2744d368beee6e357fc043944d985f85a0174f1f7"
 dependencies = [
  "openapiv3",
  "proc-macro2",
