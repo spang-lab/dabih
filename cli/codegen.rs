@@ -3340,7 +3340,7 @@ if undefined the sub from the auth token will be used*/
 
 Dabih API Server
 
-Version: 2.1.1*/
+Version: 2.2.1*/
 pub struct Client {
     pub(crate) baseurl: String,
     pub(crate) client: reqwest::Client,
@@ -3376,7 +3376,7 @@ impl Client {
 }
 impl ClientInfo<()> for Client {
     fn api_version() -> &'static str {
-        "2.1.1"
+        "2.2.1"
     }
     fn baseurl(&self) -> &str {
         self.baseurl.as_str()
