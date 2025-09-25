@@ -1,20 +1,10 @@
 use std::{env, path::PathBuf};
 
-mod api;
-mod command;
-mod config;
-mod crypto;
-mod downloader;
-mod error;
-mod fs;
-mod log;
-mod uploader;
-
 use clap::Parser;
-use config::Context;
-use error::Result;
-
-use command::Commands;
+use dabih::command::{self, Commands};
+use dabih::config::Context;
+use dabih::error::Result;
+use dabih::log;
 
 use tracing::{debug, trace};
 

@@ -1,7 +1,8 @@
+use crate::api::ApiHelpers;
 use crate::api::types::InodeMembers;
-use crate::api::{ApiHelpers, InodeType};
 use crate::config::Context;
 use crate::error::Result;
+use crate::types::InodeType;
 use clap::Args;
 use tracing::warn;
 

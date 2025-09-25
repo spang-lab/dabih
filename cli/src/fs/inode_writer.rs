@@ -2,8 +2,6 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 
-use progenitor_client::ByteStream;
-
 use crate::api::types::{Chunk, FileDownload};
 use crate::crypto::decrypt_buffer;
 use crate::error::Result;

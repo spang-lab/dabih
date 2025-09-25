@@ -1,18 +1,15 @@
 use std::fs::create_dir;
 use std::path::PathBuf;
 
-use futures::{StreamExt, TryStreamExt};
 use tracing::{debug, warn};
 
-use crate::Context;
+use crate::api::ApiHelpers;
 use crate::api::types::{FileDownload, InodeTree};
-use crate::api::{ApiHelpers, InodeType};
 use crate::command::download::Download;
-use crate::crypto::AesKey;
+use crate::config::Context;
 use crate::error::Result;
 use crate::fs::InodeWriter;
-use base64ct::{Base64UrlUnpadded, Encoding};
-use sha2::Digest;
+use crate::types::InodeType;
 
 #[derive(Debug, Clone)]
 pub enum DownloadState {
@@ -32,9 +29,6 @@ pub struct Downloader {
     pidx: usize,
     files: Vec<(String, PathBuf)>,
     fidx: usize,
-    inode: Option<FileDownload>,
-    cidx: usize,
-    aes_key: Option<AesKey>,
     writer: Option<InodeWriter>,
 }
 
@@ -103,9 +97,6 @@ impl Downloader {
             pidx: 0,
             files: Vec::new(),
             fidx: 0,
-            inode: None,
-            cidx: 0,
-            aes_key: None,
             writer: None,
         })
     }
@@ -185,7 +176,6 @@ impl Downloader {
     pub async fn finish(&mut self) -> Result<DownloadState> {
         let writer = self.writer.as_mut().unwrap();
         writer.close()?;
-        self.cidx = 0;
         self.fidx += 1;
         self.writer = None;
         if self.fidx >= self.files.len() {

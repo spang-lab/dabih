@@ -58,7 +58,6 @@ pub async fn run(ctx: Context, args: Upload) -> Result<()> {
             UploadState::Complete => {
                 return Ok(());
             }
-            _ => return Ok(()),
         }
     }
 }
