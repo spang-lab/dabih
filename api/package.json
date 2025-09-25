@@ -1,6 +1,6 @@
 {
   "name": "dabih-api",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Dabih API Server",
   "repository": "",
   "main": "index.js",
