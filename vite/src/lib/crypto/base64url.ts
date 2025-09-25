@@ -11,7 +11,7 @@ const fromUint8 = (array: ArrayBuffer | ArrayLike<number>): string => {
   return fromBase64(base64);
 };
 
-const toUint8 = (base64url: string): Uint8Array => {
+const toUint8 = (base64url: string): Uint8Array<ArrayBuffer> => {
   const base64 = toBase64(base64url);
   const mapper = (c: string) => c.charCodeAt(0);
   return Uint8Array.from(atob(base64), mapper);

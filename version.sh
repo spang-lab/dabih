@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+
 if [ $# -ne 1 ]; then
   echo "usage: ./bin/version.sh <version>"
   echo "This will update the version for all packages"
@@ -14,13 +15,21 @@ else
     SED_COMMAND="sed"
 fi
 
+# Make sure all builds pass before updating versions
+pushd vite
+  npm run build
+popd
+
+pushd cli
+  cargo build --release
+popd
+
 pushd api
   VERSION="$(npm version --no-git-tag-version "$1")"
   npm install  # update lockfile
 popd
 
 pushd vite 
-  npm run build
   npm version --no-commit-hooks "$VERSION"
 popd
 pushd cli
