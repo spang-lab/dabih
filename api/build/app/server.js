@@ -1154,9 +1154,9 @@ var require_parameter = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Body = Body7;
     exports.BodyProp = BodyProp;
-    exports.Request = Request7;
+    exports.Request = Request8;
     exports.RequestProp = RequestProp;
-    exports.Path = Path4;
+    exports.Path = Path5;
     exports.Query = Query;
     exports.Queries = Queries;
     exports.Header = Header2;
@@ -1175,7 +1175,7 @@ var require_parameter = __commonJS({
         return;
       };
     }
-    function Request7() {
+    function Request8() {
       return () => {
         return;
       };
@@ -1185,7 +1185,7 @@ var require_parameter = __commonJS({
         return;
       };
     }
-    function Path4(name) {
+    function Path5(name) {
       return () => {
         return;
       };
@@ -1239,8 +1239,8 @@ var require_methods = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Options = Options;
-    exports.Get = Get9;
-    exports.Post = Post7;
+    exports.Get = Get10;
+    exports.Post = Post8;
     exports.Put = Put2;
     exports.Patch = Patch;
     exports.Delete = Delete;
@@ -1250,12 +1250,12 @@ var require_methods = __commonJS({
         return;
       };
     }
-    function Get9(value) {
+    function Get10(value) {
       return () => {
         return;
       };
     }
-    function Post7(value) {
+    function Post8(value) {
       return () => {
         return;
       };
@@ -1288,8 +1288,8 @@ var require_tags = __commonJS({
   "node_modules/@tsoa/runtime/dist/decorators/tags.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Tags = Tags9;
-    function Tags9(...values) {
+    exports.Tags = Tags10;
+    function Tags10(...values) {
       return () => {
         return;
       };
@@ -1302,8 +1302,8 @@ var require_operationid = __commonJS({
   "node_modules/@tsoa/runtime/dist/decorators/operationid.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.OperationId = OperationId9;
-    function OperationId9(value) {
+    exports.OperationId = OperationId10;
+    function OperationId10(value) {
       return () => {
         return;
       };
@@ -1316,9 +1316,9 @@ var require_route = __commonJS({
   "node_modules/@tsoa/runtime/dist/decorators/route.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Route = Route9;
+    exports.Route = Route10;
     exports.Hidden = Hidden;
-    function Route9(name) {
+    function Route10(name) {
       return () => {
         return;
       };
@@ -1337,13 +1337,13 @@ var require_security = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.NoSecurity = NoSecurity;
-    exports.Security = Security8;
+    exports.Security = Security9;
     function NoSecurity() {
       return () => {
         return;
       };
     }
-    function Security8(name, scopes) {
+    function Security9(name, scopes) {
       return () => {
         return;
       };
@@ -1405,7 +1405,7 @@ var require_controller = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Controller = void 0;
-    var Controller9 = class {
+    var Controller10 = class {
       constructor() {
         this.statusCode = void 0;
         this.headers = {};
@@ -1426,7 +1426,7 @@ var require_controller = __commonJS({
         return this.headers;
       }
     };
-    exports.Controller = Controller9;
+    exports.Controller = Controller10;
   }
 });
 
@@ -9171,7 +9171,7 @@ var require_dist = __commonJS({
 
 // src/app.ts
 import Koa from "koa";
-import { koaBody } from "koa-body";
+import { bodyParser } from "@koa/bodyparser";
 import Router from "@koa/router";
 
 // src/lib/env.ts
@@ -9218,7 +9218,7 @@ var logger_default = logger;
 import serve from "koa-static";
 
 // build/routes.ts
-var import_runtime17 = __toESM(require_dist(), 1);
+var import_runtime19 = __toESM(require_dist(), 1);
 
 // src/api/util/controller.ts
 var import_runtime = __toESM(require_dist(), 1);
@@ -140402,7 +140402,15 @@ var removeKeys = async (mnemonic2) => {
 };
 
 // src/lib/fs/fs.ts
-import { open, access, mkdir, rm, constants as constants3, stat } from "fs/promises";
+import {
+  open,
+  access,
+  mkdir,
+  rm,
+  constants as constants3,
+  stat,
+  readdir
+} from "fs/promises";
 import { resolve, join } from "path";
 var basePath = "";
 var exists = async (path) => {
@@ -140461,6 +140469,11 @@ var createBucket = async (bucket) => {
   const path = join(basePath, bucket);
   await mkdir(path);
 };
+var listBuckets = async () => {
+  const entries = await readdir(basePath, { withFileTypes: true });
+  const buckets = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+  return buckets;
+};
 var init2 = async (path) => {
   if (!path) {
     throw new Error("fs storage provider needs config.storage.path");
@@ -140487,7 +140500,8 @@ var init2 = async (path) => {
     store,
     head,
     removeBucket,
-    createBucket
+    createBucket,
+    listBuckets
   };
 };
 var fs_default = init2;
@@ -140532,6 +140546,12 @@ var createBucket2 = (bucket) => {
     throw new Error("Storage backend not initialized");
   }
   return backend.createBucket(bucket);
+};
+var listBuckets2 = () => {
+  if (!backend) {
+    throw new Error("Storage backend not initialized");
+  }
+  return backend.listBuckets();
 };
 
 // src/lib/database/member.ts
@@ -140817,9 +140837,9 @@ async function chunk(body, request) {
   const validateStream = crypto_default.stream.validate();
   const encryptStream = crypto_default.aesKey.encrypt(aesKey4, iv);
   const crcStream = crypto_default.stream.crc32();
-  const busboy = new Busboy({ headers: request.header });
-  const { crc32: crc322, hash: hash2, byteCount } = await new Promise((resolve4, reject) => {
-    busboy.on("file", (_field, file3) => {
+  let writeResult = null;
+  if (request.is("application/octet-stream")) {
+    writeResult = await new Promise((resolve4, reject) => {
       writeStream.on(
         "finish",
         () => resolve4({
@@ -140827,11 +140847,27 @@ async function chunk(body, request) {
           ...validateStream.digest()
         })
       );
-      file3.pipe(validateStream).pipe(encryptStream).pipe(crcStream).pipe(writeStream);
+      writeStream.on("error", reject);
+      request.req.pipe(validateStream).pipe(encryptStream).pipe(crcStream).pipe(writeStream);
     });
-    busboy.on("error", reject);
-    request.req.pipe(busboy);
-  });
+  } else {
+    const busboy = new Busboy({ headers: request.header });
+    writeResult = await new Promise((resolve4, reject) => {
+      busboy.on("file", (_field, file3) => {
+        writeStream.on(
+          "finish",
+          () => resolve4({
+            crc32: crcStream.digest(),
+            ...validateStream.digest()
+          })
+        );
+        file3.pipe(validateStream).pipe(encryptStream).pipe(crcStream).pipe(writeStream);
+      });
+      busboy.on("error", reject);
+      request.req.pipe(busboy);
+    });
+  }
+  const { crc32: crc322, hash: hash2, byteCount } = writeResult;
   if (hash2 !== body.hash) {
     throw new RequestError(
       `Hash mismatch: Data: ${hash2} !== Header: ${body.hash}`
@@ -141025,6 +141061,45 @@ var parseContentRange = (contentRange) => {
   return { start: start2, end, size };
 };
 
+// src/api/upload/cleanup.ts
+async function cleanup(user) {
+  const { sub } = user;
+  const unfinished2 = await db_default.inode.findMany({
+    where: {
+      type: InodeType.UPLOAD
+    },
+    include: {
+      data: {
+        where: {
+          createdBy: sub,
+          hash: null
+        },
+        include: {
+          chunks: {
+            orderBy: {
+              start: "asc"
+            }
+          }
+        }
+      }
+    }
+  });
+  const promises = unfinished2.map(async (file2) => {
+    const { mnemonic: mnemonic2 } = file2;
+    const key = await readKey(sub, mnemonic2);
+    if (key) {
+      return null;
+    }
+    return file2;
+  });
+  const results = (await Promise.all(promises)).filter((f) => f !== null);
+  for (const file2 of results) {
+    const { mnemonic: mnemonic2 } = file2;
+    logger_default.info(`Cleaning up unfinished upload ${mnemonic2} for user ${sub}`);
+    await deleteInode(mnemonic2);
+  }
+}
+
 // src/api/upload/controller.ts
 var UploadController = class extends import_runtime5.Controller {
   async start(request, requestBody) {
@@ -141056,6 +141131,10 @@ var UploadController = class extends import_runtime5.Controller {
   async unfinished(request) {
     const { user } = request;
     return unfinished(user);
+  }
+  async cleanup(request) {
+    const { user } = request;
+    await cleanup(user);
   }
 };
 __decorateClass([
@@ -141091,6 +141170,11 @@ __decorateClass([
   (0, import_runtime5.OperationId)("unfinishedUploads"),
   __decorateParam(0, (0, import_runtime5.Request)())
 ], UploadController.prototype, "unfinished", 1);
+__decorateClass([
+  (0, import_runtime5.Post)("cleanup"),
+  (0, import_runtime5.OperationId)("cleanupUploads"),
+  __decorateParam(0, (0, import_runtime5.Request)())
+], UploadController.prototype, "cleanup", 1);
 UploadController = __decorateClass([
   (0, import_runtime5.Route)("upload"),
   (0, import_runtime5.Tags)("Upload"),
@@ -141923,8 +142007,26 @@ async function setAccess(user, mnemonic2, body) {
 
 // src/api/fs/resolve.ts
 import { isAbsolute, resolve as resolvePath } from "path";
+async function resolveMnemonic(mnemonic2) {
+  if (!/^[a-z_]+$/.exec(mnemonic2)) {
+    return null;
+  }
+  const inode = await db_default.inode.findUnique({
+    where: {
+      mnemonic: mnemonic2
+    },
+    include: {
+      data: true
+    }
+  });
+  return inode;
+}
 async function resolve3(user, path) {
   let nodes = [];
+  const match = await resolveMnemonic(path);
+  if (match) {
+    return match;
+  }
   if (isAbsolute(path)) {
     nodes.push(await getRoot());
   } else {
@@ -141945,11 +142047,16 @@ async function resolve3(user, path) {
     });
     const children = (await Promise.all(promises)).flat();
     if (children.length === 0) {
-      throw new NotFoundError(`Path ${path} not found`);
+      return null;
     }
     nodes = children;
   }
-  return nodes;
+  if (nodes.length > 1) {
+    const mnemonics = nodes.map((n) => n.mnemonic).join(", ");
+    throw new RequestError(`Path "${path}" is ambiguous, matched mnemonics: ${mnemonics}
+                           use a mnemonic to disambiguate.`);
+  }
+  return nodes[0] || null;
 }
 
 // src/api/fs/controller.ts
@@ -142141,8 +142248,124 @@ FilesystemController = __decorateClass([
   (0, import_runtime11.Security)("api_key", ["dabih:api"])
 ], FilesystemController);
 
-// src/api/download/controller.ts
+// src/api/filedata/controller.ts
 var import_runtime13 = __toESM(require_dist(), 1);
+
+// src/api/filedata/orphaned.ts
+async function orphaned(user) {
+  const { sub, isAdmin } = user;
+  if (!isAdmin) {
+    throw new AuthorizationError(
+      `User ${sub} is not authorized to list orphaned file data`
+    );
+  }
+  const entries = await db_default.fileData.findMany({
+    where: {
+      inodes: {
+        none: {}
+      }
+    }
+  });
+  return entries;
+}
+
+// src/api/filedata/remove.ts
+async function remove5(user, uid) {
+  const { sub, isAdmin } = user;
+  if (!isAdmin && sub !== uid) {
+    throw new Error("Not authorized to remove file data");
+  }
+  const fileData2 = await db_default.fileData.findUnique({
+    where: {
+      uid
+    },
+    include: {
+      chunks: true
+    }
+  });
+  if (!fileData2) {
+    throw new NotFoundError(`File data with uid ${uid} not found`);
+  }
+  const chunkIds = fileData2.chunks.map((chunk3) => chunk3.id);
+  await db_default.$transaction([
+    db_default.chunk.deleteMany({
+      where: {
+        id: {
+          in: chunkIds
+        }
+      }
+    }),
+    db_default.fileData.delete({
+      where: {
+        uid
+      }
+    })
+  ]);
+  await removeBucket2(uid);
+}
+
+// src/api/filedata/checkIntegrity.ts
+async function checkIntegrity(user) {
+  const { sub, isAdmin } = user;
+  if (!isAdmin) {
+    throw new Error(`User ${sub} is not authorized to list unknown buckets`);
+  }
+  const validUids = await db_default.fileData.findMany({
+    select: {
+      uid: true
+    }
+  }).then((entries) => entries.map((entry) => entry.uid));
+  const validUidSet = new Set(validUids);
+  const folders = await listBuckets2();
+  const regex = /^[A-Za-z0-9_-]{12}$/;
+  const uids = new Set(folders.filter((folder) => regex.test(folder)));
+  return {
+    missing: [...validUidSet.difference(uids)],
+    unknown: [...uids.difference(validUidSet)]
+  };
+}
+
+// src/api/filedata/controller.ts
+var FileDataController = class extends import_runtime13.Controller {
+  async listOrphaned(request) {
+    const { user } = request;
+    return orphaned(user);
+  }
+  async removeFileData(request, uid) {
+    const { user } = request;
+    return remove5(user, uid);
+  }
+  async checkIntegrity(request) {
+    const { user } = request;
+    return checkIntegrity(user);
+  }
+};
+__decorateClass([
+  (0, import_runtime13.Get)("orphaned"),
+  (0, import_runtime13.Security)("api_key", ["dabih:admin"]),
+  (0, import_runtime13.OperationId)("listOrphaned"),
+  __decorateParam(0, (0, import_runtime13.Request)())
+], FileDataController.prototype, "listOrphaned", 1);
+__decorateClass([
+  (0, import_runtime13.Post)("{uid}/remove"),
+  (0, import_runtime13.Security)("api_key", ["dabih:admin"]),
+  (0, import_runtime13.OperationId)("removeFileData"),
+  __decorateParam(0, (0, import_runtime13.Request)()),
+  __decorateParam(1, (0, import_runtime13.Path)())
+], FileDataController.prototype, "removeFileData", 1);
+__decorateClass([
+  (0, import_runtime13.Get)("checkIntegrity"),
+  (0, import_runtime13.Security)("api_key", ["dabih:admin"]),
+  (0, import_runtime13.OperationId)("checkIntegrity"),
+  __decorateParam(0, (0, import_runtime13.Request)())
+], FileDataController.prototype, "checkIntegrity", 1);
+FileDataController = __decorateClass([
+  (0, import_runtime13.Route)("filedata"),
+  (0, import_runtime13.Tags)("File Data")
+], FileDataController);
+
+// src/api/download/controller.ts
+var import_runtime15 = __toESM(require_dist(), 1);
 
 // src/api/download/chunk.ts
 async function chunk2(uid, hash2) {
@@ -142262,7 +142485,7 @@ async function mnemonic(user) {
 }
 
 // src/api/download/controller.ts
-var DownloadController = class extends import_runtime13.Controller {
+var DownloadController = class extends import_runtime15.Controller {
   decrypt(mnemonic2, request, body) {
     const { user } = request;
     const { key } = body;
@@ -142281,34 +142504,34 @@ var DownloadController = class extends import_runtime13.Controller {
   }
 };
 __decorateClass([
-  (0, import_runtime13.Post)("{mnemonic}/decrypt"),
-  (0, import_runtime13.Security)("api_key", ["dabih:api"]),
-  (0, import_runtime13.OperationId)("decryptDataset"),
-  __decorateParam(0, (0, import_runtime13.Path)()),
-  __decorateParam(1, (0, import_runtime13.Request)()),
-  __decorateParam(2, (0, import_runtime13.Body)())
+  (0, import_runtime15.Post)("{mnemonic}/decrypt"),
+  (0, import_runtime15.Security)("api_key", ["dabih:api"]),
+  (0, import_runtime15.OperationId)("decryptDataset"),
+  __decorateParam(0, (0, import_runtime15.Path)()),
+  __decorateParam(1, (0, import_runtime15.Request)()),
+  __decorateParam(2, (0, import_runtime15.Body)())
 ], DownloadController.prototype, "decrypt", 1);
 __decorateClass([
-  (0, import_runtime13.Get)("/"),
-  (0, import_runtime13.Security)("api_key"),
-  (0, import_runtime13.OperationId)("downloadDataset"),
-  __decorateParam(0, (0, import_runtime13.Request)())
+  (0, import_runtime15.Get)("/"),
+  (0, import_runtime15.Security)("api_key"),
+  (0, import_runtime15.OperationId)("downloadDataset"),
+  __decorateParam(0, (0, import_runtime15.Request)())
 ], DownloadController.prototype, "download", 1);
 __decorateClass([
-  (0, import_runtime13.Get)("{uid}/chunk/{hash}"),
-  (0, import_runtime13.Security)("api_key", ["dabih:api"]),
-  (0, import_runtime13.OperationId)("downloadChunk"),
-  (0, import_runtime13.Produces)("application/octet-stream"),
-  __decorateParam(0, (0, import_runtime13.Path)()),
-  __decorateParam(1, (0, import_runtime13.Path)())
+  (0, import_runtime15.Get)("{uid}/chunk/{hash}"),
+  (0, import_runtime15.Security)("api_key", ["dabih:api"]),
+  (0, import_runtime15.OperationId)("downloadChunk"),
+  (0, import_runtime15.Produces)("application/octet-stream"),
+  __decorateParam(0, (0, import_runtime15.Path)()),
+  __decorateParam(1, (0, import_runtime15.Path)())
 ], DownloadController.prototype, "chunk", 1);
 DownloadController = __decorateClass([
-  (0, import_runtime13.Route)("download"),
-  (0, import_runtime13.Tags)("Download")
+  (0, import_runtime15.Route)("download"),
+  (0, import_runtime15.Tags)("Download")
 ], DownloadController);
 
 // src/api/auth/controller.ts
-var import_runtime15 = __toESM(require_dist(), 1);
+var import_runtime17 = __toESM(require_dist(), 1);
 
 // src/lib/redis/rateLimit.ts
 var prefix3 = "rateLimit:";
@@ -142504,7 +142727,12 @@ var verify = async (request) => {
     return token;
   }
   const secrets = await getSecrets(SECRET.AUTH);
-  const decoded = crypto_default.jwt.verifyWithSecrets(tokenStr, secrets);
+  let decoded;
+  try {
+    decoded = crypto_default.jwt.verifyWithSecrets(tokenStr, secrets);
+  } catch {
+    throw new AuthenticationError("Invalid jwt signature");
+  }
   if (typeof decoded === "string") {
     throw new AuthenticationError("Invalid jwt");
   }
@@ -142619,7 +142847,7 @@ async function verifyEmail(tokenStr) {
 }
 
 // src/api/auth/controller.ts
-var AuthController = class extends import_runtime15.Controller {
+var AuthController = class extends import_runtime17.Controller {
   info(request) {
     const { user } = request;
     return user;
@@ -142639,31 +142867,31 @@ var AuthController = class extends import_runtime15.Controller {
   }
 };
 __decorateClass([
-  (0, import_runtime15.Get)("info"),
-  (0, import_runtime15.Security)("api_key", []),
-  (0, import_runtime15.OperationId)("authInfo"),
-  __decorateParam(0, (0, import_runtime15.Request)())
+  (0, import_runtime17.Get)("info"),
+  (0, import_runtime17.Security)("api_key", []),
+  (0, import_runtime17.OperationId)("authInfo"),
+  __decorateParam(0, (0, import_runtime17.Request)())
 ], AuthController.prototype, "info", 1);
 __decorateClass([
-  (0, import_runtime15.Post)("signIn"),
-  (0, import_runtime15.OperationId)("signIn"),
-  __decorateParam(0, (0, import_runtime15.Request)()),
-  __decorateParam(1, (0, import_runtime15.Body)())
+  (0, import_runtime17.Post)("signIn"),
+  (0, import_runtime17.OperationId)("signIn"),
+  __decorateParam(0, (0, import_runtime17.Request)()),
+  __decorateParam(1, (0, import_runtime17.Body)())
 ], AuthController.prototype, "signIn", 1);
 __decorateClass([
-  (0, import_runtime15.Post)("verify"),
-  (0, import_runtime15.Response)(500, "Unknown error"),
-  (0, import_runtime15.OperationId)("verifyEmail"),
-  __decorateParam(0, (0, import_runtime15.Body)())
+  (0, import_runtime17.Post)("verify"),
+  (0, import_runtime17.Response)(500, "Unknown error"),
+  (0, import_runtime17.OperationId)("verifyEmail"),
+  __decorateParam(0, (0, import_runtime17.Body)())
 ], AuthController.prototype, "verify", 1);
 __decorateClass([
-  (0, import_runtime15.Post)("refresh"),
-  (0, import_runtime15.OperationId)("refreshToken"),
-  __decorateParam(0, (0, import_runtime15.Request)())
+  (0, import_runtime17.Post)("refresh"),
+  (0, import_runtime17.OperationId)("refreshToken"),
+  __decorateParam(0, (0, import_runtime17.Request)())
 ], AuthController.prototype, "token", 1);
 AuthController = __decorateClass([
-  (0, import_runtime15.Route)("auth"),
-  (0, import_runtime15.Tags)("Auth")
+  (0, import_runtime17.Route)("auth"),
+  (0, import_runtime17.Tags)("Auth")
 ], AuthController);
 
 // build/routes.ts
@@ -142799,10 +143027,11 @@ var models = {
     "properties": {
       "id": { "dataType": "any", "required": true },
       "mnemonic": { "dataType": "string", "required": true },
-      "type": { "dataType": "double", "required": true },
+      "type": { "dataType": "integer", "required": true, "validators": { "minimum": { "value": 0 } } },
       "name": { "dataType": "string", "required": true },
       "tag": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "enum", "enums": [null] }], "required": true },
-      "data": { "ref": "FileData" },
+      "dataId": { "dataType": "union", "subSchemas": [{ "dataType": "any" }, { "dataType": "enum", "enums": [null] }], "required": true },
+      "data": { "dataType": "union", "subSchemas": [{ "ref": "FileData" }, { "dataType": "enum", "enums": [null] }] },
       "parentId": { "dataType": "any", "required": true },
       "createdAt": { "dataType": "datetime", "required": true },
       "updatedAt": { "dataType": "datetime", "required": true }
@@ -142815,16 +143044,11 @@ var models = {
     "type": { "dataType": "intersection", "subSchemas": [{ "ref": "Inode" }, { "dataType": "nestedObjectLiteral", "nestedProperties": { "data": { "ref": "FileData", "required": true } } }], "validators": {} }
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  "Mnemonic": {
-    "dataType": "refAlias",
-    "type": { "dataType": "string", "validators": { "pattern": { "value": "^[a-z_]+$" } } }
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   "UploadStartBody": {
     "dataType": "refObject",
     "properties": {
       "fileName": { "dataType": "string", "required": true },
-      "directory": { "ref": "Mnemonic" },
+      "directory": { "dataType": "string" },
       "filePath": { "dataType": "string" },
       "size": { "dataType": "long", "validators": { "minimum": { "value": 0 } } },
       "tag": { "dataType": "string" }
@@ -142949,7 +143173,7 @@ var models = {
   "FileDecryptionKey": {
     "dataType": "refObject",
     "properties": {
-      "mnemonic": { "ref": "Mnemonic", "required": true },
+      "mnemonic": { "dataType": "string", "required": true },
       "key": { "ref": "AESKey", "required": true }
     },
     "additionalProperties": false
@@ -142981,8 +143205,8 @@ var models = {
   "MoveInodeBody": {
     "dataType": "refObject",
     "properties": {
-      "mnemonic": { "ref": "Mnemonic", "required": true },
-      "parent": { "dataType": "union", "subSchemas": [{ "ref": "Mnemonic" }, { "dataType": "enum", "enums": [null] }] },
+      "mnemonic": { "dataType": "string", "required": true },
+      "parent": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "enum", "enums": [null] }] },
       "keys": { "dataType": "array", "array": { "dataType": "refObject", "ref": "FileDecryptionKey" } },
       "name": { "dataType": "string" },
       "tag": { "dataType": "string" }
@@ -143002,7 +143226,7 @@ var models = {
   "Directory": {
     "dataType": "refObject",
     "properties": {
-      "mnemonic": { "ref": "Mnemonic", "required": true },
+      "mnemonic": { "dataType": "string", "required": true },
       "name": { "dataType": "string", "required": true },
       "createdAt": { "dataType": "datetime", "required": true },
       "updatedAt": { "dataType": "datetime", "required": true }
@@ -143014,7 +143238,7 @@ var models = {
     "dataType": "refObject",
     "properties": {
       "name": { "dataType": "string", "required": true },
-      "parent": { "ref": "Mnemonic" },
+      "parent": { "dataType": "string" },
       "tag": { "dataType": "string" }
     },
     "additionalProperties": false
@@ -143033,6 +143257,15 @@ var models = {
     "properties": {
       "isComplete": { "dataType": "boolean", "required": true },
       "inodes": { "dataType": "array", "array": { "dataType": "refObject", "ref": "Inode" }, "required": true }
+    },
+    "additionalProperties": false
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  "IntegrityCheckResult": {
+    "dataType": "refObject",
+    "properties": {
+      "missing": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
+      "unknown": { "dataType": "array", "array": { "dataType": "string" }, "required": true }
     },
     "additionalProperties": false
   },
@@ -143065,13 +143298,13 @@ var models = {
   }
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
-var templateService = new import_runtime17.KoaTemplateService(models, { "noImplicitAdditionalProperties": "throw-on-extras", "bodyCoercion": true });
+var templateService = new import_runtime19.KoaTemplateService(models, { "noImplicitAdditionalProperties": "throw-on-extras", "bodyCoercion": true });
 function RegisterRoutes(router) {
   const argsUtilController_healthy = {};
   router.get(
     "/healthy",
-    ...(0, import_runtime17.fetchMiddlewares)(UtilController),
-    ...(0, import_runtime17.fetchMiddlewares)(UtilController.prototype.healthy),
+    ...(0, import_runtime19.fetchMiddlewares)(UtilController),
+    ...(0, import_runtime19.fetchMiddlewares)(UtilController.prototype.healthy),
     async function UtilController_healthy(context, next) {
       let validatedArgs = [];
       try {
@@ -143095,8 +143328,8 @@ function RegisterRoutes(router) {
   const argsUtilController_info = {};
   router.get(
     "/info",
-    ...(0, import_runtime17.fetchMiddlewares)(UtilController),
-    ...(0, import_runtime17.fetchMiddlewares)(UtilController.prototype.info),
+    ...(0, import_runtime19.fetchMiddlewares)(UtilController),
+    ...(0, import_runtime19.fetchMiddlewares)(UtilController.prototype.info),
     async function UtilController_info(context, next) {
       let validatedArgs = [];
       try {
@@ -143124,8 +143357,8 @@ function RegisterRoutes(router) {
   router.post(
     "/user/add",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController.prototype.add),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.add),
     async function UserController_add(context, next) {
       let validatedArgs = [];
       try {
@@ -143152,8 +143385,8 @@ function RegisterRoutes(router) {
   router.get(
     "/user/me",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController.prototype.me),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.me),
     async function UserController_me(context, next) {
       let validatedArgs = [];
       try {
@@ -143180,8 +143413,8 @@ function RegisterRoutes(router) {
   router.post(
     "/user/find",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController.prototype.get),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.get),
     async function UserController_get(context, next) {
       let validatedArgs = [];
       try {
@@ -143206,8 +143439,8 @@ function RegisterRoutes(router) {
   router.get(
     "/user/list",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController.prototype.list),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.list),
     async function UserController_list(context, next) {
       let validatedArgs = [];
       try {
@@ -143235,8 +143468,8 @@ function RegisterRoutes(router) {
   router.post(
     "/user/remove",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController.prototype.remove),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.remove),
     async function UserController_remove(context, next) {
       let validatedArgs = [];
       try {
@@ -143264,8 +143497,8 @@ function RegisterRoutes(router) {
   router.post(
     "/user/key/add",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController.prototype.addKey),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.addKey),
     async function UserController_addKey(context, next) {
       let validatedArgs = [];
       try {
@@ -143293,8 +143526,8 @@ function RegisterRoutes(router) {
   router.post(
     "/user/key/enable",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController.prototype.enableKey),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.enableKey),
     async function UserController_enableKey(context, next) {
       let validatedArgs = [];
       try {
@@ -143322,8 +143555,8 @@ function RegisterRoutes(router) {
   router.post(
     "/user/key/remove",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController),
-    ...(0, import_runtime17.fetchMiddlewares)(UserController.prototype.removeKey),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.removeKey),
     async function UserController_removeKey(context, next) {
       let validatedArgs = [];
       try {
@@ -143351,8 +143584,8 @@ function RegisterRoutes(router) {
   router.post(
     "/upload/start",
     authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController.prototype.start),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.start),
     async function UploadController_start(context, next) {
       let validatedArgs = [];
       try {
@@ -143375,13 +143608,13 @@ function RegisterRoutes(router) {
   );
   const argsUploadController_cancel = {
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" }
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" }
   };
   router.post(
     "/upload/:mnemonic/cancel",
     authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController.prototype.cancel),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.cancel),
     async function UploadController_cancel(context, next) {
       let validatedArgs = [];
       try {
@@ -143403,7 +143636,7 @@ function RegisterRoutes(router) {
     }
   );
   const argsUploadController_chunk = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
     contentRange: { "in": "header", "name": "content-range", "required": true, "dataType": "string" },
     digest: { "in": "header", "name": "digest", "required": true, "dataType": "string" }
@@ -143411,8 +143644,8 @@ function RegisterRoutes(router) {
   router.put(
     "/upload/:mnemonic/chunk",
     authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController.prototype.chunk),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.chunk),
     async function UploadController_chunk(context, next) {
       let validatedArgs = [];
       try {
@@ -143435,13 +143668,13 @@ function RegisterRoutes(router) {
   );
   const argsUploadController_finish = {
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" }
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" }
   };
   router.post(
     "/upload/:mnemonic/finish",
     authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController.prototype.finish),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.finish),
     async function UploadController_finish(context, next) {
       let validatedArgs = [];
       try {
@@ -143468,8 +143701,8 @@ function RegisterRoutes(router) {
   router.get(
     "/upload/unfinished",
     authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController),
-    ...(0, import_runtime17.fetchMiddlewares)(UploadController.prototype.unfinished),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.unfinished),
     async function UploadController_unfinished(context, next) {
       let validatedArgs = [];
       try {
@@ -143490,6 +143723,34 @@ function RegisterRoutes(router) {
       });
     }
   );
+  const argsUploadController_cleanup = {
+    request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
+  };
+  router.post(
+    "/upload/cleanup",
+    authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.cleanup),
+    async function UploadController_cleanup(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsUploadController_cleanup, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new UploadController();
+      return templateService.apiHandler({
+        methodName: "cleanup",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
   const argsTokenController_add = {
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
     requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "TokenAddBody" }
@@ -143497,8 +143758,8 @@ function RegisterRoutes(router) {
   router.post(
     "/token/add",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(TokenController),
-    ...(0, import_runtime17.fetchMiddlewares)(TokenController.prototype.add),
+    ...(0, import_runtime19.fetchMiddlewares)(TokenController),
+    ...(0, import_runtime19.fetchMiddlewares)(TokenController.prototype.add),
     async function TokenController_add(context, next) {
       let validatedArgs = [];
       try {
@@ -143525,8 +143786,8 @@ function RegisterRoutes(router) {
   router.get(
     "/token/list",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(TokenController),
-    ...(0, import_runtime17.fetchMiddlewares)(TokenController.prototype.list),
+    ...(0, import_runtime19.fetchMiddlewares)(TokenController),
+    ...(0, import_runtime19.fetchMiddlewares)(TokenController.prototype.list),
     async function TokenController_list(context, next) {
       let validatedArgs = [];
       try {
@@ -143554,8 +143815,8 @@ function RegisterRoutes(router) {
   router.post(
     "/token/remove",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(TokenController),
-    ...(0, import_runtime17.fetchMiddlewares)(TokenController.prototype.remove),
+    ...(0, import_runtime19.fetchMiddlewares)(TokenController),
+    ...(0, import_runtime19.fetchMiddlewares)(TokenController.prototype.remove),
     async function TokenController_remove(context, next) {
       let validatedArgs = [];
       try {
@@ -143580,8 +143841,8 @@ function RegisterRoutes(router) {
   router.get(
     "/job/list",
     authenticateMiddleware([{ "api_key": ["dabih:admin"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(JobController),
-    ...(0, import_runtime17.fetchMiddlewares)(JobController.prototype.listJobs),
+    ...(0, import_runtime19.fetchMiddlewares)(JobController),
+    ...(0, import_runtime19.fetchMiddlewares)(JobController.prototype.listJobs),
     async function JobController_listJobs(context, next) {
       let validatedArgs = [];
       try {
@@ -143603,14 +143864,14 @@ function RegisterRoutes(router) {
     }
   );
   const argsFilesystemController_file = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
   router.get(
     "/fs/:mnemonic/file",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.file),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.file),
     async function FilesystemController_file(context, next) {
       let validatedArgs = [];
       try {
@@ -143632,14 +143893,14 @@ function RegisterRoutes(router) {
     }
   );
   const argsFilesystemController_listFiles = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
   router.get(
     "/fs/:mnemonic/file/list",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.listFiles),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.listFiles),
     async function FilesystemController_listFiles(context, next) {
       let validatedArgs = [];
       try {
@@ -143661,14 +143922,14 @@ function RegisterRoutes(router) {
     }
   );
   const argsFilesystemController_listParents = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
   router.get(
     "/fs/:mnemonic/parent/list",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.listParents),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.listParents),
     async function FilesystemController_listParents(context, next) {
       let validatedArgs = [];
       try {
@@ -143690,15 +143951,15 @@ function RegisterRoutes(router) {
     }
   );
   const argsFilesystemController_addMembers = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     body: { "in": "body", "name": "body", "required": true, "ref": "MemberAddBody" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
   router.post(
     "/fs/:mnemonic/member/add",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.addMembers),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.addMembers),
     async function FilesystemController_addMembers(context, next) {
       let validatedArgs = [];
       try {
@@ -143720,15 +143981,15 @@ function RegisterRoutes(router) {
     }
   );
   const argsFilesystemController_setAccess = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     body: { "in": "body", "name": "body", "required": true, "ref": "SetAccessBody" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
   router.post(
     "/fs/:mnemonic/member/set",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.setAccess),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.setAccess),
     async function FilesystemController_setAccess(context, next) {
       let validatedArgs = [];
       try {
@@ -143750,14 +144011,14 @@ function RegisterRoutes(router) {
     }
   );
   const argsFilesystemController_duplicate = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
   router.post(
     "/fs/:mnemonic/duplicate",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.duplicate),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.duplicate),
     async function FilesystemController_duplicate(context, next) {
       let validatedArgs = [];
       try {
@@ -143779,14 +144040,14 @@ function RegisterRoutes(router) {
     }
   );
   const argsFilesystemController_remove = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
   router.post(
     "/fs/:mnemonic/remove",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.remove),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.remove),
     async function FilesystemController_remove(context, next) {
       let validatedArgs = [];
       try {
@@ -143808,14 +144069,14 @@ function RegisterRoutes(router) {
     }
   );
   const argsFilesystemController_destroy = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
   router.post(
     "/fs/:mnemonic/destroy",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.destroy),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.destroy),
     async function FilesystemController_destroy(context, next) {
       let validatedArgs = [];
       try {
@@ -143837,14 +144098,14 @@ function RegisterRoutes(router) {
     }
   );
   const argsFilesystemController_tree = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
   router.get(
     "/fs/:mnemonic/tree",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.tree),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.tree),
     async function FilesystemController_tree(context, next) {
       let validatedArgs = [];
       try {
@@ -143872,8 +144133,8 @@ function RegisterRoutes(router) {
   router.get(
     "/fs/resolve/:path",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.resolve),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.resolve),
     async function FilesystemController_resolve(context, next) {
       let validatedArgs = [];
       try {
@@ -143900,8 +144161,8 @@ function RegisterRoutes(router) {
   router.get(
     "/fs/resolve",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.resolveHome),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.resolveHome),
     async function FilesystemController_resolveHome(context, next) {
       let validatedArgs = [];
       try {
@@ -143929,8 +144190,8 @@ function RegisterRoutes(router) {
   router.post(
     "/fs/move",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.move),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.move),
     async function FilesystemController_move(context, next) {
       let validatedArgs = [];
       try {
@@ -143957,8 +144218,8 @@ function RegisterRoutes(router) {
   router.get(
     "/fs/list",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.listHome),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.listHome),
     async function FilesystemController_listHome(context, next) {
       let validatedArgs = [];
       try {
@@ -143981,13 +144242,13 @@ function RegisterRoutes(router) {
   );
   const argsFilesystemController_listInodes = {
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" }
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" }
   };
   router.get(
     "/fs/:mnemonic/list",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.listInodes),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.listInodes),
     async function FilesystemController_listInodes(context, next) {
       let validatedArgs = [];
       try {
@@ -144015,8 +144276,8 @@ function RegisterRoutes(router) {
   router.post(
     "/fs/directory/add",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.addDirectory),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.addDirectory),
     async function FilesystemController_addDirectory(context, next) {
       let validatedArgs = [];
       try {
@@ -144044,8 +144305,8 @@ function RegisterRoutes(router) {
   router.post(
     "/fs/search",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.search),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.search),
     async function FilesystemController_search(context, next) {
       let validatedArgs = [];
       try {
@@ -144073,8 +144334,8 @@ function RegisterRoutes(router) {
   router.post(
     "/fs/search/:jobId",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.searchResults),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.searchResults),
     async function FilesystemController_searchResults(context, next) {
       let validatedArgs = [];
       try {
@@ -144102,8 +144363,8 @@ function RegisterRoutes(router) {
   router.post(
     "/fs/search/:jobId/cancel",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime17.fetchMiddlewares)(FilesystemController.prototype.searchCancel),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.searchCancel),
     async function FilesystemController_searchCancel(context, next) {
       let validatedArgs = [];
       try {
@@ -144124,16 +144385,101 @@ function RegisterRoutes(router) {
       });
     }
   );
+  const argsFileDataController_listOrphaned = {
+    request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
+  };
+  router.get(
+    "/filedata/orphaned",
+    authenticateMiddleware([{ "api_key": ["dabih:admin"] }]),
+    ...(0, import_runtime19.fetchMiddlewares)(FileDataController),
+    ...(0, import_runtime19.fetchMiddlewares)(FileDataController.prototype.listOrphaned),
+    async function FileDataController_listOrphaned(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsFileDataController_listOrphaned, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new FileDataController();
+      return templateService.apiHandler({
+        methodName: "listOrphaned",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
+  const argsFileDataController_removeFileData = {
+    request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+    uid: { "in": "path", "name": "uid", "required": true, "dataType": "string" }
+  };
+  router.post(
+    "/filedata/:uid/remove",
+    authenticateMiddleware([{ "api_key": ["dabih:admin"] }]),
+    ...(0, import_runtime19.fetchMiddlewares)(FileDataController),
+    ...(0, import_runtime19.fetchMiddlewares)(FileDataController.prototype.removeFileData),
+    async function FileDataController_removeFileData(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsFileDataController_removeFileData, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new FileDataController();
+      return templateService.apiHandler({
+        methodName: "removeFileData",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
+  const argsFileDataController_checkIntegrity = {
+    request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
+  };
+  router.get(
+    "/filedata/checkIntegrity",
+    authenticateMiddleware([{ "api_key": ["dabih:admin"] }]),
+    ...(0, import_runtime19.fetchMiddlewares)(FileDataController),
+    ...(0, import_runtime19.fetchMiddlewares)(FileDataController.prototype.checkIntegrity),
+    async function FileDataController_checkIntegrity(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsFileDataController_checkIntegrity, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new FileDataController();
+      return templateService.apiHandler({
+        methodName: "checkIntegrity",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
   const argsDownloadController_decrypt = {
-    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "ref": "Mnemonic" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
     body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "key": { "ref": "AESKey", "required": true } } }
   };
   router.post(
     "/download/:mnemonic/decrypt",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(DownloadController),
-    ...(0, import_runtime17.fetchMiddlewares)(DownloadController.prototype.decrypt),
+    ...(0, import_runtime19.fetchMiddlewares)(DownloadController),
+    ...(0, import_runtime19.fetchMiddlewares)(DownloadController.prototype.decrypt),
     async function DownloadController_decrypt(context, next) {
       let validatedArgs = [];
       try {
@@ -144160,8 +144506,8 @@ function RegisterRoutes(router) {
   router.get(
     "/download",
     authenticateMiddleware([{ "api_key": [] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(DownloadController),
-    ...(0, import_runtime17.fetchMiddlewares)(DownloadController.prototype.download),
+    ...(0, import_runtime19.fetchMiddlewares)(DownloadController),
+    ...(0, import_runtime19.fetchMiddlewares)(DownloadController.prototype.download),
     async function DownloadController_download(context, next) {
       let validatedArgs = [];
       try {
@@ -144189,8 +144535,8 @@ function RegisterRoutes(router) {
   router.get(
     "/download/:uid/chunk/:hash",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(DownloadController),
-    ...(0, import_runtime17.fetchMiddlewares)(DownloadController.prototype.chunk),
+    ...(0, import_runtime19.fetchMiddlewares)(DownloadController),
+    ...(0, import_runtime19.fetchMiddlewares)(DownloadController.prototype.chunk),
     async function DownloadController_chunk(context, next) {
       let validatedArgs = [];
       try {
@@ -144217,8 +144563,8 @@ function RegisterRoutes(router) {
   router.get(
     "/auth/info",
     authenticateMiddleware([{ "api_key": [] }]),
-    ...(0, import_runtime17.fetchMiddlewares)(AuthController),
-    ...(0, import_runtime17.fetchMiddlewares)(AuthController.prototype.info),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.info),
     async function AuthController_info(context, next) {
       let validatedArgs = [];
       try {
@@ -144245,8 +144591,8 @@ function RegisterRoutes(router) {
   };
   router.post(
     "/auth/signIn",
-    ...(0, import_runtime17.fetchMiddlewares)(AuthController),
-    ...(0, import_runtime17.fetchMiddlewares)(AuthController.prototype.signIn),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.signIn),
     async function AuthController_signIn(context, next) {
       let validatedArgs = [];
       try {
@@ -144272,8 +144618,8 @@ function RegisterRoutes(router) {
   };
   router.post(
     "/auth/verify",
-    ...(0, import_runtime17.fetchMiddlewares)(AuthController),
-    ...(0, import_runtime17.fetchMiddlewares)(AuthController.prototype.verify),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.verify),
     async function AuthController_verify(context, next) {
       let validatedArgs = [];
       try {
@@ -144299,8 +144645,8 @@ function RegisterRoutes(router) {
   };
   router.post(
     "/auth/refresh",
-    ...(0, import_runtime17.fetchMiddlewares)(AuthController),
-    ...(0, import_runtime17.fetchMiddlewares)(AuthController.prototype.token),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.token),
     async function AuthController_token(context, next) {
       let validatedArgs = [];
       try {
@@ -144372,7 +144718,7 @@ function RegisterRoutes(router) {
 }
 
 // src/middleware/error.ts
-var import_runtime18 = __toESM(require_dist(), 1);
+var import_runtime20 = __toESM(require_dist(), 1);
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 var getStackMessage = (error2) => {
   const { stack } = error2;
@@ -144397,7 +144743,9 @@ var error = async (ctx, next) => {
       }
       ctx.status = error2.code ?? 500;
       logger_default.error(`${ctx.status}: ${error2.message}`);
-      logger_default.verbose(`Error Details: ${JSON.stringify(error2.details)}`);
+      if (error2.details) {
+        logger_default.verbose(`${JSON.stringify(error2.details)}`);
+      }
       ctx.body = {
         message: error2.message,
         details: error2.details
@@ -144420,7 +144768,7 @@ var error = async (ctx, next) => {
         code: 400
       });
     }
-    if (err instanceof import_runtime18.ValidateError) {
+    if (err instanceof import_runtime20.ValidateError) {
       ctx.error({
         message: "Validation Failed",
         details: err?.fields,
@@ -144512,7 +144860,7 @@ var app = async (port) => {
   await initRedis();
   initEmail();
   const app2 = new Koa();
-  app2.use(koaBody());
+  app2.use(bodyParser());
   app2.use(log_default());
   app2.use(error_default());
   app2.use(serialize_default());
