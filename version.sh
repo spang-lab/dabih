@@ -34,6 +34,8 @@ pushd vite
 popd
 pushd cli
   $SED_COMMAND -i "s/^version = .*/version = \"${VERSION#v}\"/" Cargo.toml
+  # update lockfile
+  cargo build --release
 popd
 
 # Update the version in the docker-compose file
