@@ -9,8 +9,6 @@ import {
   Security,
   OperationId,
   Path,
-  SuccessResponse,
-  Response,
 } from '@tsoa/runtime';
 
 import file from './file';

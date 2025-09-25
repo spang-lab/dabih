@@ -28,10 +28,10 @@
   },
   "include": [
     "src/**/*",
-    "build/**/*",
+    "build/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist",
+    "dist"
   ]
 }

@@ -1,7 +1,6 @@
 import createClient from 'openapi-fetch';
 
 import type { components, paths } from './schema';
-import checkIntegrity from 'src/api/filedata/checkIntegrity';
 type schemas = components['schemas'];
 
 type ChunkUpload = {

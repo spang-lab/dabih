@@ -1,5 +1,3 @@
-import { join } from 'path';
-
 /**
  * The AES-256 encryption key used to encrypt and decrypt datasets.
  * base64url encoded

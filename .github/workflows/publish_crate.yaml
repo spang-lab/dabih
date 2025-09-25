@@ -4,7 +4,7 @@ name: Publish Crates.io cli crate
 on:
   push:
     tags:
-      - "vdisabled*"
+      - "v*"
 
 jobs:
   publish:
