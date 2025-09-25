@@ -34,7 +34,7 @@ fn allow_additional_properties(spec: &mut OpenAPI) {
 }
 
 fn main() {
-    let src = "../api/build/spec.json";
+    let src = "spec.json";
     println!("cargo:rerun-if-changed={}", src);
     let file = std::fs::File::open(src).unwrap();
     let mut spec = serde_json::from_reader(file).unwrap();
