@@ -48,6 +48,8 @@ export const getHome = async (sub: string) => {
   if (home) {
     return home;
   }
+
+  logger.info(`Creating home for user ${sub}`);
   const root = await getRoot();
   const user = await db.user.findUnique({
     where: {

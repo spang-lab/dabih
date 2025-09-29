@@ -2,6 +2,7 @@ import crypto from '#lib/crypto/index';
 import { getSecret, getSecrets, SECRET } from '#lib/redis/secrets';
 import db from '#lib/db';
 import logger from '#lib/logger';
+import { getHome } from '#lib/database/inodes';
 
 export default async function verifyEmail(tokenStr: string): Promise<string> {
   const secrets = await getSecrets(SECRET.EMAIL);
@@ -19,6 +20,13 @@ export default async function verifyEmail(tokenStr: string): Promise<string> {
   if (typeof sub !== 'string' || typeof email !== 'string') {
     throw new Error('Invalid token payload structure');
   }
+  const adminUser = await db.user.findFirst({
+    where: {
+      scope: {
+        contains: 'dabih:admin',
+      },
+    },
+  });
 
   const secret = await getSecret(SECRET.AUTH);
   const existingUser = await db.user.findUnique({
@@ -46,13 +54,6 @@ export default async function verifyEmail(tokenStr: string): Promise<string> {
   }
 
   const scopes = ['dabih:upload', 'dabih:api'];
-  const adminUser = await db.user.findFirst({
-    where: {
-      scope: {
-        contains: 'dabih:admin',
-      },
-    },
-  });
   if (!adminUser) {
     logger.warn(
       `No admin user found, creating new user with admin scope for ${email}`,
@@ -72,6 +73,7 @@ export default async function verifyEmail(tokenStr: string): Promise<string> {
       keys: true,
     },
   });
+  await getHome(sub);
   const token = crypto.jwt.signWithSecret(
     {
       sub,

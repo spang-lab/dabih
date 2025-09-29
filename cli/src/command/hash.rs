@@ -4,6 +4,7 @@ use crate::error::{CliError, Result};
 use crate::fs::ChunkedReader;
 use clap::Args;
 
+/// Compute and print the hash of a file in chunks
 #[derive(Args, Debug)]
 pub struct Hash {
     #[arg(required = true, name = "PATH")]

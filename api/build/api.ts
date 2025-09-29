@@ -31,6 +31,7 @@ const init = (baseUrl: string) => {
       }),
     signIn: (email: string) => c.POST('/auth/signIn', { body: { email } }),
     verify: (token: string) => c.POST('/auth/verify', { body: { token } }),
+    providers: () => c.GET('/auth/providers'),
   };
 
   const token = {
@@ -45,6 +46,8 @@ const init = (baseUrl: string) => {
     list: () => c.GET('/user/list'),
     remove: (sub: string) => c.POST('/user/remove', { body: { sub } }),
     addKey: (body: schemas['KeyAddBody']) => c.POST('/user/key/add', { body }),
+    findKey: (hash: string) =>
+      c.GET('/user/findKey/{hash}', { params: { path: { hash } } }),
     enableKey: (body: schemas['KeyEnableBody']) =>
       c.POST('/user/key/enable', { body }),
     removeKey: (body: schemas['KeyRemoveBody']) =>
@@ -118,6 +121,7 @@ const init = (baseUrl: string) => {
       }
       return c.GET('/fs/{mnemonic}/list', { params: { path: { mnemonic } } });
     },
+    listShared: () => c.GET('/fs/list/shared'),
     searchStart: (body: schemas['InodeSearchBody']) =>
       c.POST('/fs/search', { body }),
     searchResults: (jobId: string) =>

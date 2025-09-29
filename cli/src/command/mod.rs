@@ -1,3 +1,4 @@
+pub mod cat;
 pub mod download;
 pub mod hash;
 pub mod list;
@@ -13,4 +14,5 @@ pub enum Commands {
     List(list::List),
     Download(download::Download),
     Hash(hash::Hash),
+    Cat(cat::Cat),
 }

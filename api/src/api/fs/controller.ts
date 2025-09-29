@@ -44,6 +44,7 @@ import type {
 import destroy from './destroy';
 import setAccess from './setAccess';
 import resolve from './resolve';
+import listShared from './listShared';
 
 @Route('fs')
 @Tags('Filesystem')
@@ -176,6 +177,15 @@ export class FilesystemController extends Controller {
   ): Promise<ListResponse> {
     const { user } = request;
     return list(user);
+  }
+
+  @Get('list/shared')
+  @OperationId('listShared')
+  public async listShared(
+    @Request() request: RequestWithUser,
+  ): Promise<ListResponse> {
+    const { user } = request;
+    return listShared(user);
   }
 
   @Get('{mnemonic}/list')

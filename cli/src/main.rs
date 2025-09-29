@@ -46,6 +46,7 @@ async fn main() -> Result<()> {
         Commands::Upload(args) => command::upload::run(ctx, args).await?,
         Commands::List(args) => command::list::run(ctx, args).await?,
         Commands::Download(args) => command::download::run(ctx, args).await?,
+        Commands::Cat(args) => command::cat::run(ctx, args).await?,
         _ => { /* already handled above */ }
     }
     Ok(())

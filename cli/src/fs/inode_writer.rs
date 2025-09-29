@@ -6,8 +6,8 @@ use crate::api::types::{Chunk, FileDownload};
 use crate::crypto::decrypt_buffer;
 use crate::error::Result;
 
-pub struct InodeWriter {
-    inner: BufWriter<File>,
+pub struct InodeWriter<W: Write> {
+    inner: BufWriter<W>,
     key: Vec<u8>,
     inode: FileDownload,
     pos: usize,
@@ -20,7 +20,7 @@ pub fn chunk_len(chunk: &Chunk) -> usize {
     s as usize
 }
 
-impl InodeWriter {
+impl InodeWriter<File> {
     pub fn from(path: &PathBuf, inode: FileDownload, key: Vec<u8>) -> Result<Self> {
         let file = File::create(path)?;
         let writer = BufWriter::new(file);
@@ -31,6 +31,19 @@ impl InodeWriter {
             pos: 0,
         })
     }
+}
+
+impl<W: Write> InodeWriter<W> {
+    pub fn from_writer(writer: W, inode: FileDownload, key: Vec<u8>) -> Result<InodeWriter<W>> {
+        let buf_writer = BufWriter::new(writer);
+        Ok(InodeWriter {
+            inner: buf_writer,
+            key,
+            inode,
+            pos: 0,
+        })
+    }
+
     pub fn read_chunk(&self) -> Option<(&String, &Chunk)> {
         if self.pos >= self.inode.data.chunks.len() {
             return None;

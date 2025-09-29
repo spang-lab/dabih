@@ -3,6 +3,7 @@
 import Inode from "./inode/Inode";
 import DragOverlay from "./DragOverlay";
 import ParentDirectory from "./inode/ParentDirectory";
+import SharedDirectory from "./inode/SharedDirectory";
 import Parents from "./inode/Parents";
 import useFinder from "./Context";
 import Header from "./inode/Header";
@@ -34,6 +35,7 @@ export default function Files() {
       <Header />
       <div className="flex flex-1 flex-row flex-wrap content-start ">
         <ParentDirectory />
+        <SharedDirectory />
         {nodes.map((inode) => (
           <Inode key={inode.mnemonic} inode={inode} />
         ))}

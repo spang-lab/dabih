@@ -4,6 +4,7 @@ use crate::uploader::{UploadState, Uploader};
 use clap::Args;
 use pbr::ProgressBar;
 
+/// Upload files to dabih
 #[derive(Args, Debug)]
 pub struct Upload {
     /// The files that should be uploaded to dabih, this can also be a glob pattern

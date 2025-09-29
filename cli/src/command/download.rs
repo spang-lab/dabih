@@ -4,6 +4,7 @@ use crate::error::Result;
 use clap::Args;
 use tracing::debug;
 
+/// Download files or directories from dabih
 #[derive(Args, Debug)]
 pub struct Download {
     #[arg(required = true, name = "PATH")]

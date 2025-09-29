@@ -73,7 +73,7 @@ pub async fn run(ctx: Context, args: List) -> Result<()> {
             let t = InodeType::from_i32(entry.type_)?;
             let s = get_size(&entry);
             println!(
-                "{} {}\t{:20}\t{}",
+                "{}\t{}\t{:20}\t{}",
                 t.as_char(),
                 size_to_human_readable(s),
                 entry.mnemonic,

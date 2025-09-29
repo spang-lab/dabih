@@ -79,6 +79,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/user/findKey/{hash}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["findKey"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/user/list": {
         parameters: {
             query?: never;
@@ -514,6 +530,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fs/list/shared": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listShared"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/fs/{mnemonic}/list": {
         parameters: {
             query?: never;
@@ -683,6 +715,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["downloadChunk"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["authProviders"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1181,6 +1229,23 @@ export interface components {
              *     this list should be empty, if not these files are orphaned and can be removed */
             unknown: string[];
         };
+        AuthMetadata: {
+            issuer: string;
+            authorization_endpoint: string;
+            userinfo_endpoint: string;
+            token_endpoint: string;
+            end_session_endpoint?: string;
+        };
+        AuthProvider: {
+            id: string;
+            name: string;
+            authority: string;
+            signInUrl?: string;
+            clientId: string;
+            scopes: string[];
+            logo?: string;
+            metadata?: components["schemas"]["AuthMetadata"];
+        };
         /** @description User is the type that represents a user in the system. */
         User: {
             /**
@@ -1313,6 +1378,28 @@ export interface operations {
                 "application/json": components["schemas"]["UserSub"];
             };
         };
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponse"] | null;
+                };
+            };
+        };
+    };
+    findKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                hash: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Ok */
             200: {
@@ -1911,6 +1998,26 @@ export interface operations {
             };
         };
     };
+    listShared: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListResponse"];
+                };
+            };
+        };
+    };
     listInodes: {
         parameters: {
             query?: never;
@@ -2152,6 +2259,26 @@ export interface operations {
                 };
                 content: {
                     "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    authProviders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthProvider"][];
                 };
             };
         };

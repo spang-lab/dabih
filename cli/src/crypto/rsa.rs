@@ -7,7 +7,7 @@ use rsa::{
 };
 use sha2::Digest;
 
-use crate::error::Result;
+use crate::{api::types::FileDownload, error::Result};
 
 #[derive(Debug, Clone)]
 pub struct PrivateKey {
@@ -35,5 +35,19 @@ impl PrivateKey {
         let padding = Oaep::new::<sha2::Sha256>();
         let decrypted_data = self.key.decrypt(padding, &encrypted_bytes)?;
         Ok(decrypted_data)
+    }
+
+    pub fn extract_key(&self, inode: &FileDownload) -> Result<Vec<u8>> {
+        let key_hash = self.hash()?;
+        let encrypted = match inode.keys.iter().find(|k| k.hash == key_hash) {
+            Some(k) => k.key.clone(),
+            None => {
+                return Err(crate::error::CliError::NoDecryptionKey(
+                    inode.mnemonic.clone(),
+                ));
+            }
+        };
+        let decrypted = self.decrypt(&encrypted)?;
+        Ok(decrypted)
     }
 }

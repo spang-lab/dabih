@@ -9,6 +9,7 @@ import {
   Security,
   OperationId,
   SuccessResponse,
+  NoSecurity,
 } from '@tsoa/runtime';
 
 import type {
@@ -28,6 +29,7 @@ import remove from './remove';
 import addKey from './addKey';
 import enableKey from './enableKey';
 import removeKey from './removeKey';
+import findKey from './findKey';
 
 @Route('user')
 @Tags('User')
@@ -59,6 +61,13 @@ export class UserController extends Controller {
   public async get(@Body() body: UserSub): Promise<UserResponse | null> {
     const { sub } = body;
     return get(sub);
+  }
+
+  @Get('findKey/{hash}')
+  @OperationId('findKey')
+  @NoSecurity()
+  public async findKey(hash: string): Promise<UserResponse | null> {
+    return findKey(hash);
   }
 
   @Get('list')

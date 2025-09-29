@@ -3,6 +3,7 @@ use crate::error::Result;
 use clap::Args;
 use progenitor_client::ClientInfo;
 
+/// Show the current connection and authentication status
 #[derive(Args, Debug)]
 pub struct Status {}
 

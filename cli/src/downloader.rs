@@ -1,4 +1,4 @@
-use std::fs::create_dir;
+use std::fs::{File, create_dir};
 use std::path::PathBuf;
 
 use tracing::{debug, warn};
@@ -29,7 +29,7 @@ pub struct Downloader {
     pidx: usize,
     files: Vec<(String, PathBuf)>,
     fidx: usize,
-    writer: Option<InodeWriter>,
+    writer: Option<InodeWriter<File>>,
 }
 
 fn rename_path(path: &PathBuf, idx: u64) -> PathBuf {
@@ -135,26 +135,15 @@ impl Downloader {
         self.fidx = 0;
         Ok(DownloadState::Creating)
     }
-    pub async fn find_key(&self, inode: &FileDownload) -> Result<Vec<u8>> {
-        let private_key = self.ctx.private_key().unwrap();
-        let key_hash = private_key.hash()?;
-        let encrypted = match inode.keys.iter().find(|k| k.hash == key_hash) {
-            Some(k) => k.key.clone(),
-            None => {
-                return Err(crate::error::CliError::NoDecryptionKey(
-                    inode.mnemonic.clone(),
-                ));
-            }
-        };
-        let decrypted = private_key.decrypt(&encrypted)?;
-        Ok(decrypted)
-    }
 
     pub async fn create(&mut self) -> Result<DownloadState> {
         let (mnemonic, path) = &self.files[self.fidx];
 
         let inode = self.ctx.api().file_info(mnemonic).await?.into_inner();
-        let key = self.find_key(&inode).await?;
+        let private_key = self.ctx.private_key().unwrap();
+
+        let key = private_key.extract_key(&inode)?;
+
         let writer = InodeWriter::from(path, inode, key)?;
         self.writer = Some(writer);
 

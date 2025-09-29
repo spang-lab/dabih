@@ -4,7 +4,7 @@ import { UserResponse } from "./lib/api/types";
 import crypto from "./lib/crypto";
 import api, { setAPIToken } from "./lib/api";
 
-export const KEY = {
+const KEY = {
   privateKey: "dabih_private_key",
   token: "dabih_token",
 };
@@ -45,7 +45,6 @@ export function SessionWrapper({ children }: {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-
 
 
 
@@ -153,34 +152,46 @@ export function SessionWrapper({ children }: {
 
   const signOut = useCallback(async () => {
     localStorage.removeItem(KEY.token);
+    localStorage.removeItem(KEY.privateKey);
+    setKey(null);
     await update();
   }, [update]);
 
   const refreshToken = useCallback(async () => {
-    if (!token) {
-      return;
-    }
-    const payload = crypto.jwt.decode(token);
-    const { sub, exp } = payload;
-    if (!sub || !exp) {
-      console.error("Invalid token payload:", payload);
-      return;
-    }
-    const now = Math.floor(Date.now() / 1000);
-    const thirtyMinutes = 30 * 60;
-    if (exp - now > thirtyMinutes) {
-      // Token is still valid no need to refresh
-      return;
+    let sub = null;
+    if (token) {
+      const payload = crypto.jwt.decode(token);
+      const { exp } = payload;
+      sub = payload.sub;
+      if (!exp) {
+        console.error("Invalid token payload:", payload);
+        return;
+      }
+      const now = Math.floor(Date.now() / 1000);
+      const thirtyMinutes = 30 * 60;
+      if (exp - now > thirtyMinutes) {
+        // Token is still valid no need to refresh
+        return;
+      }
     }
     if (!key) {
       return;
     }
+    if (!sub) {
+      const hash = await crypto.privateKey.toHash(key);
+      const { data: user, error } = await api.user.findKey(hash);
+      if (error || !user) {
+        console.error("Key lookup error:", error);
+        return;
+      }
+      sub = user.sub;
+    }
     const signingKey = await crypto.privateKey.toSigningKey(key);
     const signedToken = await crypto.jwt.signWithRSA({ sub }, signingKey);
 
-    const { data: newToken, error } = await api.auth.refresh(signedToken);
-    if (error || !newToken) {
-      console.error("Token refresh error:", error);
+    const { data: newToken, error: error2 } = await api.auth.refresh(signedToken);
+    if (error2 || !newToken) {
+      console.error("Token refresh error:", error2);
       return;
     }
     localStorage.setItem(KEY.token, newToken);

@@ -19,10 +19,18 @@ import refresh from './refresh';
 
 import { parseRequest } from 'src/auth';
 import verifyEmail from './verifyEmail';
+import providers from './providers';
+import { AuthProvider } from '../types/auth';
 
 @Route('auth')
 @Tags('Auth')
 export class AuthController extends Controller {
+  @Get('providers')
+  @OperationId('authProviders')
+  public providers(): AuthProvider[] {
+    return providers();
+  }
+
   @Get('info')
   @Security('api_key', [])
   @OperationId('authInfo')
