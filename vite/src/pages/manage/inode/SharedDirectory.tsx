@@ -9,9 +9,10 @@ export default function SharedDirectory() {
 
   const parents = useFiles((state) => state.parents);
   const shared = useFiles((state) => state.shared);
-  const cwd = parents[0];
-  if (!cwd || cwd.type !== InodeType.HOME
-    || cwd.name !== user?.email
+  const cwd = useFiles((state) => state.cwd);
+  const cwdNode = parents[0];
+  if (!cwd || cwdNode.type !== InodeType.HOME
+    || cwdNode.name !== user?.email
   ) {
     return null;
   }

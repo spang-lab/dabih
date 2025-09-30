@@ -4,7 +4,7 @@ import winston from 'winston';
 const { combine, timestamp, json, cli } = winston.format;
 
 const logger = winston.createLogger();
-const level = getEnv('LOG_LEVEL', 'info');
+const level = getEnv('LOG_LEVEL', 'info')!;
 
 if (getEnv('NODE_ENV', 'development') === 'production') {
   logger.add(

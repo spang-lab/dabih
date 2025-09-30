@@ -1289,7 +1289,7 @@
 	},
 	"info": {
 		"title": "dabih-api",
-		"version": "2.2.7",
+		"version": "2.2.8",
 		"description": "Dabih API Server",
 		"license": {
 			"name": "MIT"
