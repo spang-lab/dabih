@@ -336,7 +336,7 @@ dependencies = [
 
 [[package]]
 name = "dabih"
-version = "2.2.10"
+version = "2.2.11"
 dependencies = [
  "aes",
  "base64ct",
