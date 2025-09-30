@@ -1336,9 +1336,9 @@ var require_security = __commonJS({
   "node_modules/@tsoa/runtime/dist/decorators/security.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.NoSecurity = NoSecurity;
+    exports.NoSecurity = NoSecurity2;
     exports.Security = Security9;
-    function NoSecurity() {
+    function NoSecurity2() {
       return () => {
         return;
       };
@@ -139796,6 +139796,7 @@ var getHome = async (sub) => {
   if (home) {
     return home;
   }
+  logger_default.info(`Creating home for user ${sub}`);
   const root = await getRoot();
   const user = await db_default.user.findUnique({
     where: {
@@ -140000,6 +140001,23 @@ async function removeKey(user, body) {
   return result;
 }
 
+// src/api/user/findKey.ts
+async function findKey(hash2) {
+  const result = await db_default.user.findFirst({
+    where: {
+      keys: {
+        some: {
+          hash: hash2
+        }
+      }
+    },
+    include: {
+      keys: true
+    }
+  });
+  return result;
+}
+
 // src/api/user/controller.ts
 var UserController = class extends import_runtime3.Controller {
   async add(request, requestBody) {
@@ -140015,6 +140033,9 @@ var UserController = class extends import_runtime3.Controller {
   async get(body) {
     const { sub } = body;
     return get(sub);
+  }
+  async findKey(hash2) {
+    return findKey(hash2);
   }
   async list() {
     return list();
@@ -140056,6 +140077,11 @@ __decorateClass([
   (0, import_runtime3.OperationId)("findUser"),
   __decorateParam(0, (0, import_runtime3.Body)())
 ], UserController.prototype, "get", 1);
+__decorateClass([
+  (0, import_runtime3.Get)("findKey/{hash}"),
+  (0, import_runtime3.OperationId)("findKey"),
+  (0, import_runtime3.NoSecurity)()
+], UserController.prototype, "findKey", 1);
 __decorateClass([
   (0, import_runtime3.Get)("list"),
   (0, import_runtime3.OperationId)("listUsers")
@@ -142059,6 +142085,36 @@ async function resolve3(user, path) {
   return nodes[0] || null;
 }
 
+// src/api/fs/listShared.ts
+async function listShared(user) {
+  const { sub } = user;
+  const home = await getHome(sub);
+  const parents = await getParents(home.mnemonic);
+  const shared = await db_default.inode.findMany({
+    where: {
+      members: {
+        some: {
+          sub,
+          permission: {
+            not: Permission.NONE
+          }
+        }
+      },
+      id: {
+        not: home.id
+      }
+    },
+    include: {
+      members: true,
+      data: true
+    }
+  });
+  return {
+    parents,
+    children: shared
+  };
+}
+
 // src/api/fs/controller.ts
 var FilesystemController = class extends import_runtime11.Controller {
   file(mnemonic2, request) {
@@ -142112,6 +142168,10 @@ var FilesystemController = class extends import_runtime11.Controller {
   async listHome(request) {
     const { user } = request;
     return list4(user);
+  }
+  async listShared(request) {
+    const { user } = request;
+    return listShared(user);
   }
   async listInodes(request, mnemonic2) {
     const { user } = request;
@@ -142212,6 +142272,11 @@ __decorateClass([
   (0, import_runtime11.OperationId)("listHome"),
   __decorateParam(0, (0, import_runtime11.Request)())
 ], FilesystemController.prototype, "listHome", 1);
+__decorateClass([
+  (0, import_runtime11.Get)("list/shared"),
+  (0, import_runtime11.OperationId)("listShared"),
+  __decorateParam(0, (0, import_runtime11.Request)())
+], FilesystemController.prototype, "listShared", 1);
 __decorateClass([
   (0, import_runtime11.Get)("{mnemonic}/list"),
   (0, import_runtime11.OperationId)("listInodes"),
@@ -142786,6 +142851,13 @@ async function verifyEmail(tokenStr) {
   if (typeof sub !== "string" || typeof email !== "string") {
     throw new Error("Invalid token payload structure");
   }
+  const adminUser = await db_default.user.findFirst({
+    where: {
+      scope: {
+        contains: "dabih:admin"
+      }
+    }
+  });
   const secret3 = await getSecret(SECRET.AUTH);
   const existingUser = await db_default.user.findUnique({
     where: { sub }
@@ -142811,13 +142883,6 @@ async function verifyEmail(tokenStr) {
     return token2;
   }
   const scopes = ["dabih:upload", "dabih:api"];
-  const adminUser = await db_default.user.findFirst({
-    where: {
-      scope: {
-        contains: "dabih:admin"
-      }
-    }
-  });
   if (!adminUser) {
     logger_default.warn(
       `No admin user found, creating new user with admin scope for ${email}`
@@ -142836,6 +142901,7 @@ async function verifyEmail(tokenStr) {
       keys: true
     }
   });
+  await getHome(sub);
   const token = crypto_default.jwt.signWithSecret(
     {
       sub,
@@ -142846,8 +142912,36 @@ async function verifyEmail(tokenStr) {
   return token;
 }
 
+// src/api/auth/providers.ts
+function providers() {
+  const providers2 = [];
+  const githubClientId = getEnv("GITHUB_CLIENT_ID", null);
+  if (githubClientId) {
+    const metadata = {
+      issuer: "https://github.com",
+      authorization_endpoint: "https://github.com/login/oauth/authorize",
+      userinfo_endpoint: "https://api.github.com/user",
+      token_endpoint: "https://github.com/login/oauth/access_token",
+      end_session_endpoint: "https://github.com/logout"
+    };
+    providers2.push({
+      id: "github",
+      name: "GitHub",
+      authority: "https://github.com/login/oauth",
+      logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAKRlWElmTU0AKgAAAAgABgESAAMAAAABAAEAAAEaAAUAAAABAAAAVgEbAAUAAAABAAAAXgEoAAMAAAABAAIAAAExAAIAAAATAAAAZodpAAQAAAABAAAAegAAAAAAAABIAAAAAQAAAEgAAAABUGl4ZWxtYXRvciBQcm8gMy43AAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAMqADAAQAAAABAAAAMgAAAABBTEI0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADamlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNi4wLjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczpleGlmPSJodHRwOi8vbnMuYWRvYmUuY29tL2V4aWYvMS4wLyIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDxleGlmOlBpeGVsWURpbWVuc2lvbj41MDwvZXhpZjpQaXhlbFlEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOlBpeGVsWERpbWVuc2lvbj41MDwvZXhpZjpQaXhlbFhEaW1lbnNpb24+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+UGl4ZWxtYXRvciBQcm8gMy43PC94bXA6Q3JlYXRvclRvb2w+CiAgICAgICAgIDx4bXA6TWV0YWRhdGFEYXRlPjIwMjUtMDktMjlUMTI6MzA6MTErMDI6MDA8L3htcDpNZXRhZGF0YURhdGU+CiAgICAgICAgIDx0aWZmOlhSZXNvbHV0aW9uPjcyMDAwMC8xMDAwMDwvdGlmZjpYUmVzb2x1dGlvbj4KICAgICAgICAgPHRpZmY6UmVzb2x1dGlvblVuaXQ+MjwvdGlmZjpSZXNvbHV0aW9uVW5pdD4KICAgICAgICAgPHRpZmY6WVJlc29sdXRpb24+NzIwMDAwLzEwMDAwPC90aWZmOllSZXNvbHV0aW9uPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4K2DXT/AAADPNJREFUaAXdmntsXnUZx8+t7Rh07bqxW3d523UbsYhkG1uAATVqdIBIDGgUDBGRABr/8R8CMca7xviHGiYEownBRAMGuYqXkA4EAjjuM8B6eXtljG0d3Rhr+57fz8/3d87p3r49b7exgolP8vac3+W5fJ/n+V1Pfe/9UQib5Wcce3t77bJDY2cGgbfeM3az5/urPd873bN+k7Vmkfr4frDH8+0+uPZ61nZ7gf+MMd7zw6fVvert3Dnu5HheoK784rR83A8xnQhNUbS8Zd1Z1pSu8IPgMxj3Md/3ayVMCCnrL4/kSZsrg8hZmraNU37JGu9vyLhnsPf1l5NO3lRHpZUzPU4ESISgkoQtW9m6JQyCb2HiJRg4V8YmBmOS9Q2WSm75T2xCVPazOMUPBJBowW8Ow/BwbMyvhvt7/iUGaFJnUqz+93iAqI8iES8pFAo1XvQ9rLkaAwJDboChhC1ZpI5HXrk1DhgyDDKigNzEIQYhd094pe/uLhaLdFZ0lMLqW5XUaSaSgU7ZysLqa3wvvAcA58n7xtjYOZNK+gjAiYKQXseXOsJKJnUBaXZ24AVXNTTOf3v0wMgL6ghltiSlir8zAck8ETYX2m4jAD8CwKkocxFAeQagQuT7LirLZKxzEo96AF1e39i0+OCB/Y+qmp905kammhfFEDc1tc07ZZ53Ly76VBzHWQo5ZbR/0GQU+DAMI2PNP94b9a7Yv79rFKXOtkrleUBkqElBPAqIc42JJ6irqWT+kMoTQRDWAObpsUPhp/fuff0gep2N5forvStgLoRJJPxKEAqr2slll8+5YS5XcALvyJJMJ1djJZNdI0cyvZ1bd1r8Z+oVEdkwJQiqLCeVbXNhzTZmkC8yK5VHQoLJY0YLpL9UIEyKye4KwanQzJi0OFX50T5M20zFeN7JpV7TsmQ6nTxDxudEEIZrGhqaFo0e2P+w6tJ2HknBvXheB3N2MV5WaP1q6Ac/MLEpoTZLJ6ZHN+e/4Xv2OhaKTtL3MGvGUrSfyioipawxZLVT7mcGaJFIfkeBYrQMl5GsOdggAHAeouoRRNyG3l9bz2+DdQXt6iP5odVEE/ib6hvn9x10s5mzWe2THnI5t7SlZVVoo+eZyptoUweXeigphWEQ4ZWfDRa7bhajaOXKta1xYK4D3E3gbAAQAilhIjLo4b9LyW0/aMEpdm7qkElX02+Mzr8t2WDb7v6u/zjB/GGmvJGwbItxKK7QwihyNiFjnwnM+uGenn7qnO1ZByEGcvhjmJpY58qZcar1nXG+t0P92tra6rq6uib6+9/ooXjLssLau3xjfoihjeB4gmXyNYx4y1jvHeMFRzxvnFypraNunjXx6dStxfgtCA792H5nYKDnOcmFgvb29mgne6/QBK8YP9ZCWZ7+ilyJxF4QxMFP6H8VP2e7CxmFeCXbDhMET+D1yUhQn5FNM6RjoHfX41Q6LyTPDt473dYl6/w+nlm+uzDCb5e3tq5hyX2J91NU5ucM5ilyqc7W4oL+ZDsTyiBHgPh2Mmbl+1xCbixF5UTZgZAc/VB2JUYpd50n0zpnhN6Ttg7XnvHoqVlqimx/IqDsxhBNlYSNhMrZnDZJYby8peUsMF/MHoEiO7hpJHB+ENpAY0dU7h2Vy4y4R0blUeqgTrDnNU/WSba1UbCAJb5usnbKix/IVrLkYtk+2Nv7sjPamuALVNYCRilSaaSq2FcFyPUuTOR15PSZoukkCkpVUbyZGVGO1hJQqY85ROPYr5Xt6i2mGiouYWyoe040XH5GDFKPzenjYsKlZRFIambvbyI7jr2nWM21imsJmJ7u2CqbZTvtUcDi185LuwOSAKNYTmBmmqDp5wO9XQ/QIi99gECQzRh6s797h2/srehGnZuAyo3Su4AIYDsYzmRGNJtAVUNV3syjMIXs3vaMB6VfpJKqjYG0eRYencks2FA/5w4WwVdJa81q05yHzaS8X8PUv0nz8gapZhLIo1geYZ2+f09v71vpbDQ9zHmcJ1tHVLSesMj+CWMZ/dOBTJoceBvImWBttbSi3u01sGl7YlfnyZp3/Pydnc5hgNDaxjo2ZWFM5KTjhCxbq7Ml+5mEp1ILQkLaY1p70rZp4a3kmcWy08Vuo59oHEauAlCZDcl+yLMrGEl2AR1Fk5FypaNMhlHChu5/Q0ei0rvk9rtVtCcZY+0CbcXrq3SarLac0yYLH/KLiWOyhsyYgYQhb93IWLJQ6pRwWlb5YT/rSiG67dxj6GV373ladPLJbSD9MLZmSdqhMv3y+Wan1ukyobeIKVUXfxoAufqpHGVu9felzclIKTOCdVOzBRsU85GkuiNXUBnLLL4mWxX0r2Wx0wkxb6Jxm0dhILX8AR2GoGlAEOLOIexNzk8s7MwTNovGl4vqdPYwc25RLc9p9lHtjqbCABDzBp0EI89IFkxV2wuaW1vX8qLCTOOK5lkheTZubj6DHbC3lbs0CZ0+4LFZtrOhf50tbXLqy4MLs+ZptgHhKWz+b5A0neD0/CAJHcldQVS6hlG8DP9pWzQtrXVXILsJy47ABsGz5N8EwKYjlrVsdLiOkZRvLi+s2axtA4rcrbuaZ5s2bNhQIx2LV61rQect1c9IMs3dfrONCZ8Vymh5oU1n5rPTAZWljsAqldRHR90QDxSNbzre7O3tS/ZdnWrXbzaIHdOG0NuxY6K1tbVhLA4ew7nrSW2ikbuOuOMuil/gQmSTjC4B4KGKcSIQ4A1Ch1r3EtaOk42FyEadS1vWXJgecQVCMpRuimjmBF6PSeornoyPJN8xwVn9o+PGfxy963XPXAWEG9OyWbYjoyRve8lRN3yOyrL52t9L7xeBM4/eGwXIgUnm9BgRdxovvmOoWHxRMk6WlhUKZwQ2vJYT9U3ozS7Lq43HxNG+P+aVzDmDgz2vCIg8EpNe92Hs5dwujvMUoKcJ2XkysHll6yeou4M7ndWcD9zto7b3AHsPoE8xsW3n3vEZHLiHUcpXjeIB2FxKir+SFi5cVz9nzniLDYOFOHUjXTvocx46GvTNBSDV0ikTxZWQ7tnMfYPF7s9TGU4CqbgOcgOJzeSTsV+6Wh9cFq9a1RL5USfptdLlbeITbgmPZhMgh0p+aUv6gSYPiKtrbm5e4EdztpO6Op06cgB0uDu+zxVufJB6W4b7u59EgLsO0tQWuvsh6/0Bw3TY4lCoI65/fuTVPFooFJa81dfXy0T8dRDSndkiWaDY05kSs9ph+jNC7C8diOS6R1ArSXXR0NDQPqL7U7EoA+CXDazSbqxJQVWCR9EgHby7MxB0ZmeZkFMaB/GtGLQPW5WbnCDNGOFeV/Kj76vb8EDX38mnm5FDdRDpD68RJ1Ft6uyEie5VP6+zU4ZVI9d2yJYeQtYQukhjHMOfagxl9UTC4yLE7jOhuTWtd7ZrfIgodESHDrw4Ut+4YA/GXQ4gKaxVZNCxsbG+8ZHR0ZFhbsKfnNfQ+CoRWQKXALPptEVWpm3Dfbvup+zSh+dM5B85cODIvPlNl9K9hY4y5jiAKEu48Pb8bwz3dm+Xzbp4l6JKZjfwVxRW/4ap+wZ9l8Br8Ia6gLhrqNh1TXrvOybe5ua2ZlMbh6eG4W7uglV3vKQImBUtbQD3LyPyMiZzajUZ7oMP88DtA8XuG9P+DoQYKoGobDtAumvVwF/Jm0+iRLNUSAS07/racF/P78R4klQBRGMkd9HL1AAi4IOP+edQ34qt6RrmbM065HkhKBKuaMH8ByLjXYSAVaSXropYHIPPNcxvOr2hqfHt+rlzxxYfXGyWekvD2ubaxvpFixYeHBkZzQQf4+mMQNaXAbAO+aSWGyd5bAkIa5+pC+1lIyMvvEcnOcKNjYyhMiJZvUux+WwV5sb+veQWkYkBY7XYh+mX3V6U74eBS1i7HLE7WXcuTgVMUZIJLXu6iCxvaXuQ6fzSKqmlBUVjIqL9sdCOX9Hf3z9CnbOtTJZ7lcA8cjk70tPzzlBL91Y+f99OZJilAkDwYcazEraG32bez+VWZgWp52auPGE5dTMDdZeFmhFZ9Iy5s7GvbutMICS/GhC1CUzgdXqlIQZXbONrSYC9CHc35GTDBBMb/3Fh2avhPPdHbCdCblHKGAROKWyZmCK2QCM2NtcP9nVdv9Nz/3QjW2VTLs0ERAwKL+l3ZThc7Pl97EfnYPjd1DGVBexG+OLEqUYd0xyfMgCT+hn+6iyt4ZEYqBAAgEtca/7oG/+cwf7uO2lT9CU31cNbDh0LiFjQpG8eHdHu4mvFob6ur6D8IgBp8TuC9lryWP3mJH2nzYRqqyQ3NrUYMuQ4SQe1LK7jpNFf4P44GfClgYGubumEUVGYORXp4ARWapmhLODicSHmFvxsLso/ixM3ck1x12DfLn0HV58ZvZf1aV7VyieB4AYAPU+SPvjmQM+/aRPJMzL+WHLU9/+L/gt//IwlvKdbXAAAAABJRU5ErkJggg==",
+      clientId: githubClientId,
+      scopes: ["read:user", "user:email"],
+      metadata
+    });
+  }
+  return providers2;
+}
+
 // src/api/auth/controller.ts
 var AuthController = class extends import_runtime17.Controller {
+  providers() {
+    return providers();
+  }
   info(request) {
     const { user } = request;
     return user;
@@ -142866,6 +142960,10 @@ var AuthController = class extends import_runtime17.Controller {
     return refresh(tokenStr);
   }
 };
+__decorateClass([
+  (0, import_runtime17.Get)("providers"),
+  (0, import_runtime17.OperationId)("authProviders")
+], AuthController.prototype, "providers", 1);
 __decorateClass([
   (0, import_runtime17.Get)("info"),
   (0, import_runtime17.Security)("api_key", []),
@@ -143270,6 +143368,33 @@ var models = {
     "additionalProperties": false
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  "AuthMetadata": {
+    "dataType": "refObject",
+    "properties": {
+      "issuer": { "dataType": "string", "required": true },
+      "authorization_endpoint": { "dataType": "string", "required": true },
+      "userinfo_endpoint": { "dataType": "string", "required": true },
+      "token_endpoint": { "dataType": "string", "required": true },
+      "end_session_endpoint": { "dataType": "string" }
+    },
+    "additionalProperties": false
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  "AuthProvider": {
+    "dataType": "refObject",
+    "properties": {
+      "id": { "dataType": "string", "required": true },
+      "name": { "dataType": "string", "required": true },
+      "authority": { "dataType": "string", "required": true },
+      "signInUrl": { "dataType": "string" },
+      "clientId": { "dataType": "string", "required": true },
+      "scopes": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
+      "logo": { "dataType": "string" },
+      "metadata": { "ref": "AuthMetadata" }
+    },
+    "additionalProperties": false
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   "User": {
     "dataType": "refObject",
     "properties": {
@@ -143428,6 +143553,33 @@ function RegisterRoutes(router) {
       const controller = new UserController();
       return templateService.apiHandler({
         methodName: "get",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
+  const argsUserController_findKey = {
+    hash: { "in": "path", "name": "hash", "required": true, "dataType": "string" }
+  };
+  router.get(
+    "/user/findKey/:hash",
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.findKey),
+    async function UserController_findKey(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsUserController_findKey, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new UserController();
+      return templateService.apiHandler({
+        methodName: "findKey",
         controller,
         context,
         validatedArgs,
@@ -144240,6 +144392,34 @@ function RegisterRoutes(router) {
       });
     }
   );
+  const argsFilesystemController_listShared = {
+    request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
+  };
+  router.get(
+    "/fs/list/shared",
+    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.listShared),
+    async function FilesystemController_listShared(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_listShared, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new FilesystemController();
+      return templateService.apiHandler({
+        methodName: "listShared",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
   const argsFilesystemController_listInodes = {
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
     mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" }
@@ -144550,6 +144730,31 @@ function RegisterRoutes(router) {
       const controller = new DownloadController();
       return templateService.apiHandler({
         methodName: "chunk",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
+  const argsAuthController_providers = {};
+  router.get(
+    "/auth/providers",
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.providers),
+    async function AuthController_providers(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_providers, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new AuthController();
+      return templateService.apiHandler({
+        methodName: "providers",
         controller,
         context,
         validatedArgs,
