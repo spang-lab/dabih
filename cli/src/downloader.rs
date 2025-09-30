@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use tracing::{debug, warn};
 
 use crate::api::ApiHelpers;
-use crate::api::types::{FileDownload, InodeTree};
+use crate::api::types::InodeTree;
 use crate::command::download::Download;
 use crate::config::Context;
 use crate::error::Result;
