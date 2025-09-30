@@ -71,7 +71,6 @@ jobs:
 
       - name: Build CLI for ${{ matrix.os.target }}
         run: |
-          cp api/build/spec.json cli/spec.json
           rustup target add ${{ matrix.os.target }}
           cargo build --manifest-path cli/Cargo.toml --release --target ${{ matrix.os.target }}
 

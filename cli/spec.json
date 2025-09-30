@@ -1164,6 +1164,73 @@
         "type": "object",
         "additionalProperties": false
       },
+      "AuthMetadata": {
+        "properties": {
+          "issuer": {
+            "type": "string"
+          },
+          "authorization_endpoint": {
+            "type": "string"
+          },
+          "userinfo_endpoint": {
+            "type": "string"
+          },
+          "token_endpoint": {
+            "type": "string"
+          },
+          "end_session_endpoint": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "issuer",
+          "authorization_endpoint",
+          "userinfo_endpoint",
+          "token_endpoint"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AuthProvider": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "authority": {
+            "type": "string"
+          },
+          "signInUrl": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/AuthMetadata"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "authority",
+          "clientId",
+          "scopes"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "User": {
         "description": "User is the type that represents a user in the system.",
         "properties": {
@@ -1238,7 +1305,7 @@
   },
   "info": {
     "title": "dabih-api",
-    "version": "2.2.1",
+    "version": "2.2.8",
     "description": "Dabih API Server",
     "license": {
       "name": "MIT"
@@ -1417,6 +1484,42 @@
             }
           }
         }
+      }
+    },
+    "/user/findKey/{hash}": {
+      "get": {
+        "operationId": "findKey",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UserResponse"
+                    }
+                  ],
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "User"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hash",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     },
     "/user/list": {
@@ -2352,6 +2455,34 @@
         "parameters": []
       }
     },
+    "/fs/list/shared": {
+      "get": {
+        "operationId": "listShared",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Filesystem"
+        ],
+        "security": [
+          {
+            "api_key": [
+              "dabih:api"
+            ]
+          }
+        ],
+        "parameters": []
+      }
+    },
     "/fs/{mnemonic}/list": {
       "get": {
         "operationId": "listInodes",
@@ -2756,6 +2887,31 @@
             }
           }
         ]
+      }
+    },
+    "/auth/providers": {
+      "get": {
+        "operationId": "authProviders",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AuthProvider"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "security": [],
+        "parameters": []
       }
     },
     "/auth/info": {

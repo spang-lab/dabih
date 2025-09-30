@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
-      - name: Copy spec
-        run: cp ./api/build/spec.json ./cli/spec.json
       - name: Cargo publish
         working-directory: ./cli
         run: cargo publish --token ${CRATES_TOKEN}
