@@ -47,7 +47,7 @@ test('upload start', async (t) => {
 test('upload chunk', async (t) => {
   const api = await client(t, 'test_uploader');
   const { response: response, data: dataset } = await api.upload.start({
-    fileName: 'test.txt',
+    fileName: 'test_chunk.txt',
   });
   t.is(response.status, 201);
   if (!dataset) {
