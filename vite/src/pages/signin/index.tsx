@@ -2,7 +2,6 @@ import { Mail } from "react-feather";
 import useSession from "@/Session";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router";
-import SignInButton from "./Button";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");

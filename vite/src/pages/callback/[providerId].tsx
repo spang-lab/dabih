@@ -1,5 +1,3 @@
-import useSession from "@/Session";
-import { useEffect } from "react";
 import { useParams } from "react-router";
 
 export default function Callback() {
@@ -8,16 +6,7 @@ export default function Callback() {
   }>();
   const { providerId } = params;
 
-  const { signinCallback } = useSession();
 
-
-  useEffect(() => {
-    if (!providerId) {
-      console.error("No providerId in params");
-      return;
-    }
-    signinCallback(providerId);
-  }, [signinCallback, providerId]);
 
 
   return (
