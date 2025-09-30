@@ -1022,6 +1022,9 @@ export interface components {
             size?: number;
             /** @description A custom searchable tag for the file */
             tag?: string;
+            /** @description If true, allows adding the file even if a file with the same name already
+             *     * exists in the target directory. */
+            allowExisting?: boolean;
         };
         Chunk: {
             /**

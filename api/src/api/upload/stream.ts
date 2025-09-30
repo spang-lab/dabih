@@ -58,7 +58,6 @@ const handleChunk = async (
       },
     },
   });
-  console.log(`Uploaded chunk ${hash} (${start}-${end})`);
 };
 
 export default async function stream(
@@ -73,10 +72,7 @@ export default async function stream(
   if (isNaN(chunkSize) || chunkSize <= 0) {
     throw new RequestError('Invalid X-Chunk-Size header value');
   }
-  console.log('Chunk Size:', chunkSize);
-
   const contentLength = request.headers['content-length'];
-
   const size = contentLength ? parseInt(contentLength, 10) : undefined;
 
   const { user } = request;

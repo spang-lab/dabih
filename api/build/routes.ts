@@ -187,6 +187,7 @@ const models: TsoaRoute.Models = {
             "filePath": {"dataType":"string"},
             "size": {"dataType":"long","validators":{"minimum":{"value":0}}},
             "tag": {"dataType":"string"},
+            "allowExisting": {"dataType":"boolean"},
         },
         "additionalProperties": false,
     },

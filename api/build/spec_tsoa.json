@@ -529,6 +529,10 @@
 					"tag": {
 						"type": "string",
 						"description": "A custom searchable tag for the file"
+					},
+					"allowExisting": {
+						"type": "boolean",
+						"description": "If true, allows adding the file even if a file with the same name already\n* exists in the target directory."
 					}
 				},
 				"required": [
@@ -1289,7 +1293,7 @@
 	},
 	"info": {
 		"title": "dabih-api",
-		"version": "2.2.11",
+		"version": "2.2.12",
 		"description": "Dabih API Server",
 		"license": {
 			"name": "MIT"

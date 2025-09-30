@@ -21,6 +21,12 @@ export interface UploadStartBody {
    * A custom searchable tag for the file
    */
   tag?: string;
+
+  /**
+   * If true, allows adding the file even if a file with the same name already
+   * * exists in the target directory.
+   */
+  allowExisting?: boolean;
 }
 
 export interface ChunkAddBody {

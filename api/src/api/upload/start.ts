@@ -22,7 +22,7 @@ export default async function start(
   if (publicKeys.length === 0) {
     throw new RequestError(`User ${sub} has no public keys for encryption`);
   }
-  const { fileName, directory, filePath, size, tag } = body;
+  const { fileName, directory, filePath, size, tag, allowExisting } = body;
 
   let parent = undefined;
   if (directory) {
@@ -55,6 +55,20 @@ export default async function start(
         id: home.id,
       },
     };
+  }
+
+  if (!allowExisting) {
+    const existing = await db.inode.findFirst({
+      where: {
+        parentId: parent.connect.id,
+        name: fileName,
+      },
+    });
+    if (existing) {
+      throw new RequestError(
+        `File ${fileName} already exists in the target directory`,
+      );
+    }
   }
 
   const mnemonic = await generateMnemonic();
