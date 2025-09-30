@@ -16,6 +16,11 @@ else
 fi
 
 # Make sure all builds pass before updating versions
+
+pushd api
+  npm run build
+popd
+
 pushd vite
   npm run build
 popd
