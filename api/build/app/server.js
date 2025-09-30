@@ -140694,7 +140694,7 @@ async function start(user, body) {
   if (publicKeys.length === 0) {
     throw new RequestError(`User ${sub} has no public keys for encryption`);
   }
-  const { fileName, directory, filePath, size, tag } = body;
+  const { fileName, directory, filePath, size, tag, allowExisting } = body;
   let parent = void 0;
   if (directory) {
     const permission = await getPermission(directory, sub);
@@ -140726,6 +140726,19 @@ async function start(user, body) {
         id: home.id
       }
     };
+  }
+  if (!allowExisting) {
+    const existing = await db_default.inode.findFirst({
+      where: {
+        parentId: parent.connect.id,
+        name: fileName
+      }
+    });
+    if (existing) {
+      throw new RequestError(
+        `File ${fileName} already exists in the target directory`
+      );
+    }
   }
   const mnemonic2 = await generateMnemonic();
   const uid = await generateDataUid();
@@ -141168,14 +141181,12 @@ var handleChunk = async (uid, aesKey4, chunkData, start2) => {
       }
     }
   });
-  console.log(`Uploaded chunk ${hash2} (${start2}-${end})`);
 };
 async function stream(request, mnemonic2, filename2) {
   const chunkSize = request.headers["x-chunk-size"] ? parseInt(request.headers["x-chunk-size"], 10) : defaultChunkSize;
   if (isNaN(chunkSize) || chunkSize <= 0) {
     throw new RequestError("Invalid X-Chunk-Size header value");
   }
-  console.log("Chunk Size:", chunkSize);
   const contentLength = request.headers["content-length"];
   const size = contentLength ? parseInt(contentLength, 10) : void 0;
   const { user } = request;
@@ -143235,7 +143246,8 @@ var models = {
       "directory": { "dataType": "string" },
       "filePath": { "dataType": "string" },
       "size": { "dataType": "long", "validators": { "minimum": { "value": 0 } } },
-      "tag": { "dataType": "string" }
+      "tag": { "dataType": "string" },
+      "allowExisting": { "dataType": "boolean" }
     },
     "additionalProperties": false
   },

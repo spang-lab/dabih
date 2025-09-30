@@ -259,6 +259,7 @@ impl Uploader {
             file_path: Some(stringify(&path)),
             size: Some(fs as i64),
             tag: self.args.tag.clone(),
+            allow_existing: Some(false),
         };
         let inode = self.ctx.api().start_upload(&body).await?;
 

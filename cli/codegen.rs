@@ -3174,6 +3174,10 @@ otherwise a string describing how long ago the token expired*/
     ///    "fileName"
     ///  ],
     ///  "properties": {
+    ///    "allowExisting": {
+    ///      "description": "If true, allows adding the file even if a file with the same name already\n* exists in the target directory.",
+    ///      "type": "boolean"
+    ///    },
     ///    "directory": {
     ///      "description": "The mnemonic of the directory to upload the file to",
     ///      "type": "string"
@@ -3203,6 +3207,14 @@ otherwise a string describing how long ago the token expired*/
     /// </details>
     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
     pub struct UploadStartBody {
+        /**If true, allows adding the file even if a file with the same name already
+* exists in the target directory.*/
+        #[serde(
+            rename = "allowExisting",
+            default,
+            skip_serializing_if = "::std::option::Option::is_none"
+        )]
+        pub allow_existing: ::std::option::Option<bool>,
         ///The mnemonic of the directory to upload the file to
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub directory: ::std::option::Option<::std::string::String>,
@@ -3489,7 +3501,7 @@ if undefined the sub from the auth token will be used*/
 
 Dabih API Server
 
-Version: 2.2.11*/
+Version: 2.2.12*/
 pub struct Client {
     pub(crate) baseurl: String,
     pub(crate) client: reqwest::Client,
@@ -3525,7 +3537,7 @@ impl Client {
 }
 impl ClientInfo<()> for Client {
     fn api_version() -> &'static str {
-        "2.2.11"
+        "2.2.12"
     }
     fn baseurl(&self) -> &str {
         self.baseurl.as_str()
