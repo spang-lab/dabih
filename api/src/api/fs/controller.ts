@@ -142,22 +142,15 @@ export class FilesystemController extends Controller {
     const { user } = request;
     return tree(user, mnemonic);
   }
-  @Get('resolve/{path}')
-  @OperationId('resolvePath')
-  public async resolve(
-    @Path() path: string,
+
+  @Post('resolve')
+  @OperationId('resolve')
+  public async resolvePost(
+    @Body() body: { path: string | null },
     @Request() request: RequestWithUser,
   ): Promise<Inode | null> {
     const { user } = request;
-    return resolve(user, path);
-  }
-  @Get('resolve')
-  @OperationId('resolveHome')
-  public async resolveHome(
-    @Request() request: RequestWithUser,
-  ): Promise<Inode | null> {
-    const { user } = request;
-    return resolve(user, '');
+    return resolve(user, body.path ?? '');
   }
 
   @Post('move')

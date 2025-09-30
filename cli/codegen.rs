@@ -2689,6 +2689,36 @@ this list should be empty, if not these files are orphaned and can be removed*/
             value.clone()
         }
     }
+    ///`ResolveBody`
+    ///
+    /// <details><summary>JSON schema</summary>
+    ///
+    /// ```json
+    ///{
+    ///  "type": "object",
+    ///  "required": [
+    ///    "path"
+    ///  ],
+    ///  "properties": {
+    ///    "path": {
+    ///      "type": [
+    ///        "string",
+    ///        "null"
+    ///      ]
+    ///    }
+    ///  }
+    ///}
+    /// ```
+    /// </details>
+    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+    pub struct ResolveBody {
+        pub path: ::std::option::Option<::std::string::String>,
+    }
+    impl ::std::convert::From<&ResolveBody> for ResolveBody {
+        fn from(value: &ResolveBody) -> Self {
+            value.clone()
+        }
+    }
     ///`SearchFsResponse`
     ///
     /// <details><summary>JSON schema</summary>
@@ -3459,7 +3489,7 @@ if undefined the sub from the auth token will be used*/
 
 Dabih API Server
 
-Version: 2.2.8*/
+Version: 2.2.10*/
 pub struct Client {
     pub(crate) baseurl: String,
     pub(crate) client: reqwest::Client,
@@ -3495,7 +3525,7 @@ impl Client {
 }
 impl ClientInfo<()> for Client {
     fn api_version() -> &'static str {
-        "2.2.8"
+        "2.2.10"
     }
     fn baseurl(&self) -> &str {
         self.baseurl.as_str()
@@ -4510,49 +4540,12 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
             _ => Err(Error::UnexpectedResponse(response)),
         }
     }
-    /**Sends a `GET` request to `/fs/resolve/{path}`
+    /**Sends a `POST` request to `/fs/resolve`
 
 */
-    pub async fn resolve_path<'a>(
+    pub async fn resolve<'a>(
         &'a self,
-        path: &'a str,
-    ) -> Result<ResponseValue<::std::option::Option<types::Inode>>, Error<()>> {
-        let url = format!(
-            "{}/fs/resolve/{}", self.baseurl, encode_path(& path.to_string()),
-        );
-        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
-        header_map
-            .append(
-                ::reqwest::header::HeaderName::from_static("api-version"),
-                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
-            );
-        #[allow(unused_mut)]
-        let mut request = self
-            .client
-            .get(url)
-            .header(
-                ::reqwest::header::ACCEPT,
-                ::reqwest::header::HeaderValue::from_static("application/json"),
-            )
-            .headers(header_map)
-            .build()?;
-        let info = OperationInfo {
-            operation_id: "resolve_path",
-        };
-        self.pre(&mut request, &info).await?;
-        let result = self.exec(request, &info).await;
-        self.post(&result, &info).await?;
-        let response = result?;
-        match response.status().as_u16() {
-            200u16 => ResponseValue::from_response(response).await,
-            _ => Err(Error::UnexpectedResponse(response)),
-        }
-    }
-    /**Sends a `GET` request to `/fs/resolve`
-
-*/
-    pub async fn resolve_home<'a>(
-        &'a self,
+        body: &'a types::ResolveBody,
     ) -> Result<ResponseValue<::std::option::Option<types::Inode>>, Error<()>> {
         let url = format!("{}/fs/resolve", self.baseurl,);
         let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
@@ -4564,15 +4557,16 @@ Sends a `GET` request to `/fs/{mnemonic}/file/list`
         #[allow(unused_mut)]
         let mut request = self
             .client
-            .get(url)
+            .post(url)
             .header(
                 ::reqwest::header::ACCEPT,
                 ::reqwest::header::HeaderValue::from_static("application/json"),
             )
+            .json(&body)
             .headers(header_map)
             .build()?;
         let info = OperationInfo {
-            operation_id: "resolve_home",
+            operation_id: "resolve",
         };
         self.pre(&mut request, &info).await?;
         let result = self.exec(request, &info).await;

@@ -1289,7 +1289,7 @@
 	},
 	"info": {
 		"title": "dabih-api",
-		"version": "2.2.8",
+		"version": "2.2.10",
 		"description": "Dabih API Server",
 		"license": {
 			"name": "MIT"
@@ -2305,51 +2305,9 @@
 				]
 			}
 		},
-		"/fs/resolve/{path}": {
-			"get": {
-				"operationId": "resolvePath",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/Inode"
-										}
-									],
-									"nullable": true
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Filesystem"
-				],
-				"security": [
-					{
-						"api_key": [
-							"dabih:api"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "path",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
 		"/fs/resolve": {
-			"get": {
-				"operationId": "resolveHome",
+			"post": {
+				"operationId": "resolve",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -2377,7 +2335,26 @@
 						]
 					}
 				],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"path": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"required": [
+									"path"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/fs/move": {

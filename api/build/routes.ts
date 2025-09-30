@@ -1420,20 +1420,20 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsFilesystemController_resolve: Record<string, TsoaRoute.ParameterSchema> = {
-                path: {"in":"path","name":"path","required":true,"dataType":"string"},
+        const argsFilesystemController_resolvePost: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"path":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true}}},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
-        router.get('/fs/resolve/:path',
+        router.post('/fs/resolve',
             authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(FilesystemController)),
-            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.resolve)),
+            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.resolvePost)),
 
-            async function FilesystemController_resolve(context: Context, next: Next) {
+            async function FilesystemController_resolvePost(context: Context, next: Next) {
 
             let validatedArgs: any[] = [];
             try {
-              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_resolve, context, next });
+              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_resolvePost, context, next });
             } catch (err) {
               const error = err as any;
               error.message ||= JSON.stringify({ fields: error.fields });
@@ -1444,38 +1444,7 @@ export function RegisterRoutes(router: KoaRouter) {
             const controller = new FilesystemController();
 
             return templateService.apiHandler({
-              methodName: 'resolve',
-              controller,
-              context,
-              validatedArgs,
-              successStatus: undefined,
-            });
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsFilesystemController_resolveHome: Record<string, TsoaRoute.ParameterSchema> = {
-                request: {"in":"request","name":"request","required":true,"dataType":"object"},
-        };
-        router.get('/fs/resolve',
-            authenticateMiddleware([{"api_key":["dabih:api"]}]),
-            ...(fetchMiddlewares<Middleware>(FilesystemController)),
-            ...(fetchMiddlewares<Middleware>(FilesystemController.prototype.resolveHome)),
-
-            async function FilesystemController_resolveHome(context: Context, next: Next) {
-
-            let validatedArgs: any[] = [];
-            try {
-              validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_resolveHome, context, next });
-            } catch (err) {
-              const error = err as any;
-              error.message ||= JSON.stringify({ fields: error.fields });
-              context.status = error.status;
-              context.throw(context.status, error.message, error);
-            }
-
-            const controller = new FilesystemController();
-
-            return templateService.apiHandler({
-              methodName: 'resolveHome',
+              methodName: 'resolvePost',
               controller,
               context,
               validatedArgs,

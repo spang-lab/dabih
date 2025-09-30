@@ -8,6 +8,7 @@ use futures::StreamExt;
 use reqwest::StatusCode;
 
 use crate::api::types::Inode;
+use crate::api::types::ResolveBody;
 use crate::error::{CliError, Result};
 
 pub trait ApiHelpers {
@@ -17,7 +18,12 @@ pub trait ApiHelpers {
 
 impl ApiHelpers for Client {
     async fn resolve_path_h(&self, path: &str) -> Result<Option<Inode>> {
-        match self.resolve_path(path).await {
+        match self
+            .resolve(&ResolveBody {
+                path: Some(path.to_string()),
+            })
+            .await
+        {
             Ok(r) => Ok(r.into_inner()),
             Err(e) => match e {
                 progenitor_client::Error::UnexpectedResponse(r) => {

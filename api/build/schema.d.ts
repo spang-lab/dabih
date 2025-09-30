@@ -466,22 +466,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/fs/resolve/{path}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["resolvePath"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/fs/resolve": {
         parameters: {
             query?: never;
@@ -489,9 +473,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["resolveHome"];
+        get?: never;
         put?: never;
-        post?: never;
+        post: operations["resolve"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1914,36 +1898,20 @@ export interface operations {
             };
         };
     };
-    resolvePath: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                path: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Inode"] | null;
-                };
-            };
-        };
-    };
-    resolveHome: {
+    resolve: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    path: string | null;
+                };
+            };
+        };
         responses: {
             /** @description Ok */
             200: {
