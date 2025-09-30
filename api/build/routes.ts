@@ -877,6 +877,39 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUploadController_stream: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
+                filename: {"in":"path","name":"filename","required":true,"dataType":"string"},
+        };
+        router.put('/upload/stream/:mnemonic/:filename',
+            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
+            ...(fetchMiddlewares<Middleware>(UploadController)),
+            ...(fetchMiddlewares<Middleware>(UploadController.prototype.stream)),
+
+            async function UploadController_stream(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsUploadController_stream, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new UploadController();
+
+            return templateService.apiHandler({
+              methodName: 'stream',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUploadController_chunk: Record<string, TsoaRoute.ParameterSchema> = {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},

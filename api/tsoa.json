@@ -18,6 +18,20 @@
     "specMerging": "recursive",
     "spec": {
       "paths": {
+        "/upload/stream/{mnemonic}/{filename}": {
+          "put": {
+            "requestBody": {
+              "content": {
+                "application/octet-stream": {
+                  "schema": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
         "/upload/{mnemonic}/chunk": {
           "put": {
             "requestBody": {

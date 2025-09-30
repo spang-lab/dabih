@@ -12,6 +12,7 @@ import {
   OperationId,
   Path,
   Header,
+  NoSecurity,
 } from '@tsoa/runtime';
 import { Request as KoaRequest } from 'koa';
 type RequestWithHeaders = KoaRequest & RequestWithUser;
@@ -31,6 +32,8 @@ import type {
 } from '../types';
 import { parseDigest, parseContentRange } from './util';
 import cleanup from './cleanup';
+import dbg from '#lib/dbg';
+import stream from './stream';
 
 @Route('upload')
 @Tags('Upload')
@@ -57,6 +60,16 @@ export class UploadController extends Controller {
   ) {
     const { user } = request;
     await cancel(user, mnemonic);
+  }
+
+  @Put('stream/{mnemonic}/{filename}')
+  @OperationId('streamUpload')
+  public async stream(
+    @Request() request: RequestWithHeaders,
+    @Path() mnemonic: string,
+    @Path() filename: string,
+  ): Promise<File> {
+    return stream(request, mnemonic, filename);
   }
 
   @Put('{mnemonic}/chunk')

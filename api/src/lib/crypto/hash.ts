@@ -2,15 +2,20 @@ import { createHash } from 'crypto';
 
 const create = () => createHash('sha256');
 
-const blob = async (data: Blob) => {
+const buffer = (data: Buffer) => {
   const hash = create();
-  const buffer = Buffer.from(await data.arrayBuffer());
-  hash.update(buffer);
+  hash.update(data);
   return hash.digest('base64url');
+};
+
+const blob = async (data: Blob) => {
+  const buf = Buffer.from(await data.arrayBuffer());
+  return buffer(buf);
 };
 
 const hash = {
   create,
+  buffer,
   blob,
 };
 export default hash;

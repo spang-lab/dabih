@@ -1289,7 +1289,7 @@
 	},
 	"info": {
 		"title": "dabih-api",
-		"version": "2.2.10",
+		"version": "2.2.11",
 		"description": "Dabih API Server",
 		"license": {
 			"name": "MIT"
@@ -3011,6 +3011,61 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/upload/stream/{mnemonic}/{filename}": {
+			"put": {
+				"operationId": "streamUpload",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/File"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Upload"
+				],
+				"security": [
+					{
+						"api_key": [
+							"dabih:upload"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mnemonic",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "filename",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/octet-stream": {
+							"schema": {
+								"type": "string",
+								"format": "binary"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/upload/{mnemonic}/chunk": {
