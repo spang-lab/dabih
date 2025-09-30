@@ -12,7 +12,6 @@ import {
   OperationId,
   Path,
   Header,
-  NoSecurity,
 } from '@tsoa/runtime';
 import { Request as KoaRequest } from 'koa';
 type RequestWithHeaders = KoaRequest & RequestWithUser;
@@ -32,7 +31,6 @@ import type {
 } from '../types';
 import { parseDigest, parseContentRange } from './util';
 import cleanup from './cleanup';
-import dbg from '#lib/dbg';
 import stream from './stream';
 
 @Route('upload')

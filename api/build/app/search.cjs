@@ -136,20 +136,20 @@ var toPublicKey = (key) => {
 };
 var toHash = (key) => {
   const publicKey2 = toPublicKey(key);
-  const buffer = publicKey2.export({ type: "spki", format: "der" });
+  const buffer2 = publicKey2.export({ type: "spki", format: "der" });
   const hasher = (0, import_node_crypto.createHash)("sha256");
-  hasher.update(buffer);
+  hasher.update(buffer2);
   return hasher.digest("base64url");
 };
 var decrypt = (key, base64) => {
-  const buffer = base64url_default.toUint8(base64);
+  const buffer2 = base64url_default.toUint8(base64);
   const result = (0, import_node_crypto.privateDecrypt)(
     {
       key,
       oaepHash: "sha256",
       padding: import_node_crypto.constants.RSA_PKCS1_OAEP_PADDING
     },
-    buffer
+    buffer2
   );
   return base64url_default.fromUint8(result);
 };
@@ -187,18 +187,18 @@ var toString = (key) => {
   return JSON.stringify(jwk);
 };
 var encrypt = (key, base64) => {
-  const buffer = base64url_default.toUint8(base64);
+  const buffer2 = base64url_default.toUint8(base64);
   const result = (0, import_node_crypto2.publicEncrypt)({
     key,
     oaepHash: "sha256",
     padding: import_node_crypto2.constants.RSA_PKCS1_OAEP_PADDING
-  }, buffer);
+  }, buffer2);
   return base64url_default.fromUint8(result);
 };
 var toHash2 = (key) => {
   const hasher = (0, import_node_crypto2.createHash)("sha256");
-  const buffer = key.export({ type: "spki", format: "der" });
-  hasher.update(buffer);
+  const buffer2 = key.export({ type: "spki", format: "der" });
+  hasher.update(buffer2);
   return hasher.digest("base64url");
 };
 var publicKey = {
@@ -130040,8 +130040,8 @@ var firstNames_default = [
 var getBytes = async (n) => {
   const rFill = (0, import_node_util.promisify)(import_node_crypto3.randomFill);
   const data = new Uint8Array(n);
-  const buffer = await rFill(data);
-  return buffer;
+  const buffer2 = await rFill(data);
+  return buffer2;
 };
 var getToken = async (len = 8) => {
   const bitsPerChar = 6;
@@ -130108,8 +130108,8 @@ var decryptString = (key, iv, data) => {
 };
 var toHash3 = (key) => {
   const hasher = (0, import_crypto.createHash)("sha256");
-  const buffer = base64url_default.toUint8(key);
-  hasher.update(buffer);
+  const buffer2 = base64url_default.toUint8(key);
+  hasher.update(buffer2);
   return hasher.digest("base64url");
 };
 var aesKey = {
@@ -130187,14 +130187,18 @@ var stream_default = {
 // src/lib/crypto/hash.ts
 var import_crypto2 = require("crypto");
 var create = () => (0, import_crypto2.createHash)("sha256");
-var blob = async (data) => {
+var buffer = (data) => {
   const hash2 = create();
-  const buffer = Buffer.from(await data.arrayBuffer());
-  hash2.update(buffer);
+  hash2.update(data);
   return hash2.digest("base64url");
+};
+var blob = async (data) => {
+  const buf = Buffer.from(await data.arrayBuffer());
+  return buffer(buf);
 };
 var hash = {
   create,
+  buffer,
   blob
 };
 var hash_default = hash;

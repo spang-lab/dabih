@@ -1074,10 +1074,10 @@ var require_Reflect = __commonJS({
             }
             return target[rootKey];
           }
-          function FillRandomBytes(buffer, size) {
+          function FillRandomBytes(buffer2, size) {
             for (var i = 0; i < size; ++i)
-              buffer[i] = Math.random() * 255 | 0;
-            return buffer;
+              buffer2[i] = Math.random() * 255 | 0;
+            return buffer2;
           }
           function GenRandomBytes(size) {
             if (typeof Uint8Array === "function") {
@@ -9374,20 +9374,20 @@ var toPublicKey = (key) => {
 };
 var toHash = (key) => {
   const publicKey3 = toPublicKey(key);
-  const buffer = publicKey3.export({ type: "spki", format: "der" });
+  const buffer2 = publicKey3.export({ type: "spki", format: "der" });
   const hasher = createHash("sha256");
-  hasher.update(buffer);
+  hasher.update(buffer2);
   return hasher.digest("base64url");
 };
 var decrypt = (key, base64) => {
-  const buffer = base64url_default.toUint8(base64);
+  const buffer2 = base64url_default.toUint8(base64);
   const result = privateDecrypt(
     {
       key,
       oaepHash: "sha256",
       padding: constants.RSA_PKCS1_OAEP_PADDING
     },
-    buffer
+    buffer2
   );
   return base64url_default.fromUint8(result);
 };
@@ -9430,18 +9430,18 @@ var toString2 = (key) => {
   return JSON.stringify(jwk);
 };
 var encrypt = (key, base64) => {
-  const buffer = base64url_default.toUint8(base64);
+  const buffer2 = base64url_default.toUint8(base64);
   const result = publicEncrypt({
     key,
     oaepHash: "sha256",
     padding: constants2.RSA_PKCS1_OAEP_PADDING
-  }, buffer);
+  }, buffer2);
   return base64url_default.fromUint8(result);
 };
 var toHash2 = (key) => {
   const hasher = createHash2("sha256");
-  const buffer = key.export({ type: "spki", format: "der" });
-  hasher.update(buffer);
+  const buffer2 = key.export({ type: "spki", format: "der" });
+  hasher.update(buffer2);
   return hasher.digest("base64url");
 };
 var publicKey = {
@@ -139283,8 +139283,8 @@ var firstNames_default = [
 var getBytes = async (n) => {
   const rFill = promisify2(randomFill);
   const data = new Uint8Array(n);
-  const buffer = await rFill(data);
-  return buffer;
+  const buffer2 = await rFill(data);
+  return buffer2;
 };
 var getToken = async (len = 8) => {
   const bitsPerChar = 6;
@@ -139356,8 +139356,8 @@ var decryptString = (key, iv, data) => {
 };
 var toHash3 = (key) => {
   const hasher = createHash3("sha256");
-  const buffer = base64url_default.toUint8(key);
-  hasher.update(buffer);
+  const buffer2 = base64url_default.toUint8(key);
+  hasher.update(buffer2);
   return hasher.digest("base64url");
 };
 var aesKey = {
@@ -139435,14 +139435,18 @@ var stream_default = {
 // src/lib/crypto/hash.ts
 import { createHash as createHash5 } from "crypto";
 var create = () => createHash5("sha256");
-var blob = async (data) => {
+var buffer = (data) => {
   const hash2 = create();
-  const buffer = Buffer.from(await data.arrayBuffer());
-  hash2.update(buffer);
+  hash2.update(data);
   return hash2.digest("base64url");
+};
+var blob = async (data) => {
+  const buf = Buffer.from(await data.arrayBuffer());
+  return buffer(buf);
 };
 var hash = {
   create,
+  buffer,
   blob
 };
 var hash_default = hash;
@@ -141126,6 +141130,87 @@ async function cleanup(user) {
   }
 }
 
+// src/api/upload/stream.ts
+import { Readable } from "stream";
+var defaultChunkSize = 2 * 1024 * 1024;
+var handleChunk = async (uid, aesKey4, chunkData, start2) => {
+  const hash2 = crypto_default.hash.buffer(chunkData);
+  const iv = await crypto_default.aesKey.generateIv();
+  const writeStream = await store2(uid, hash2);
+  const validateStream = crypto_default.stream.validate();
+  const encryptStream = crypto_default.aesKey.encrypt(aesKey4, iv);
+  const crcStream = crypto_default.stream.crc32();
+  const { crc32: crc322, byteCount } = await new Promise((resolve4, reject) => {
+    writeStream.on(
+      "finish",
+      () => resolve4({
+        crc32: crcStream.digest(),
+        ...validateStream.digest()
+      })
+    );
+    writeStream.on("error", reject);
+    Readable.from(chunkData).pipe(validateStream).pipe(encryptStream).pipe(crcStream).pipe(writeStream);
+  });
+  const end = start2 + byteCount - 1;
+  await db_default.fileData.update({
+    where: {
+      uid
+    },
+    data: {
+      chunks: {
+        create: {
+          hash: hash2,
+          iv,
+          start: start2,
+          end,
+          crc: crc322
+        }
+      }
+    }
+  });
+  console.log(`Uploaded chunk ${hash2} (${start2}-${end})`);
+};
+async function stream(request, mnemonic2, filename2) {
+  const chunkSize = request.headers["x-chunk-size"] ? parseInt(request.headers["x-chunk-size"], 10) : defaultChunkSize;
+  if (isNaN(chunkSize) || chunkSize <= 0) {
+    throw new RequestError("Invalid X-Chunk-Size header value");
+  }
+  console.log("Chunk Size:", chunkSize);
+  const contentLength = request.headers["content-length"];
+  const size = contentLength ? parseInt(contentLength, 10) : void 0;
+  const { user } = request;
+  const { sub } = user;
+  const inode = await start(user, {
+    fileName: filename2,
+    directory: mnemonic2,
+    size
+  });
+  const { data } = inode;
+  const { uid } = data;
+  const aesKey4 = await readKey(sub, inode.mnemonic);
+  if (!aesKey4) {
+    throw new RequestError(
+      `No encryption key for ${inode.mnemonic} in ephemeral storage.`
+    );
+  }
+  let buffer2 = Buffer.alloc(0);
+  let start2 = 0;
+  for await (const data2 of request.req) {
+    buffer2 = Buffer.concat([buffer2, data2]);
+    while (buffer2.length >= chunkSize) {
+      const chunkData = buffer2.subarray(0, chunkSize);
+      buffer2 = buffer2.subarray(chunkSize);
+      await handleChunk(uid, aesKey4, chunkData, start2);
+      start2 += chunkData.length;
+    }
+  }
+  if (buffer2.length > 0) {
+    await handleChunk(uid, aesKey4, buffer2, start2);
+  }
+  const result = await finish(user, inode.mnemonic);
+  return result;
+}
+
 // src/api/upload/controller.ts
 var UploadController = class extends import_runtime5.Controller {
   async start(request, requestBody) {
@@ -141137,6 +141222,9 @@ var UploadController = class extends import_runtime5.Controller {
   async cancel(request, mnemonic2) {
     const { user } = request;
     await cancel(user, mnemonic2);
+  }
+  async stream(request, mnemonic2, filename2) {
+    return stream(request, mnemonic2, filename2);
   }
   async chunk(mnemonic2, request, contentRange, digest) {
     const result = await chunk(
@@ -141176,6 +141264,13 @@ __decorateClass([
   __decorateParam(0, (0, import_runtime5.Request)()),
   __decorateParam(1, (0, import_runtime5.Path)())
 ], UploadController.prototype, "cancel", 1);
+__decorateClass([
+  (0, import_runtime5.Put)("stream/{mnemonic}/{filename}"),
+  (0, import_runtime5.OperationId)("streamUpload"),
+  __decorateParam(0, (0, import_runtime5.Request)()),
+  __decorateParam(1, (0, import_runtime5.Path)()),
+  __decorateParam(2, (0, import_runtime5.Path)())
+], UploadController.prototype, "stream", 1);
 __decorateClass([
   (0, import_runtime5.Put)("{mnemonic}/chunk"),
   (0, import_runtime5.OperationId)("chunkUpload"),
@@ -142153,13 +142248,9 @@ var FilesystemController = class extends import_runtime11.Controller {
     const { user } = request;
     return tree(user, mnemonic2);
   }
-  async resolve(path, request) {
+  async resolvePost(body, request) {
     const { user } = request;
-    return resolve3(user, path);
-  }
-  async resolveHome(request) {
-    const { user } = request;
-    return resolve3(user, "");
+    return resolve3(user, body.path ?? "");
   }
   async move(body, request) {
     const { user } = request;
@@ -142251,16 +142342,11 @@ __decorateClass([
   __decorateParam(1, (0, import_runtime11.Request)())
 ], FilesystemController.prototype, "tree", 1);
 __decorateClass([
-  (0, import_runtime11.Get)("resolve/{path}"),
-  (0, import_runtime11.OperationId)("resolvePath"),
-  __decorateParam(0, (0, import_runtime11.Path)()),
+  (0, import_runtime11.Post)("resolve"),
+  (0, import_runtime11.OperationId)("resolve"),
+  __decorateParam(0, (0, import_runtime11.Body)()),
   __decorateParam(1, (0, import_runtime11.Request)())
-], FilesystemController.prototype, "resolve", 1);
-__decorateClass([
-  (0, import_runtime11.Get)("resolve"),
-  (0, import_runtime11.OperationId)("resolveHome"),
-  __decorateParam(0, (0, import_runtime11.Request)())
-], FilesystemController.prototype, "resolveHome", 1);
+], FilesystemController.prototype, "resolvePost", 1);
 __decorateClass([
   (0, import_runtime11.Post)("move"),
   (0, import_runtime11.OperationId)("moveInode"),
@@ -142434,8 +142520,8 @@ var import_runtime15 = __toESM(require_dist(), 1);
 
 // src/api/download/chunk.ts
 async function chunk2(uid, hash2) {
-  const stream = await get3(uid, hash2);
-  return stream;
+  const stream2 = await get3(uid, hash2);
+  return stream2;
 }
 
 // src/api/download/decrypt.ts
@@ -142537,10 +142623,10 @@ async function mnemonic(user) {
   const pStream = new PassThrough();
   for (const chunk3 of chunks) {
     const { hash: hash2, iv } = chunk3;
-    const stream = await get3(uid, hash2);
+    const stream2 = await get3(uid, hash2);
     const decrypt4 = crypto_default.aesKey.decrypt(key, iv);
     const isLast = chunk3.end + BigInt(1) === size;
-    stream.pipe(decrypt4).pipe(pStream, { end: isLast });
+    stream2.pipe(decrypt4).pipe(pStream, { end: isLast });
   }
   return {
     stream: pStream,
@@ -142558,10 +142644,10 @@ var DownloadController = class extends import_runtime15.Controller {
   }
   async download(request) {
     const { user } = request;
-    const { stream, fileName, size } = await mnemonic(user);
+    const { stream: stream2, fileName, size } = await mnemonic(user);
     this.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
     this.setHeader("Content-Length", size.toString());
-    return stream;
+    return stream2;
   }
   chunk(uid, hash2) {
     this.setHeader("Content-Type", "application/octet-stream");
@@ -143787,6 +143873,36 @@ function RegisterRoutes(router) {
       });
     }
   );
+  const argsUploadController_stream = {
+    request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+    mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
+    filename: { "in": "path", "name": "filename", "required": true, "dataType": "string" }
+  };
+  router.put(
+    "/upload/stream/:mnemonic/:filename",
+    authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController),
+    ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.stream),
+    async function UploadController_stream(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsUploadController_stream, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new UploadController();
+      return templateService.apiHandler({
+        methodName: "stream",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
   const argsUploadController_chunk = {
     mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
@@ -144278,47 +144394,19 @@ function RegisterRoutes(router) {
       });
     }
   );
-  const argsFilesystemController_resolve = {
-    path: { "in": "path", "name": "path", "required": true, "dataType": "string" },
+  const argsFilesystemController_resolvePost = {
+    body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "path": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "enum", "enums": [null] }], "required": true } } },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
-  router.get(
-    "/fs/resolve/:path",
-    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
-    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.resolve),
-    async function FilesystemController_resolve(context, next) {
-      let validatedArgs = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_resolve, context, next });
-      } catch (err) {
-        const error2 = err;
-        error2.message ||= JSON.stringify({ fields: error2.fields });
-        context.status = error2.status;
-        context.throw(context.status, error2.message, error2);
-      }
-      const controller = new FilesystemController();
-      return templateService.apiHandler({
-        methodName: "resolve",
-        controller,
-        context,
-        validatedArgs,
-        successStatus: void 0
-      });
-    }
-  );
-  const argsFilesystemController_resolveHome = {
-    request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
-  };
-  router.get(
+  router.post(
     "/fs/resolve",
     authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(FilesystemController),
-    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.resolveHome),
-    async function FilesystemController_resolveHome(context, next) {
+    ...(0, import_runtime19.fetchMiddlewares)(FilesystemController.prototype.resolvePost),
+    async function FilesystemController_resolvePost(context, next) {
       let validatedArgs = [];
       try {
-        validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_resolveHome, context, next });
+        validatedArgs = templateService.getValidatedArgs({ args: argsFilesystemController_resolvePost, context, next });
       } catch (err) {
         const error2 = err;
         error2.message ||= JSON.stringify({ fields: error2.fields });
@@ -144327,7 +144415,7 @@ function RegisterRoutes(router) {
       }
       const controller = new FilesystemController();
       return templateService.apiHandler({
-        methodName: "resolveHome",
+        methodName: "resolvePost",
         controller,
         context,
         validatedArgs,

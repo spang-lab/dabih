@@ -3489,7 +3489,7 @@ if undefined the sub from the auth token will be used*/
 
 Dabih API Server
 
-Version: 2.2.10*/
+Version: 2.2.11*/
 pub struct Client {
     pub(crate) baseurl: String,
     pub(crate) client: reqwest::Client,
@@ -3525,7 +3525,7 @@ impl Client {
 }
 impl ClientInfo<()> for Client {
     fn api_version() -> &'static str {
-        "2.2.10"
+        "2.2.11"
     }
     fn baseurl(&self) -> &str {
         self.baseurl.as_str()
@@ -5236,6 +5236,52 @@ Sends a `GET` request to `/filedata/orphaned`
             .build()?;
         let info = OperationInfo {
             operation_id: "refresh_token",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            200u16 => ResponseValue::from_response(response).await,
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
+    /**Sends a `PUT` request to `/upload/stream/{mnemonic}/{filename}`
+
+*/
+    pub async fn stream_upload<'a, B: Into<reqwest::Body>>(
+        &'a self,
+        mnemonic: &'a str,
+        filename: &'a str,
+        body: B,
+    ) -> Result<ResponseValue<types::File>, Error<()>> {
+        let url = format!(
+            "{}/upload/stream/{}/{}", self.baseurl, encode_path(& mnemonic.to_string()),
+            encode_path(& filename.to_string()),
+        );
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
+        header_map
+            .append(
+                ::reqwest::header::HeaderName::from_static("api-version"),
+                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+            );
+        #[allow(unused_mut)]
+        let mut request = self
+            .client
+            .put(url)
+            .header(
+                ::reqwest::header::ACCEPT,
+                ::reqwest::header::HeaderValue::from_static("application/json"),
+            )
+            .header(
+                ::reqwest::header::CONTENT_TYPE,
+                ::reqwest::header::HeaderValue::from_static("application/octet-stream"),
+            )
+            .body(body)
+            .headers(header_map)
+            .build()?;
+        let info = OperationInfo {
+            operation_id: "stream_upload",
         };
         self.pre(&mut request, &info).await?;
         let result = self.exec(request, &info).await;
