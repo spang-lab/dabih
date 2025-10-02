@@ -289,7 +289,7 @@ const models: TsoaRoute.Models = {
             "id": {"dataType":"any","required":true},
             "sub": {"dataType":"string","required":true},
             "inodeId": {"dataType":"any","required":true},
-            "permission": {"dataType":"double","required":true},
+            "permission": {"dataType":"integer","required":true,"validators":{"minimum":{"value":0}}},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
@@ -301,16 +301,11 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"intersection","subSchemas":[{"ref":"Inode"},{"dataType":"nestedObjectLiteral","nestedProperties":{"members":{"dataType":"array","array":{"dataType":"refObject","ref":"Member"},"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AESKey": {
-        "dataType": "refAlias",
-        "type": {"dataType":"string","validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "FileDecryptionKey": {
         "dataType": "refObject",
         "properties": {
             "mnemonic": {"dataType":"string","required":true},
-            "key": {"ref":"AESKey","required":true},
+            "key": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -328,7 +323,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "sub": {"dataType":"string","required":true},
-            "permission": {"dataType":"double","required":true},
+            "permission": {"dataType":"integer","required":true,"validators":{"minimum":{"value":0}}},
         },
         "additionalProperties": false,
     },
@@ -568,7 +563,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/user/me',
-            authenticateMiddleware([{"api_key":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.me)),
 
@@ -723,7 +718,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 body: {"in":"body","name":"body","required":true,"ref":"KeyAddBody"},
         };
         router.post('/user/key/add',
-            authenticateMiddleware([{"api_key":["dabih:api"]}]),
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(UserController)),
             ...(fetchMiddlewares<Middleware>(UserController.prototype.addKey)),
 
@@ -819,7 +814,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UploadStartBody"},
         };
         router.post('/upload/start',
-            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.start)),
 
@@ -851,7 +846,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
         };
         router.post('/upload/:mnemonic/cancel',
-            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.cancel)),
 
@@ -884,7 +879,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 filename: {"in":"path","name":"filename","required":true,"dataType":"string"},
         };
         router.put('/upload/stream/:mnemonic/:filename',
-            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.stream)),
 
@@ -918,7 +913,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 digest: {"in":"header","name":"digest","required":true,"dataType":"string"},
         };
         router.put('/upload/:mnemonic/chunk',
-            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.chunk)),
 
@@ -950,7 +945,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
         };
         router.post('/upload/:mnemonic/finish',
-            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.finish)),
 
@@ -981,7 +976,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/upload/unfinished',
-            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.unfinished)),
 
@@ -1012,7 +1007,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/upload/cleanup',
-            authenticateMiddleware([{"api_key":["dabih:upload"]}]),
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.cleanup)),
 
@@ -1837,7 +1832,7 @@ export function RegisterRoutes(router: KoaRouter) {
         const argsDownloadController_decrypt: Record<string, TsoaRoute.ParameterSchema> = {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"ref":"AESKey","required":true}}},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"dataType":"string","required":true}}},
         };
         router.post('/download/:mnemonic/decrypt',
             authenticateMiddleware([{"api_key":["dabih:api"]}]),

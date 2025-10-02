@@ -2,6 +2,7 @@ pub mod cat;
 pub mod download;
 pub mod hash;
 pub mod list;
+pub mod member;
 pub mod status;
 pub mod upload;
 
@@ -14,5 +15,6 @@ pub enum Commands {
     List(list::List),
     Download(download::Download),
     Hash(hash::Hash),
+    Member(member::Member),
     Cat(cat::Cat),
 }

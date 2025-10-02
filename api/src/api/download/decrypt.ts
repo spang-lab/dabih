@@ -1,4 +1,4 @@
-import { AESKey, User, InodeType } from '../types';
+import { User, InodeType } from '../types';
 
 import { NotFoundError, RequestError } from '../errors';
 import db from '#lib/db';
@@ -9,7 +9,7 @@ import { storeKey } from '#lib/redis/aesKey';
 export default async function decrypt(
   user: User,
   mnemonic: string,
-  key: AESKey,
+  key: string,
 ) {
   const { sub } = user;
   const file = await db.inode.findUnique({

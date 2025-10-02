@@ -17,7 +17,7 @@ export default async function add(user: User, body: UserAddBody) {
 
   const key = convertKey(user, body.key, isRootKey);
   await getHome(sub);
-  const defaultScope = ['dabih:upload', 'dabih:api'].join(' ');
+  const defaultScope = ['dabih:base', 'dabih:api'].join(' ');
   const result = await db.user.create({
     data: {
       sub,

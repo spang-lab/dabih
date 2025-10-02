@@ -30,6 +30,9 @@ export interface UploadStartBody {
 }
 
 export interface ChunkAddBody {
+  /**
+   * The mnemonic inode to upload the chunk to
+   */
   mnemonic: string;
   hash: string;
   /**

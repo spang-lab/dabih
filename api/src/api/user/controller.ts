@@ -48,6 +48,7 @@ export class UserController extends Controller {
     return response;
   }
   @Get('me')
+  @Security('api_key', ['dabih:base'])
   @OperationId('me')
   public async me(
     @Request() request: RequestWithUser,
@@ -88,6 +89,7 @@ export class UserController extends Controller {
 
   @Post('key/add')
   @OperationId('addKey')
+  @Security('api_key', ['dabih:base'])
   @SuccessResponse('201', 'Created')
   public async addKey(
     @Request() request: RequestWithUser,

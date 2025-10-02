@@ -53,11 +53,12 @@ export default async function verifyEmail(tokenStr: string): Promise<string> {
     return token;
   }
 
-  const scopes = ['dabih:upload', 'dabih:api'];
+  const scopes = ['dabih:base'];
   if (!adminUser) {
     logger.warn(
       `No admin user found, creating new user with admin scope for ${email}`,
     );
+    scopes.push('dabih:api');
     scopes.push('dabih:admin');
   }
   const scope = scopes.join(' ');

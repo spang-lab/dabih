@@ -32,10 +32,10 @@ export default function Home() {
     void fetchInfo();
   }, []);
   return (
-    <div className="px-4 flex justify-center">
+    <div className="px-4">
       <BrowserSupport />
-      <div className="flex flex-row items-center pt-10">
-        <div className="p-3 basis-3/4">
+      <div className="flex items-center pt-10 justify-center">
+        <div className="p-3">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
             Welcome to the
             <br />
@@ -96,7 +96,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div className="basis-1/4">
+        <div>
           <div className="relative w-32 h-32 truncate rounded-full shadow-xl lg:w-72 lg:h-72">
             <img
               alt="Spang Lab Dabih Logo"

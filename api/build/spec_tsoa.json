@@ -382,28 +382,34 @@
 						"format": "bigint"
 					},
 					"uid": {
-						"type": "string"
+						"type": "string",
+						"description": "The unique identifier of the file data"
 					},
 					"createdBy": {
-						"type": "string"
+						"type": "string",
+						"description": "The user sub who created the file data"
 					},
 					"fileName": {
-						"type": "string"
+						"type": "string",
+						"description": "The original name of the file"
 					},
 					"filePath": {
 						"type": "string",
-						"nullable": true
+						"nullable": true,
+						"description": "The original path of the file"
 					},
 					"hash": {
 						"type": "string",
-						"nullable": true
+						"nullable": true,
+						"description": "The hash of the unencrypted chunked file data"
 					},
 					"size": {
 						"description": "The size of the file in bytes",
 						"format": "bigint"
 					},
 					"keyHash": {
-						"type": "string"
+						"type": "string",
+						"description": "The hash of the AES encryption key used to encrypt the file data\nbase64url encoded"
 					},
 					"createdAt": {
 						"type": "string",
@@ -445,11 +451,13 @@
 						"minimum": 0
 					},
 					"name": {
-						"type": "string"
+						"type": "string",
+						"description": "The name of the inode\nthis is the file/directory name"
 					},
 					"tag": {
 						"type": "string",
-						"nullable": true
+						"nullable": true,
+						"description": "A custom searchable tag for the inode"
 					},
 					"dataId": {
 						"nullable": true,
@@ -462,9 +470,12 @@
 								"$ref": "#/components/schemas/FileData"
 							}
 						],
-						"nullable": true
+						"nullable": true,
+						"description": "The file data if the inode is a file"
 					},
-					"parentId": {},
+					"parentId": {
+						"description": "The parent inode\neach inode should have exactly one parent except the root inode"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -496,7 +507,8 @@
 					{
 						"properties": {
 							"data": {
-								"$ref": "#/components/schemas/FileData"
+								"$ref": "#/components/schemas/FileData",
+								"description": "The file data of the inode"
 							}
 						},
 						"required": [
@@ -773,10 +785,12 @@
 						"format": "bigint"
 					},
 					"hash": {
-						"type": "string"
+						"type": "string",
+						"description": "The base64url encoded SHA-256 hash of the user's public key"
 					},
 					"key": {
-						"type": "string"
+						"type": "string",
+						"description": "The encrypted AES-256 key base64url encoded"
 					},
 					"createdAt": {
 						"type": "string",
@@ -834,7 +848,8 @@
 								"items": {
 									"$ref": "#/components/schemas/Key"
 								},
-								"type": "array"
+								"type": "array",
+								"description": "The list of encrypted AES keys for all members of the inode\neach member has at least one key encrypted with their public key"
 							}
 						},
 						"required": [
@@ -851,15 +866,18 @@
 						"format": "bigint"
 					},
 					"sub": {
-						"type": "string"
+						"type": "string",
+						"description": "The sub claim of the user\nThis is based on the OIDC standard"
 					},
 					"inodeId": {
 						"description": "The database id of the inode",
 						"format": "bigint"
 					},
 					"permission": {
-						"type": "number",
-						"format": "double"
+						"type": "integer",
+						"format": "int32",
+						"description": "The permission of the member\n0: no access\n1: read access\n2: write access",
+						"minimum": 0
 					},
 					"createdAt": {
 						"type": "string",
@@ -892,7 +910,8 @@
 								"items": {
 									"$ref": "#/components/schemas/Member"
 								},
-								"type": "array"
+								"type": "array",
+								"description": "The list members of the inode"
 							}
 						},
 						"required": [
@@ -902,17 +921,14 @@
 					}
 				]
 			},
-			"AESKey": {
-				"type": "string",
-				"description": "The AES-256 encryption key used to encrypt and decrypt datasets.\nbase64url encoded"
-			},
 			"FileDecryptionKey": {
 				"properties": {
 					"mnemonic": {
 						"type": "string"
 					},
 					"key": {
-						"$ref": "#/components/schemas/AESKey"
+						"type": "string",
+						"description": "The AES-256 encryption key used to encrypt and decrypt datasets.\nbase64url encoded"
 					}
 				},
 				"required": [
@@ -953,9 +969,10 @@
 						"description": "The user to set the permission for"
 					},
 					"permission": {
-						"type": "number",
-						"format": "double",
-						"description": "The permission to set"
+						"type": "integer",
+						"format": "int32",
+						"description": "The permission to set",
+						"minimum": 0
 					}
 				},
 				"required": [
@@ -976,13 +993,15 @@
 								"items": {
 									"$ref": "#/components/schemas/Key"
 								},
-								"type": "array"
+								"type": "array",
+								"description": "The list of encrypted AES keys for all members of the inode\neach member has at least one key encrypted with their public key"
 							},
 							"children": {
 								"items": {
 									"$ref": "#/components/schemas/InodeTree"
 								},
-								"type": "array"
+								"type": "array",
+								"description": "The list of child inodes if the inode is a directory"
 							}
 						},
 						"required": [
@@ -1293,7 +1312,7 @@
 	},
 	"info": {
 		"title": "dabih-api",
-		"version": "2.2.12",
+		"version": "2.2.13",
 		"description": "Dabih API Server",
 		"license": {
 			"name": "MIT"
@@ -1424,7 +1443,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
+							"dabih:base"
 						]
 					}
 				],
@@ -1593,7 +1612,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:api"
+							"dabih:base"
 						]
 					}
 				],
@@ -1700,7 +1719,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:upload"
+							"dabih:base"
 						]
 					}
 				],
@@ -1731,7 +1750,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:upload"
+							"dabih:base"
 						]
 					}
 				],
@@ -1768,7 +1787,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:upload"
+							"dabih:base"
 						]
 					}
 				],
@@ -1808,7 +1827,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:upload"
+							"dabih:base"
 						]
 					}
 				],
@@ -1829,7 +1848,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:upload"
+							"dabih:base"
 						]
 					}
 				],
@@ -2768,7 +2787,7 @@
 							"schema": {
 								"properties": {
 									"key": {
-										"$ref": "#/components/schemas/AESKey"
+										"type": "string"
 									}
 								},
 								"required": [
@@ -3038,7 +3057,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:upload"
+							"dabih:base"
 						]
 					}
 				],
@@ -3093,7 +3112,7 @@
 				"security": [
 					{
 						"api_key": [
-							"dabih:upload"
+							"dabih:base"
 						]
 					}
 				],

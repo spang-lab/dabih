@@ -1,12 +1,10 @@
-/**
- * The AES-256 encryption key used to encrypt and decrypt datasets.
- * base64url encoded
- */
-export type AESKey = string;
-
 export interface FileDecryptionKey {
   mnemonic: string;
-  key: AESKey;
+  /**
+   * The AES-256 encryption key used to encrypt and decrypt datasets.
+   * base64url encoded
+   */
+  key: string;
 }
 
 export interface Chunk {
@@ -58,16 +56,35 @@ export interface FileData {
    * @format bigint
    */
   id: unknown;
+  /**
+   * The unique identifier of the file data
+   */
   uid: string;
+  /**
+   * The user sub who created the file data
+   */
   createdBy: string;
+  /**
+   * The original name of the file
+   */
   fileName: string;
+  /**
+   * The original path of the file
+   */
   filePath: string | null;
+  /**
+   * The hash of the unencrypted chunked file data
+   */
   hash: string | null;
   /**
    * The size of the file in bytes
    * @format bigint
    */
   size: unknown;
+  /**
+   * The hash of the AES encryption key used to encrypt the file data
+   * base64url encoded
+   */
   keyHash: string;
   createdAt: Date;
   updatedAt: Date;
@@ -90,7 +107,14 @@ export interface Inode {
    * @minimum 0
    */
   type: number;
+  /**
+   * The name of the inode
+   * this is the file/directory name
+   */
   name: string;
+  /**
+   * A custom searchable tag for the inode
+   */
   tag: string | null;
   /**
    * The database id file data if the inode is a file
@@ -98,29 +122,58 @@ export interface Inode {
    */
   /* eslint @typescript-eslint/no-redundant-type-constituents: off */
   dataId: unknown | null;
+  /**
+   * The file data if the inode is a file
+   */
   data?: FileData | null;
+  /**
+   * The parent inode
+   * each inode should have exactly one parent except the root inode
+   */
   parentId: unknown;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export type InodeMembers = Inode & {
+  /**
+   * The list members of the inode
+   */
   members: Member[];
 };
 export type InodeMembersKeys = InodeMembers & {
+  /**
+   * The list of encrypted AES keys for all members of the inode
+   * each member has at least one key encrypted with their public key
+   */
   keys: Key[];
 };
 
 export type InodeTree = InodeMembers & {
+  /**
+   * The list of child inodes if the inode is a directory
+   */
   children?: InodeTree[];
+  /**
+   * The list of encrypted AES keys for all members of the inode
+   * each member has at least one key encrypted with their public key
+   */
   keys: Key[];
 };
 
+// Utility type to return when an inode is a known file
 export type File = Inode & {
+  /**
+   * The file data of the inode
+   */
   data: FileData;
 };
 
 export type FileKeys = File & {
+  /**
+   * The list of encrypted AES keys for all members of the inode
+   * each member has at least one key encrypted with their public key
+   */
   keys: Key[];
 };
 
@@ -151,7 +204,13 @@ export interface Key {
    * @format bigint
    */
   inodeId: unknown;
+  /**
+   * The base64url encoded SHA-256 hash of the user's public key
+   */
   hash: string;
+  /**
+   * The encrypted AES-256 key base64url encoded
+   */
   key: string;
   createdAt: Date;
   updatedAt: Date;
@@ -163,12 +222,24 @@ export interface Member {
    * @format bigint
    */
   id: unknown;
+  /**
+   * The sub claim of the user
+   * This is based on the OIDC standard
+   */
   sub: string;
   /**
    * The database id of the inode
    * @format bigint
    */
   inodeId: unknown;
+  /**
+   * The permission of the member
+   * 0: no access
+   * 1: read access
+   * 2: write access
+   * @isInt
+   * @minimum 0
+   */
   permission: number;
   createdAt: Date;
   updatedAt: Date;
@@ -230,6 +301,8 @@ export interface SetAccessBody {
   sub: string;
   /**
    * The permission to set
+   * @isInt
+   * @minimum 0
    */
   permission: number;
 }

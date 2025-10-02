@@ -21,7 +21,7 @@ test.after.always((t) => {
 test('create a dabih access_token', async (t) => {
   const api = await client(t, 'test_token');
   const { data } = await api.token.add({
-    scopes: ['dabih:upload'],
+    scopes: ['dabih:base'],
     lifetime: null,
   });
   t.truthy(data);

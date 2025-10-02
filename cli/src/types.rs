@@ -59,3 +59,28 @@ pub enum Permission {
     Read = 1,
     Write = 2,
 }
+
+impl Permission {
+    pub fn from_str(value: &str) -> Result<Self> {
+        match value.to_lowercase().as_str() {
+            "none" => Ok(Permission::None),
+            "read" => Ok(Permission::Read),
+            "write" => Ok(Permission::Write),
+            _ => Err(CliError::UnexpectedError(format!(
+                "Unknown permission: {}",
+                value
+            ))),
+        }
+    }
+    pub fn from_i32(value: i32) -> Result<Self> {
+        match value {
+            x if x == Permission::None as i32 => Ok(Permission::None),
+            x if x == Permission::Read as i32 => Ok(Permission::Read),
+            x if x == Permission::Write as i32 => Ok(Permission::Write),
+            _ => Err(CliError::UnexpectedError(format!(
+                "Unknown permission: {}",
+                value
+            ))),
+        }
+    }
+}

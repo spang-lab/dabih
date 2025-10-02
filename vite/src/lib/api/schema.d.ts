@@ -963,16 +963,23 @@ export interface components {
              * @description The database id of the file data
              */
             id: string;
+            /** @description The unique identifier of the file data */
             uid: string;
+            /** @description The user sub who created the file data */
             createdBy: string;
+            /** @description The original name of the file */
             fileName: string;
+            /** @description The original path of the file */
             filePath: string | null;
+            /** @description The hash of the unencrypted chunked file data */
             hash: string | null;
             /**
              * Format: bigint
              * @description The size of the file in bytes
              */
             size: string;
+            /** @description The hash of the AES encryption key used to encrypt the file data
+             *     base64url encoded */
             keyHash: string;
             /** Format: date-time */
             createdAt: Date;
@@ -991,14 +998,20 @@ export interface components {
              * @description The type of the inode
              */
             type: number;
+            /** @description The name of the inode
+             *     this is the file/directory name */
             name: string;
+            /** @description A custom searchable tag for the inode */
             tag: string | null;
             /**
              * Format: bigint
              * @description The database id file data if the inode is a file
              */
             dataId: string;
+            /** @description The file data if the inode is a file */
             data?: components["schemas"]["FileData"] | null;
+            /** @description The parent inode
+             *     each inode should have exactly one parent except the root inode */
             parentId: unknown;
             /** Format: date-time */
             createdAt: Date;
@@ -1006,6 +1019,7 @@ export interface components {
             updatedAt: Date;
         };
         File: components["schemas"]["Inode"] & {
+            /** @description The file data of the inode */
             data: components["schemas"]["FileData"];
         };
         UploadStartBody: {
@@ -1120,7 +1134,9 @@ export interface components {
              * @description The inode id the key belongs to
              */
             inodeId: string;
+            /** @description The base64url encoded SHA-256 hash of the user's public key */
             hash: string;
+            /** @description The encrypted AES-256 key base64url encoded */
             key: string;
             /** Format: date-time */
             createdAt: Date;
@@ -1132,6 +1148,8 @@ export interface components {
             data: components["schemas"]["ChunkData"];
         };
         FileKeys: components["schemas"]["File"] & {
+            /** @description The list of encrypted AES keys for all members of the inode
+             *     each member has at least one key encrypted with their public key */
             keys: components["schemas"]["Key"][];
         };
         Member: {
@@ -1140,13 +1158,21 @@ export interface components {
              * @description The database id of the member
              */
             id: string;
+            /** @description The sub claim of the user
+             *     This is based on the OIDC standard */
             sub: string;
             /**
              * Format: bigint
              * @description The database id of the inode
              */
             inodeId: string;
-            /** Format: double */
+            /**
+             * Format: int32
+             * @description The permission of the member
+             *     0: no access
+             *     1: read access
+             *     2: write access
+             */
             permission: number;
             /** Format: date-time */
             createdAt: Date;
@@ -1154,14 +1180,14 @@ export interface components {
             updatedAt: Date;
         };
         InodeMembers: components["schemas"]["Inode"] & {
+            /** @description The list members of the inode */
             members: components["schemas"]["Member"][];
         };
-        /** @description The AES-256 encryption key used to encrypt and decrypt datasets.
-         *     base64url encoded */
-        AESKey: string;
         FileDecryptionKey: {
             mnemonic: string;
-            key: components["schemas"]["AESKey"];
+            /** @description The AES-256 encryption key used to encrypt and decrypt datasets.
+             *     base64url encoded */
+            key: string;
         };
         MemberAddBody: {
             /** @description The users to add to the dataset */
@@ -1173,13 +1199,16 @@ export interface components {
             /** @description The user to set the permission for */
             sub: string;
             /**
-             * Format: double
+             * Format: int32
              * @description The permission to set
              */
             permission: number;
         };
         InodeTree: components["schemas"]["InodeMembers"] & {
+            /** @description The list of encrypted AES keys for all members of the inode
+             *     each member has at least one key encrypted with their public key */
             keys: components["schemas"]["Key"][];
+            /** @description The list of child inodes if the inode is a directory */
             children?: components["schemas"]["InodeTree"][];
         };
         MoveInodeBody: {
@@ -2191,7 +2220,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    key: components["schemas"]["AESKey"];
+                    key: string;
                 };
             };
         };

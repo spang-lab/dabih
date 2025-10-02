@@ -35,7 +35,7 @@ import stream from './stream';
 
 @Route('upload')
 @Tags('Upload')
-@Security('api_key', ['dabih:upload'])
+@Security('api_key', ['dabih:base'])
 export class UploadController extends Controller {
   @Post('start')
   @OperationId('startUpload')

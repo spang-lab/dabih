@@ -81,63 +81,6 @@ pub mod types {
             value.clone()
         }
     }
-    /**The AES-256 encryption key used to encrypt and decrypt datasets.
-base64url encoded*/
-    ///
-    /// <details><summary>JSON schema</summary>
-    ///
-    /// ```json
-    ///{
-    ///  "description": "The AES-256 encryption key used to encrypt and decrypt datasets.\nbase64url encoded",
-    ///  "type": "string"
-    ///}
-    /// ```
-    /// </details>
-    #[derive(
-        ::serde::Deserialize,
-        ::serde::Serialize,
-        Clone,
-        Debug,
-        Eq,
-        Hash,
-        Ord,
-        PartialEq,
-        PartialOrd
-    )]
-    #[serde(transparent)]
-    pub struct AesKey(pub ::std::string::String);
-    impl ::std::ops::Deref for AesKey {
-        type Target = ::std::string::String;
-        fn deref(&self) -> &::std::string::String {
-            &self.0
-        }
-    }
-    impl ::std::convert::From<AesKey> for ::std::string::String {
-        fn from(value: AesKey) -> Self {
-            value.0
-        }
-    }
-    impl ::std::convert::From<&AesKey> for AesKey {
-        fn from(value: &AesKey) -> Self {
-            value.clone()
-        }
-    }
-    impl ::std::convert::From<::std::string::String> for AesKey {
-        fn from(value: ::std::string::String) -> Self {
-            Self(value)
-        }
-    }
-    impl ::std::str::FromStr for AesKey {
-        type Err = ::std::convert::Infallible;
-        fn from_str(value: &str) -> ::std::result::Result<Self, Self::Err> {
-            Ok(Self(value.to_string()))
-        }
-    }
-    impl ::std::fmt::Display for AesKey {
-        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-            self.0.fmt(f)
-        }
-    }
     ///`AuthMetadata`
     ///
     /// <details><summary>JSON schema</summary>
@@ -388,19 +331,26 @@ base64url encoded*/
         pub chunks: ::std::vec::Vec<Chunk>,
         #[serde(rename = "createdAt")]
         pub created_at: ::chrono::DateTime<::chrono::offset::Utc>,
+        ///The user sub who created the file data
         #[serde(rename = "createdBy")]
         pub created_by: ::std::string::String,
+        ///The original name of the file
         #[serde(rename = "fileName")]
         pub file_name: ::std::string::String,
+        ///The original path of the file
         #[serde(rename = "filePath")]
         pub file_path: ::std::option::Option<::std::string::String>,
+        ///The hash of the unencrypted chunked file data
         pub hash: ::std::option::Option<::std::string::String>,
         ///The database id of the file data
         pub id: ::std::string::String,
+        /**The hash of the AES encryption key used to encrypt the file data
+base64url encoded*/
         #[serde(rename = "keyHash")]
         pub key_hash: ::std::string::String,
         ///The size of the file in bytes
         pub size: ::std::string::String,
+        ///The unique identifier of the file data
         pub uid: ::std::string::String,
         #[serde(rename = "updatedAt")]
         pub updated_at: ::chrono::DateTime<::chrono::offset::Utc>,
@@ -952,7 +902,7 @@ base64url encoded*/
     ///  ],
     ///  "properties": {
     ///    "key": {
-    ///      "$ref": "#/components/schemas/AESKey"
+    ///      "type": "string"
     ///    }
     ///  }
     ///}
@@ -960,7 +910,7 @@ base64url encoded*/
     /// </details>
     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
     pub struct DecryptDatasetBody {
-        pub key: AesKey,
+        pub key: ::std::string::String,
     }
     impl ::std::convert::From<&DecryptDatasetBody> for DecryptDatasetBody {
         fn from(value: &DecryptDatasetBody) -> Self {
@@ -1078,9 +1028,14 @@ base64url encoded*/
         ///The database id of the inode
         pub id: ::std::string::String,
         pub mnemonic: ::std::string::String,
+        /**The name of the inode
+this is the file/directory name*/
         pub name: ::std::string::String,
+        /**The parent inode
+each inode should have exactly one parent except the root inode*/
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
+        ///A custom searchable tag for the inode
         pub tag: ::std::option::Option<::std::string::String>,
         ///The type of the inode
         #[serde(rename = "type")]
@@ -1118,18 +1073,22 @@ base64url encoded*/
     ///      "format": "date-time"
     ///    },
     ///    "createdBy": {
+    ///      "description": "The user sub who created the file data",
     ///      "type": "string"
     ///    },
     ///    "fileName": {
+    ///      "description": "The original name of the file",
     ///      "type": "string"
     ///    },
     ///    "filePath": {
+    ///      "description": "The original path of the file",
     ///      "type": [
     ///        "string",
     ///        "null"
     ///      ]
     ///    },
     ///    "hash": {
+    ///      "description": "The hash of the unencrypted chunked file data",
     ///      "type": [
     ///        "string",
     ///        "null"
@@ -1141,6 +1100,7 @@ base64url encoded*/
     ///      "format": "bigint"
     ///    },
     ///    "keyHash": {
+    ///      "description": "The hash of the AES encryption key used to encrypt the file data\nbase64url encoded",
     ///      "type": "string"
     ///    },
     ///    "size": {
@@ -1149,6 +1109,7 @@ base64url encoded*/
     ///      "format": "bigint"
     ///    },
     ///    "uid": {
+    ///      "description": "The unique identifier of the file data",
     ///      "type": "string"
     ///    },
     ///    "updatedAt": {
@@ -1164,19 +1125,26 @@ base64url encoded*/
     pub struct FileData {
         #[serde(rename = "createdAt")]
         pub created_at: ::chrono::DateTime<::chrono::offset::Utc>,
+        ///The user sub who created the file data
         #[serde(rename = "createdBy")]
         pub created_by: ::std::string::String,
+        ///The original name of the file
         #[serde(rename = "fileName")]
         pub file_name: ::std::string::String,
+        ///The original path of the file
         #[serde(rename = "filePath")]
         pub file_path: ::std::option::Option<::std::string::String>,
+        ///The hash of the unencrypted chunked file data
         pub hash: ::std::option::Option<::std::string::String>,
         ///The database id of the file data
         pub id: ::std::string::String,
+        /**The hash of the AES encryption key used to encrypt the file data
+base64url encoded*/
         #[serde(rename = "keyHash")]
         pub key_hash: ::std::string::String,
         ///The size of the file in bytes
         pub size: ::std::string::String,
+        ///The unique identifier of the file data
         pub uid: ::std::string::String,
         #[serde(rename = "updatedAt")]
         pub updated_at: ::chrono::DateTime<::chrono::offset::Utc>,
@@ -1199,7 +1167,8 @@ base64url encoded*/
     ///  ],
     ///  "properties": {
     ///    "key": {
-    ///      "$ref": "#/components/schemas/AESKey"
+    ///      "description": "The AES-256 encryption key used to encrypt and decrypt datasets.\nbase64url encoded",
+    ///      "type": "string"
     ///    },
     ///    "mnemonic": {
     ///      "type": "string"
@@ -1211,7 +1180,9 @@ base64url encoded*/
     /// </details>
     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
     pub struct FileDecryptionKey {
-        pub key: AesKey,
+        /**The AES-256 encryption key used to encrypt and decrypt datasets.
+base64url encoded*/
+        pub key: ::std::string::String,
         pub mnemonic: ::std::string::String,
     }
     impl ::std::convert::From<&FileDecryptionKey> for FileDecryptionKey {
@@ -1263,9 +1234,14 @@ base64url encoded*/
         pub id: ::std::string::String,
         pub keys: ::std::vec::Vec<Key>,
         pub mnemonic: ::std::string::String,
+        /**The name of the inode
+this is the file/directory name*/
         pub name: ::std::string::String,
+        /**The parent inode
+each inode should have exactly one parent except the root inode*/
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
+        ///A custom searchable tag for the inode
         pub tag: ::std::option::Option<::std::string::String>,
         ///The type of the inode
         #[serde(rename = "type")]
@@ -1392,6 +1368,7 @@ base64url encoded*/
     ///      ],
     ///      "properties": {
     ///        "keys": {
+    ///          "description": "The list of encrypted AES keys for all members of the inode\neach member has at least one key encrypted with their public key",
     ///          "type": "array",
     ///          "items": {
     ///            "$ref": "#/components/schemas/Key"
@@ -1413,11 +1390,18 @@ base64url encoded*/
         pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
+        /**The list of encrypted AES keys for all members of the inode
+each member has at least one key encrypted with their public key*/
         pub keys: ::std::vec::Vec<Key>,
         pub mnemonic: ::std::string::String,
+        /**The name of the inode
+this is the file/directory name*/
         pub name: ::std::string::String,
+        /**The parent inode
+each inode should have exactly one parent except the root inode*/
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
+        ///A custom searchable tag for the inode
         pub tag: ::std::option::Option<::std::string::String>,
         ///The type of the inode
         #[serde(rename = "type")]
@@ -1457,18 +1441,22 @@ base64url encoded*/
     ///          "format": "date-time"
     ///        },
     ///        "createdBy": {
+    ///          "description": "The user sub who created the file data",
     ///          "type": "string"
     ///        },
     ///        "fileName": {
+    ///          "description": "The original name of the file",
     ///          "type": "string"
     ///        },
     ///        "filePath": {
+    ///          "description": "The original path of the file",
     ///          "type": [
     ///            "string",
     ///            "null"
     ///          ]
     ///        },
     ///        "hash": {
+    ///          "description": "The hash of the unencrypted chunked file data",
     ///          "type": [
     ///            "string",
     ///            "null"
@@ -1480,6 +1468,7 @@ base64url encoded*/
     ///          "format": "bigint"
     ///        },
     ///        "keyHash": {
+    ///          "description": "The hash of the AES encryption key used to encrypt the file data\nbase64url encoded",
     ///          "type": "string"
     ///        },
     ///        "size": {
@@ -1488,6 +1477,7 @@ base64url encoded*/
     ///          "format": "bigint"
     ///        },
     ///        "uid": {
+    ///          "description": "The unique identifier of the file data",
     ///          "type": "string"
     ///        },
     ///        "updatedAt": {
@@ -1573,9 +1563,14 @@ base64url encoded*/
         ///The database id of the inode
         pub id: ::std::string::String,
         pub mnemonic: ::std::string::String,
+        /**The name of the inode
+this is the file/directory name*/
         pub name: ::std::string::String,
+        /**The parent inode
+each inode should have exactly one parent except the root inode*/
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
+        ///A custom searchable tag for the inode
         pub tag: ::std::option::Option<::std::string::String>,
         ///The type of the inode
         #[serde(rename = "type")]
@@ -1736,6 +1731,7 @@ base64url encoded*/
     ///      "format": "date-time"
     ///    },
     ///    "data": {
+    ///      "description": "The file data if the inode is a file",
     ///      "oneOf": [
     ///        {
     ///          "type": "null"
@@ -1766,10 +1762,14 @@ base64url encoded*/
     ///      "type": "string"
     ///    },
     ///    "name": {
+    ///      "description": "The name of the inode\nthis is the file/directory name",
     ///      "type": "string"
     ///    },
-    ///    "parentId": {},
+    ///    "parentId": {
+    ///      "description": "The parent inode\neach inode should have exactly one parent except the root inode"
+    ///    },
     ///    "tag": {
+    ///      "description": "A custom searchable tag for the inode",
     ///      "type": [
     ///        "string",
     ///        "null"
@@ -1794,6 +1794,7 @@ base64url encoded*/
     pub struct Inode {
         #[serde(rename = "createdAt")]
         pub created_at: ::chrono::DateTime<::chrono::offset::Utc>,
+        ///The file data if the inode is a file
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub data: ::std::option::Option<FileData>,
         ///The database id file data if the inode is a file
@@ -1802,9 +1803,14 @@ base64url encoded*/
         ///The database id of the inode
         pub id: ::std::string::String,
         pub mnemonic: ::std::string::String,
+        /**The name of the inode
+this is the file/directory name*/
         pub name: ::std::string::String,
+        /**The parent inode
+each inode should have exactly one parent except the root inode*/
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
+        ///A custom searchable tag for the inode
         pub tag: ::std::option::Option<::std::string::String>,
         ///The type of the inode
         #[serde(rename = "type")]
@@ -1834,6 +1840,7 @@ base64url encoded*/
     ///      ],
     ///      "properties": {
     ///        "members": {
+    ///          "description": "The list members of the inode",
     ///          "type": "array",
     ///          "items": {
     ///            "$ref": "#/components/schemas/Member"
@@ -1849,6 +1856,7 @@ base64url encoded*/
     pub struct InodeMembers {
         #[serde(rename = "createdAt")]
         pub created_at: ::chrono::DateTime<::chrono::offset::Utc>,
+        ///The file data if the inode is a file
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub data: ::std::option::Option<FileData>,
         ///The database id file data if the inode is a file
@@ -1856,11 +1864,17 @@ base64url encoded*/
         pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
+        ///The list members of the inode
         pub members: ::std::vec::Vec<Member>,
         pub mnemonic: ::std::string::String,
+        /**The name of the inode
+this is the file/directory name*/
         pub name: ::std::string::String,
+        /**The parent inode
+each inode should have exactly one parent except the root inode*/
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
+        ///A custom searchable tag for the inode
         pub tag: ::std::option::Option<::std::string::String>,
         ///The type of the inode
         #[serde(rename = "type")]
@@ -1957,12 +1971,14 @@ base64url encoded*/
     ///      ],
     ///      "properties": {
     ///        "children": {
+    ///          "description": "The list of child inodes if the inode is a directory",
     ///          "type": "array",
     ///          "items": {
     ///            "$ref": "#/components/schemas/InodeTree"
     ///          }
     ///        },
     ///        "keys": {
+    ///          "description": "The list of encrypted AES keys for all members of the inode\neach member has at least one key encrypted with their public key",
     ///          "type": "array",
     ///          "items": {
     ///            "$ref": "#/components/schemas/Key"
@@ -1976,10 +1992,12 @@ base64url encoded*/
     /// </details>
     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
     pub struct InodeTree {
+        ///The list of child inodes if the inode is a directory
         #[serde(default, skip_serializing_if = "::std::vec::Vec::is_empty")]
         pub children: ::std::vec::Vec<InodeTree>,
         #[serde(rename = "createdAt")]
         pub created_at: ::chrono::DateTime<::chrono::offset::Utc>,
+        ///The file data if the inode is a file
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub data: ::std::option::Option<FileData>,
         ///The database id file data if the inode is a file
@@ -1987,12 +2005,20 @@ base64url encoded*/
         pub data_id: ::std::option::Option<::std::string::String>,
         ///The database id of the inode
         pub id: ::std::string::String,
+        /**The list of encrypted AES keys for all members of the inode
+each member has at least one key encrypted with their public key*/
         pub keys: ::std::vec::Vec<Key>,
+        ///The list members of the inode
         pub members: ::std::vec::Vec<Member>,
         pub mnemonic: ::std::string::String,
+        /**The name of the inode
+this is the file/directory name*/
         pub name: ::std::string::String,
+        /**The parent inode
+each inode should have exactly one parent except the root inode*/
         #[serde(rename = "parentId")]
         pub parent_id: ::serde_json::Value,
+        ///A custom searchable tag for the inode
         pub tag: ::std::option::Option<::std::string::String>,
         ///The type of the inode
         #[serde(rename = "type")]
@@ -2191,6 +2217,7 @@ this list should be empty, if not these files are orphaned and can be removed*/
     ///      "format": "date-time"
     ///    },
     ///    "hash": {
+    ///      "description": "The base64url encoded SHA-256 hash of the user's public key",
     ///      "type": "string"
     ///    },
     ///    "id": {
@@ -2204,6 +2231,7 @@ this list should be empty, if not these files are orphaned and can be removed*/
     ///      "format": "bigint"
     ///    },
     ///    "key": {
+    ///      "description": "The encrypted AES-256 key base64url encoded",
     ///      "type": "string"
     ///    },
     ///    "updatedAt": {
@@ -2219,12 +2247,14 @@ this list should be empty, if not these files are orphaned and can be removed*/
     pub struct Key {
         #[serde(rename = "createdAt")]
         pub created_at: ::chrono::DateTime<::chrono::offset::Utc>,
+        ///The base64url encoded SHA-256 hash of the user's public key
         pub hash: ::std::string::String,
         ///The database id of the key
         pub id: ::std::string::String,
         ///The inode id the key belongs to
         #[serde(rename = "inodeId")]
         pub inode_id: ::std::string::String,
+        ///The encrypted AES-256 key base64url encoded
         pub key: ::std::string::String,
         #[serde(rename = "updatedAt")]
         pub updated_at: ::chrono::DateTime<::chrono::offset::Utc>,
@@ -2432,10 +2462,13 @@ this list should be empty, if not these files are orphaned and can be removed*/
     ///      "format": "bigint"
     ///    },
     ///    "permission": {
-    ///      "type": "number",
-    ///      "format": "double"
+    ///      "description": "The permission of the member\n0: no access\n1: read access\n2: write access",
+    ///      "type": "integer",
+    ///      "format": "int32",
+    ///      "minimum": 0.0
     ///    },
     ///    "sub": {
+    ///      "description": "The sub claim of the user\nThis is based on the OIDC standard",
     ///      "type": "string"
     ///    },
     ///    "updatedAt": {
@@ -2456,7 +2489,13 @@ this list should be empty, if not these files are orphaned and can be removed*/
         ///The database id of the inode
         #[serde(rename = "inodeId")]
         pub inode_id: ::std::string::String,
-        pub permission: f64,
+        /**The permission of the member
+0: no access
+1: read access
+2: write access*/
+        pub permission: i32,
+        /**The sub claim of the user
+This is based on the OIDC standard*/
         pub sub: ::std::string::String,
         #[serde(rename = "updatedAt")]
         pub updated_at: ::chrono::DateTime<::chrono::offset::Utc>,
@@ -2761,8 +2800,9 @@ this list should be empty, if not these files are orphaned and can be removed*/
     ///  "properties": {
     ///    "permission": {
     ///      "description": "The permission to set",
-    ///      "type": "number",
-    ///      "format": "double"
+    ///      "type": "integer",
+    ///      "format": "int32",
+    ///      "minimum": 0.0
     ///    },
     ///    "sub": {
     ///      "description": "The user to set the permission for",
@@ -2775,7 +2815,8 @@ this list should be empty, if not these files are orphaned and can be removed*/
     /// </details>
     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
     pub struct SetAccessBody {
-        pub permission: f64,
+        ///The permission to set
+        pub permission: i32,
         ///The user to set the permission for
         pub sub: ::std::string::String,
     }
@@ -3501,7 +3542,7 @@ if undefined the sub from the auth token will be used*/
 
 Dabih API Server
 
-Version: 2.2.12*/
+Version: 2.2.13*/
 pub struct Client {
     pub(crate) baseurl: String,
     pub(crate) client: reqwest::Client,
@@ -3537,7 +3578,7 @@ impl Client {
 }
 impl ClientInfo<()> for Client {
     fn api_version() -> &'static str {
-        "2.2.12"
+        "2.2.13"
     }
     fn baseurl(&self) -> &str {
         self.baseurl.as_str()

@@ -12,7 +12,7 @@ import {
   Produces,
 } from '@tsoa/runtime';
 
-import type { AESKey, RequestWithUser, TokenResponse } from '../types';
+import type { RequestWithUser, TokenResponse } from '../types';
 
 import chunk from './chunk';
 import decrypt from './decrypt';
@@ -28,7 +28,7 @@ export class DownloadController extends Controller {
   public decrypt(
     @Path() mnemonic: string,
     @Request() request: RequestWithUser,
-    @Body() body: { key: AESKey },
+    @Body() body: { key: string },
   ): Promise<TokenResponse> {
     const { user } = request;
     const { key } = body;
