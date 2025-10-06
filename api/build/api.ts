@@ -31,7 +31,7 @@ const init = (baseUrl: string) => {
       }),
     signIn: (email: string) => c.POST('/auth/signIn', { body: { email } }),
     verify: (token: string) => c.POST('/auth/verify', { body: { token } }),
-    providers: () => c.GET('/auth/providers'),
+    provider: () => c.GET('/auth/provider'),
   };
 
   const token = {

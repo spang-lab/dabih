@@ -10,6 +10,7 @@ import { RegisterRoutes } from '../build/routes';
 import { error, indexFallback, log, serialize } from './middleware';
 import { init as initFilesystem } from '#lib/fs';
 import { initInodes } from '#lib/database/inodes';
+import { initOpenID } from '#lib/openid/index';
 import redis, { initRedis } from '#lib/redis';
 import { initEmail } from '#lib/email';
 
@@ -18,6 +19,7 @@ const app = async (port?: number) => {
   await initInodes();
   await initRedis();
   initEmail();
+  await initOpenID();
   const app = new Koa();
   app.use(bodyParser());
   app.use(log());
@@ -41,7 +43,7 @@ const app = async (port?: number) => {
 
   app.use(indexFallback());
 
-  const lPort = port?.toString() ?? getEnv('PORT', '3001');
+  const lPort = port?.toString() ?? getEnv('PORT', '8080');
   const state = app.listen(lPort);
   logger.info(`API server listening on port ${lPort}`);
   state.on('close', () => {

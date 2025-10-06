@@ -1,18 +1,8 @@
-export interface AuthMetadata {
-  issuer: string;
-  authorization_endpoint: string;
-  userinfo_endpoint: string;
-  token_endpoint: string;
-  end_session_endpoint?: string;
-}
-
-export interface AuthProvider {
+export interface OpenIDProvider {
   id: string;
   name: string;
-  authority: string;
-  signInUrl?: string;
-  clientId: string;
-  scopes: string[];
-  logo?: string;
-  metadata?: AuthMetadata;
+  logo_uri: string;
+  issuer: string;
+  discovery: boolean;
+  [key: string]: unknown;
 }

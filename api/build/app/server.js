@@ -145181,7 +145181,7 @@ var app = async (port) => {
   app2.use(serve("dist", {}));
   app2.use(appRouter.routes()).use(appRouter.allowedMethods());
   app2.use(indexFallback_default());
-  const lPort = port?.toString() ?? getEnv("PORT", "3001");
+  const lPort = port?.toString() ?? getEnv("PORT", "8080");
   const state = app2.listen(lPort);
   logger_default.info(`API server listening on port ${lPort}`);
   state.on("close", () => {

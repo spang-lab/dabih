@@ -146,7 +146,7 @@ async fn test_invalid_url() -> Result<()> {
 #[tokio::test]
 async fn test_invalid_token() -> Result<()> {
     let mut ctx = Context::new(
-        "http://localhost:3001".to_string(),
+        "http://localhost:8080".to_string(),
         "invalid_token".to_string(),
         PathBuf::new(),
     )?;

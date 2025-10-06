@@ -2,12 +2,13 @@ import { Mail } from "react-feather";
 import useSession from "@/Session";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router";
+import ProviderButton from "./ProviderButton";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
-  const { signIn, user, error, clearError } = useSession();
+  const { signIn, provider, user, error, clearError } = useSession();
 
   if (user) {
     return <Navigate to="/key" />
@@ -34,6 +35,9 @@ export default function SignIn() {
         {' '}
         <span className="text-blue">your account</span>
       </h1>
+      <div>
+        <ProviderButton provider={provider} />
+      </div>
       <div className="flex max-w-md mx-auto my-10">
         <form onSubmit={async (e) => {
           e.preventDefault()

@@ -3,6 +3,7 @@ import { UserResponse } from "./lib/api/types";
 
 import crypto from "./lib/crypto";
 import api, { setAPIToken } from "./lib/api";
+import { OpenIDProvider } from "./lib/api/types/auth";
 
 const KEY = {
   privateKey: "dabih_private_key",
@@ -27,6 +28,7 @@ interface SessionContextType {
   user: UserResponse | null;
   key: CryptoKey | null;
   token: string | null;
+  provider: OpenIDProvider | null;
   clearError: () => void;
   signIn: (email: string) => Promise<void>;
   verifyToken: (token: string) => Promise<void>;
@@ -46,24 +48,37 @@ export function SessionWrapper({ children }: {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [provider, setProvider] = useState<OpenIDProvider | null>(null);
+
+  useEffect(() => {
+    const fetchProvider = async () => {
+      const { data, error } = await api.auth.provider();
+      if (error || !data) {
+        console.error("Failed to fetch OpenID configuration:", error);
+        return;
+      }
+      setProvider(data);
+    };
+    void fetchProvider();
+  }, []);
+
 
 
   const update = useCallback(async () => {
     const token = localStorage.getItem(KEY.token);
+    const base64 = localStorage.getItem(KEY.privateKey);
     setToken(token);
     setAPIToken(token);
     if (!token) {
       setUser(null);
       return;
     }
-
     const { data, error } = await api.user.me();
     if (error || !data) {
       setUser(null);
       return;
     }
     setUser(data);
-    const base64 = localStorage.getItem(KEY.privateKey);
     if (base64) {
       const key = await crypto.privateKey.fromBase64(base64);
       const hash = await crypto.privateKey.toHash(key);
@@ -124,39 +139,6 @@ export function SessionWrapper({ children }: {
 
 
 
-
-
-  const saveKey = useCallback(async (privateKey: CryptoKey) => {
-    if (!user) {
-      throw new Error("User must be authenticated to save a key");
-    }
-    const hash = await crypto.privateKey.toHash(privateKey);
-    const userKey = user.keys.find(k => k.hash === hash);
-    if (!userKey) {
-      throw new Error(`Key with hash ${hash} does not belong to user ${user.email}`);
-    }
-    if (!userKey.enabled) {
-      throw new Error("This key needs to be enabled first");
-    }
-    const base64 = await crypto.privateKey.toBase64(privateKey);
-    localStorage.setItem(KEY.privateKey, base64);
-    await update();
-  }, [update, user]);
-
-  const dropKey = useCallback(async () => {
-    localStorage.removeItem(KEY.privateKey);
-    await update();
-  }, [update]);
-
-
-
-  const signOut = useCallback(async () => {
-    localStorage.removeItem(KEY.token);
-    localStorage.removeItem(KEY.privateKey);
-    setKey(null);
-    await update();
-  }, [update]);
-
   const refreshToken = useCallback(async () => {
     let sub = null;
     if (token) {
@@ -199,6 +181,59 @@ export function SessionWrapper({ children }: {
   }, [token, key, update]);
 
 
+  const saveKey = useCallback(async (privateKey: CryptoKey) => {
+    const hash = await crypto.privateKey.toHash(privateKey);
+    if (!user) {
+      const { data: u, error } = await api.user.findKey(hash);
+      if (error || !u) {
+        throw new Error(`Key with hash ${hash} not found`);
+      }
+      const key = u.keys.find(k => k.hash === hash);
+      if (!key) {
+        throw new Error(`This should not happen, key with hash ${hash} not found in user record`);
+      }
+      const signingKey = await crypto.privateKey.toSigningKey(privateKey);
+      const signedToken = await crypto.jwt.signWithRSA({ sub: u.sub }, signingKey);
+      const { data: newToken, error: error2 } = await api.auth.refresh(signedToken);
+      if (error2 || !newToken) {
+        throw new Error(`Token refresh failed`);
+      }
+      localStorage.setItem(KEY.token, newToken);
+
+
+      const base64 = await crypto.privateKey.toBase64(privateKey);
+      localStorage.setItem(KEY.privateKey, base64);
+      await update();
+      return;
+    }
+    const userKey = user.keys.find(k => k.hash === hash);
+    if (!userKey) {
+      throw new Error(`Key with hash ${hash} does not belong to user ${user.email}`);
+    }
+    if (!userKey.enabled) {
+      throw new Error("This key needs to be enabled first");
+    }
+    const base64 = await crypto.privateKey.toBase64(privateKey);
+    localStorage.setItem(KEY.privateKey, base64);
+    await update();
+  }, [update, user]);
+
+  const dropKey = useCallback(async () => {
+    localStorage.removeItem(KEY.privateKey);
+    await update();
+  }, [update]);
+
+
+
+  const signOut = useCallback(async () => {
+    localStorage.removeItem(KEY.token);
+    localStorage.removeItem(KEY.privateKey);
+    setKey(null);
+    await update();
+  }, [update]);
+
+
+
 
   useEffect(() => {
     void refreshToken();
@@ -225,6 +260,7 @@ export function SessionWrapper({ children }: {
     clearError: () => setError(null),
     user,
     isAdmin: user ? user.scope.includes("dabih:admin") : false,
+    provider,
     key,
     saveKey,
     dropKey,
@@ -237,6 +273,7 @@ export function SessionWrapper({ children }: {
     user,
     key,
     error,
+    provider,
     saveKey,
     dropKey,
     verifyToken,

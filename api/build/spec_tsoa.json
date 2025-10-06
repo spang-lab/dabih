@@ -1171,73 +1171,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AuthMetadata": {
-				"properties": {
-					"issuer": {
-						"type": "string"
-					},
-					"authorization_endpoint": {
-						"type": "string"
-					},
-					"userinfo_endpoint": {
-						"type": "string"
-					},
-					"token_endpoint": {
-						"type": "string"
-					},
-					"end_session_endpoint": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"issuer",
-					"authorization_endpoint",
-					"userinfo_endpoint",
-					"token_endpoint"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"AuthProvider": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"authority": {
-						"type": "string"
-					},
-					"signInUrl": {
-						"type": "string"
-					},
-					"clientId": {
-						"type": "string"
-					},
-					"scopes": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"logo": {
-						"type": "string"
-					},
-					"metadata": {
-						"$ref": "#/components/schemas/AuthMetadata"
-					}
-				},
-				"required": [
-					"id",
-					"name",
-					"authority",
-					"clientId",
-					"scopes"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"User": {
 				"description": "User is the type that represents a user in the system.",
 				"properties": {
@@ -1268,6 +1201,34 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"OpenIDProvider": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"logo_uri": {
+						"type": "string"
+					},
+					"issuer": {
+						"type": "string"
+					},
+					"discovery": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"logo_uri",
+					"issuer",
+					"discovery"
+				],
+				"type": "object",
+				"additionalProperties": {}
 			},
 			"SignInResponse": {
 				"properties": {
@@ -2873,31 +2834,6 @@
 				]
 			}
 		},
-		"/auth/providers": {
-			"get": {
-				"operationId": "authProviders",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/AuthProvider"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
 		"/auth/info": {
 			"get": {
 				"operationId": "authInfo",
@@ -2922,6 +2858,86 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/auth/provider": {
+			"get": {
+				"operationId": "authProvider",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/OpenIDProvider"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/login": {
+			"get": {
+				"operationId": "loginRedirect",
+				"responses": {
+					"204": {
+						"description": "No content"
+					},
+					"302": {
+						"description": "Redirect to OIDC provider"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/callback": {
+			"get": {
+				"operationId": "loginCallback",
+				"responses": {
+					"204": {
+						"description": "No content"
+					},
+					"302": {
+						"description": "Redirect to frontend with token"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "state",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "code",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/auth/signIn": {

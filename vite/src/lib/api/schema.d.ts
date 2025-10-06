@@ -707,22 +707,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/providers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["authProviders"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/auth/info": {
         parameters: {
             query?: never;
@@ -731,6 +715,54 @@ export interface paths {
             cookie?: never;
         };
         get: operations["authInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/provider": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["authProvider"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["loginRedirect"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["loginCallback"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1261,23 +1293,6 @@ export interface components {
              *     this list should be empty, if not these files are orphaned and can be removed */
             unknown: string[];
         };
-        AuthMetadata: {
-            issuer: string;
-            authorization_endpoint: string;
-            userinfo_endpoint: string;
-            token_endpoint: string;
-            end_session_endpoint?: string;
-        };
-        AuthProvider: {
-            id: string;
-            name: string;
-            authority: string;
-            signInUrl?: string;
-            clientId: string;
-            scopes: string[];
-            logo?: string;
-            metadata?: components["schemas"]["AuthMetadata"];
-        };
         /** @description User is the type that represents a user in the system. */
         User: {
             /**
@@ -1294,6 +1309,15 @@ export interface components {
             scopes: string[];
             /** @description Does the user have the dabih:admin scope */
             isAdmin: boolean;
+        };
+        OpenIDProvider: {
+            id: string;
+            name: string;
+            logo_uri: string;
+            issuer: string;
+            discovery: boolean;
+        } & {
+            [key: string]: unknown;
         };
         SignInResponse: {
             /** @enum {string} */
@@ -2279,26 +2303,6 @@ export interface operations {
             };
         };
     };
-    authProviders: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthProvider"][];
-                };
-            };
-        };
-    };
     authInfo: {
         parameters: {
             query?: never;
@@ -2316,6 +2320,79 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["User"];
                 };
+            };
+        };
+    };
+    authProvider: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpenIDProvider"] | null;
+                };
+            };
+        };
+    };
+    loginRedirect: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Redirect to OIDC provider */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    loginCallback: {
+        parameters: {
+            query: {
+                state: string;
+                code: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Redirect to frontend with token */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

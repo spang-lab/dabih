@@ -401,33 +401,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AuthMetadata": {
-        "dataType": "refObject",
-        "properties": {
-            "issuer": {"dataType":"string","required":true},
-            "authorization_endpoint": {"dataType":"string","required":true},
-            "userinfo_endpoint": {"dataType":"string","required":true},
-            "token_endpoint": {"dataType":"string","required":true},
-            "end_session_endpoint": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AuthProvider": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"string","required":true},
-            "name": {"dataType":"string","required":true},
-            "authority": {"dataType":"string","required":true},
-            "signInUrl": {"dataType":"string"},
-            "clientId": {"dataType":"string","required":true},
-            "scopes": {"dataType":"array","array":{"dataType":"string"},"required":true},
-            "logo": {"dataType":"string"},
-            "metadata": {"ref":"AuthMetadata"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "User": {
         "dataType": "refObject",
         "properties": {
@@ -436,6 +409,18 @@ const models: TsoaRoute.Models = {
             "isAdmin": {"dataType":"boolean","required":true},
         },
         "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OpenIDProvider": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "logo_uri": {"dataType":"string","required":true},
+            "issuer": {"dataType":"string","required":true},
+            "discovery": {"dataType":"boolean","required":true},
+        },
+        "additionalProperties": {"dataType":"any"},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SignInResponse": {
@@ -1925,35 +1910,6 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAuthController_providers: Record<string, TsoaRoute.ParameterSchema> = {
-        };
-        router.get('/auth/providers',
-            ...(fetchMiddlewares<Middleware>(AuthController)),
-            ...(fetchMiddlewares<Middleware>(AuthController.prototype.providers)),
-
-            async function AuthController_providers(context: Context, next: Next) {
-
-            let validatedArgs: any[] = [];
-            try {
-              validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_providers, context, next });
-            } catch (err) {
-              const error = err as any;
-              error.message ||= JSON.stringify({ fields: error.fields });
-              context.status = error.status;
-              context.throw(context.status, error.message, error);
-            }
-
-            const controller = new AuthController();
-
-            return templateService.apiHandler({
-              methodName: 'providers',
-              controller,
-              context,
-              validatedArgs,
-              successStatus: undefined,
-            });
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_info: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
@@ -1978,6 +1934,96 @@ export function RegisterRoutes(router: KoaRouter) {
 
             return templateService.apiHandler({
               methodName: 'info',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_provider: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        router.get('/auth/provider',
+            ...(fetchMiddlewares<Middleware>(AuthController)),
+            ...(fetchMiddlewares<Middleware>(AuthController.prototype.provider)),
+
+            async function AuthController_provider(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_provider, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new AuthController();
+
+            return templateService.apiHandler({
+              methodName: 'provider',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_login: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        router.get('/auth/login',
+            ...(fetchMiddlewares<Middleware>(AuthController)),
+            ...(fetchMiddlewares<Middleware>(AuthController.prototype.login)),
+
+            async function AuthController_login(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_login, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new AuthController();
+
+            return templateService.apiHandler({
+              methodName: 'login',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_callback: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                state: {"in":"query","name":"state","required":true,"dataType":"string"},
+                code: {"in":"query","name":"code","required":true,"dataType":"string"},
+        };
+        router.get('/auth/callback',
+            ...(fetchMiddlewares<Middleware>(AuthController)),
+            ...(fetchMiddlewares<Middleware>(AuthController.prototype.callback)),
+
+            async function AuthController_callback(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_callback, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new AuthController();
+
+            return templateService.apiHandler({
+              methodName: 'callback',
               controller,
               context,
               validatedArgs,
