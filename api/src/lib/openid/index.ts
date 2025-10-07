@@ -6,11 +6,14 @@ import {
   calculatePKCECodeChallenge,
   randomState,
   buildAuthorizationUrl,
+  authorizationCodeGrant,
 } from 'openid-client';
 import { getEnv } from '../env';
 import logger from '../logger';
 import { OpenIDProvider } from 'src/api/types/auth';
 import providers from './providers';
+import dbg from '#lib/dbg';
+import { Request } from 'koa';
 
 let provider: OpenIDProvider | null = null;
 let config: Configuration | null = null;
@@ -76,7 +79,7 @@ export async function getRedirectUrl() {
 
   const parameters = {
     redirect_uri: redirectUri,
-    scope: 'openid email',
+    scope: 'openid',
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
     state,
@@ -89,8 +92,35 @@ export async function getRedirectUrl() {
   };
 }
 
-export async function authorizationCodeGrant() {
-  throw new Error('Not implemented');
+export async function authorizationCode(
+  request: Request,
+  expectedState: string,
+  pkceCodeVerifier: string,
+  code: string,
+) {
+  if (!config) {
+    throw new Error('OpenID Connect is not configured.');
+  }
+  const host = getEnv('HOST', null);
+  if (!host) {
+    throw new Error('HOST environment variable is required, but not set.');
+  }
+  const callbackUrl = new URL(request.url, host);
+
+  const tokens = await authorizationCodeGrant(
+    config,
+    callbackUrl,
+    {
+      pkceCodeVerifier,
+      expectedState,
+      idTokenExpected: false,
+    },
+    {
+      state: expectedState,
+      code,
+    },
+  );
+  return tokens;
 }
 
 export function getProvider(): OpenIDProvider | null {

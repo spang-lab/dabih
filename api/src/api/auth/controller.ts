@@ -60,7 +60,7 @@ export class AuthController extends Controller {
     @Query() state: string,
     @Query() code: string,
   ) {
-    return callback(request.url, state, code);
+    return callback(request, state, code);
   }
 
   @Post('signIn')

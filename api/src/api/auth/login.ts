@@ -1,10 +1,8 @@
-import dbg from '#lib/dbg';
 import { getRedirectUrl } from '#lib/openid/index';
+import { storeCodeVerifier } from '#lib/redis/codeVerifier';
 
 export default async function login() {
   const { redirectUrl, codeVerifier, state } = await getRedirectUrl();
-
-  dbg(codeVerifier, state);
-
+  await storeCodeVerifier(state, codeVerifier);
   return redirectUrl.href;
 }
