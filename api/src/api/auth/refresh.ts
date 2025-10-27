@@ -2,19 +2,23 @@ import db from '#lib/db';
 import { AuthenticationError, NotFoundError } from '../errors';
 import crypto from '#crypto';
 import { getSecret, SECRET } from '#lib/redis/secrets';
+import { Scope, User, UserResponse } from '../types';
 
-export default async function refresh(tokenStr: string) {
-  const payload = crypto.jwt.decode(tokenStr);
-  if (!payload || typeof payload !== 'object') {
-    throw new AuthenticationError('Invalid token: not a valid JWT');
+const getScope = (user: UserResponse) => {
+  const scopes = new Set<string>([Scope.BASE]);
+  const { keys } = user;
+  if (keys.some((k) => k.enabled)) {
+    scopes.add(Scope.API);
   }
-  if (!payload.sub || typeof payload.sub !== 'string') {
-    throw new AuthenticationError(
-      'Invalid token: no "sub" key in payload, this is not a signIn token',
-    );
+  if (user.scope.includes(Scope.ADMIN)) {
+    scopes.add(Scope.ADMIN);
   }
-  const { sub } = payload;
-  const user = await db.user.findUnique({
+  return Array.from(scopes).join(' ');
+};
+
+export default async function refresh(user: User, tokenStr: string) {
+  const { sub } = user;
+  const dbUser = await db.user.findUnique({
     where: { sub },
     include: {
       keys: {
@@ -24,18 +28,18 @@ export default async function refresh(tokenStr: string) {
       },
     },
   });
-  if (!user) {
+  if (!dbUser) {
     throw new NotFoundError(`User not found: ${sub}`);
   }
-  const keys = user.keys.map((key) => crypto.publicKey.fromString(key.data));
+  const keys = dbUser.keys.map((key) => crypto.publicKey.fromString(key.data));
   try {
     crypto.jwt.verifyWithRSA(tokenStr, keys);
   } catch {
     throw new AuthenticationError(
-      `Invalid token: no valid signature for user ${user.email}`,
+      `Invalid token: no valid signature for user ${dbUser.email}`,
     );
   }
-  const { lastAuthAt, scope } = user;
+  const { lastAuthAt } = dbUser;
   const twoWeeks = 2 * 7 * 24 * 60 * 60 * 1000;
   const twoWeeksAgo = new Date(Date.now() - twoWeeks);
   if (lastAuthAt < twoWeeksAgo) {
@@ -43,6 +47,15 @@ export default async function refresh(tokenStr: string) {
       "User's last authentication was more than two weeks ago, re-authentication required",
     );
   }
+
+  const scope = getScope(dbUser);
+  await db.user.update({
+    where: { sub },
+    data: {
+      scope,
+    },
+  });
+
   const secret = await getSecret(SECRET.AUTH);
   const token = crypto.jwt.signWithSecret(
     {

@@ -25,21 +25,22 @@ import searchStart from './searchStart';
 import searchResults from './searchResults';
 import searchCancel from './searchCancel';
 
-import type {
-  AddDirectoryBody,
-  Directory,
-  FileDownload,
-  FileKeys,
-  MemberAddBody,
-  MoveInodeBody,
-  RequestWithUser,
-  Inode,
-  InodeTree,
-  ListResponse,
-  InodeMembers,
-  InodeSearchBody,
-  InodeSearchResults,
-  SetAccessBody,
+import {
+  type AddDirectoryBody,
+  type Directory,
+  type FileDownload,
+  type FileKeys,
+  type MemberAddBody,
+  type MoveInodeBody,
+  type RequestWithUser,
+  type Inode,
+  type InodeTree,
+  type ListResponse,
+  type InodeMembers,
+  type InodeSearchBody,
+  type InodeSearchResults,
+  type SetAccessBody,
+  Scope,
 } from '../types';
 import destroy from './destroy';
 import setAccess from './setAccess';
@@ -48,7 +49,7 @@ import listShared from './listShared';
 
 @Route('fs')
 @Tags('Filesystem')
-@Security('api_key', ['dabih:api'])
+@Security('api_key', [Scope.API])
 export class FilesystemController extends Controller {
   /**
    * Get all the file information required to download a single file

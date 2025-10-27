@@ -27,7 +27,7 @@ const init = (baseUrl: string) => {
     info: () => c.GET('/auth/info'),
     refresh: (token: string) =>
       c.POST('/auth/refresh', {
-        headers: { Authorization: `Bearer ${token}` },
+        body: { token },
       }),
     signIn: (email: string) => c.POST('/auth/signIn', { body: { email } }),
     verify: (token: string) => c.POST('/auth/verify', { body: { token } }),
@@ -52,6 +52,8 @@ const init = (baseUrl: string) => {
       c.POST('/user/key/enable', { body }),
     removeKey: (body: schemas['KeyRemoveBody']) =>
       c.POST('/user/key/remove', { body }),
+    setAdmin: (sub: string, admin: boolean) =>
+      c.POST('/user/admin', { body: { sub, admin } }),
   };
   const upload = {
     start: (body: schemas['UploadStartBody']) =>

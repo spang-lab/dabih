@@ -1,5 +1,5 @@
 import { Request } from 'koa';
-import type { User } from './api/types';
+import { Scope, type User } from './api/types';
 import { isToken, convertToken } from './lib/database/token';
 import db from './lib/db';
 
@@ -88,7 +88,7 @@ export async function koaAuthentication(
   }
   const user = {
     ...decoded,
-    isAdmin: decoded.scopes.includes('dabih:admin'),
+    isAdmin: decoded.scopes.includes(Scope.ADMIN),
   };
   return user;
 }

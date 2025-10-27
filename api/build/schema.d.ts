@@ -111,6 +111,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/user/admin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["setAdmin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/user/remove": {
         parameters: {
             query?: never;
@@ -954,8 +970,10 @@ export interface components {
             [key: string]: unknown;
         };
         UserAddBody: {
-            /** @description The unique user sub
-             *     if undefined the sub from the auth token will be used */
+            /**
+             * @description The unique user sub
+             *     if undefined the sub from the auth token will be used
+             */
             sub?: string;
             /** @description The email of the user */
             email: string;
@@ -1010,8 +1028,10 @@ export interface components {
              * @description The size of the file in bytes
              */
             size: string;
-            /** @description The hash of the AES encryption key used to encrypt the file data
-             *     base64url encoded */
+            /**
+             * @description The hash of the AES encryption key used to encrypt the file data
+             *     base64url encoded
+             */
             keyHash: string;
             /** Format: date-time */
             createdAt: Date;
@@ -1030,8 +1050,10 @@ export interface components {
              * @description The type of the inode
              */
             type: number;
-            /** @description The name of the inode
-             *     this is the file/directory name */
+            /**
+             * @description The name of the inode
+             *     this is the file/directory name
+             */
             name: string;
             /** @description A custom searchable tag for the inode */
             tag: string | null;
@@ -1042,8 +1064,10 @@ export interface components {
             dataId: string;
             /** @description The file data if the inode is a file */
             data?: components["schemas"]["FileData"] | null;
-            /** @description The parent inode
-             *     each inode should have exactly one parent except the root inode */
+            /**
+             * @description The parent inode
+             *     each inode should have exactly one parent except the root inode
+             */
             parentId: unknown;
             /** Format: date-time */
             createdAt: Date;
@@ -1068,8 +1092,10 @@ export interface components {
             size?: number;
             /** @description A custom searchable tag for the file */
             tag?: string;
-            /** @description If true, allows adding the file even if a file with the same name already
-             *     * exists in the target directory. */
+            /**
+             * @description If true, allows adding the file even if a file with the same name already
+             *     * exists in the target directory.
+             */
             allowExisting?: boolean;
         };
         Chunk: {
@@ -1133,8 +1159,10 @@ export interface components {
             updatedAt: Date;
         };
         TokenResponse: components["schemas"]["Token"] & {
-            /** @description false if the token has not expired,
-             *     otherwise a string describing how long ago the token expired */
+            /**
+             * @description false if the token has not expired,
+             *     otherwise a string describing how long ago the token expired
+             */
             expired: string | false;
             /** @description The array of scopes the token has */
             scopes: string[];
@@ -1180,8 +1208,10 @@ export interface components {
             data: components["schemas"]["ChunkData"];
         };
         FileKeys: components["schemas"]["File"] & {
-            /** @description The list of encrypted AES keys for all members of the inode
-             *     each member has at least one key encrypted with their public key */
+            /**
+             * @description The list of encrypted AES keys for all members of the inode
+             *     each member has at least one key encrypted with their public key
+             */
             keys: components["schemas"]["Key"][];
         };
         Member: {
@@ -1190,8 +1220,10 @@ export interface components {
              * @description The database id of the member
              */
             id: string;
-            /** @description The sub claim of the user
-             *     This is based on the OIDC standard */
+            /**
+             * @description The sub claim of the user
+             *     This is based on the OIDC standard
+             */
             sub: string;
             /**
              * Format: bigint
@@ -1217,8 +1249,10 @@ export interface components {
         };
         FileDecryptionKey: {
             mnemonic: string;
-            /** @description The AES-256 encryption key used to encrypt and decrypt datasets.
-             *     base64url encoded */
+            /**
+             * @description The AES-256 encryption key used to encrypt and decrypt datasets.
+             *     base64url encoded
+             */
             key: string;
         };
         MemberAddBody: {
@@ -1237,8 +1271,10 @@ export interface components {
             permission: number;
         };
         InodeTree: components["schemas"]["InodeMembers"] & {
-            /** @description The list of encrypted AES keys for all members of the inode
-             *     each member has at least one key encrypted with their public key */
+            /**
+             * @description The list of encrypted AES keys for all members of the inode
+             *     each member has at least one key encrypted with their public key
+             */
             keys: components["schemas"]["Key"][];
             /** @description The list of child inodes if the inode is a directory */
             children?: components["schemas"]["InodeTree"][];
@@ -1286,11 +1322,15 @@ export interface components {
             inodes: components["schemas"]["Inode"][];
         };
         IntegrityCheckResult: {
-            /** @description list of file data uids that are not referenced by a corresponding bucket
-             *     THIS LIST SHOULD BE EMPTY if not it indicates a serious issue */
+            /**
+             * @description list of file data uids that are not referenced by a corresponding bucket
+             *     THIS LIST SHOULD BE EMPTY if not it indicates a serious issue
+             */
             missing: string[];
-            /** @description list of buckets that do not have corresponding filedata in the database
-             *     this list should be empty, if not these files are orphaned and can be removed */
+            /**
+             * @description list of buckets that do not have corresponding filedata in the database
+             *     this list should be empty, if not these files are orphaned and can be removed
+             */
             unknown: string[];
         };
         /** @description User is the type that represents a user in the system. */
@@ -1312,10 +1352,11 @@ export interface components {
         };
         OpenIDProvider: {
             id: string;
+            url: string;
             name: string;
             logo_uri: string;
-            issuer: string;
             discovery: boolean;
+            supportsPKCE?: boolean;
         } & {
             [key: string]: unknown;
         };
@@ -1484,6 +1525,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserResponse"][];
+                };
+            };
+        };
+    };
+    setAdmin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    admin: boolean;
+                    sub: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Ok */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponse"] | null;
                 };
             };
         };
@@ -2372,7 +2440,6 @@ export interface operations {
         parameters: {
             query: {
                 state: string;
-                code: string;
             };
             header?: never;
             path?: never;
@@ -2464,7 +2531,13 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    token: string;
+                };
+            };
+        };
         responses: {
             /** @description Ok */
             200: {
@@ -2508,11 +2581,15 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description The range of bytes in the chunk
-                 *     It should be in the format `bytes {start}-{end}/{size?}` */
+                /**
+                 * @description The range of bytes in the chunk
+                 *     It should be in the format `bytes {start}-{end}/{size?}`
+                 */
                 "content-range": string;
-                /** @description The SHA-256 hash of the chunk data encoded in base64url
-                 *     It should be in the format `sha-256={hash}` */
+                /**
+                 * @description The SHA-256 hash of the chunk data encoded in base64url
+                 *     It should be in the format `sha-256={hash}`
+                 */
                 digest: string;
             };
             path: {

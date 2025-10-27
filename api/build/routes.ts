@@ -75,19 +75,19 @@ const models: TsoaRoute.Models = {
     "crypto.JsonWebKey": {
         "dataType": "refObject",
         "properties": {
-            "crv": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "d": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "dp": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "dq": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "e": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "k": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "kty": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "n": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "p": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "q": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "qi": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "x": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-            "y": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
+            "crv": {"dataType":"string"},
+            "d": {"dataType":"string"},
+            "dp": {"dataType":"string"},
+            "dq": {"dataType":"string"},
+            "e": {"dataType":"string"},
+            "k": {"dataType":"string"},
+            "kty": {"dataType":"string"},
+            "n": {"dataType":"string"},
+            "p": {"dataType":"string"},
+            "q": {"dataType":"string"},
+            "qi": {"dataType":"string"},
+            "x": {"dataType":"string"},
+            "y": {"dataType":"string"},
         },
         "additionalProperties": {"dataType":"any"},
     },
@@ -415,10 +415,11 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"string","required":true},
+            "url": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
             "logo_uri": {"dataType":"string","required":true},
-            "issuer": {"dataType":"string","required":true},
             "discovery": {"dataType":"boolean","required":true},
+            "supportsPKCE": {"dataType":"boolean"},
         },
         "additionalProperties": {"dataType":"any"},
     },
@@ -666,6 +667,37 @@ export function RegisterRoutes(router: KoaRouter) {
             });
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_setAdmin: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"admin":{"dataType":"boolean","required":true},"sub":{"dataType":"string","required":true}}},
+        };
+        router.post('/user/admin',
+            authenticateMiddleware([{"api_key":["dabih:admin"]}]),
+            ...(fetchMiddlewares<Middleware>(UserController)),
+            ...(fetchMiddlewares<Middleware>(UserController.prototype.setAdmin)),
+
+            async function UserController_setAdmin(context: Context, next: Next) {
+
+            let validatedArgs: any[] = [];
+            try {
+              validatedArgs = templateService.getValidatedArgs({ args: argsUserController_setAdmin, context, next });
+            } catch (err) {
+              const error = err as any;
+              error.message ||= JSON.stringify({ fields: error.fields });
+              context.status = error.status;
+              context.throw(context.status, error.message, error);
+            }
+
+            const controller = new UserController();
+
+            return templateService.apiHandler({
+              methodName: 'setAdmin',
+              controller,
+              context,
+              validatedArgs,
+              successStatus: undefined,
+            });
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUserController_remove: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
                 body: {"in":"body","name":"body","required":true,"ref":"UserSub"},
@@ -799,7 +831,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UploadStartBody"},
         };
         router.post('/upload/start',
-            authenticateMiddleware([{"api_key":["dabih:base"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.start)),
 
@@ -831,7 +863,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
         };
         router.post('/upload/:mnemonic/cancel',
-            authenticateMiddleware([{"api_key":["dabih:base"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.cancel)),
 
@@ -864,7 +896,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 filename: {"in":"path","name":"filename","required":true,"dataType":"string"},
         };
         router.put('/upload/stream/:mnemonic/:filename',
-            authenticateMiddleware([{"api_key":["dabih:base"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.stream)),
 
@@ -898,7 +930,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 digest: {"in":"header","name":"digest","required":true,"dataType":"string"},
         };
         router.put('/upload/:mnemonic/chunk',
-            authenticateMiddleware([{"api_key":["dabih:base"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.chunk)),
 
@@ -930,7 +962,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 mnemonic: {"in":"path","name":"mnemonic","required":true,"dataType":"string"},
         };
         router.post('/upload/:mnemonic/finish',
-            authenticateMiddleware([{"api_key":["dabih:base"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.finish)),
 
@@ -961,7 +993,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.get('/upload/unfinished',
-            authenticateMiddleware([{"api_key":["dabih:base"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.unfinished)),
 
@@ -992,7 +1024,7 @@ export function RegisterRoutes(router: KoaRouter) {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         router.post('/upload/cleanup',
-            authenticateMiddleware([{"api_key":["dabih:base"]}]),
+            authenticateMiddleware([{"api_key":["dabih:api"]}]),
             ...(fetchMiddlewares<Middleware>(UploadController)),
             ...(fetchMiddlewares<Middleware>(UploadController.prototype.cleanup)),
 
@@ -2002,7 +2034,6 @@ export function RegisterRoutes(router: KoaRouter) {
         const argsAuthController_callback: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
                 state: {"in":"query","name":"state","required":true,"dataType":"string"},
-                code: {"in":"query","name":"code","required":true,"dataType":"string"},
         };
         router.get('/auth/callback',
             ...(fetchMiddlewares<Middleware>(AuthController)),
@@ -2094,8 +2125,10 @@ export function RegisterRoutes(router: KoaRouter) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_token: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"token":{"dataType":"string","required":true}}},
         };
         router.post('/auth/refresh',
+            authenticateMiddleware([{"api_key":["dabih:base"]}]),
             ...(fetchMiddlewares<Middleware>(AuthController)),
             ...(fetchMiddlewares<Middleware>(AuthController.prototype.token)),
 

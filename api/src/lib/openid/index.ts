@@ -11,24 +11,26 @@ import {
 import { getEnv } from '../env';
 import logger from '../logger';
 import { OpenIDProvider } from 'src/api/types/auth';
-import providers from './providers';
-import dbg from '#lib/dbg';
+import { initProvider, convertUserInfo } from './providers';
 import { Request } from 'koa';
+import { RequestError } from 'src/api/errors';
 
 let provider: OpenIDProvider | null = null;
 let config: Configuration | null = null;
 
 export async function initOpenID() {
-  const providerId = getEnv('OIDC_PROVIDER', null);
-  if (!providerId) {
+  const providerUrl = getEnv('OIDC_PROVIDER', null);
+  if (!providerUrl) {
     logger.warn(
       'OIDC_PROVIDER is not set, skipping OpenID Connect initialization.',
     );
     return;
   }
-  provider = providers.find((p) => p.id === providerId) ?? null;
+  provider = initProvider(providerUrl);
   if (!provider) {
-    logger.error(`OIDC provider ${providerId} not found. Skipping OIDC setup.`);
+    logger.error(
+      `OIDC provider ${providerUrl} not found. Skipping OIDC setup.`,
+    );
     return;
   }
   const clientId = getEnv('OIDC_CLIENT_ID', null);
@@ -40,12 +42,12 @@ export async function initOpenID() {
     throw new Error('OIDC_CLIENT_SECRET is required when OIDC_ISSUER is set.');
   }
   logger.info(`Using OIDC provider: ${provider.name}`);
-  if (provider.discovery && provider.issuer) {
-    logger.info(`Using discovery for issuer: ${provider.issuer}`);
+  if (provider.discovery) {
+    logger.info(`Using discovery for issuer: ${providerUrl}`);
     try {
-      const url = new URL(provider.issuer);
+      const url = new URL(providerUrl);
       config = await discovery(url, clientId, clientSecret);
-      logger.info(`Discovered OIDC configuration: ${JSON.stringify(config)}`);
+      logger.info('Discovered OIDC configuration');
     } catch (error) {
       logger.error(`Error discovering OIDC configuration: ${error as Error}`);
       config = null;
@@ -53,18 +55,20 @@ export async function initOpenID() {
     }
     return;
   }
-  config = new Configuration(
-    provider as ServerMetadata,
-    clientId,
-    clientSecret,
-  );
+
+  const serverData: ServerMetadata = {
+    issuer: providerUrl,
+    ...provider,
+  };
+
+  config = new Configuration(serverData, clientId, clientSecret);
 }
 
 export async function getRedirectUrl() {
   if (!config) {
     throw new Error('OpenID Connect is not configured.');
   }
-  if (!config.serverMetadata().supportsPKCE()) {
+  if (!config.serverMetadata().supportsPKCE() && !provider?.supportsPKCE) {
     throw new Error('OIDC provider does not support PKCE.');
   }
 
@@ -72,14 +76,17 @@ export async function getRedirectUrl() {
   if (!host) {
     throw new Error('HOST environment variable is required, but not set.');
   }
+  const scope = getEnv('OIDC_SCOPE', 'openid email')!;
+
   const redirectUri = new URL('/api/v1/auth/callback', host).toString();
+  logger.debug(`Using redirect URI: ${redirectUri}`);
   const codeVerifier = randomPKCECodeVerifier();
   const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
   const state = randomState();
 
   const parameters = {
     redirect_uri: redirectUri,
-    scope: 'openid',
+    scope,
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
     state,
@@ -96,7 +103,6 @@ export async function authorizationCode(
   request: Request,
   expectedState: string,
   pkceCodeVerifier: string,
-  code: string,
 ) {
   if (!config) {
     throw new Error('OpenID Connect is not configured.');
@@ -107,20 +113,46 @@ export async function authorizationCode(
   }
   const callbackUrl = new URL(request.url, host);
 
-  const tokens = await authorizationCodeGrant(
-    config,
-    callbackUrl,
-    {
+  let tokens;
+  try {
+    tokens = await authorizationCodeGrant(config, callbackUrl, {
       pkceCodeVerifier,
       expectedState,
       idTokenExpected: false,
+    });
+  } catch (error) {
+    console.log(error);
+    logger.error(`Error during authorization code grant: ${error as Error}`);
+    throw new RequestError('Invalid authorization code or state.');
+  }
+
+  if (!tokens.access_token) {
+    throw new RequestError('No access token received from OIDC provider.');
+  }
+  return tokens.access_token;
+}
+
+export async function getUserInfo(accessToken: string) {
+  if (!config || !provider) {
+    throw new Error('OpenID Connect is not configured.');
+  }
+  const serverConfig = config.serverMetadata();
+  if (!serverConfig.userinfo_endpoint) {
+    throw new Error('OIDC provider does not support userinfo endpoint.');
+  }
+  const response = await fetch(serverConfig.userinfo_endpoint, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      Accept: 'application/json',
     },
-    {
-      state: expectedState,
-      code,
-    },
-  );
-  return tokens;
+  });
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch user info: ${response.status} ${response.statusText}`,
+    );
+  }
+  const userInfo = (await response.json()) as Record<string, unknown>;
+  return convertUserInfo(provider.id, userInfo);
 }
 
 export function getProvider(): OpenIDProvider | null {

@@ -91,22 +91,28 @@ export default function FileData() {
   const [integrity, setIntegrity] = useState<IntegrityCheckResult | null>(null);
 
   const fetchOrphans = useCallback(async () => {
+    if (!isAdmin) {
+      return;
+    }
     const { data, error } = await api.filedata.orphaned();
     if (error) {
       console.error(error);
       return;
     }
     setOrphans(data);
-  }, []);
+  }, [isAdmin]);
 
   const checkIntegrity = useCallback(async () => {
+    if (!isAdmin) {
+      return;
+    }
     const { data, error } = await api.filedata.checkIntegrity();
     if (error) {
       console.error(error);
       return;
     }
     setIntegrity(data);
-  }, []);
+  }, [isAdmin]);
 
   const removeOrphan = useCallback(async (uid: string) => {
     const { error } = await api.filedata.remove(uid);

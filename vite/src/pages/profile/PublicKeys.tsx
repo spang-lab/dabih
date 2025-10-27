@@ -10,24 +10,31 @@ import DeleteDialog from '@/dialog/Delete';
 import CreateKeyDialog from '@/dialog/CreateKey';
 import { KeyRemoveBody } from '@/lib/api/types';
 import PublicKey from './PublicKey';
+import User from './User';
 import useSession from '@/Session';
 
 
 export default function PublicKeys() {
-  const { user, update, isAdmin } = useSession();
+  const { user, update, isAdmin, hasApi } = useSession();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [rootOnly, setRootOnly] = useState<boolean>(false);
   const [toRemove, setToRemove] = useState<KeyRemoveBody | null>(null);
   const [showGenerate, setShowGenerate] = useState(false);
 
 
+
   const fetchKeys = useCallback(async () => {
+    if (!hasApi) {
+      return;
+    }
+
+
     const { data, error } = await api.user.list();
     if (error) {
       return;
     }
     setUsers(data);
-  }, []);
+  }, [hasApi]);
 
   const enableKey = async (sub: string, hash: string, enabled: boolean) => {
     await api.user.enableKey({
@@ -43,6 +50,22 @@ export default function PublicKeys() {
     await api.user.removeKey(req);
     await fetchKeys();
   };
+
+  const removeUser = async (sub: string) => {
+    await api.user.remove(sub);
+    await fetchKeys();
+  }
+
+  const setAdmin = async (sub: string, admin: boolean) => {
+    await api.user.setAdmin(
+      sub,
+      admin,
+    );
+    await fetchKeys();
+  };
+
+
+
   const uploadKey = async (publicKey: JsonWebKey) => {
     if (!user) {
       return;
@@ -109,6 +132,23 @@ export default function PublicKeys() {
           </span>
         </button>
       </div>
+      <h2 hidden={!isAdmin}
+        className="text-xl pt-5 font-extrabold tracking-tight sm:text-2xl md:text-3xl">
+        <span className="text-blue">Users</span>
+      </h2>
+      {users.map((u) => (
+        <User
+          key={u.sub}
+          user={u}
+          isAdmin={isAdmin}
+          onRemove={removeUser}
+          onChange={setAdmin}
+        />
+      ))}
+
+
+
+
     </div>
   );
 }

@@ -14,7 +14,12 @@ import {
 
 import { rateLimit } from '#lib/redis/rateLimit';
 import { Request as KoaRequest } from 'koa';
-import type { RequestWithUser, SignInResponse, ErrorResponse } from '../types';
+import {
+  type RequestWithUser,
+  type SignInResponse,
+  type ErrorResponse,
+  Scope,
+} from '../types';
 import signIn from './signIn';
 import refresh from './refresh';
 
@@ -46,10 +51,15 @@ export class AuthController extends Controller {
   @OperationId('loginRedirect')
   @Response(302, 'Redirect to OIDC provider')
   public async login() {
-    const url = await login();
+    let redirectUrl;
+    try {
+      redirectUrl = await login();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      redirectUrl = `/signin/error?message=${encodeURIComponent(message)}`;
+    }
     this.setStatus(302);
-    this.setHeader('Location', url);
-    return;
+    this.setHeader('Location', redirectUrl);
   }
 
   @Get('callback')
@@ -58,9 +68,17 @@ export class AuthController extends Controller {
   public async callback(
     @Request() request: KoaRequest,
     @Query() state: string,
-    @Query() code: string,
   ) {
-    return callback(request, state, code);
+    let redirectUrl;
+    try {
+      const token = await callback(request, state);
+      redirectUrl = `/signin/success/${token}`;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      redirectUrl = `/signin/error?message=${encodeURIComponent(message)}`;
+    }
+    this.setStatus(302);
+    this.setHeader('Location', redirectUrl);
   }
 
   @Post('signIn')
@@ -83,8 +101,13 @@ export class AuthController extends Controller {
 
   @Post('refresh')
   @OperationId('refreshToken')
-  public async token(@Request() request: KoaRequest): Promise<string> {
-    const tokenStr = parseRequest(request);
-    return refresh(tokenStr);
+  @Security('api_key', [Scope.BASE])
+  public async token(
+    @Request() request: RequestWithUser,
+    @Body() body: { token: string },
+  ): Promise<string> {
+    const { user } = request;
+    const { token } = body;
+    return refresh(user, token);
   }
 }

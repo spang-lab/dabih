@@ -14,7 +14,7 @@ import useSession from '@/Session';
 
 
 export default function Tokens() {
-  const { user } = useSession();
+  const { user, hasApi } = useSession();
   const [tokens, setTokens] = useState<TokenResponse[]>([]);
   const [showCreateToken, setShowCreateToken] = useState(false);
   const [tokenValue, setTokenValue] = useState<string | null>(null);
@@ -23,13 +23,17 @@ export default function Tokens() {
 
 
   const fetchTokens = useCallback(async () => {
+    if (!hasApi) {
+      return;
+    }
+
     const { data, error } = await api.token.list();
     if (!data || error) {
       console.error(error);
       return;
     }
     setTokens(data);
-  }, []);
+  }, [hasApi]);
 
   const addToken = async (req: TokenAddBody) => {
     const { data: token, error } = await api.token.add(req);

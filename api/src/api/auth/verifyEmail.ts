@@ -3,6 +3,7 @@ import { getSecret, getSecrets, SECRET } from '#lib/redis/secrets';
 import db from '#lib/db';
 import logger from '#lib/logger';
 import { getHome } from '#lib/database/inodes';
+import { Scope } from '../types';
 
 export default async function verifyEmail(tokenStr: string): Promise<string> {
   const secrets = await getSecrets(SECRET.EMAIL);
@@ -23,7 +24,7 @@ export default async function verifyEmail(tokenStr: string): Promise<string> {
   const adminUser = await db.user.findFirst({
     where: {
       scope: {
-        contains: 'dabih:admin',
+        contains: Scope.ADMIN,
       },
     },
   });
@@ -58,8 +59,8 @@ export default async function verifyEmail(tokenStr: string): Promise<string> {
     logger.warn(
       `No admin user found, creating new user with admin scope for ${email}`,
     );
-    scopes.push('dabih:api');
-    scopes.push('dabih:admin');
+    scopes.push(Scope.API);
+    scopes.push(Scope.ADMIN);
   }
   const scope = scopes.join(' ');
 

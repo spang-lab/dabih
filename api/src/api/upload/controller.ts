@@ -22,12 +22,13 @@ import chunk from './chunk';
 import finish from './finish';
 import unfinished from './unfinished';
 
-import type {
-  UploadStartBody,
-  File,
-  RequestWithUser,
-  Chunk,
-  FileUpload,
+import {
+  type UploadStartBody,
+  type File,
+  type RequestWithUser,
+  type Chunk,
+  type FileUpload,
+  Scope,
 } from '../types';
 import { parseDigest, parseContentRange } from './util';
 import cleanup from './cleanup';
@@ -35,7 +36,7 @@ import stream from './stream';
 
 @Route('upload')
 @Tags('Upload')
-@Security('api_key', ['dabih:base'])
+@Security('api_key', [Scope.API])
 export class UploadController extends Controller {
   @Post('start')
   @OperationId('startUpload')

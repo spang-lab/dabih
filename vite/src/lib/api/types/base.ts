@@ -10,6 +10,18 @@ export const Permission = {
   WRITE: 2,
 } as const;
 
+/**
+ * The Scope type is used to represent the scopes a user can have.
+ * BASE: basic access to the system, can be used to sign in
+ * API: access to the API, required to use any API endpoints
+ * ADMIN: admin access, required to manage users and keys
+ */
+export const Scope = {
+  BASE: 'dabih:base',
+  API: 'dabih:api',
+  ADMIN: 'dabih:admin',
+} as const;
+
 export interface ErrorResponse {
   message: string;
 }

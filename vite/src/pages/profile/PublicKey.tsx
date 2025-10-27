@@ -71,6 +71,7 @@ export default function PublicKey({ publicKey, user, isAdmin, show, onRemove, on
         {getState()}
         <button
           type="button"
+          hidden={!isAdmin}
           className="py-1 px-1 bg-red text-white rounded-md inline-flex items-center"
           onClick={() => onRemove(hash)}
         >

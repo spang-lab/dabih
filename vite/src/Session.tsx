@@ -25,6 +25,7 @@ interface SessionContextType {
   status: AuthStatus;
   error: string | null;
   isAdmin: boolean;
+  hasApi: boolean;
   user: UserResponse | null;
   key: CryptoKey | null;
   token: string | null;
@@ -32,7 +33,9 @@ interface SessionContextType {
   clearError: () => void;
   signIn: (email: string) => Promise<void>;
   verifyToken: (token: string) => Promise<void>;
+  refreshToken: (lifetimeS?: number) => Promise<void>;
   signOut: () => Promise<void>;
+  saveToken: (token: string) => Promise<void>;
   saveKey: (privateKey: CryptoKey) => Promise<void>;
   dropKey: () => Promise<void>;
   update: () => Promise<void>;
@@ -124,11 +127,17 @@ export function SessionWrapper({ children }: {
     await update();
   }, [update]);
 
+  const saveToken = useCallback(async (newToken: string) => {
+    localStorage.setItem(KEY.token, newToken);
+    await update();
+  }, [update]);
+
+
 
   const signIn = useCallback(async (email: string) => {
     const { data, error } = await api.auth.signIn(email);
     if (error || !data) {
-      setError(`Sign in failed for`);
+      setError(`Sign in failed with error`);
       return;
     }
     const { status, token } = data;
@@ -139,38 +148,23 @@ export function SessionWrapper({ children }: {
 
 
 
-  const refreshToken = useCallback(async () => {
-    let sub = null;
-    if (token) {
-      const payload = crypto.jwt.decode(token);
-      const { exp } = payload;
-      sub = payload.sub;
-      if (!exp) {
-        console.error("Invalid token payload:", payload);
-        return;
-      }
-      const now = Math.floor(Date.now() / 1000);
-      const thirtyMinutes = 30 * 60;
-      if (exp - now > thirtyMinutes) {
-        // Token is still valid no need to refresh
-        return;
-      }
-    }
-    if (!key) {
+  const refreshToken = useCallback(async (lifetimeS?: number) => {
+    if (!token || !key) {
       return;
     }
-    if (!sub) {
-      const hash = await crypto.privateKey.toHash(key);
-      const { data: user, error } = await api.user.findKey(hash);
-      if (error || !user) {
-        console.error("Key lookup error:", error);
-        return;
-      }
-      sub = user.sub;
+    const payload = crypto.jwt.decode(token);
+    const { exp, sub } = payload;
+    if (!exp) {
+      console.error("Invalid token payload:", payload);
+      return;
+    }
+    const now = Math.floor(Date.now() / 1000);
+    if (lifetimeS && exp - now > lifetimeS) {
+      // Token is still valid no need to refresh
+      return;
     }
     const signingKey = await crypto.privateKey.toSigningKey(key);
     const signedToken = await crypto.jwt.signWithRSA({ sub }, signingKey);
-
     const { data: newToken, error: error2 } = await api.auth.refresh(signedToken);
     if (error2 || !newToken) {
       console.error("Token refresh error:", error2);
@@ -184,26 +178,6 @@ export function SessionWrapper({ children }: {
   const saveKey = useCallback(async (privateKey: CryptoKey) => {
     const hash = await crypto.privateKey.toHash(privateKey);
     if (!user) {
-      const { data: u, error } = await api.user.findKey(hash);
-      if (error || !u) {
-        throw new Error(`Key with hash ${hash} not found`);
-      }
-      const key = u.keys.find(k => k.hash === hash);
-      if (!key) {
-        throw new Error(`This should not happen, key with hash ${hash} not found in user record`);
-      }
-      const signingKey = await crypto.privateKey.toSigningKey(privateKey);
-      const signedToken = await crypto.jwt.signWithRSA({ sub: u.sub }, signingKey);
-      const { data: newToken, error: error2 } = await api.auth.refresh(signedToken);
-      if (error2 || !newToken) {
-        throw new Error(`Token refresh failed`);
-      }
-      localStorage.setItem(KEY.token, newToken);
-
-
-      const base64 = await crypto.privateKey.toBase64(privateKey);
-      localStorage.setItem(KEY.privateKey, base64);
-      await update();
       return;
     }
     const userKey = user.keys.find(k => k.hash === hash);
@@ -236,13 +210,11 @@ export function SessionWrapper({ children }: {
 
 
   useEffect(() => {
-    void refreshToken();
-  }, [token, refreshToken]);
-
-  useEffect(() => {
+    const fifteenMinutes = 15 * 60;
+    refreshToken(fifteenMinutes).catch(console.error);
     const interval = setInterval(() => {
-      void refreshToken();
-    }, 15 * 60 * 1000);
+      refreshToken(fifteenMinutes).catch(console.error);
+    }, fifteenMinutes * 1000);
     return () => clearInterval(interval);
   }, [refreshToken]);
 
@@ -260,8 +232,11 @@ export function SessionWrapper({ children }: {
     clearError: () => setError(null),
     user,
     isAdmin: user ? user.scope.includes("dabih:admin") : false,
+    hasApi: user ? user.scope.includes("dabih:api") : false,
     provider,
     key,
+    saveToken,
+    refreshToken,
     saveKey,
     dropKey,
     token,
@@ -274,6 +249,8 @@ export function SessionWrapper({ children }: {
     key,
     error,
     provider,
+    saveToken,
+    refreshToken,
     saveKey,
     dropKey,
     verifyToken,

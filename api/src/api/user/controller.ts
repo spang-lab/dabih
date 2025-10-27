@@ -12,15 +12,16 @@ import {
   NoSecurity,
 } from '@tsoa/runtime';
 
-import type {
-  RequestWithUser,
-  UserAddBody,
-  UserResponse,
-  KeyAddBody,
-  KeyEnableBody,
-  KeyRemoveBody,
-  PublicKey,
-  UserSub,
+import {
+  type RequestWithUser,
+  type UserAddBody,
+  type UserResponse,
+  type KeyAddBody,
+  type KeyEnableBody,
+  type KeyRemoveBody,
+  type PublicKey,
+  type UserSub,
+  Scope,
 } from '../types';
 import get from './get';
 import add from './add';
@@ -30,10 +31,11 @@ import addKey from './addKey';
 import enableKey from './enableKey';
 import removeKey from './removeKey';
 import findKey from './findKey';
+import setAdmin from './setAdmin';
 
 @Route('user')
 @Tags('User')
-@Security('api_key', ['dabih:api'])
+@Security('api_key', [Scope.API])
 export class UserController extends Controller {
   @Post('add')
   @OperationId('addUser')
@@ -76,6 +78,17 @@ export class UserController extends Controller {
   public async list(): Promise<UserResponse[]> {
     return list();
   }
+
+  @Post('admin')
+  @OperationId('setAdmin')
+  @Security('api_key', [Scope.ADMIN])
+  public async setAdmin(
+    @Body() body: { sub: string; admin: boolean },
+  ): Promise<UserResponse | null> {
+    const { sub, admin } = body;
+    return setAdmin(sub, admin);
+  }
+
   @Post('remove')
   @OperationId('removeUser')
   public async remove(

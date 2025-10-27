@@ -10,7 +10,12 @@ import {
   OperationId,
 } from '@tsoa/runtime';
 
-import type { RequestWithUser, TokenAddBody, TokenResponse } from '../types';
+import {
+  Scope,
+  type RequestWithUser,
+  type TokenAddBody,
+  type TokenResponse,
+} from '../types';
 
 import add from './add';
 import list from './list';
@@ -18,7 +23,7 @@ import remove from './remove';
 
 @Route('token')
 @Tags('Token')
-@Security('api_key', ['dabih:api'])
+@Security('api_key', [Scope.API])
 export class TokenController extends Controller {
   @Post('add')
   @OperationId('addToken')

@@ -1,8 +1,9 @@
 export interface OpenIDProvider {
   id: string;
+  url: string;
   name: string;
   logo_uri: string;
-  issuer: string;
   discovery: boolean;
+  supportsPKCE?: boolean;
   [key: string]: unknown;
 }

@@ -12,7 +12,7 @@ import {
   Produces,
 } from '@tsoa/runtime';
 
-import type { RequestWithUser, TokenResponse } from '../types';
+import { Scope, type RequestWithUser, type TokenResponse } from '../types';
 
 import chunk from './chunk';
 import decrypt from './decrypt';
@@ -23,7 +23,7 @@ import { Readable } from 'stream';
 @Tags('Download')
 export class DownloadController extends Controller {
   @Post('{mnemonic}/decrypt')
-  @Security('api_key', ['dabih:api'])
+  @Security('api_key', [Scope.API])
   @OperationId('decryptDataset')
   public decrypt(
     @Path() mnemonic: string,
@@ -48,7 +48,7 @@ export class DownloadController extends Controller {
   }
 
   @Get('{uid}/chunk/{hash}')
-  @Security('api_key', ['dabih:api'])
+  @Security('api_key', [Scope.API])
   @OperationId('downloadChunk')
   @Produces('application/octet-stream')
   public chunk(@Path() uid: string, @Path() hash: string): Promise<Readable> {

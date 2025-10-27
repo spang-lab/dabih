@@ -1223,24 +1223,27 @@
           "id": {
             "type": "string"
           },
+          "url": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
           "logo_uri": {
             "type": "string"
           },
-          "issuer": {
-            "type": "string"
-          },
           "discovery": {
+            "type": "boolean"
+          },
+          "supportsPKCE": {
             "type": "boolean"
           }
         },
         "required": [
           "id",
+          "url",
           "name",
           "logo_uri",
-          "issuer",
           "discovery"
         ],
         "type": "object",
@@ -1537,6 +1540,61 @@
         "parameters": []
       }
     },
+    "/user/admin": {
+      "post": {
+        "operationId": "setAdmin",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UserResponse"
+                    }
+                  ],
+                  "nullable": true
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "api_key": [
+              "dabih:admin"
+            ]
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "admin": {
+                    "type": "boolean"
+                  },
+                  "sub": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "admin",
+                  "sub"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/remove": {
       "post": {
         "operationId": "removeUser",
@@ -1696,7 +1754,7 @@
         "security": [
           {
             "api_key": [
-              "dabih:base"
+              "dabih:api"
             ]
           }
         ],
@@ -1727,7 +1785,7 @@
         "security": [
           {
             "api_key": [
-              "dabih:base"
+              "dabih:api"
             ]
           }
         ],
@@ -1764,7 +1822,7 @@
         "security": [
           {
             "api_key": [
-              "dabih:base"
+              "dabih:api"
             ]
           }
         ],
@@ -1804,7 +1862,7 @@
         "security": [
           {
             "api_key": [
-              "dabih:base"
+              "dabih:api"
             ]
           }
         ],
@@ -1825,7 +1883,7 @@
         "security": [
           {
             "api_key": [
-              "dabih:base"
+              "dabih:api"
             ]
           }
         ],
@@ -2944,14 +3002,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "in": "query",
-            "name": "code",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ]
       }
@@ -3064,8 +3114,32 @@
         "tags": [
           "Auth"
         ],
-        "security": [],
-        "parameters": []
+        "security": [
+          {
+            "api_key": [
+              "dabih:base"
+            ]
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "token"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
       }
     },
     "/upload/stream/{mnemonic}/{filename}": {
@@ -3089,7 +3163,7 @@
         "security": [
           {
             "api_key": [
-              "dabih:base"
+              "dabih:api"
             ]
           }
         ],
@@ -3144,7 +3218,7 @@
         "security": [
           {
             "api_key": [
-              "dabih:base"
+              "dabih:api"
             ]
           }
         ],

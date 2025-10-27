@@ -35,8 +35,13 @@ export default function SignIn() {
         {' '}
         <span className="text-blue">your account</span>
       </h1>
-      <div>
-        <ProviderButton provider={provider} />
+      <div hidden={!provider}>
+        <div className="max-w-md mx-auto">
+          <h2 className="text-xl pt-5 font-extrabold tracking-tight">
+            OpenID
+          </h2>
+          <ProviderButton provider={provider} />
+        </div>
       </div>
       <div className="flex max-w-md mx-auto my-10">
         <form onSubmit={async (e) => {

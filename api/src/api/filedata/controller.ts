@@ -1,4 +1,9 @@
-import { FileData, IntegrityCheckResult, RequestWithUser } from '../types';
+import {
+  FileData,
+  IntegrityCheckResult,
+  RequestWithUser,
+  Scope,
+} from '../types';
 import {
   Controller,
   Tags,
@@ -16,12 +21,12 @@ import checkIntegrity from './checkIntegrity';
 
 @Route('filedata')
 @Tags('File Data')
+@Security('api_key', [Scope.ADMIN])
 export class FileDataController extends Controller {
   /**
    * Find all file data entries that are not referenced by any inode
    */
   @Get('orphaned')
-  @Security('api_key', ['dabih:admin'])
   @OperationId('listOrphaned')
   public async listOrphaned(
     @Request() request: RequestWithUser,
@@ -31,7 +36,6 @@ export class FileDataController extends Controller {
   }
 
   @Post('{uid}/remove')
-  @Security('api_key', ['dabih:admin'])
   @OperationId('removeFileData')
   public async removeFileData(
     @Request() request: RequestWithUser,
@@ -42,7 +46,6 @@ export class FileDataController extends Controller {
   }
 
   @Get('checkIntegrity')
-  @Security('api_key', ['dabih:admin'])
   @OperationId('checkIntegrity')
   public async checkIntegrity(
     @Request() request: RequestWithUser,

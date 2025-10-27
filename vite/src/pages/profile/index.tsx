@@ -1,9 +1,9 @@
 import Tokens from './Tokens';
-import User from './User';
 import PublicKeys from './PublicKeys';
 import useSession from '@/Session';
 import { Navigate } from 'react-router';
 import FileData from './FileData';
+import Account from './Account';
 
 export default function Profile() {
   const { user, isAdmin } = useSession();
@@ -31,7 +31,7 @@ export default function Profile() {
       <p className="text-gray-500">
         This is the data dabih has about you.
       </p>
-      <User />
+      <Account />
       <h2 className="text-xl pt-5 font-extrabold tracking-tight sm:text-2xl md:text-3xl">
         <span className="text-blue">Access </span>
         Tokens
