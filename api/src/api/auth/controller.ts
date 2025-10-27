@@ -23,7 +23,6 @@ import {
 import signIn from './signIn';
 import refresh from './refresh';
 
-import { parseRequest } from 'src/auth';
 import verifyEmail from './verifyEmail';
 import login from './login';
 import callback from './callback';

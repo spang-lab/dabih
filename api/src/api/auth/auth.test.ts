@@ -39,15 +39,8 @@ test('refresh access token', async (t) => {
     sub: 'test_auth_user',
   };
   const token = crypto.jwt.signWithRSA(payload, key);
-  const {
-    response,
-    data: jwt,
-    error,
-  } = await api.client.POST('/auth/refresh', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+
+  const { response, data: jwt, error } = await api.auth.refresh(token);
   if (error) {
     t.log(error);
     t.fail('Failed to get token');
@@ -63,11 +56,7 @@ test('invalid refresh signature', async (t) => {
     sub: 'test_auth_user',
   };
   const token = crypto.jwt.signWithRSA(payload, key);
-  const { response, error } = await api.client.POST('/auth/refresh', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const { response, error } = await api.auth.refresh(token);
   t.is(response.status, 401);
   t.truthy(error);
 });
@@ -79,11 +68,7 @@ test('invalid sub', async (t) => {
     sub: 'invalid_user',
   };
   const token = crypto.jwt.signWithRSA(payload, key);
-  const { response, error } = await api.client.POST('/auth/refresh', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const { response, error } = await api.auth.refresh(token);
   t.is(response.status, 404);
   t.truthy(error);
 });
@@ -109,11 +94,7 @@ test('user with 2 keys', async (t) => {
     response: response2,
     data: info,
     error,
-  } = await api.client.POST('/auth/refresh', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  } = await api.auth.refresh(token);
   if (error) {
     t.log(error);
     t.fail('Failed to get user info');

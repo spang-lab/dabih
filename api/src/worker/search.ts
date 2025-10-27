@@ -68,7 +68,7 @@ export async function search({
 
   while (searchQueue.length > 0) {
     const meta = await job.getMeta(jobId);
-    if (!meta || meta.status !== 'running') {
+    if (meta?.status !== 'running') {
       return;
     }
 
