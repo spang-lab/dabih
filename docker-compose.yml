@@ -26,7 +26,7 @@ services:
       retries: 5
 
   app:
-    image: thespanglab/dabih:v2.2.14
+    image: thespanglab/dabih:v2.2.15
     container_name: dabih-app
     ports:
       - "3000:3000"
