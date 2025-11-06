@@ -8,7 +8,7 @@
   "scripts": {
     "compile": "tsup",
     "typecheck": "tsc --noEmit",
-    "build:tsoa": "tsoa spec-and-routes --basePath /api/v1 && npm run build:tsoa:fix && npm run build:tsoa:fix2 && npm run build:copyspec",
+    "build:tsoa": "tsoa spec-and-routes --basePath /api/v1 && npm run build:tsoa:fix && npm run build:tsoa:fix2",
     "build:tsoa:fix": "jq 'walk(if type == \"object\" and .format? == \"bigint\" then .type = \"string\" else . end)' build/spec_tsoa.json > build/spec.json",
     "build:tsoa:fix2": "node --import tsx/esm build/fix_routes.ts",
     "build:copyspec": "cp -r build/api.ts build/schema.d.ts src/api/types ../vite/src/lib/api/ && cp build/spec.json ../cli/spec.json",
