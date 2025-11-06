@@ -69,7 +69,7 @@ test('invalid sub', async (t) => {
   };
   const token = crypto.jwt.signWithRSA(payload, key);
   const { response, error } = await api.auth.refresh(token);
-  t.is(response.status, 404);
+  t.is(response.status, 401);
   t.truthy(error);
 });
 

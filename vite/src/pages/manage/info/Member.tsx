@@ -41,11 +41,9 @@ export default function MemberItem({
     }
     if (member.permission === Permission.WRITE) {
       await setAccess(inode.mnemonic, member.sub, Permission.READ);
-      console.log('new permission read');
     }
     if (member.permission === Permission.READ) {
       await setAccess(inode.mnemonic, member.sub, Permission.WRITE);
-      console.log('new permission write');
     }
   }
 

@@ -47,7 +47,6 @@ export const convertUserInfo = (
   providerId: string,
   userInfo: Record<string, unknown>,
 ) => {
-  console.log('User Info:', userInfo);
   switch (providerId) {
     case 'github': {
       const sub = (userInfo.id as number).toString();

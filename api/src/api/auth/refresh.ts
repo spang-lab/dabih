@@ -33,7 +33,10 @@ export default async function refresh(user: User, tokenStr: string) {
   }
   const keys = dbUser.keys.map((key) => crypto.publicKey.fromString(key.data));
   try {
-    crypto.jwt.verifyWithRSA(tokenStr, keys);
+    const payload = crypto.jwt.verifyWithRSA(tokenStr, keys);
+    if (typeof payload === 'string' || payload.sub !== sub) {
+      throw new AuthenticationError('Invalid token payload');
+    }
   } catch {
     throw new AuthenticationError(
       `Invalid token: no valid signature for user ${dbUser.email}`,

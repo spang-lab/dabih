@@ -36,10 +36,10 @@ export async function getSecret(secretName: string, ttl?: number) {
     secret = await generateSecret(secretName, ttl);
   } else {
     secret = JSON.parse(secrets[0]) as Secret;
-  }
-  const now = Math.floor(Date.now() / 1000);
-  if (secret.expiresAt < now) {
-    secret = await generateSecret(secretName, ttl);
+    const now = Math.floor(Date.now() / 1000);
+    if (secret.expiresAt < now) {
+      secret = await generateSecret(secretName, ttl);
+    }
   }
   const { encrypted, iv } = secret;
   try {

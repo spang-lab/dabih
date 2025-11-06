@@ -29,7 +29,7 @@ export const client = async (t: Test, sub: string, admin?: boolean) => {
   const host = `http://localhost:${port}`;
   const baseUrl = `${host}/api/v1`;
 
-  let scope = 'dabih:upload dabih:api';
+  let scope = 'dabih:base dabih:api';
   if (admin) {
     scope += ' dabih:admin';
   }

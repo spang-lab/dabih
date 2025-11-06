@@ -20,15 +20,17 @@ test.after.always((t) => {
 
 test('create a dabih access_token', async (t) => {
   const api = await client(t, 'test_token');
-  const { data } = await api.token.add({
+  const { data, error } = await api.token.add({
     scopes: ['dabih:base'],
     lifetime: null,
   });
-  t.truthy(data);
-  if (data) {
-    const { response } = await api.token.remove(data.id);
-    t.is(response.status, 204);
+  if (!data || error) {
+    t.log(error);
+    t.fail();
+    return;
   }
+  const { response } = await api.token.remove(data.id);
+  t.is(response.status, 204);
 });
 
 test('invalid scope', async (t) => {
