@@ -203,15 +203,15 @@ var require_Reflect = __commonJS({
             throw new TypeError();
           if (!IsUndefined(propertyKey))
             propertyKey = ToPropertyKey(propertyKey);
-          var provider = GetMetadataProvider(
+          var provider2 = GetMetadataProvider(
             target,
             propertyKey,
             /*Create*/
             false
           );
-          if (IsUndefined(provider))
+          if (IsUndefined(provider2))
             return false;
-          return provider.OrdinaryDeleteMetadata(metadataKey, target, propertyKey);
+          return provider2.OrdinaryDeleteMetadata(metadataKey, target, propertyKey);
         }
         exporter("deleteMetadata", deleteMetadata);
         function DecorateConstructor(decorators, target) {
@@ -248,15 +248,15 @@ var require_Reflect = __commonJS({
           return false;
         }
         function OrdinaryHasOwnMetadata(MetadataKey, O, P) {
-          var provider = GetMetadataProvider(
+          var provider2 = GetMetadataProvider(
             O,
             P,
             /*Create*/
             false
           );
-          if (IsUndefined(provider))
+          if (IsUndefined(provider2))
             return false;
-          return ToBoolean(provider.OrdinaryHasOwnMetadata(MetadataKey, O, P));
+          return ToBoolean(provider2.OrdinaryHasOwnMetadata(MetadataKey, O, P));
         }
         function OrdinaryGetMetadata(MetadataKey, O, P) {
           var hasOwn2 = OrdinaryHasOwnMetadata(MetadataKey, O, P);
@@ -268,24 +268,24 @@ var require_Reflect = __commonJS({
           return void 0;
         }
         function OrdinaryGetOwnMetadata(MetadataKey, O, P) {
-          var provider = GetMetadataProvider(
+          var provider2 = GetMetadataProvider(
             O,
             P,
             /*Create*/
             false
           );
-          if (IsUndefined(provider))
+          if (IsUndefined(provider2))
             return;
-          return provider.OrdinaryGetOwnMetadata(MetadataKey, O, P);
+          return provider2.OrdinaryGetOwnMetadata(MetadataKey, O, P);
         }
         function OrdinaryDefineOwnMetadata(MetadataKey, MetadataValue, O, P) {
-          var provider = GetMetadataProvider(
+          var provider2 = GetMetadataProvider(
             O,
             P,
             /*Create*/
             true
           );
-          provider.OrdinaryDefineOwnMetadata(MetadataKey, MetadataValue, O, P);
+          provider2.OrdinaryDefineOwnMetadata(MetadataKey, MetadataValue, O, P);
         }
         function OrdinaryMetadataKeys(O, P) {
           var ownKeys = OrdinaryOwnMetadataKeys(O, P);
@@ -318,16 +318,16 @@ var require_Reflect = __commonJS({
           return keys;
         }
         function OrdinaryOwnMetadataKeys(O, P) {
-          var provider = GetMetadataProvider(
+          var provider2 = GetMetadataProvider(
             O,
             P,
             /*create*/
             false
           );
-          if (!provider) {
+          if (!provider2) {
             return [];
           }
-          return provider.OrdinaryOwnMetadataKeys(O, P);
+          return provider2.OrdinaryOwnMetadataKeys(O, P);
         }
         function Type(x) {
           if (x === null)
@@ -511,31 +511,31 @@ var require_Reflect = __commonJS({
           var targetProviderMap = new _WeakMap();
           var registry = {
             registerProvider,
-            getProvider,
+            getProvider: getProvider2,
             setProvider
           };
           return registry;
-          function registerProvider(provider) {
+          function registerProvider(provider2) {
             if (!Object.isExtensible(registry)) {
               throw new Error("Cannot add provider to a frozen registry.");
             }
             switch (true) {
-              case fallback2 === provider:
+              case fallback2 === provider2:
                 break;
               case IsUndefined(first):
-                first = provider;
+                first = provider2;
                 break;
-              case first === provider:
+              case first === provider2:
                 break;
               case IsUndefined(second):
-                second = provider;
+                second = provider2;
                 break;
-              case second === provider:
+              case second === provider2:
                 break;
               default:
                 if (rest === void 0)
                   rest = new _Set();
-                rest.add(provider);
+                rest.add(provider2);
                 break;
             }
           }
@@ -553,10 +553,10 @@ var require_Reflect = __commonJS({
                     if (!next) {
                       return void 0;
                     }
-                    var provider = IteratorValue(next);
-                    if (provider.isProviderFor(O, P)) {
+                    var provider2 = IteratorValue(next);
+                    if (provider2.isProviderFor(O, P)) {
                       IteratorClose(iterator);
-                      return provider;
+                      return provider2;
                     }
                   }
                 }
@@ -567,36 +567,36 @@ var require_Reflect = __commonJS({
             }
             return void 0;
           }
-          function getProvider(O, P) {
+          function getProvider2(O, P) {
             var providerMap = targetProviderMap.get(O);
-            var provider;
+            var provider2;
             if (!IsUndefined(providerMap)) {
-              provider = providerMap.get(P);
+              provider2 = providerMap.get(P);
             }
-            if (!IsUndefined(provider)) {
-              return provider;
+            if (!IsUndefined(provider2)) {
+              return provider2;
             }
-            provider = getProviderNoCache(O, P);
-            if (!IsUndefined(provider)) {
+            provider2 = getProviderNoCache(O, P);
+            if (!IsUndefined(provider2)) {
               if (IsUndefined(providerMap)) {
                 providerMap = new _Map();
                 targetProviderMap.set(O, providerMap);
               }
-              providerMap.set(P, provider);
+              providerMap.set(P, provider2);
             }
-            return provider;
+            return provider2;
           }
-          function hasProvider(provider) {
-            if (IsUndefined(provider))
+          function hasProvider(provider2) {
+            if (IsUndefined(provider2))
               throw new TypeError();
-            return first === provider || second === provider || !IsUndefined(rest) && rest.has(provider);
+            return first === provider2 || second === provider2 || !IsUndefined(rest) && rest.has(provider2);
           }
-          function setProvider(O, P, provider) {
-            if (!hasProvider(provider)) {
+          function setProvider(O, P, provider2) {
+            if (!hasProvider(provider2)) {
               throw new Error("Metadata provider not registered.");
             }
-            var existingProvider = getProvider(O, P);
-            if (existingProvider !== provider) {
+            var existingProvider = getProvider2(O, P);
+            if (existingProvider !== provider2) {
               if (!IsUndefined(existingProvider)) {
                 return false;
               }
@@ -605,7 +605,7 @@ var require_Reflect = __commonJS({
                 providerMap = new _Map();
                 targetProviderMap.set(O, providerMap);
               }
-              providerMap.set(P, provider);
+              providerMap.set(P, provider2);
             }
             return true;
           }
@@ -630,7 +630,7 @@ var require_Reflect = __commonJS({
         }
         function CreateMetadataProvider(registry) {
           var metadata2 = new _WeakMap();
-          var provider = {
+          var provider2 = {
             isProviderFor: function(O, P) {
               var targetMetadata = metadata2.get(O);
               if (IsUndefined(targetMetadata))
@@ -643,8 +643,8 @@ var require_Reflect = __commonJS({
             OrdinaryOwnMetadataKeys: OrdinaryOwnMetadataKeys2,
             OrdinaryDeleteMetadata
           };
-          metadataRegistry.registerProvider(provider);
-          return provider;
+          metadataRegistry.registerProvider(provider2);
+          return provider2;
           function GetOrCreateMetadataMap(O, P, Create) {
             var targetMetadata = metadata2.get(O);
             var createdTargetMetadata = false;
@@ -661,7 +661,7 @@ var require_Reflect = __commonJS({
                 return void 0;
               metadataMap = new _Map();
               targetMetadata.set(P, metadataMap);
-              if (!registry.setProvider(O, P, provider)) {
+              if (!registry.setProvider(O, P, provider2)) {
                 targetMetadata.delete(P);
                 if (createdTargetMetadata) {
                   metadata2.delete(O);
@@ -760,7 +760,7 @@ var require_Reflect = __commonJS({
         function CreateFallbackProvider(reflect) {
           var defineMetadata2 = reflect.defineMetadata, hasOwnMetadata2 = reflect.hasOwnMetadata, getOwnMetadata2 = reflect.getOwnMetadata, getOwnMetadataKeys2 = reflect.getOwnMetadataKeys, deleteMetadata2 = reflect.deleteMetadata;
           var metadataOwner = new _WeakMap();
-          var provider = {
+          var provider2 = {
             isProviderFor: function(O, P) {
               var metadataPropertySet = metadataOwner.get(O);
               if (!IsUndefined(metadataPropertySet) && metadataPropertySet.has(P)) {
@@ -782,7 +782,7 @@ var require_Reflect = __commonJS({
             OrdinaryOwnMetadataKeys: getOwnMetadataKeys2,
             OrdinaryDeleteMetadata: deleteMetadata2
           };
-          return provider;
+          return provider2;
         }
         function GetMetadataProvider(O, P, Create) {
           var registeredProvider = metadataRegistry.getProvider(O, P);
@@ -1157,7 +1157,7 @@ var require_parameter = __commonJS({
     exports.Request = Request8;
     exports.RequestProp = RequestProp;
     exports.Path = Path5;
-    exports.Query = Query;
+    exports.Query = Query2;
     exports.Queries = Queries;
     exports.Header = Header2;
     exports.Inject = Inject;
@@ -1190,7 +1190,7 @@ var require_parameter = __commonJS({
         return;
       };
     }
-    function Query(name) {
+    function Query2(name) {
       return () => {
         return;
       };
@@ -1502,22 +1502,9 @@ var require_assertString = __commonJS({
       value: true
     });
     exports.default = assertString;
-    function _typeof(o) {
-      "@babel/helpers - typeof";
-      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
-        return typeof o2;
-      } : function(o2) {
-        return o2 && "function" == typeof Symbol && o2.constructor === Symbol && o2 !== Symbol.prototype ? "symbol" : typeof o2;
-      }, _typeof(o);
-    }
     function assertString(input) {
-      var isString = typeof input === "string" || input instanceof String;
-      if (!isString) {
-        var invalidType = _typeof(input);
-        if (input === null) invalidType = "null";
-        else if (invalidType === "object") invalidType = input.constructor.name;
-        throw new TypeError("Expected a string but received a ".concat(invalidType));
-      }
+      if (input === void 0 || input === null) throw new TypeError("Expected a string but received a ".concat(input));
+      if (input.constructor.name !== "String") throw new TypeError("Expected a string but received a ".concat(input.constructor.name));
     }
     module.exports = exports.default;
     module.exports.default = exports.default;
@@ -1533,13 +1520,29 @@ var require_toDate = __commonJS({
     });
     exports.default = toDate;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function toDate(date) {
       (0, _assertString.default)(date);
       date = Date.parse(date);
       return !isNaN(date) ? new Date(date) : null;
+    }
+    module.exports = exports.default;
+    module.exports.default = exports.default;
+  }
+});
+
+// node_modules/validator/lib/util/nullUndefinedCheck.js
+var require_nullUndefinedCheck = __commonJS({
+  "node_modules/validator/lib/util/nullUndefinedCheck.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports.default = isNullOrUndefined;
+    function isNullOrUndefined(value) {
+      return value === null || value === void 0;
     }
     module.exports = exports.default;
     module.exports.default = exports.default;
@@ -1593,7 +1596,14 @@ var require_alpha = __commonJS({
       bn: /^['ঀঁংঃঅআইঈউঊঋঌএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহ়ঽািীুূৃৄেৈোৌ্ৎৗড়ঢ়য়ৠৡৢৣৰৱ৲৳৴৵৶৷৸৹৺৻']+$/,
       eo: /^[ABCĈD-GĜHĤIJĴK-PRSŜTUŬVZ]+$/i,
       "hi-IN": /^[\u0900-\u0961]+[\u0972-\u097F]*$/i,
-      "si-LK": /^[\u0D80-\u0DFF]+$/
+      "si-LK": /^[\u0D80-\u0DFF]+$/,
+      "ta-IN": /^[\u0B80-\u0BFF]+$/i,
+      "te-IN": /^[\u0C00-\u0C7F]+$/i,
+      "kn-IN": /^[\u0C80-\u0CFF]+$/i,
+      "ml-IN": /^[\u0D00-\u0D7F]+$/i,
+      "gu-IN": /^[\u0A80-\u0AFF]+$/i,
+      "pa-IN": /^[\u0A00-\u0A7F]+$/i,
+      "or-IN": /^[\u0B00-\u0B7F]+$/i
     };
     var alphanumeric = exports.alphanumeric = {
       "en-US": /^[0-9A-Z]+$/i,
@@ -1633,7 +1643,14 @@ var require_alpha = __commonJS({
       bn: /^['ঀঁংঃঅআইঈউঊঋঌএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহ়ঽািীুূৃৄেৈোৌ্ৎৗড়ঢ়য়ৠৡৢৣ০১২৩৪৫৬৭৮৯ৰৱ৲৳৴৵৶৷৸৹৺৻']+$/,
       eo: /^[0-9ABCĈD-GĜHĤIJĴK-PRSŜTUŬVZ]+$/i,
       "hi-IN": /^[\u0900-\u0963]+[\u0966-\u097F]*$/i,
-      "si-LK": /^[0-9\u0D80-\u0DFF]+$/
+      "si-LK": /^[0-9\u0D80-\u0DFF]+$/,
+      "ta-IN": /^[0-9\u0B80-\u0BFF.]+$/i,
+      "te-IN": /^[0-9\u0C00-\u0C7F.]+$/i,
+      "kn-IN": /^[0-9\u0C80-\u0CFF.]+$/i,
+      "ml-IN": /^[0-9\u0D00-\u0D7F.]+$/i,
+      "gu-IN": /^[0-9\u0A80-\u0AFF.]+$/i,
+      "pa-IN": /^[0-9\u0A00-\u0A7F.]+$/i,
+      "or-IN": /^[0-9\u0B00-\u0B7F.]+$/i
     };
     var decimal = exports.decimal = {
       "en-US": ".",
@@ -1675,7 +1692,7 @@ var require_alpha = __commonJS({
     var _locale3;
     var _i3;
     var dotDecimal = exports.dotDecimal = ["ar-EG", "ar-LB", "ar-LY"];
-    var commaDecimal = exports.commaDecimal = ["bg-BG", "cs-CZ", "da-DK", "de-DE", "el-GR", "en-ZM", "eo", "es-ES", "fr-CA", "fr-FR", "id-ID", "it-IT", "ku-IQ", "hi-IN", "hu-HU", "nb-NO", "nn-NO", "nl-NL", "pl-PL", "pt-PT", "ru-RU", "kk-KZ", "si-LK", "sl-SI", "sr-RS@latin", "sr-RS", "sv-SE", "tr-TR", "uk-UA", "vi-VN"];
+    var commaDecimal = exports.commaDecimal = ["bg-BG", "cs-CZ", "da-DK", "de-DE", "el-GR", "en-ZM", "eo", "es-ES", "fr-CA", "fr-FR", "gu-IN", "hi-IN", "hu-HU", "id-ID", "it-IT", "kk-KZ", "kn-IN", "ku-IQ", "ml-IN", "nb-NO", "nl-NL", "nn-NO", "or-IN", "pa-IN", "pl-PL", "pt-PT", "ru-RU", "si-LK", "sl-SI", "sr-RS", "sr-RS@latin", "sv-SE", "ta-IN", "te-IN", "tr-TR", "uk-UA", "vi-VN"];
     for (_i4 = 0; _i4 < dotDecimal.length; _i4++) {
       decimal[dotDecimal[_i4]] = decimal["en-US"];
     }
@@ -1706,9 +1723,10 @@ var require_isFloat = __commonJS({
     exports.default = isFloat;
     exports.locales = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
+    var _nullUndefinedCheck = _interopRequireDefault(require_nullUndefinedCheck());
     var _alpha = require_alpha();
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isFloat(str, options) {
       (0, _assertString.default)(str);
@@ -1718,7 +1736,7 @@ var require_isFloat = __commonJS({
         return false;
       }
       var value = parseFloat(str.replace(",", "."));
-      return float.test(str) && (!options.hasOwnProperty("min") || value >= options.min) && (!options.hasOwnProperty("max") || value <= options.max) && (!options.hasOwnProperty("lt") || value < options.lt) && (!options.hasOwnProperty("gt") || value > options.gt);
+      return float.test(str) && (!options.hasOwnProperty("min") || (0, _nullUndefinedCheck.default)(options.min) || value >= options.min) && (!options.hasOwnProperty("max") || (0, _nullUndefinedCheck.default)(options.max) || value <= options.max) && (!options.hasOwnProperty("lt") || (0, _nullUndefinedCheck.default)(options.lt) || value < options.lt) && (!options.hasOwnProperty("gt") || (0, _nullUndefinedCheck.default)(options.gt) || value > options.gt);
     }
     var locales = exports.locales = Object.keys(_alpha.decimal);
   }
@@ -1733,8 +1751,8 @@ var require_toFloat = __commonJS({
     });
     exports.default = toFloat;
     var _isFloat = _interopRequireDefault(require_isFloat());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function toFloat(str) {
       if (!(0, _isFloat.default)(str)) return NaN;
@@ -1754,8 +1772,8 @@ var require_toInt = __commonJS({
     });
     exports.default = toInt;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function toInt(str, radix) {
       (0, _assertString.default)(str);
@@ -1775,8 +1793,8 @@ var require_toBoolean = __commonJS({
     });
     exports.default = toBoolean;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function toBoolean(str, strict) {
       (0, _assertString.default)(str);
@@ -1799,8 +1817,8 @@ var require_equals = __commonJS({
     });
     exports.default = equals;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function equals(str, comparison) {
       (0, _assertString.default)(str);
@@ -1878,16 +1896,16 @@ var require_contains = __commonJS({
     var _assertString = _interopRequireDefault(require_assertString());
     var _toString = _interopRequireDefault(require_toString());
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    var defaulContainsOptions = {
+    var defaultContainsOptions = {
       ignoreCase: false,
       minOccurrences: 1
     };
     function contains(str, elem, options) {
       (0, _assertString.default)(str);
-      options = (0, _merge.default)(options, defaulContainsOptions);
+      options = (0, _merge.default)(options, defaultContainsOptions);
       if (options.ignoreCase) {
         return str.toLowerCase().split((0, _toString.default)(elem).toLowerCase()).length > options.minOccurrences;
       }
@@ -1907,8 +1925,8 @@ var require_matches = __commonJS({
     });
     exports.default = matches;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function matches(str, pattern, modifiers) {
       (0, _assertString.default)(str);
@@ -1916,6 +1934,31 @@ var require_matches = __commonJS({
         pattern = new RegExp(pattern, modifiers);
       }
       return !!str.match(pattern);
+    }
+    module.exports = exports.default;
+    module.exports.default = exports.default;
+  }
+});
+
+// node_modules/validator/lib/util/checkHost.js
+var require_checkHost = __commonJS({
+  "node_modules/validator/lib/util/checkHost.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports.default = checkHost;
+    function isRegExp(obj) {
+      return Object.prototype.toString.call(obj) === "[object RegExp]";
+    }
+    function checkHost(host, matches) {
+      for (var i = 0; i < matches.length; i++) {
+        var match = matches[i];
+        if (host === match || isRegExp(match) && match.test(host)) {
+          return true;
+        }
+      }
+      return false;
     }
     module.exports = exports.default;
     module.exports.default = exports.default;
@@ -1931,8 +1974,8 @@ var require_isByteLength = __commonJS({
     });
     exports.default = isByteLength;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function _typeof(o) {
       "@babel/helpers - typeof";
@@ -1971,8 +2014,8 @@ var require_isFQDN = __commonJS({
     exports.default = isFQDN;
     var _assertString = _interopRequireDefault(require_assertString());
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var default_fqdn_options = {
       require_tld: true,
@@ -2040,26 +2083,38 @@ var require_isIP = __commonJS({
     });
     exports.default = isIP;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
+    }
+    function _typeof(o) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
+        return typeof o2;
+      } : function(o2) {
+        return o2 && "function" == typeof Symbol && o2.constructor === Symbol && o2 !== Symbol.prototype ? "symbol" : typeof o2;
+      }, _typeof(o);
     }
     var IPv4SegmentFormat = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
     var IPv4AddressFormat = "(".concat(IPv4SegmentFormat, "[.]){3}").concat(IPv4SegmentFormat);
     var IPv4AddressRegExp = new RegExp("^".concat(IPv4AddressFormat, "$"));
     var IPv6SegmentFormat = "(?:[0-9a-fA-F]{1,4})";
-    var IPv6AddressRegExp = new RegExp("^(" + "(?:".concat(IPv6SegmentFormat, ":){7}(?:").concat(IPv6SegmentFormat, "|:)|") + "(?:".concat(IPv6SegmentFormat, ":){6}(?:").concat(IPv4AddressFormat, "|:").concat(IPv6SegmentFormat, "|:)|") + "(?:".concat(IPv6SegmentFormat, ":){5}(?::").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,2}|:)|") + "(?:".concat(IPv6SegmentFormat, ":){4}(?:(:").concat(IPv6SegmentFormat, "){0,1}:").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,3}|:)|") + "(?:".concat(IPv6SegmentFormat, ":){3}(?:(:").concat(IPv6SegmentFormat, "){0,2}:").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,4}|:)|") + "(?:".concat(IPv6SegmentFormat, ":){2}(?:(:").concat(IPv6SegmentFormat, "){0,3}:").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,5}|:)|") + "(?:".concat(IPv6SegmentFormat, ":){1}(?:(:").concat(IPv6SegmentFormat, "){0,4}:").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,6}|:)|") + "(?::((?::".concat(IPv6SegmentFormat, "){0,5}:").concat(IPv4AddressFormat, "|(?::").concat(IPv6SegmentFormat, "){1,7}|:))") + ")(%[0-9a-zA-Z-.:]{1,})?$");
-    function isIP(str) {
-      var version = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "";
-      (0, _assertString.default)(str);
-      version = String(version);
+    var IPv6AddressRegExp = new RegExp("^(" + "(?:".concat(IPv6SegmentFormat, ":){7}(?:").concat(IPv6SegmentFormat, "|:)|") + "(?:".concat(IPv6SegmentFormat, ":){6}(?:").concat(IPv4AddressFormat, "|:").concat(IPv6SegmentFormat, "|:)|") + "(?:".concat(IPv6SegmentFormat, ":){5}(?::").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,2}|:)|") + "(?:".concat(IPv6SegmentFormat, ":){4}(?:(:").concat(IPv6SegmentFormat, "){0,1}:").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,3}|:)|") + "(?:".concat(IPv6SegmentFormat, ":){3}(?:(:").concat(IPv6SegmentFormat, "){0,2}:").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,4}|:)|") + "(?:".concat(IPv6SegmentFormat, ":){2}(?:(:").concat(IPv6SegmentFormat, "){0,3}:").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,5}|:)|") + "(?:".concat(IPv6SegmentFormat, ":){1}(?:(:").concat(IPv6SegmentFormat, "){0,4}:").concat(IPv4AddressFormat, "|(:").concat(IPv6SegmentFormat, "){1,6}|:)|") + "(?::((?::".concat(IPv6SegmentFormat, "){0,5}:").concat(IPv4AddressFormat, "|(?::").concat(IPv6SegmentFormat, "){1,7}|:))") + ")(%[0-9a-zA-Z.]{1,})?$");
+    function isIP(ipAddress) {
+      var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+      (0, _assertString.default)(ipAddress);
+      var version = (_typeof(options) === "object" ? options.version : arguments[1]) || "";
       if (!version) {
-        return isIP(str, 4) || isIP(str, 6);
+        return isIP(ipAddress, {
+          version: 4
+        }) || isIP(ipAddress, {
+          version: 6
+        });
       }
-      if (version === "4") {
-        return IPv4AddressRegExp.test(str);
+      if (version.toString() === "4") {
+        return IPv4AddressRegExp.test(ipAddress);
       }
-      if (version === "6") {
-        return IPv6AddressRegExp.test(str);
+      if (version.toString() === "6") {
+        return IPv6AddressRegExp.test(ipAddress);
       }
       return false;
     }
@@ -2077,12 +2132,13 @@ var require_isEmail = __commonJS({
     });
     exports.default = isEmail;
     var _assertString = _interopRequireDefault(require_assertString());
+    var _checkHost = _interopRequireDefault(require_checkHost());
     var _isByteLength = _interopRequireDefault(require_isByteLength());
     var _isFQDN = _interopRequireDefault(require_isFQDN());
     var _isIP = _interopRequireDefault(require_isIP());
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var default_email_options = {
       allow_display_name: false,
@@ -2143,10 +2199,10 @@ var require_isEmail = __commonJS({
       var parts = str.split("@");
       var domain = parts.pop();
       var lower_domain = domain.toLowerCase();
-      if (options.host_blacklist.includes(lower_domain)) {
+      if (options.host_blacklist.length > 0 && (0, _checkHost.default)(lower_domain, options.host_blacklist)) {
         return false;
       }
-      if (options.host_whitelist.length > 0 && !options.host_whitelist.includes(lower_domain)) {
+      if (options.host_whitelist.length > 0 && !(0, _checkHost.default)(lower_domain, options.host_whitelist)) {
         return false;
       }
       var user = parts.join("@");
@@ -2191,7 +2247,10 @@ var require_isEmail = __commonJS({
           }
         }
       }
-      if (user[0] === '"') {
+      if (options.blacklisted_chars) {
+        if (user.search(new RegExp("[".concat(options.blacklisted_chars, "]+"), "g")) !== -1) return false;
+      }
+      if (user[0] === '"' && user[user.length - 1] === '"') {
         user = user.slice(1, user.length - 1);
         return options.allow_utf8_local_part ? quotedEmailUserUtf8.test(user) : quotedEmailUser.test(user);
       }
@@ -2202,11 +2261,25 @@ var require_isEmail = __commonJS({
           return false;
         }
       }
-      if (options.blacklisted_chars) {
-        if (user.search(new RegExp("[".concat(options.blacklisted_chars, "]+"), "g")) !== -1) return false;
-      }
       return true;
     }
+    module.exports = exports.default;
+    module.exports.default = exports.default;
+  }
+});
+
+// node_modules/validator/lib/util/includesString.js
+var require_includesString = __commonJS({
+  "node_modules/validator/lib/util/includesString.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports.default = void 0;
+    var includes = function includes2(str, val) {
+      return str.indexOf(val) !== -1;
+    };
+    var _default = exports.default = includes;
     module.exports = exports.default;
     module.exports.default = exports.default;
   }
@@ -2221,30 +2294,31 @@ var require_isURL = __commonJS({
     });
     exports.default = isURL;
     var _assertString = _interopRequireDefault(require_assertString());
+    var _checkHost = _interopRequireDefault(require_checkHost());
+    var _includesString = _interopRequireDefault(require_includesString());
     var _isFQDN = _interopRequireDefault(require_isFQDN());
     var _isIP = _interopRequireDefault(require_isIP());
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    function _slicedToArray(arr, i) {
-      return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    function _slicedToArray(r, e) {
+      return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
     }
     function _nonIterableRest() {
       throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
     }
-    function _unsupportedIterableToArray(o, minLen) {
-      if (!o) return;
-      if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-      var n = Object.prototype.toString.call(o).slice(8, -1);
-      if (n === "Object" && o.constructor) n = o.constructor.name;
-      if (n === "Map" || n === "Set") return Array.from(o);
-      if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+    function _unsupportedIterableToArray(r, a) {
+      if (r) {
+        if ("string" == typeof r) return _arrayLikeToArray(r, a);
+        var t = {}.toString.call(r).slice(8, -1);
+        return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+      }
     }
-    function _arrayLikeToArray(arr, len) {
-      if (len == null || len > arr.length) len = arr.length;
-      for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-      return arr2;
+    function _arrayLikeToArray(r, a) {
+      (null == a || a > r.length) && (a = r.length);
+      for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+      return n;
     }
     function _iterableToArrayLimit(r, l) {
       var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
@@ -2267,8 +2341,8 @@ var require_isURL = __commonJS({
         return a;
       }
     }
-    function _arrayWithHoles(arr) {
-      if (Array.isArray(arr)) return arr;
+    function _arrayWithHoles(r) {
+      if (Array.isArray(r)) return r;
     }
     var default_url_options = {
       protocols: ["http", "https", "ftp"],
@@ -2282,21 +2356,10 @@ var require_isURL = __commonJS({
       allow_protocol_relative_urls: false,
       allow_fragments: true,
       allow_query_components: true,
-      validate_length: true
+      validate_length: true,
+      max_allowed_length: 2084
     };
     var wrapped_ipv6 = /^\[([^\]]+)\](?::([0-9]+))?$/;
-    function isRegExp(obj) {
-      return Object.prototype.toString.call(obj) === "[object RegExp]";
-    }
-    function checkHost(host, matches) {
-      for (var i = 0; i < matches.length; i++) {
-        var match = matches[i];
-        if (host === match || isRegExp(match) && match.test(host)) {
-          return true;
-        }
-      }
-      return false;
-    }
     function isURL(url, options) {
       (0, _assertString.default)(url);
       if (!url || /[\s<>]/.test(url)) {
@@ -2306,13 +2369,13 @@ var require_isURL = __commonJS({
         return false;
       }
       options = (0, _merge.default)(options, default_url_options);
-      if (options.validate_length && url.length >= 2083) {
+      if (options.validate_length && url.length > options.max_allowed_length) {
         return false;
       }
-      if (!options.allow_fragments && url.includes("#")) {
+      if (!options.allow_fragments && (0, _includesString.default)(url, "#")) {
         return false;
       }
-      if (!options.allow_query_components && (url.includes("?") || url.includes("&"))) {
+      if (!options.allow_query_components && ((0, _includesString.default)(url, "?") || (0, _includesString.default)(url, "&"))) {
         return false;
       }
       var protocol, auth, host, hostname, port, port_str, split, ipv6;
@@ -2320,21 +2383,59 @@ var require_isURL = __commonJS({
       url = split.shift();
       split = url.split("?");
       url = split.shift();
-      split = url.split("://");
-      if (split.length > 1) {
-        protocol = split.shift().toLowerCase();
+      var protocol_match = url.match(/^([a-z][a-z0-9+\-.]*):/i);
+      var had_explicit_protocol = false;
+      var cleanUpProtocol = function cleanUpProtocol2(potential_protocol2) {
+        had_explicit_protocol = true;
+        protocol = potential_protocol2.toLowerCase();
         if (options.require_valid_protocol && options.protocols.indexOf(protocol) === -1) {
           return false;
         }
+        return url.substring(protocol_match[0].length);
+      };
+      if (protocol_match) {
+        var potential_protocol = protocol_match[1];
+        var after_colon = url.substring(protocol_match[0].length);
+        var starts_with_slashes = after_colon.slice(0, 2) === "//";
+        if (!starts_with_slashes) {
+          var first_slash_position = after_colon.indexOf("/");
+          var before_slash = first_slash_position === -1 ? after_colon : after_colon.substring(0, first_slash_position);
+          var at_position = before_slash.indexOf("@");
+          if (at_position !== -1) {
+            var before_at = before_slash.substring(0, at_position);
+            var valid_auth_regex = /^[a-zA-Z0-9\-_.%:]*$/;
+            var is_valid_auth = valid_auth_regex.test(before_at);
+            if (is_valid_auth) {
+              if (options.require_protocol) {
+                return false;
+              }
+            } else {
+              url = cleanUpProtocol(potential_protocol);
+              if (url === false) {
+                return false;
+              }
+            }
+          } else {
+            url = cleanUpProtocol(potential_protocol);
+            if (url === false) {
+              return false;
+            }
+          }
+        } else {
+          url = cleanUpProtocol(potential_protocol);
+          if (url === false) {
+            return false;
+          }
+        }
       } else if (options.require_protocol) {
         return false;
-      } else if (url.slice(0, 2) === "//") {
-        if (!options.allow_protocol_relative_urls) {
+      }
+      if (url.slice(0, 2) === "//") {
+        if (!had_explicit_protocol && !options.allow_protocol_relative_urls) {
           return false;
         }
-        split[0] = url.slice(2);
+        url = url.slice(2);
       }
-      url = split.join("://");
       if (url === "") {
         return false;
       }
@@ -2384,7 +2485,7 @@ var require_isURL = __commonJS({
         return false;
       }
       if (options.host_whitelist) {
-        return checkHost(host, options.host_whitelist);
+        return (0, _checkHost.default)(host, options.host_whitelist);
       }
       if (host === "" && !options.require_host) {
         return true;
@@ -2393,7 +2494,7 @@ var require_isURL = __commonJS({
         return false;
       }
       host = host || ipv6;
-      if (options.host_blacklist && checkHost(host, options.host_blacklist)) {
+      if (options.host_blacklist && (0, _checkHost.default)(host, options.host_blacklist)) {
         return false;
       }
       return true;
@@ -2412,8 +2513,8 @@ var require_isMACAddress = __commonJS({
     });
     exports.default = isMACAddress;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var macAddress48 = /^(?:[0-9a-fA-F]{2}([-:\s]))([0-9a-fA-F]{2}\1){4}([0-9a-fA-F]{2})$/;
     var macAddress48NoSeparators = /^([0-9a-fA-F]){12}$/;
@@ -2462,8 +2563,8 @@ var require_isIPRange = __commonJS({
     exports.default = isIPRange;
     var _assertString = _interopRequireDefault(require_assertString());
     var _isIP = _interopRequireDefault(require_isIP());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var subnetMaybe = /^\d{1,3}$/;
     var v4Subnet = 32;
@@ -2512,11 +2613,11 @@ var require_isDate = __commonJS({
     });
     exports.default = isDate;
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    function _slicedToArray(arr, i) {
-      return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    function _slicedToArray(r, e) {
+      return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
     }
     function _nonIterableRest() {
       throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
@@ -2542,56 +2643,51 @@ var require_isDate = __commonJS({
         return a;
       }
     }
-    function _arrayWithHoles(arr) {
-      if (Array.isArray(arr)) return arr;
+    function _arrayWithHoles(r) {
+      if (Array.isArray(r)) return r;
     }
-    function _createForOfIteratorHelper(o, allowArrayLike) {
-      var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
-      if (!it) {
-        if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-          if (it) o = it;
-          var i = 0;
-          var F = function F2() {
+    function _createForOfIteratorHelper(r, e) {
+      var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+      if (!t) {
+        if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) {
+          t && (r = t);
+          var _n = 0, F = function F2() {
           };
           return { s: F, n: function n() {
-            if (i >= o.length) return { done: true };
-            return { done: false, value: o[i++] };
-          }, e: function e(_e) {
-            throw _e;
+            return _n >= r.length ? { done: true } : { done: false, value: r[_n++] };
+          }, e: function e2(r2) {
+            throw r2;
           }, f: F };
         }
         throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
       }
-      var normalCompletion = true, didErr = false, err;
+      var o, a = true, u = false;
       return { s: function s() {
-        it = it.call(o);
+        t = t.call(r);
       }, n: function n() {
-        var step = it.next();
-        normalCompletion = step.done;
-        return step;
-      }, e: function e(_e2) {
-        didErr = true;
-        err = _e2;
+        var r2 = t.next();
+        return a = r2.done, r2;
+      }, e: function e2(r2) {
+        u = true, o = r2;
       }, f: function f() {
         try {
-          if (!normalCompletion && it.return != null) it.return();
+          a || null == t.return || t.return();
         } finally {
-          if (didErr) throw err;
+          if (u) throw o;
         }
       } };
     }
-    function _unsupportedIterableToArray(o, minLen) {
-      if (!o) return;
-      if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-      var n = Object.prototype.toString.call(o).slice(8, -1);
-      if (n === "Object" && o.constructor) n = o.constructor.name;
-      if (n === "Map" || n === "Set") return Array.from(o);
-      if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+    function _unsupportedIterableToArray(r, a) {
+      if (r) {
+        if ("string" == typeof r) return _arrayLikeToArray(r, a);
+        var t = {}.toString.call(r).slice(8, -1);
+        return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+      }
     }
-    function _arrayLikeToArray(arr, len) {
-      if (len == null || len > arr.length) len = arr.length;
-      for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-      return arr2;
+    function _arrayLikeToArray(r, a) {
+      (null == a || a > r.length) && (a = r.length);
+      for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+      return n;
     }
     var default_date_options = {
       format: "YYYY/MM/DD",
@@ -2602,7 +2698,7 @@ var require_isDate = __commonJS({
       return /(^(y{4}|y{2})[.\/-](m{1,2})[.\/-](d{1,2})$)|(^(m{1,2})[.\/-](d{1,2})[.\/-]((y{4}|y{2})$))|(^(d{1,2})[.\/-](m{1,2})[.\/-]((y{4}|y{2})$))/gi.test(format);
     }
     function zip(date, format) {
-      var zippedArr = [], len = Math.min(date.length, format.length);
+      var zippedArr = [], len = Math.max(date.length, format.length);
       for (var i = 0; i < len; i++) {
         zippedArr.push([date[i], format[i]]);
       }
@@ -2617,6 +2713,7 @@ var require_isDate = __commonJS({
         options = (0, _merge.default)(options, default_date_options);
       }
       if (typeof input === "string" && isValidFormat(options.format)) {
+        if (options.strictMode && input.length !== options.format.length) return false;
         var formatDelimiter = options.delimiters.find(function(delimiter) {
           return options.format.indexOf(delimiter) !== -1;
         });
@@ -2629,7 +2726,7 @@ var require_isDate = __commonJS({
         try {
           for (_iterator.s(); !(_step = _iterator.n()).done; ) {
             var _step$value = _slicedToArray(_step.value, 2), dateWord = _step$value[0], formatWord = _step$value[1];
-            if (dateWord.length !== formatWord.length) {
+            if (!dateWord || !formatWord || dateWord.length !== formatWord.length) {
               return false;
             }
             dateObj[formatWord.charAt(0)] = dateWord;
@@ -2684,8 +2781,8 @@ var require_isTime = __commonJS({
     });
     exports.default = isTime;
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var default_time_options = {
       hourFormat: "hour24",
@@ -2694,11 +2791,13 @@ var require_isTime = __commonJS({
     var formats = {
       hour24: {
         default: /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/,
-        withSeconds: /^([01]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/
+        withSeconds: /^([01]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/,
+        withOptionalSeconds: /^([01]?[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9]))?$/
       },
       hour12: {
         default: /^(0?[1-9]|1[0-2]):([0-5][0-9]) (A|P)M$/,
-        withSeconds: /^(0?[1-9]|1[0-2]):([0-5][0-9]):([0-5][0-9]) (A|P)M$/
+        withSeconds: /^(0?[1-9]|1[0-2]):([0-5][0-9]):([0-5][0-9]) (A|P)M$/,
+        withOptionalSeconds: /^(0?[1-9]|1[0-2]):([0-5][0-9])(?::([0-5][0-9]))? (A|P)M$/
       }
     };
     function isTime(input, options) {
@@ -2706,6 +2805,25 @@ var require_isTime = __commonJS({
       if (typeof input !== "string") return false;
       return formats[options.hourFormat][options.mode].test(input);
     }
+    module.exports = exports.default;
+    module.exports.default = exports.default;
+  }
+});
+
+// node_modules/validator/lib/util/includesArray.js
+var require_includesArray = __commonJS({
+  "node_modules/validator/lib/util/includesArray.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports.default = void 0;
+    var includes = function includes2(arr, val) {
+      return arr.some(function(arrVal) {
+        return val === arrVal;
+      });
+    };
+    var _default = exports.default = includes;
     module.exports = exports.default;
     module.exports.default = exports.default;
   }
@@ -2720,8 +2838,9 @@ var require_isBoolean = __commonJS({
     });
     exports.default = isBoolean;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    var _includesArray = _interopRequireDefault(require_includesArray());
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var defaultOptions = {
       loose: false
@@ -2732,9 +2851,9 @@ var require_isBoolean = __commonJS({
       var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : defaultOptions;
       (0, _assertString.default)(str);
       if (options.loose) {
-        return looseBooleans.includes(str.toLowerCase());
+        return (0, _includesArray.default)(looseBooleans, str.toLowerCase());
       }
-      return strictBooleans.includes(str);
+      return (0, _includesArray.default)(strictBooleans, str);
     }
     module.exports = exports.default;
     module.exports.default = exports.default;
@@ -2750,8 +2869,8 @@ var require_isLocale = __commonJS({
     });
     exports.default = isLocale;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var extlang = "([A-Za-z]{3}(-[A-Za-z]{3}){0,2})";
     var language = "(([a-zA-Z]{2,3}(-".concat(extlang, ")?)|([a-zA-Z]{5,8}))");
@@ -2785,8 +2904,8 @@ var require_isAbaRouting = __commonJS({
     });
     exports.default = isAbaRouting;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var isRoutingReg = /^(?!(1[3-9])|(20)|(3[3-9])|(4[0-9])|(5[0-9])|(60)|(7[3-9])|(8[1-9])|(9[0-2])|(9[3-9]))[0-9]{9}$/;
     function isAbaRouting(str) {
@@ -2816,8 +2935,8 @@ var require_isAlpha = __commonJS({
     exports.locales = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
     var _alpha = require_alpha();
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isAlpha(_str) {
       var locale = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "en-US";
@@ -2854,8 +2973,8 @@ var require_isAlphanumeric = __commonJS({
     exports.locales = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
     var _alpha = require_alpha();
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isAlphanumeric(_str) {
       var locale = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "en-US";
@@ -2891,8 +3010,8 @@ var require_isNumeric = __commonJS({
     exports.default = isNumeric;
     var _assertString = _interopRequireDefault(require_assertString());
     var _alpha = require_alpha();
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var numericNoSymbols = /^[0-9]+$/;
     function isNumeric(str, options) {
@@ -2909,15 +3028,16 @@ var require_isNumeric = __commonJS({
 
 // node_modules/validator/lib/isPassportNumber.js
 var require_isPassportNumber = __commonJS({
-  "node_modules/validator/lib/isPassportNumber.js"(exports, module) {
+  "node_modules/validator/lib/isPassportNumber.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", {
       value: true
     });
     exports.default = isPassportNumber;
+    exports.locales = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var passportRegexByCountryCode = {
       AM: /^[A-Z]{2}\d{7}$/,
@@ -2938,7 +3058,7 @@ var require_isPassportNumber = __commonJS({
       // BRAZIL
       BY: /^[A-Z]{2}\d{7}$/,
       // BELARUS
-      CA: /^[A-Z]{2}\d{6}$/,
+      CA: /^[A-Z]{2}\d{6}$|^[A-Z]\d{6}[A-Z]{2}$/,
       // CANADA
       CH: /^[A-Z]\d{7}$/,
       // SWITZERLAND
@@ -3036,18 +3156,17 @@ var require_isPassportNumber = __commonJS({
       // TURKEY
       UA: /^[A-Z]{2}\d{6}$/,
       // UKRAINE
-      US: /^\d{9}$/,
+      US: /^\d{9}$|^[A-Z]\d{8}$/,
       // UNITED STATES
       ZA: /^[TAMD]\d{8}$/
       // SOUTH AFRICA
     };
+    var locales = exports.locales = Object.keys(passportRegexByCountryCode);
     function isPassportNumber(str, countryCode) {
       (0, _assertString.default)(str);
       var normalizedStr = str.replace(/\s/g, "").toUpperCase();
       return countryCode.toUpperCase() in passportRegexByCountryCode && passportRegexByCountryCode[countryCode].test(normalizedStr);
     }
-    module.exports = exports.default;
-    module.exports.default = exports.default;
   }
 });
 
@@ -3060,8 +3179,9 @@ var require_isInt = __commonJS({
     });
     exports.default = isInt;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    var _nullUndefinedCheck = _interopRequireDefault(require_nullUndefinedCheck());
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var int = /^(?:[-+]?(?:0|[1-9][0-9]*))$/;
     var intLeadingZeroes = /^[-+]?[0-9]+$/;
@@ -3069,10 +3189,10 @@ var require_isInt = __commonJS({
       (0, _assertString.default)(str);
       options = options || {};
       var regex = options.allow_leading_zeroes === false ? int : intLeadingZeroes;
-      var minCheckPassed = !options.hasOwnProperty("min") || str >= options.min;
-      var maxCheckPassed = !options.hasOwnProperty("max") || str <= options.max;
-      var ltCheckPassed = !options.hasOwnProperty("lt") || str < options.lt;
-      var gtCheckPassed = !options.hasOwnProperty("gt") || str > options.gt;
+      var minCheckPassed = !options.hasOwnProperty("min") || (0, _nullUndefinedCheck.default)(options.min) || str >= options.min;
+      var maxCheckPassed = !options.hasOwnProperty("max") || (0, _nullUndefinedCheck.default)(options.max) || str <= options.max;
+      var ltCheckPassed = !options.hasOwnProperty("lt") || (0, _nullUndefinedCheck.default)(options.lt) || str < options.lt;
+      var gtCheckPassed = !options.hasOwnProperty("gt") || (0, _nullUndefinedCheck.default)(options.gt) || str > options.gt;
       return regex.test(str) && minCheckPassed && maxCheckPassed && ltCheckPassed && gtCheckPassed;
     }
     module.exports = exports.default;
@@ -3089,8 +3209,8 @@ var require_isPort = __commonJS({
     });
     exports.default = isPort;
     var _isInt = _interopRequireDefault(require_isInt());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isPort(str) {
       return (0, _isInt.default)(str, {
@@ -3113,8 +3233,8 @@ var require_isLowercase = __commonJS({
     });
     exports.default = isLowercase;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isLowercase(str) {
       (0, _assertString.default)(str);
@@ -3134,8 +3254,8 @@ var require_isUppercase = __commonJS({
     });
     exports.default = isUppercase;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isUppercase(str) {
       (0, _assertString.default)(str);
@@ -3155,17 +3275,17 @@ var require_isIMEI = __commonJS({
     });
     exports.default = isIMEI;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    var imeiRegexWithoutHypens = /^[0-9]{15}$/;
-    var imeiRegexWithHypens = /^\d{2}-\d{6}-\d{6}-\d{1}$/;
+    var imeiRegexWithoutHyphens = /^[0-9]{15}$/;
+    var imeiRegexWithHyphens = /^\d{2}-\d{6}-\d{6}-\d{1}$/;
     function isIMEI(str, options) {
       (0, _assertString.default)(str);
       options = options || {};
-      var imeiRegex = imeiRegexWithoutHypens;
+      var imeiRegex = imeiRegexWithoutHyphens;
       if (options.allow_hyphens) {
-        imeiRegex = imeiRegexWithHypens;
+        imeiRegex = imeiRegexWithHyphens;
       }
       if (!imeiRegex.test(str)) {
         return false;
@@ -3206,8 +3326,8 @@ var require_isAscii = __commonJS({
     });
     exports.default = isAscii;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var ascii = /^[\x00-\x7F]+$/;
     function isAscii(str) {
@@ -3229,8 +3349,8 @@ var require_isFullWidth = __commonJS({
     exports.default = isFullWidth;
     exports.fullWidth = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var fullWidth = exports.fullWidth = /[^\u0020-\u007E\uFF61-\uFF9F\uFFA0-\uFFDC\uFFE8-\uFFEE0-9a-zA-Z]/;
     function isFullWidth(str) {
@@ -3250,8 +3370,8 @@ var require_isHalfWidth = __commonJS({
     exports.default = isHalfWidth;
     exports.halfWidth = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var halfWidth = exports.halfWidth = /[\u0020-\u007E\uFF61-\uFF9F\uFFA0-\uFFDC\uFFE8-\uFFEE0-9a-zA-Z]/;
     function isHalfWidth(str) {
@@ -3272,8 +3392,8 @@ var require_isVariableWidth = __commonJS({
     var _assertString = _interopRequireDefault(require_assertString());
     var _isFullWidth = require_isFullWidth();
     var _isHalfWidth = require_isHalfWidth();
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isVariableWidth(str) {
       (0, _assertString.default)(str);
@@ -3293,8 +3413,8 @@ var require_isMultibyte = __commonJS({
     });
     exports.default = isMultibyte;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var multibyte = /[^\x00-\x7F]/;
     function isMultibyte(str) {
@@ -3333,8 +3453,8 @@ var require_isSemVer = __commonJS({
     exports.default = isSemVer;
     var _assertString = _interopRequireDefault(require_assertString());
     var _multilineRegex = _interopRequireDefault(require_multilineRegex());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var semanticVersioningRegex = (0, _multilineRegex.default)(["^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)", "(?:-((?:0|[1-9]\\d*|\\d*[a-z-][0-9a-z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-z-][0-9a-z-]*))*))", "?(?:\\+([0-9a-z-]+(?:\\.[0-9a-z-]+)*))?$"], "i");
     function isSemVer(str) {
@@ -3355,33 +3475,14 @@ var require_isSurrogatePair = __commonJS({
     });
     exports.default = isSurrogatePair;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var surrogatePair = /[\uD800-\uDBFF][\uDC00-\uDFFF]/;
     function isSurrogatePair(str) {
       (0, _assertString.default)(str);
       return surrogatePair.test(str);
     }
-    module.exports = exports.default;
-    module.exports.default = exports.default;
-  }
-});
-
-// node_modules/validator/lib/util/includes.js
-var require_includes = __commonJS({
-  "node_modules/validator/lib/util/includes.js"(exports, module) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var includes = function includes2(arr, val) {
-      return arr.some(function(arrVal) {
-        return val === arrVal;
-      });
-    };
-    var _default = exports.default = includes;
     module.exports = exports.default;
     module.exports.default = exports.default;
   }
@@ -3397,10 +3498,10 @@ var require_isDecimal = __commonJS({
     exports.default = isDecimal;
     var _merge = _interopRequireDefault(require_merge());
     var _assertString = _interopRequireDefault(require_assertString());
-    var _includes = _interopRequireDefault(require_includes());
+    var _includesArray = _interopRequireDefault(require_includesArray());
     var _alpha = require_alpha();
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function decimalRegExp(options) {
       var regExp = new RegExp("^[-+]?([0-9]+)?(\\".concat(_alpha.decimal[options.locale], "[0-9]{").concat(options.decimal_digits, "})").concat(options.force_decimal ? "" : "?", "$"));
@@ -3416,7 +3517,7 @@ var require_isDecimal = __commonJS({
       (0, _assertString.default)(str);
       options = (0, _merge.default)(options, default_decimal_options);
       if (options.locale in _alpha.decimal) {
-        return !(0, _includes.default)(blacklist, str.replace(/ /g, "")) && decimalRegExp(options).test(str);
+        return !(0, _includesArray.default)(blacklist, str.replace(/ /g, "")) && decimalRegExp(options).test(str);
       }
       throw new Error("Invalid locale '".concat(options.locale, "'"));
     }
@@ -3434,8 +3535,8 @@ var require_isHexadecimal = __commonJS({
     });
     exports.default = isHexadecimal;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var hexadecimal = /^(0x|0h)?[0-9A-F]+$/i;
     function isHexadecimal(str) {
@@ -3456,8 +3557,8 @@ var require_isOctal = __commonJS({
     });
     exports.default = isOctal;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var octal = /^(0o)?[0-7]+$/i;
     function isOctal(str) {
@@ -3479,8 +3580,8 @@ var require_isDivisibleBy = __commonJS({
     exports.default = isDivisibleBy;
     var _assertString = _interopRequireDefault(require_assertString());
     var _toFloat = _interopRequireDefault(require_toFloat());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isDivisibleBy(str, num) {
       (0, _assertString.default)(str);
@@ -3500,8 +3601,8 @@ var require_isHexColor = __commonJS({
     });
     exports.default = isHexColor;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var hexcolor = /^#?([0-9A-F]{3}|[0-9A-F]{4}|[0-9A-F]{6}|[0-9A-F]{8})$/i;
     function isHexColor(str) {
@@ -3522,16 +3623,40 @@ var require_isRgbColor = __commonJS({
     });
     exports.default = isRgbColor;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
+    }
+    function _typeof(o) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
+        return typeof o2;
+      } : function(o2) {
+        return o2 && "function" == typeof Symbol && o2.constructor === Symbol && o2 !== Symbol.prototype ? "symbol" : typeof o2;
+      }, _typeof(o);
     }
     var rgbColor = /^rgb\((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]),){2}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\)$/;
-    var rgbaColor = /^rgba\((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]),){3}(0?\.\d|1(\.0)?|0(\.0)?)\)$/;
+    var rgbaColor = /^rgba\((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]),){3}(0?\.\d\d?|1(\.0)?|0(\.0)?)\)$/;
     var rgbColorPercent = /^rgb\((([0-9]%|[1-9][0-9]%|100%),){2}([0-9]%|[1-9][0-9]%|100%)\)$/;
-    var rgbaColorPercent = /^rgba\((([0-9]%|[1-9][0-9]%|100%),){3}(0?\.\d|1(\.0)?|0(\.0)?)\)$/;
-    function isRgbColor(str) {
-      var includePercentValues = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+    var rgbaColorPercent = /^rgba\((([0-9]%|[1-9][0-9]%|100%),){3}(0?\.\d\d?|1(\.0)?|0(\.0)?)\)$/;
+    var startsWithRgb = /^rgba?/;
+    function isRgbColor(str, options) {
       (0, _assertString.default)(str);
+      var allowSpaces = false;
+      var includePercentValues = true;
+      if (_typeof(options) !== "object") {
+        if (arguments.length >= 2) {
+          includePercentValues = arguments[1];
+        }
+      } else {
+        allowSpaces = options.allowSpaces !== void 0 ? options.allowSpaces : allowSpaces;
+        includePercentValues = options.includePercentValues !== void 0 ? options.includePercentValues : includePercentValues;
+      }
+      if (allowSpaces) {
+        if (!startsWithRgb.test(str)) {
+          return false;
+        }
+        str = str.replace(/\s/g, "");
+      }
       if (!includePercentValues) {
         return rgbColor.test(str) || rgbaColor.test(str);
       }
@@ -3551,8 +3676,8 @@ var require_isHSL = __commonJS({
     });
     exports.default = isHSL;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var hslComma = /^hsla?\(((\+|\-)?([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?|\.[0-9]+(e(\+|\-)?[0-9]+)?))(deg|grad|rad|turn)?(,(\+|\-)?([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?|\.[0-9]+(e(\+|\-)?[0-9]+)?)%){2}(,((\+|\-)?([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?|\.[0-9]+(e(\+|\-)?[0-9]+)?)%?))?\)$/i;
     var hslSpace = /^hsla?\(((\+|\-)?([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?|\.[0-9]+(e(\+|\-)?[0-9]+)?))(deg|grad|rad|turn)?(\s(\+|\-)?([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?|\.[0-9]+(e(\+|\-)?[0-9]+)?)%){2}\s?(\/\s((\+|\-)?([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?|\.[0-9]+(e(\+|\-)?[0-9]+)?)%?)\s?)?\)$/i;
@@ -3578,8 +3703,8 @@ var require_isISRC = __commonJS({
     });
     exports.default = isISRC;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var isrc = /^[A-Z]{2}[0-9A-Z]{3}\d{2}\d{5}$/;
     function isISRC(str) {
@@ -3601,8 +3726,9 @@ var require_isIBAN = __commonJS({
     exports.default = isIBAN;
     exports.locales = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    var _includesArray = _interopRequireDefault(require_includesArray());
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var ibanRegexThroughCountryCode = {
       AD: /^(AD[0-9]{2})\d{8}[A-Z0-9]{12}$/,
@@ -3638,7 +3764,7 @@ var require_isIBAN = __commonJS({
       GT: /^(GT[0-9]{2})[A-Z0-9]{4}[A-Z0-9]{20}$/,
       HR: /^(HR[0-9]{2})\d{17}$/,
       HU: /^(HU[0-9]{2})\d{24}$/,
-      IE: /^(IE[0-9]{2})[A-Z0-9]{4}\d{14}$/,
+      IE: /^(IE[0-9]{2})[A-Z]{4}\d{14}$/,
       IL: /^(IL[0-9]{2})\d{19}$/,
       IQ: /^(IQ[0-9]{2})[A-Z]{4}\d{15}$/,
       IR: /^(IR[0-9]{2})0\d{2}0\d{18}$/,
@@ -3666,7 +3792,7 @@ var require_isIBAN = __commonJS({
       NO: /^(NO[0-9]{2})\d{11}$/,
       PK: /^(PK[0-9]{2})[A-Z0-9]{4}\d{16}$/,
       PL: /^(PL[0-9]{2})\d{24}$/,
-      PS: /^(PS[0-9]{2})[A-Z0-9]{4}\d{21}$/,
+      PS: /^(PS[0-9]{2})[A-Z]{4}[A-Z0-9]{21}$/,
       PT: /^(PT[0-9]{2})\d{21}$/,
       QA: /^(QA[0-9]{2})[A-Z]{4}[A-Z0-9]{21}$/,
       RO: /^(RO[0-9]{2})[A-Z]{4}[A-Z0-9]{16}$/,
@@ -3683,7 +3809,7 @@ var require_isIBAN = __commonJS({
       TR: /^(TR[0-9]{2})\d{5}[A-Z0-9]{17}$/,
       UA: /^(UA[0-9]{2})\d{6}[A-Z0-9]{19}$/,
       VA: /^(VA[0-9]{2})\d{18}$/,
-      VG: /^(VG[0-9]{2})[A-Z0-9]{4}\d{16}$/,
+      VG: /^(VG[0-9]{2})[A-Z]{4}\d{16}$/,
       XK: /^(XK[0-9]{2})\d{16}$/
     };
     function hasOnlyValidCountryCodes(countryCodeArray) {
@@ -3703,13 +3829,13 @@ var require_isIBAN = __commonJS({
         if (!hasOnlyValidCountryCodes(options.whitelist)) {
           return false;
         }
-        var isoCountryCodeInWhiteList = options.whitelist.includes(isoCountryCode);
+        var isoCountryCodeInWhiteList = (0, _includesArray.default)(options.whitelist, isoCountryCode);
         if (!isoCountryCodeInWhiteList) {
           return false;
         }
       }
       if (options.blacklist) {
-        var isoCountryCodeInBlackList = options.blacklist.includes(isoCountryCode);
+        var isoCountryCodeInBlackList = (0, _includesArray.default)(options.blacklist, isoCountryCode);
         if (isoCountryCodeInBlackList) {
           return false;
         }
@@ -3746,8 +3872,8 @@ var require_isISO31661Alpha2 = __commonJS({
     exports.CountryCodes = void 0;
     exports.default = isISO31661Alpha2;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var validISO31661Alpha2CountriesCodes = /* @__PURE__ */ new Set(["AD", "AE", "AF", "AG", "AI", "AL", "AM", "AO", "AQ", "AR", "AS", "AT", "AU", "AW", "AX", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BL", "BM", "BN", "BO", "BQ", "BR", "BS", "BT", "BV", "BW", "BY", "BZ", "CA", "CC", "CD", "CF", "CG", "CH", "CI", "CK", "CL", "CM", "CN", "CO", "CR", "CU", "CV", "CW", "CX", "CY", "CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "EH", "ER", "ES", "ET", "FI", "FJ", "FK", "FM", "FO", "FR", "GA", "GB", "GD", "GE", "GF", "GG", "GH", "GI", "GL", "GM", "GN", "GP", "GQ", "GR", "GS", "GT", "GU", "GW", "GY", "HK", "HM", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IM", "IN", "IO", "IQ", "IR", "IS", "IT", "JE", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KY", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MF", "MG", "MH", "MK", "ML", "MM", "MN", "MO", "MP", "MQ", "MR", "MS", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NC", "NE", "NF", "NG", "NI", "NL", "NO", "NP", "NR", "NU", "NZ", "OM", "PA", "PE", "PF", "PG", "PH", "PK", "PL", "PM", "PN", "PR", "PS", "PT", "PW", "PY", "QA", "RE", "RO", "RS", "RU", "RW", "SA", "SB", "SC", "SD", "SE", "SG", "SH", "SI", "SJ", "SK", "SL", "SM", "SN", "SO", "SR", "SS", "ST", "SV", "SX", "SY", "SZ", "TC", "TD", "TF", "TG", "TH", "TJ", "TK", "TL", "TM", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "UM", "US", "UY", "UZ", "VA", "VC", "VE", "VG", "VI", "VN", "VU", "WF", "WS", "YE", "YT", "ZA", "ZM", "ZW"]);
     function isISO31661Alpha2(str) {
@@ -3768,8 +3894,8 @@ var require_isBIC = __commonJS({
     exports.default = isBIC;
     var _assertString = _interopRequireDefault(require_assertString());
     var _isISO31661Alpha = require_isISO31661Alpha2();
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var isBICReg = /^[A-Za-z]{6}[A-Za-z0-9]{2}([A-Za-z0-9]{3})?$/;
     function isBIC(str) {
@@ -3794,8 +3920,8 @@ var require_isMD5 = __commonJS({
     });
     exports.default = isMD5;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var md5 = /^[a-f0-9]{32}$/;
     function isMD5(str) {
@@ -3816,8 +3942,8 @@ var require_isHash = __commonJS({
     });
     exports.default = isHash;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var lengths = {
       md5: 32,
@@ -3854,26 +3980,29 @@ var require_isBase64 = __commonJS({
     exports.default = isBase64;
     var _assertString = _interopRequireDefault(require_assertString());
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    var notBase64 = /[^A-Z0-9+\/=]/i;
-    var urlSafeBase64 = /^[A-Z0-9_\-]*$/i;
-    var defaultBase64Options = {
-      urlSafe: false
-    };
+    var base64WithPadding = /^[A-Za-z0-9+/]+={0,2}$/;
+    var base64WithoutPadding = /^[A-Za-z0-9+/]+$/;
+    var base64UrlWithPadding = /^[A-Za-z0-9_-]+={0,2}$/;
+    var base64UrlWithoutPadding = /^[A-Za-z0-9_-]+$/;
     function isBase64(str, options) {
+      var _options;
       (0, _assertString.default)(str);
-      options = (0, _merge.default)(options, defaultBase64Options);
-      var len = str.length;
+      options = (0, _merge.default)(options, {
+        urlSafe: false,
+        padding: !((_options = options) !== null && _options !== void 0 && _options.urlSafe)
+      });
+      if (str === "") return true;
+      if (options.padding && str.length % 4 !== 0) return false;
+      var regex;
       if (options.urlSafe) {
-        return urlSafeBase64.test(str);
+        regex = options.padding ? base64UrlWithPadding : base64UrlWithoutPadding;
+      } else {
+        regex = options.padding ? base64WithPadding : base64WithoutPadding;
       }
-      if (len % 4 !== 0 || notBase64.test(str)) {
-        return false;
-      }
-      var firstPaddingChar = str.indexOf("=");
-      return firstPaddingChar === -1 || firstPaddingChar === len - 1 || firstPaddingChar === len - 2 && str[len - 1] === "=";
+      return (!options.padding || str.length % 4 === 0) && regex.test(str);
     }
     module.exports = exports.default;
     module.exports.default = exports.default;
@@ -3890,8 +4019,8 @@ var require_isJWT = __commonJS({
     exports.default = isJWT;
     var _assertString = _interopRequireDefault(require_assertString());
     var _isBase = _interopRequireDefault(require_isBase64());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isJWT(str) {
       (0, _assertString.default)(str);
@@ -3920,9 +4049,10 @@ var require_isJSON = __commonJS({
     });
     exports.default = isJSON;
     var _assertString = _interopRequireDefault(require_assertString());
+    var _includesArray = _interopRequireDefault(require_includesArray());
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function _typeof(o) {
       "@babel/helpers - typeof";
@@ -3944,7 +4074,7 @@ var require_isJSON = __commonJS({
           primitives = [null, false, true];
         }
         var obj = JSON.parse(str);
-        return primitives.includes(obj) || !!obj && _typeof(obj) === "object";
+        return (0, _includesArray.default)(primitives, obj) || !!obj && _typeof(obj) === "object";
       } catch (e) {
       }
       return false;
@@ -3964,8 +4094,8 @@ var require_isEmpty = __commonJS({
     exports.default = isEmpty;
     var _assertString = _interopRequireDefault(require_assertString());
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var default_is_empty_options = {
       ignore_whitespace: false
@@ -3989,8 +4119,8 @@ var require_isLength = __commonJS({
     });
     exports.default = isLength;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function _typeof(o) {
       "@babel/helpers - typeof";
@@ -4014,7 +4144,34 @@ var require_isLength = __commonJS({
       var presentationSequences = str.match(/(\uFE0F|\uFE0E)/g) || [];
       var surrogatePairs = str.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g) || [];
       var len = str.length - presentationSequences.length - surrogatePairs.length;
-      return len >= min && (typeof max === "undefined" || len <= max);
+      var isInsideRange = len >= min && (typeof max === "undefined" || len <= max);
+      if (isInsideRange && Array.isArray(options === null || options === void 0 ? void 0 : options.discreteLengths)) {
+        return options.discreteLengths.some(function(discreteLen) {
+          return discreteLen === len;
+        });
+      }
+      return isInsideRange;
+    }
+    module.exports = exports.default;
+    module.exports.default = exports.default;
+  }
+});
+
+// node_modules/validator/lib/isULID.js
+var require_isULID = __commonJS({
+  "node_modules/validator/lib/isULID.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports.default = isULID;
+    var _assertString = _interopRequireDefault(require_assertString());
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
+    }
+    function isULID(str) {
+      (0, _assertString.default)(str);
+      return /^[0-7][0-9A-HJKMNP-TV-Z]{25}$/i.test(str);
     }
     module.exports = exports.default;
     module.exports.default = exports.default;
@@ -4030,22 +4187,30 @@ var require_isUUID = __commonJS({
     });
     exports.default = isUUID;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var uuid = {
-      1: /^[0-9A-F]{8}-[0-9A-F]{4}-1[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i,
-      2: /^[0-9A-F]{8}-[0-9A-F]{4}-2[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i,
-      3: /^[0-9A-F]{8}-[0-9A-F]{4}-3[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i,
+      1: /^[0-9A-F]{8}-[0-9A-F]{4}-1[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+      2: /^[0-9A-F]{8}-[0-9A-F]{4}-2[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+      3: /^[0-9A-F]{8}-[0-9A-F]{4}-3[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
       4: /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
       5: /^[0-9A-F]{8}-[0-9A-F]{4}-5[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+      6: /^[0-9A-F]{8}-[0-9A-F]{4}-6[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
       7: /^[0-9A-F]{8}-[0-9A-F]{4}-7[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
-      all: /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i
+      8: /^[0-9A-F]{8}-[0-9A-F]{4}-8[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+      nil: /^00000000-0000-0000-0000-000000000000$/i,
+      max: /^ffffffff-ffff-ffff-ffff-ffffffffffff$/i,
+      loose: /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i,
+      // From https://github.com/uuidjs/uuid/blob/main/src/regex.js
+      all: /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/i
     };
     function isUUID(str, version) {
       (0, _assertString.default)(str);
-      var pattern = uuid[![void 0, null].includes(version) ? version : "all"];
-      return !!pattern && pattern.test(str);
+      if (version === void 0 || version === null) {
+        version = "all";
+      }
+      return version in uuid ? uuid[version].test(str) : false;
     }
     module.exports = exports.default;
     module.exports.default = exports.default;
@@ -4062,8 +4227,8 @@ var require_isMongoId = __commonJS({
     exports.default = isMongoId;
     var _assertString = _interopRequireDefault(require_assertString());
     var _isHexadecimal = _interopRequireDefault(require_isHexadecimal());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isMongoId(str) {
       (0, _assertString.default)(str);
@@ -4083,11 +4248,19 @@ var require_isAfter = __commonJS({
     });
     exports.default = isAfter;
     var _toDate = _interopRequireDefault(require_toDate());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
+    }
+    function _typeof(o) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
+        return typeof o2;
+      } : function(o2) {
+        return o2 && "function" == typeof Symbol && o2.constructor === Symbol && o2 !== Symbol.prototype ? "symbol" : typeof o2;
+      }, _typeof(o);
     }
     function isAfter(date, options) {
-      var comparisonDate = (options === null || options === void 0 ? void 0 : options.comparisonDate) || options || Date().toString();
+      var comparisonDate = (_typeof(options) === "object" ? options.comparisonDate : options) || Date().toString();
       var comparison = (0, _toDate.default)(comparisonDate);
       var original = (0, _toDate.default)(date);
       return !!(original && comparison && original > comparison);
@@ -4105,16 +4278,22 @@ var require_isBefore = __commonJS({
       value: true
     });
     exports.default = isBefore;
-    var _assertString = _interopRequireDefault(require_assertString());
     var _toDate = _interopRequireDefault(require_toDate());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    function isBefore(str) {
-      var date = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : String(/* @__PURE__ */ new Date());
-      (0, _assertString.default)(str);
-      var comparison = (0, _toDate.default)(date);
-      var original = (0, _toDate.default)(str);
+    function _typeof(o) {
+      "@babel/helpers - typeof";
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
+        return typeof o2;
+      } : function(o2) {
+        return o2 && "function" == typeof Symbol && o2.constructor === Symbol && o2 !== Symbol.prototype ? "symbol" : typeof o2;
+      }, _typeof(o);
+    }
+    function isBefore(date, options) {
+      var comparisonDate = (_typeof(options) === "object" ? options.comparisonDate : options) || Date().toString();
+      var comparison = (0, _toDate.default)(comparisonDate);
+      var original = (0, _toDate.default)(date);
       return !!(original && comparison && original < comparison);
     }
     module.exports = exports.default;
@@ -4132,8 +4311,8 @@ var require_isIn = __commonJS({
     exports.default = isIn;
     var _assertString = _interopRequireDefault(require_assertString());
     var _toString = _interopRequireDefault(require_toString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function _typeof(o) {
       "@babel/helpers - typeof";
@@ -4175,8 +4354,8 @@ var require_isLuhnNumber = __commonJS({
     });
     exports.default = isLuhnNumber;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isLuhnNumber(str) {
       (0, _assertString.default)(str);
@@ -4217,8 +4396,8 @@ var require_isCreditCard = __commonJS({
     exports.default = isCreditCard;
     var _assertString = _interopRequireDefault(require_assertString());
     var _isLuhnNumber = _interopRequireDefault(require_isLuhnNumber());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var cards = {
       amex: /^3[47][0-9]{13}$/,
@@ -4242,14 +4421,14 @@ var require_isCreditCard = __commonJS({
     function isCreditCard(card) {
       var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
       (0, _assertString.default)(card);
-      var provider = options.provider;
+      var provider2 = options.provider;
       var sanitized = card.replace(/[- ]+/g, "");
-      if (provider && provider.toLowerCase() in cards) {
-        if (!cards[provider.toLowerCase()].test(sanitized)) {
+      if (provider2 && provider2.toLowerCase() in cards) {
+        if (!cards[provider2.toLowerCase()].test(sanitized)) {
           return false;
         }
-      } else if (provider && !(provider.toLowerCase() in cards)) {
-        throw new Error("".concat(provider, " is not a valid credit card provider."));
+      } else if (provider2 && !(provider2.toLowerCase() in cards)) {
+        throw new Error("".concat(provider2, " is not a valid credit card provider."));
       } else if (!allCards.some(function(cardProvider) {
         return cardProvider.test(sanitized);
       })) {
@@ -4271,9 +4450,10 @@ var require_isIdentityCard = __commonJS({
     });
     exports.default = isIdentityCard;
     var _assertString = _interopRequireDefault(require_assertString());
+    var _includesArray = _interopRequireDefault(require_includesArray());
     var _isInt = _interopRequireDefault(require_isInt());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var validators = {
       PL: function PL(str) {
@@ -4502,7 +4682,7 @@ var require_isIdentityCard = __commonJS({
         var powers = ["7", "9", "10", "5", "8", "4", "2", "1", "6", "3", "7", "9", "10", "5", "8", "4", "2"];
         var parityBit = ["1", "0", "X", "9", "8", "7", "6", "5", "4", "3", "2"];
         var checkAddressCode = function checkAddressCode2(addressCode) {
-          return provincesAndCities.includes(addressCode);
+          return (0, _includesArray.default)(provincesAndCities, addressCode);
         };
         var checkBirthDayCode = function checkBirthDayCode2(birDayCode) {
           var yyyy = parseInt(birDayCode.substring(0, 4), 10);
@@ -4624,6 +4804,11 @@ var require_isIdentityCard = __commonJS({
           }
           return sum + Number(number) * (9 - index);
         }, 0);
+      },
+      PK: function PK(str) {
+        var CNIC = /^[1-7][0-9]{4}-[0-9]{7}-[1-9]$/;
+        var sanitized = str.trim();
+        return CNIC.test(sanitized);
       }
     };
     function isIdentityCard(str, locale) {
@@ -4657,8 +4842,8 @@ var require_isEAN = __commonJS({
     });
     exports.default = isEAN;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var LENGTH_EAN_8 = 8;
     var LENGTH_EAN_14 = 14;
@@ -4697,8 +4882,8 @@ var require_isISIN = __commonJS({
     });
     exports.default = isISIN;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var isin = /^[A-Z]{2}[0-9A-Z]{9}[0-9]$/;
     function isISIN(str) {
@@ -4757,8 +4942,8 @@ var require_isISBN = __commonJS({
     });
     exports.default = isISBN;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var possibleIsbn10 = /^(?:[0-9]{9}X|[0-9]{10})$/;
     var possibleIsbn13 = /^(?:[0-9]{13})$/;
@@ -4817,8 +5002,8 @@ var require_isISSN = __commonJS({
     });
     exports.default = isISSN;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var issn = "^\\d{4}-?\\d{3}[\\dX]$";
     function isISSN(str) {
@@ -4923,52 +5108,46 @@ var require_isTaxID = __commonJS({
     var _assertString = _interopRequireDefault(require_assertString());
     var algorithms = _interopRequireWildcard(require_algorithms());
     var _isDate = _interopRequireDefault(require_isDate());
-    function _getRequireWildcardCache(e) {
-      if ("function" != typeof WeakMap) return null;
-      var r = /* @__PURE__ */ new WeakMap(), t = /* @__PURE__ */ new WeakMap();
-      return (_getRequireWildcardCache = function _getRequireWildcardCache2(e2) {
-        return e2 ? t : r;
-      })(e);
+    function _interopRequireWildcard(e, t) {
+      if ("function" == typeof WeakMap) var r = /* @__PURE__ */ new WeakMap(), n = /* @__PURE__ */ new WeakMap();
+      return (_interopRequireWildcard = function _interopRequireWildcard2(e2, t2) {
+        if (!t2 && e2 && e2.__esModule) return e2;
+        var o, i, f = { __proto__: null, default: e2 };
+        if (null === e2 || "object" != _typeof(e2) && "function" != typeof e2) return f;
+        if (o = t2 ? n : r) {
+          if (o.has(e2)) return o.get(e2);
+          o.set(e2, f);
+        }
+        for (var _t in e2) "default" !== _t && {}.hasOwnProperty.call(e2, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e2, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e2[_t]);
+        return f;
+      })(e, t);
     }
-    function _interopRequireWildcard(e, r) {
-      if (!r && e && e.__esModule) return e;
-      if (null === e || "object" != _typeof(e) && "function" != typeof e) return { default: e };
-      var t = _getRequireWildcardCache(r);
-      if (t && t.has(e)) return t.get(e);
-      var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor;
-      for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) {
-        var i = a ? Object.getOwnPropertyDescriptor(e, u) : null;
-        i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u];
-      }
-      return n.default = e, t && t.set(e, n), n;
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function _toConsumableArray(arr) {
-      return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+    function _toConsumableArray(r) {
+      return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread();
     }
     function _nonIterableSpread() {
       throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
     }
-    function _unsupportedIterableToArray(o, minLen) {
-      if (!o) return;
-      if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-      var n = Object.prototype.toString.call(o).slice(8, -1);
-      if (n === "Object" && o.constructor) n = o.constructor.name;
-      if (n === "Map" || n === "Set") return Array.from(o);
-      if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+    function _unsupportedIterableToArray(r, a) {
+      if (r) {
+        if ("string" == typeof r) return _arrayLikeToArray(r, a);
+        var t = {}.toString.call(r).slice(8, -1);
+        return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+      }
     }
-    function _iterableToArray(iter) {
-      if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+    function _iterableToArray(r) {
+      if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);
     }
-    function _arrayWithoutHoles(arr) {
-      if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+    function _arrayWithoutHoles(r) {
+      if (Array.isArray(r)) return _arrayLikeToArray(r);
     }
-    function _arrayLikeToArray(arr, len) {
-      if (len == null || len > arr.length) len = arr.length;
-      for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-      return arr2;
+    function _arrayLikeToArray(r, a) {
+      (null == a || a > r.length) && (a = r.length);
+      for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+      return n;
     }
     function bgBgCheck(tin) {
       var century_year = tin.slice(0, 2);
@@ -5076,23 +5255,23 @@ var require_isTaxID = __commonJS({
       var digits = tin.split("").map(function(a) {
         return parseInt(a, 10);
       });
-      var occurences = [];
+      var occurrences = [];
       for (var i = 0; i < digits.length - 1; i++) {
-        occurences.push("");
+        occurrences.push("");
         for (var j = 0; j < digits.length - 1; j++) {
           if (digits[i] === digits[j]) {
-            occurences[i] += j;
+            occurrences[i] += j;
           }
         }
       }
-      occurences = occurences.filter(function(a) {
+      occurrences = occurrences.filter(function(a) {
         return a.length > 1;
       });
-      if (occurences.length !== 2 && occurences.length !== 3) {
+      if (occurrences.length !== 2 && occurrences.length !== 3) {
         return false;
       }
-      if (occurences[0].length === 3) {
-        var trip_locations = occurences[0].split("").map(function(a) {
+      if (occurrences[0].length === 3) {
+        var trip_locations = occurrences[0].split("").map(function(a) {
           return parseInt(a, 10);
         });
         var recurrent = 0;
@@ -5683,8 +5862,8 @@ var require_isTaxID = __commonJS({
       identifiers = tin.substring(0, length);
       sum = 0;
       pos = length - 7;
-      for (var _i10 = length; _i10 >= 1; _i10--) {
-        sum += identifiers.charAt(length - _i10) * pos;
+      for (var _i0 = length; _i0 >= 1; _i0--) {
+        sum += identifiers.charAt(length - _i0) * pos;
         pos -= 1;
         if (pos < 2) {
           pos = 9;
@@ -5958,8 +6137,8 @@ var require_isMobilePhone = __commonJS({
     exports.default = isMobilePhone;
     exports.locales = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var phones = {
       "am-AM": /^(\+?374|0)(33|4[134]|55|77|88|9[13-689])\d{6}$/,
@@ -5973,13 +6152,14 @@ var require_isMobilePhone = __commonJS({
       "ar-KW": /^(\+?965)([569]\d{7}|41\d{6})$/,
       "ar-LY": /^((\+?218)|0)?(9[1-6]\d{7}|[1-8]\d{7,9})$/,
       "ar-MA": /^(?:(?:\+|00)212|0)[5-7]\d{8}$/,
-      "ar-OM": /^((\+|00)968)?(9[1-9])\d{6}$/,
+      "ar-OM": /^((\+|00)968)?([79][1-9])\d{6}$/,
       "ar-PS": /^(\+?970|0)5[6|9](\d{7})$/,
       "ar-SA": /^(!?(\+?966)|0)?5\d{8}$/,
       "ar-SD": /^((\+?249)|0)?(9[012369]|1[012])\d{7}$/,
       "ar-SY": /^(!?(\+?963)|0)?9\d{8}$/,
       "ar-TN": /^(\+?216)?[2459]\d{7}$/,
       "az-AZ": /^(\+994|0)(10|5[015]|7[07]|99)\d{7}$/,
+      "ar-QA": /^(\+?974|0)?([3567]\d{7})$/,
       "bs-BA": /^((((\+|00)3876)|06))((([0-3]|[5-6])\d{6})|(4\d{7}))$/,
       "be-BY": /^(\+?375)?(24|25|29|33|44)\d{7}$/,
       "bg-BG": /^(\+?359|0)?8[789]\d{7}$/,
@@ -5993,15 +6173,15 @@ var require_isMobilePhone = __commonJS({
       "de-LU": /^(\+352)?((6\d1)\d{6})$/,
       "dv-MV": /^(\+?960)?(7[2-9]|9[1-9])\d{5}$/,
       "el-GR": /^(\+?30|0)?6(8[5-9]|9(?![26])[0-9])\d{7}$/,
-      "el-CY": /^(\+?357?)?(9(9|6)\d{6})$/,
+      "el-CY": /^(\+?357?)?(9(9|7|6|5|4)\d{6})$/,
       "en-AI": /^(\+?1|0)264(?:2(35|92)|4(?:6[1-2]|76|97)|5(?:3[6-9]|8[1-4])|7(?:2(4|9)|72))\d{4}$/,
       "en-AU": /^(\+?61|0)4\d{8}$/,
       "en-AG": /^(?:\+1|1)268(?:464|7(?:1[3-9]|[28]\d|3[0246]|64|7[0-689]))\d{4}$/,
       "en-BM": /^(\+?1)?441(((3|7)\d{6}$)|(5[0-3][0-9]\d{4}$)|(59\d{5}$))/,
       "en-BS": /^(\+?1[-\s]?|0)?\(?242\)?[-\s]?\d{3}[-\s]?\d{4}$/,
-      "en-GB": /^(\+?44|0)7\d{9}$/,
+      "en-GB": /^(\+?44|0)7[1-9]\d{8}$/,
       "en-GG": /^(\+?44|0)1481\d{6}$/,
-      "en-GH": /^(\+233|0)(20|50|24|54|27|57|26|56|23|28|55|59)\d{7}$/,
+      "en-GH": /^(\+233|0)(20|50|24|54|27|57|26|56|23|53|28|55|59)\d{7}$/,
       "en-GY": /^(\+592|0)6\d{6}$/,
       "en-HK": /^(\+?852[-\s]?)?[456789]\d{3}[-\s]?\d{4}$/,
       "en-MO": /^(\+?853[-\s]?)?[6]\d{3}[-\s]?\d{4}$/,
@@ -6030,7 +6210,7 @@ var require_isMobilePhone = __commonJS({
       "en-UG": /^(\+?256|0)?[7]\d{8}$/,
       "en-US": /^((\+1|1)?( |-)?)?(\([2-9][0-9]{2}\)|[2-9][0-9]{2})( |-)?([2-9][0-9]{2}( |-)?[0-9]{4})$/,
       "en-ZA": /^(\+?27|0)\d{9}$/,
-      "en-ZM": /^(\+?26)?09[567]\d{7}$/,
+      "en-ZM": /^(\+?26)?0[79][567]\d{7}$/,
       "en-ZW": /^(\+263)[0-9]{9}$/,
       "en-BW": /^(\+?267)?(7[1-8]{1})\d{6}$/,
       "es-AR": /^\+?549(11|[2368]\d)\d{8}$/,
@@ -6043,6 +6223,7 @@ var require_isMobilePhone = __commonJS({
       "es-HN": /^(\+?504)?[9|8|3|2]\d{7}$/,
       "es-EC": /^(\+?593|0)([2-7]|9[2-9])\d{7}$/,
       "es-ES": /^(\+?34)?[6|7]\d{8}$/,
+      "es-GT": /^(\+?502)?[2|6|7]\d{7}$/,
       "es-PE": /^(\+?51)?9\d{8}$/,
       "es-MX": /^(\+?52)?(1|01)?\d{10,11}$/,
       "es-NI": /^(\+?505)\d{7,8}$/,
@@ -6078,7 +6259,7 @@ var require_isMobilePhone = __commonJS({
       "kk-KZ": /^(\+?7|8)?7\d{9}$/,
       "kl-GL": /^(\+?299)?\s?\d{2}\s?\d{2}\s?\d{2}$/,
       "ko-KR": /^((\+?82)[ \-]?)?0?1([0|1|6|7|8|9]{1})[ \-]?\d{3,4}[ \-]?\d{4}$/,
-      "ky-KG": /^(\+?7\s?\+?7|0)\s?\d{2}\s?\d{3}\s?\d{4}$/,
+      "ky-KG": /^(\+996\s?)?(22[0-9]|50[0-9]|55[0-9]|70[0-9]|75[0-9]|77[0-9]|880|990|995|996|997|998)\s?\d{3}\s?\d{3}$/,
       "lt-LT": /^(\+370|8)\d{8}$/,
       "lv-LV": /^(\+?371)2\d{7}$/,
       "mg-MG": /^((\+?261|0)(2|3)\d)?\d{7}$/,
@@ -6095,7 +6276,7 @@ var require_isMobilePhone = __commonJS({
       "pl-PL": /^(\+?48)? ?([5-8]\d|45) ?\d{3} ?\d{2} ?\d{2}$/,
       "pt-BR": /^((\+?55\ ?[1-9]{2}\ ?)|(\+?55\ ?\([1-9]{2}\)\ ?)|(0[1-9]{2}\ ?)|(\([1-9]{2}\)\ ?)|([1-9]{2}\ ?))((\d{4}\-?\d{4})|(9[1-9]{1}\d{3}\-?\d{4}))$/,
       "pt-PT": /^(\+?351)?9[1236]\d{7}$/,
-      "pt-AO": /^(\+244)\d{9}$/,
+      "pt-AO": /^(\+?244)?9\d{8}$/,
       "ro-MD": /^(\+?373|0)((6(0|1|2|6|7|8|9))|(7(6|7|8|9)))\d{6}$/,
       "ro-RO": /^(\+?40|0)\s?7\d{2}(\/|\s|\.|-)?\d{3}(\s|\.|-)?\d{3}$/,
       "ru-RU": /^(\+?7|8)?9\d{9}$/,
@@ -6103,14 +6284,14 @@ var require_isMobilePhone = __commonJS({
       "sl-SI": /^(\+386\s?|0)(\d{1}\s?\d{3}\s?\d{2}\s?\d{2}|\d{2}\s?\d{3}\s?\d{3})$/,
       "sk-SK": /^(\+?421)? ?[1-9][0-9]{2} ?[0-9]{3} ?[0-9]{3}$/,
       "so-SO": /^(\+?252|0)((6[0-9])\d{7}|(7[1-9])\d{7})$/,
-      "sq-AL": /^(\+355|0)6[789]\d{6}$/,
+      "sq-AL": /^(\+355|0)6[2-9]\d{7}$/,
       "sr-RS": /^(\+3816|06)[- \d]{5,9}$/,
       "sv-SE": /^(\+?46|0)[\s\-]?7[\s\-]?[02369]([\s\-]?\d){7}$/,
       "tg-TJ": /^(\+?992)?[5][5]\d{7}$/,
       "th-TH": /^(\+66|66|0)\d{9}$/,
       "tr-TR": /^(\+?90|0)?5\d{9}$/,
       "tk-TM": /^(\+993|993|8)\d{8}$/,
-      "uk-UA": /^(\+?38|8)?0\d{9}$/,
+      "uk-UA": /^(\+?38)?0(50|6[36-8]|7[357]|9[1-9])\d{7}$/,
       "uz-UZ": /^(\+?998)?(6[125-79]|7[1-69]|88|9\d)\d{7}$/,
       "vi-VN": /^((\+?84)|0)((3([2-9]))|(5([25689]))|(7([0|6-9]))|(8([1-9]))|(9([0-9])))([0-9]{7})$/,
       "zh-CN": /^((\+|00)86)?(1[3-9]|9[28])\d{9}$/,
@@ -6118,7 +6299,8 @@ var require_isMobilePhone = __commonJS({
       "dz-BT": /^(\+?975|0)?(17|16|77|02)\d{6}$/,
       "ar-YE": /^(((\+|00)9677|0?7)[0137]\d{7}|((\+|00)967|0)[1-7]\d{6})$/,
       "ar-EH": /^(\+?212|0)[\s\-]?(5288|5289)[\s\-]?\d{5}$/,
-      "fa-AF": /^(\+93|0)?(2{1}[0-8]{1}|[3-5]{1}[0-4]{1})(\d{7})$/
+      "fa-AF": /^(\+93|0)?(2{1}[0-8]{1}|[3-5]{1}[0-4]{1})(\d{7})$/,
+      "mk-MK": /^(\+?389|0)?((?:2[2-9]\d{6}|(?:3[1-4]|4[2-8])\d{6}|500\d{5}|5[2-9]\d{6}|7[0-9][2-9]\d{5}|8[1-9]\d{6}|800\d{5}|8009\d{4}))$/
     };
     phones["en-CA"] = phones["en-US"];
     phones["fr-CA"] = phones["en-CA"];
@@ -6171,8 +6353,8 @@ var require_isEthereumAddress = __commonJS({
     });
     exports.default = isEthereumAddress;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var eth = /^(0x)[0-9a-f]{40}$/i;
     function isEthereumAddress(str) {
@@ -6194,8 +6376,8 @@ var require_isCurrency = __commonJS({
     exports.default = isCurrency;
     var _merge = _interopRequireDefault(require_merge());
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function currencyRegex(options) {
       var decimal_digits = "\\d{".concat(options.digits_after_decimal[0], "}");
@@ -6270,11 +6452,11 @@ var require_isBtcAddress = __commonJS({
     });
     exports.default = isBtcAddress;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    var bech32 = /^(bc1)[a-z0-9]{25,39}$/;
-    var base58 = /^(1|3)[A-HJ-NP-Za-km-z1-9]{25,39}$/;
+    var bech32 = /^(bc1|tb1|bc1p|tb1p)[ac-hj-np-z02-9]{39,58}$/;
+    var base58 = /^(1|2|3|m)[A-HJ-NP-Za-km-z1-9]{25,39}$/;
     function isBtcAddress(str) {
       (0, _assertString.default)(str);
       return bech32.test(str) || base58.test(str);
@@ -6294,8 +6476,8 @@ var require_isISO6346 = __commonJS({
     exports.isFreightContainerID = void 0;
     exports.isISO6346 = isISO6346;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var isISO6346Str = /^[A-Z]{3}(U[0-9]{7})|([J,Z][0-9]{6,7})$/;
     var isDigit = /^[0-9]$/;
@@ -6317,6 +6499,7 @@ var require_isISO6346 = __commonJS({
           } else sum += str[i] * Math.pow(2, i);
         }
         var checkSumDigit = sum % 11;
+        if (checkSumDigit === 10) checkSumDigit = 0;
         return Number(str[str.length - 1]) === checkSumDigit;
       }
       return true;
@@ -6334,8 +6517,8 @@ var require_isISO6391 = __commonJS({
     });
     exports.default = isISO6391;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var isISO6391Set = /* @__PURE__ */ new Set(["aa", "ab", "ae", "af", "ak", "am", "an", "ar", "as", "av", "ay", "az", "az", "ba", "be", "bg", "bh", "bi", "bm", "bn", "bo", "br", "bs", "ca", "ce", "ch", "co", "cr", "cs", "cu", "cv", "cy", "da", "de", "dv", "dz", "ee", "el", "en", "eo", "es", "et", "eu", "fa", "ff", "fi", "fj", "fo", "fr", "fy", "ga", "gd", "gl", "gn", "gu", "gv", "ha", "he", "hi", "ho", "hr", "ht", "hu", "hy", "hz", "ia", "id", "ie", "ig", "ii", "ik", "io", "is", "it", "iu", "ja", "jv", "ka", "kg", "ki", "kj", "kk", "kl", "km", "kn", "ko", "kr", "ks", "ku", "kv", "kw", "ky", "la", "lb", "lg", "li", "ln", "lo", "lt", "lu", "lv", "mg", "mh", "mi", "mk", "ml", "mn", "mr", "ms", "mt", "my", "na", "nb", "nd", "ne", "ng", "nl", "nn", "no", "nr", "nv", "ny", "oc", "oj", "om", "or", "os", "pa", "pi", "pl", "ps", "pt", "qu", "rm", "rn", "ro", "ru", "rw", "sa", "sc", "sd", "se", "sg", "si", "sk", "sl", "sm", "sn", "so", "sq", "sr", "ss", "st", "su", "sv", "sw", "ta", "te", "tg", "th", "ti", "tk", "tl", "tn", "to", "tr", "ts", "tt", "tw", "ty", "ug", "uk", "ur", "uz", "ve", "vi", "vo", "wa", "wo", "xh", "yi", "yo", "za", "zh", "zu"]);
     function isISO6391(str) {
@@ -6356,8 +6539,8 @@ var require_isISO8601 = __commonJS({
     });
     exports.default = isISO8601;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var iso8601 = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-3])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
     var iso8601StrictSeparator = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-3])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
@@ -6402,8 +6585,8 @@ var require_isRFC3339 = __commonJS({
     });
     exports.default = isRFC3339;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var dateFullYear = /[0-9]{4}/;
     var dateMonth = /(0[1-9]|1[0-2])/;
@@ -6427,6 +6610,28 @@ var require_isRFC3339 = __commonJS({
   }
 });
 
+// node_modules/validator/lib/isISO15924.js
+var require_isISO15924 = __commonJS({
+  "node_modules/validator/lib/isISO15924.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports.ScriptCodes = void 0;
+    exports.default = isISO15924;
+    var _assertString = _interopRequireDefault(require_assertString());
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
+    }
+    var validISO15924Codes = /* @__PURE__ */ new Set(["Adlm", "Afak", "Aghb", "Ahom", "Arab", "Aran", "Armi", "Armn", "Avst", "Bali", "Bamu", "Bass", "Batk", "Beng", "Bhks", "Blis", "Bopo", "Brah", "Brai", "Bugi", "Buhd", "Cakm", "Cans", "Cari", "Cham", "Cher", "Chis", "Chrs", "Cirt", "Copt", "Cpmn", "Cprt", "Cyrl", "Cyrs", "Deva", "Diak", "Dogr", "Dsrt", "Dupl", "Egyd", "Egyh", "Egyp", "Elba", "Elym", "Ethi", "Gara", "Geok", "Geor", "Glag", "Gong", "Gonm", "Goth", "Gran", "Grek", "Gujr", "Gukh", "Guru", "Hanb", "Hang", "Hani", "Hano", "Hans", "Hant", "Hatr", "Hebr", "Hira", "Hluw", "Hmng", "Hmnp", "Hrkt", "Hung", "Inds", "Ital", "Jamo", "Java", "Jpan", "Jurc", "Kali", "Kana", "Kawi", "Khar", "Khmr", "Khoj", "Kitl", "Kits", "Knda", "Kore", "Kpel", "Krai", "Kthi", "Lana", "Laoo", "Latf", "Latg", "Latn", "Leke", "Lepc", "Limb", "Lina", "Linb", "Lisu", "Loma", "Lyci", "Lydi", "Mahj", "Maka", "Mand", "Mani", "Marc", "Maya", "Medf", "Mend", "Merc", "Mero", "Mlym", "Modi", "Mong", "Moon", "Mroo", "Mtei", "Mult", "Mymr", "Nagm", "Nand", "Narb", "Nbat", "Newa", "Nkdb", "Nkgb", "Nkoo", "Nshu", "Ogam", "Olck", "Onao", "Orkh", "Orya", "Osge", "Osma", "Ougr", "Palm", "Pauc", "Pcun", "Pelm", "Perm", "Phag", "Phli", "Phlp", "Phlv", "Phnx", "Plrd", "Piqd", "Prti", "Psin", "Qaaa", "Qaab", "Qaac", "Qaad", "Qaae", "Qaaf", "Qaag", "Qaah", "Qaai", "Qaaj", "Qaak", "Qaal", "Qaam", "Qaan", "Qaao", "Qaap", "Qaaq", "Qaar", "Qaas", "Qaat", "Qaau", "Qaav", "Qaaw", "Qaax", "Qaay", "Qaaz", "Qaba", "Qabb", "Qabc", "Qabd", "Qabe", "Qabf", "Qabg", "Qabh", "Qabi", "Qabj", "Qabk", "Qabl", "Qabm", "Qabn", "Qabo", "Qabp", "Qabq", "Qabr", "Qabs", "Qabt", "Qabu", "Qabv", "Qabw", "Qabx", "Ranj", "Rjng", "Rohg", "Roro", "Runr", "Samr", "Sara", "Sarb", "Saur", "Sgnw", "Shaw", "Shrd", "Shui", "Sidd", "Sidt", "Sind", "Sinh", "Sogd", "Sogo", "Sora", "Soyo", "Sund", "Sunu", "Sylo", "Syrc", "Syre", "Syrj", "Syrn", "Tagb", "Takr", "Tale", "Talu", "Taml", "Tang", "Tavt", "Tayo", "Telu", "Teng", "Tfng", "Tglg", "Thaa", "Thai", "Tibt", "Tirh", "Tnsa", "Todr", "Tols", "Toto", "Tutg", "Ugar", "Vaii", "Visp", "Vith", "Wara", "Wcho", "Wole", "Xpeo", "Xsux", "Yezi", "Yiii", "Zanb", "Zinh", "Zmth", "Zsye", "Zsym", "Zxxx", "Zyyy", "Zzzz"]);
+    function isISO15924(str) {
+      (0, _assertString.default)(str);
+      return validISO15924Codes.has(str);
+    }
+    var ScriptCodes = exports.ScriptCodes = validISO15924Codes;
+  }
+});
+
 // node_modules/validator/lib/isISO31661Alpha3.js
 var require_isISO31661Alpha3 = __commonJS({
   "node_modules/validator/lib/isISO31661Alpha3.js"(exports, module) {
@@ -6436,13 +6641,35 @@ var require_isISO31661Alpha3 = __commonJS({
     });
     exports.default = isISO31661Alpha3;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var validISO31661Alpha3CountriesCodes = /* @__PURE__ */ new Set(["AFG", "ALA", "ALB", "DZA", "ASM", "AND", "AGO", "AIA", "ATA", "ATG", "ARG", "ARM", "ABW", "AUS", "AUT", "AZE", "BHS", "BHR", "BGD", "BRB", "BLR", "BEL", "BLZ", "BEN", "BMU", "BTN", "BOL", "BES", "BIH", "BWA", "BVT", "BRA", "IOT", "BRN", "BGR", "BFA", "BDI", "KHM", "CMR", "CAN", "CPV", "CYM", "CAF", "TCD", "CHL", "CHN", "CXR", "CCK", "COL", "COM", "COG", "COD", "COK", "CRI", "CIV", "HRV", "CUB", "CUW", "CYP", "CZE", "DNK", "DJI", "DMA", "DOM", "ECU", "EGY", "SLV", "GNQ", "ERI", "EST", "ETH", "FLK", "FRO", "FJI", "FIN", "FRA", "GUF", "PYF", "ATF", "GAB", "GMB", "GEO", "DEU", "GHA", "GIB", "GRC", "GRL", "GRD", "GLP", "GUM", "GTM", "GGY", "GIN", "GNB", "GUY", "HTI", "HMD", "VAT", "HND", "HKG", "HUN", "ISL", "IND", "IDN", "IRN", "IRQ", "IRL", "IMN", "ISR", "ITA", "JAM", "JPN", "JEY", "JOR", "KAZ", "KEN", "KIR", "PRK", "KOR", "KWT", "KGZ", "LAO", "LVA", "LBN", "LSO", "LBR", "LBY", "LIE", "LTU", "LUX", "MAC", "MKD", "MDG", "MWI", "MYS", "MDV", "MLI", "MLT", "MHL", "MTQ", "MRT", "MUS", "MYT", "MEX", "FSM", "MDA", "MCO", "MNG", "MNE", "MSR", "MAR", "MOZ", "MMR", "NAM", "NRU", "NPL", "NLD", "NCL", "NZL", "NIC", "NER", "NGA", "NIU", "NFK", "MNP", "NOR", "OMN", "PAK", "PLW", "PSE", "PAN", "PNG", "PRY", "PER", "PHL", "PCN", "POL", "PRT", "PRI", "QAT", "REU", "ROU", "RUS", "RWA", "BLM", "SHN", "KNA", "LCA", "MAF", "SPM", "VCT", "WSM", "SMR", "STP", "SAU", "SEN", "SRB", "SYC", "SLE", "SGP", "SXM", "SVK", "SVN", "SLB", "SOM", "ZAF", "SGS", "SSD", "ESP", "LKA", "SDN", "SUR", "SJM", "SWZ", "SWE", "CHE", "SYR", "TWN", "TJK", "TZA", "THA", "TLS", "TGO", "TKL", "TON", "TTO", "TUN", "TUR", "TKM", "TCA", "TUV", "UGA", "UKR", "ARE", "GBR", "USA", "UMI", "URY", "UZB", "VUT", "VEN", "VNM", "VGB", "VIR", "WLF", "ESH", "YEM", "ZMB", "ZWE"]);
     function isISO31661Alpha3(str) {
       (0, _assertString.default)(str);
       return validISO31661Alpha3CountriesCodes.has(str.toUpperCase());
+    }
+    module.exports = exports.default;
+    module.exports.default = exports.default;
+  }
+});
+
+// node_modules/validator/lib/isISO31661Numeric.js
+var require_isISO31661Numeric = __commonJS({
+  "node_modules/validator/lib/isISO31661Numeric.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports.default = isISO31661Numeric;
+    var _assertString = _interopRequireDefault(require_assertString());
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
+    }
+    var validISO31661NumericCountriesCodes = /* @__PURE__ */ new Set(["004", "008", "010", "012", "016", "020", "024", "028", "031", "032", "036", "040", "044", "048", "050", "051", "052", "056", "060", "064", "068", "070", "072", "074", "076", "084", "086", "090", "092", "096", "100", "104", "108", "112", "116", "120", "124", "132", "136", "140", "144", "148", "152", "156", "158", "162", "166", "170", "174", "175", "178", "180", "184", "188", "191", "192", "196", "203", "204", "208", "212", "214", "218", "222", "226", "231", "232", "233", "234", "238", "239", "242", "246", "248", "250", "254", "258", "260", "262", "266", "268", "270", "275", "276", "288", "292", "296", "300", "304", "308", "312", "316", "320", "324", "328", "332", "334", "336", "340", "344", "348", "352", "356", "360", "364", "368", "372", "376", "380", "384", "388", "392", "398", "400", "404", "408", "410", "414", "417", "418", "422", "426", "428", "430", "434", "438", "440", "442", "446", "450", "454", "458", "462", "466", "470", "474", "478", "480", "484", "492", "496", "498", "499", "500", "504", "508", "512", "516", "520", "524", "528", "531", "533", "534", "535", "540", "548", "554", "558", "562", "566", "570", "574", "578", "580", "581", "583", "584", "585", "586", "591", "598", "600", "604", "608", "612", "616", "620", "624", "626", "630", "634", "638", "642", "643", "646", "652", "654", "659", "660", "662", "663", "666", "670", "674", "678", "682", "686", "688", "690", "694", "702", "703", "704", "705", "706", "710", "716", "724", "728", "729", "732", "740", "744", "748", "752", "756", "760", "762", "764", "768", "772", "776", "780", "784", "788", "792", "795", "796", "798", "800", "804", "807", "818", "826", "831", "832", "833", "834", "840", "850", "854", "858", "860", "862", "876", "882", "887", "894"]);
+    function isISO31661Numeric(str) {
+      (0, _assertString.default)(str);
+      return validISO31661NumericCountriesCodes.has(str);
     }
     module.exports = exports.default;
     module.exports.default = exports.default;
@@ -6459,10 +6686,10 @@ var require_isISO4217 = __commonJS({
     exports.CurrencyCodes = void 0;
     exports.default = isISO4217;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    var validISO4217CurrencyCodes = /* @__PURE__ */ new Set(["AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SLL", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VES", "VND", "VUV", "WST", "XAF", "XAG", "XAU", "XBA", "XBB", "XBC", "XBD", "XCD", "XDR", "XOF", "XPD", "XPF", "XPT", "XSU", "XTS", "XUA", "XXX", "YER", "ZAR", "ZMW", "ZWL"]);
+    var validISO4217CurrencyCodes = /* @__PURE__ */ new Set(["AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SLL", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAF", "XAG", "XAU", "XBA", "XBB", "XBC", "XBD", "XCD", "XDR", "XOF", "XPD", "XPF", "XPT", "XSU", "XTS", "XUA", "XXX", "YER", "ZAR", "ZMW", "ZWL"]);
     function isISO4217(str) {
       (0, _assertString.default)(str);
       return validISO4217CurrencyCodes.has(str.toUpperCase());
@@ -6481,8 +6708,8 @@ var require_isBase32 = __commonJS({
     exports.default = isBase32;
     var _assertString = _interopRequireDefault(require_assertString());
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var base32 = /^[A-Z2-7]+=*$/;
     var crockfordBase32 = /^[A-HJKMNP-TV-Z0-9]+$/;
@@ -6515,8 +6742,8 @@ var require_isBase58 = __commonJS({
     });
     exports.default = isBase58;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var base58Reg = /^[A-HJ-NP-Za-km-z1-9]*$/;
     function isBase58(str) {
@@ -6540,8 +6767,8 @@ var require_isDataURI = __commonJS({
     });
     exports.default = isDataURI;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var validMediaType = /^[a-z]+\/[a-z0-9\-\+\._]+$/i;
     var validAttribute = /^[a-z\-]+=[a-z0-9\-]+$/i;
@@ -6587,8 +6814,8 @@ var require_isMagnetURI = __commonJS({
     });
     exports.default = isMagnetURI;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var magnetURIComponent = /(?:^magnet:\?|[^?&]&)xt(?:\.1)?=urn:(?:(?:aich|bitprint|btih|ed2k|ed2khash|kzhash|md5|sha1|tree:tiger):[a-z0-9]{32}(?:[a-z0-9]{8})?|btmh:1220[a-z0-9]{64})(?:$|&)/i;
     function isMagnetURI(url) {
@@ -6612,8 +6839,8 @@ var require_rtrim = __commonJS({
     });
     exports.default = rtrim;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function rtrim(str, chars) {
       (0, _assertString.default)(str);
@@ -6641,8 +6868,8 @@ var require_ltrim = __commonJS({
     });
     exports.default = ltrim;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function ltrim(str, chars) {
       (0, _assertString.default)(str);
@@ -6664,8 +6891,8 @@ var require_trim = __commonJS({
     exports.default = trim;
     var _rtrim = _interopRequireDefault(require_rtrim());
     var _ltrim = _interopRequireDefault(require_ltrim());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function trim(str, chars) {
       return (0, _rtrim.default)((0, _ltrim.default)(str, chars), chars);
@@ -6686,11 +6913,11 @@ var require_isMailtoURI = __commonJS({
     var _trim = _interopRequireDefault(require_trim());
     var _isEmail = _interopRequireDefault(require_isEmail());
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    function _slicedToArray(arr, i) {
-      return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    function _slicedToArray(r, e) {
+      return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
     }
     function _nonIterableRest() {
       throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
@@ -6716,56 +6943,51 @@ var require_isMailtoURI = __commonJS({
         return a;
       }
     }
-    function _arrayWithHoles(arr) {
-      if (Array.isArray(arr)) return arr;
+    function _arrayWithHoles(r) {
+      if (Array.isArray(r)) return r;
     }
-    function _createForOfIteratorHelper(o, allowArrayLike) {
-      var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
-      if (!it) {
-        if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-          if (it) o = it;
-          var i = 0;
-          var F = function F2() {
+    function _createForOfIteratorHelper(r, e) {
+      var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+      if (!t) {
+        if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) {
+          t && (r = t);
+          var _n = 0, F = function F2() {
           };
           return { s: F, n: function n() {
-            if (i >= o.length) return { done: true };
-            return { done: false, value: o[i++] };
-          }, e: function e(_e) {
-            throw _e;
+            return _n >= r.length ? { done: true } : { done: false, value: r[_n++] };
+          }, e: function e2(r2) {
+            throw r2;
           }, f: F };
         }
         throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
       }
-      var normalCompletion = true, didErr = false, err;
+      var o, a = true, u = false;
       return { s: function s() {
-        it = it.call(o);
+        t = t.call(r);
       }, n: function n() {
-        var step = it.next();
-        normalCompletion = step.done;
-        return step;
-      }, e: function e(_e2) {
-        didErr = true;
-        err = _e2;
+        var r2 = t.next();
+        return a = r2.done, r2;
+      }, e: function e2(r2) {
+        u = true, o = r2;
       }, f: function f() {
         try {
-          if (!normalCompletion && it.return != null) it.return();
+          a || null == t.return || t.return();
         } finally {
-          if (didErr) throw err;
+          if (u) throw o;
         }
       } };
     }
-    function _unsupportedIterableToArray(o, minLen) {
-      if (!o) return;
-      if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-      var n = Object.prototype.toString.call(o).slice(8, -1);
-      if (n === "Object" && o.constructor) n = o.constructor.name;
-      if (n === "Map" || n === "Set") return Array.from(o);
-      if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+    function _unsupportedIterableToArray(r, a) {
+      if (r) {
+        if ("string" == typeof r) return _arrayLikeToArray(r, a);
+        var t = {}.toString.call(r).slice(8, -1);
+        return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+      }
     }
-    function _arrayLikeToArray(arr, len) {
-      if (len == null || len > arr.length) len = arr.length;
-      for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-      return arr2;
+    function _arrayLikeToArray(r, a) {
+      (null == a || a > r.length) && (a = r.length);
+      for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+      return n;
     }
     function parseMailtoQueryString(queryString) {
       var allowedParams = /* @__PURE__ */ new Set(["subject", "body", "cc", "bcc"]), query = {
@@ -6835,8 +7057,8 @@ var require_isMimeType = __commonJS({
     });
     exports.default = isMimeType;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var mimeTypeSimple = /^(application|audio|font|image|message|model|multipart|text|video)\/[a-zA-Z0-9\.\-\+_]{1,100}$/i;
     var mimeTypeText = /^text\/[a-zA-Z0-9\.\-\+]{1,100};\s?charset=("[a-zA-Z0-9\.\-\+\s]{0,70}"|[a-zA-Z0-9\.\-\+]{0,70})(\s?\([a-zA-Z0-9\.\-\+\s]{1,20}\))?$/i;
@@ -6860,8 +7082,9 @@ var require_isLatLong = __commonJS({
     exports.default = isLatLong;
     var _assertString = _interopRequireDefault(require_assertString());
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    var _includesString = _interopRequireDefault(require_includesString());
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var lat = /^\(?[+-]?(90(\.0+)?|[1-8]?\d(\.\d+)?)$/;
     var long = /^\s?[+-]?(180(\.0+)?|1[0-7]\d(\.\d+)?|\d{1,2}(\.\d+)?)\)?$/;
@@ -6873,7 +7096,7 @@ var require_isLatLong = __commonJS({
     function isLatLong(str, options) {
       (0, _assertString.default)(str);
       options = (0, _merge.default)(options, defaultLatLongOptions);
-      if (!str.includes(",")) return false;
+      if (!(0, _includesString.default)(str, ",")) return false;
       var pair = str.split(",");
       if (pair[0].startsWith("(") && !pair[1].endsWith(")") || pair[1].endsWith(")") && !pair[0].startsWith("(")) return false;
       if (options.checkDMS) {
@@ -6896,8 +7119,8 @@ var require_isPostalCode = __commonJS({
     exports.default = isPostalCode;
     exports.locales = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var threeDigit = /^\d{3}$/;
     var fourDigit = /^\d{4}$/;
@@ -6909,13 +7132,15 @@ var require_isPostalCode = __commonJS({
       AU: fourDigit,
       AZ: /^AZ\d{4}$/,
       BA: /^([7-8]\d{4}$)/,
+      BD: /^([1-8][0-9]{3}|9[0-4][0-9]{2})$/,
       BE: fourDigit,
       BG: fourDigit,
-      BR: /^\d{5}-\d{3}$/,
+      BR: /^\d{5}-?\d{3}$/,
       BY: /^2[1-4]\d{4}$/,
       CA: /^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][\s\-]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
       CH: fourDigit,
       CN: /^(0[1-7]|1[012356]|2[0-7]|3[0-6]|4[0-7]|5[1-7]|6[1-7]|7[1-5]|8[1345]|9[09])\d{4}$/,
+      CO: /^(05|08|11|13|15|17|18|19|20|23|25|27|41|44|47|50|52|54|63|66|68|70|73|76|81|85|86|88|91|94|95|97|99)(\d{4})$/,
       CZ: /^\d{3}\s?\d{2}$/,
       DE: fiveDigit,
       DK: fourDigit,
@@ -6924,7 +7149,7 @@ var require_isPostalCode = __commonJS({
       EE: fiveDigit,
       ES: /^(5[0-2]{1}|[0-4]{1}\d{1})\d{3}$/,
       FI: fiveDigit,
-      FR: /^\d{2}\s?\d{3}$/,
+      FR: /^(?:(?:0[1-9]|[1-8]\d|9[0-5])\d{3}|97[1-46]\d{2})$/,
       GB: /^(gir\s?0aa|[a-z]{1,2}\d[\da-z]?\s?(\d[a-z]{2})?)$/i,
       GR: /^\d{3}\s?\d{2}$/,
       HR: /^([1-5]\d{4}$)/,
@@ -6953,6 +7178,8 @@ var require_isPostalCode = __commonJS({
       NO: fourDigit,
       NP: /^(10|21|22|32|33|34|44|45|56|57)\d{3}$|^(977)$/i,
       NZ: fourDigit,
+      // https://www.pakpost.gov.pk/postcodes.php
+      PK: fiveDigit,
       PL: /^\d{2}\-\d{3}$/,
       PR: /^00[679]\d{2}([ -]\d{4})?$/,
       PT: /^\d{4}\-\d{3}?$/,
@@ -6965,7 +7192,7 @@ var require_isPostalCode = __commonJS({
       SK: /^\d{3}\s?\d{2}$/,
       TH: fiveDigit,
       TN: fourDigit,
-      TW: /^\d{3}(\d{2})?$/,
+      TW: /^\d{3}(\d{2,3})?$/,
       UA: fiveDigit,
       US: /^\d{5}(-\d{4})?$/,
       ZA: fourDigit,
@@ -7001,8 +7228,8 @@ var require_escape = __commonJS({
     });
     exports.default = escape;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function escape(str) {
       (0, _assertString.default)(str);
@@ -7022,8 +7249,8 @@ var require_unescape = __commonJS({
     });
     exports.default = unescape;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function unescape(str) {
       (0, _assertString.default)(str);
@@ -7043,8 +7270,8 @@ var require_blacklist = __commonJS({
     });
     exports.default = blacklist;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function blacklist(str, chars) {
       (0, _assertString.default)(str);
@@ -7065,8 +7292,8 @@ var require_stripLow = __commonJS({
     exports.default = stripLow;
     var _assertString = _interopRequireDefault(require_assertString());
     var _blacklist = _interopRequireDefault(require_blacklist());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function stripLow(str, keep_new_lines) {
       (0, _assertString.default)(str);
@@ -7087,8 +7314,8 @@ var require_whitelist = __commonJS({
     });
     exports.default = whitelist;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function whitelist(str, chars) {
       (0, _assertString.default)(str);
@@ -7108,8 +7335,8 @@ var require_isWhitelisted = __commonJS({
     });
     exports.default = isWhitelisted;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     function isWhitelisted(str, chars) {
       (0, _assertString.default)(str);
@@ -7134,8 +7361,8 @@ var require_normalizeEmail = __commonJS({
     });
     exports.default = normalizeEmail;
     var _merge = _interopRequireDefault(require_merge());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var default_normalize_email_options = {
       // The following options apply to all email addresses
@@ -7165,6 +7392,8 @@ var require_normalizeEmail = __commonJS({
       // The following conversions are specific to Yandex
       // Lowercases the local part of the Yandex address (known to be case-insensitive)
       yandex_lowercase: true,
+      // all yandex domains are equal, this explicitly sets the domain to 'yandex.ru'
+      yandex_convert_yandexru: true,
       // The following conversions are specific to iCloud
       // Lowercases the local part of the iCloud address (known to be case-insensitive)
       icloud_lowercase: true,
@@ -7237,7 +7466,7 @@ var require_normalizeEmail = __commonJS({
         if (options.all_lowercase || options.yandex_lowercase) {
           parts[0] = parts[0].toLowerCase();
         }
-        parts[1] = "yandex.ru";
+        parts[1] = options.yandex_convert_yandexru ? "yandex.ru" : parts[1];
       } else if (options.all_lowercase) {
         parts[0] = parts[0].toLowerCase();
       }
@@ -7257,8 +7486,8 @@ var require_isSlug = __commonJS({
     });
     exports.default = isSlug;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var charsetRegex = /^[^\s-_](?!.*?[-_]{2,})[a-z0-9-\\][^\s]*[^-_\s]$/;
     function isSlug(str) {
@@ -7279,8 +7508,8 @@ var require_isLicensePlate = __commonJS({
     });
     exports.default = isLicensePlate;
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var validators = {
       "cs-CZ": function csCZ(str) {
@@ -7295,6 +7524,9 @@ var require_isLicensePlate = __commonJS({
       "en-IN": function enIN(str) {
         return /^[A-Z]{2}[ -]?[0-9]{1,2}(?:[ -]?[A-Z])(?:[ -]?[A-Z]*)?[ -]?[0-9]{4}$/.test(str);
       },
+      "en-SG": function enSG(str) {
+        return /^[A-Z]{3}[ -]?[\d]{4}[ -]?[A-Z]{1}$/.test(str);
+      },
       "es-AR": function esAR(str) {
         return /^(([A-Z]{2} ?[0-9]{3} ?[A-Z]{2})|([A-Z]{3} ?[0-9]{3}))$/.test(str);
       },
@@ -7308,7 +7540,7 @@ var require_isLicensePlate = __commonJS({
         return /^[A-Z]{3}[ -]?[0-9][A-Z][0-9]{2}|[A-Z]{3}[ -]?[0-9]{4}$/.test(str);
       },
       "pt-PT": function ptPT(str) {
-        return /^([A-Z]{2}|[0-9]{2})[ -·]?([A-Z]{2}|[0-9]{2})[ -·]?([A-Z]{2}|[0-9]{2})$/.test(str);
+        return /^(([A-Z]{2}[ -·]?[0-9]{2}[ -·]?[0-9]{2})|([0-9]{2}[ -·]?[A-Z]{2}[ -·]?[0-9]{2})|([0-9]{2}[ -·]?[0-9]{2}[ -·]?[A-Z]{2})|([A-Z]{2}[ -·]?[0-9]{2}[ -·]?[A-Z]{2}))$/.test(str);
       },
       "sq-AL": function sqAL(str) {
         return /^[A-Z]{2}[- ]?((\d{3}[- ]?(([A-Z]{2})|T))|(R[- ]?\d{3}))$/.test(str);
@@ -7350,8 +7582,8 @@ var require_isStrongPassword = __commonJS({
     exports.default = isStrongPassword;
     var _merge = _interopRequireDefault(require_merge());
     var _assertString = _interopRequireDefault(require_assertString());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var upperCaseRegex = /^[A-Z]$/;
     var lowerCaseRegex = /^[a-z]$/;
@@ -7458,27 +7690,22 @@ var require_isVAT = __commonJS({
     exports.vatMatchers = void 0;
     var _assertString = _interopRequireDefault(require_assertString());
     var algorithms = _interopRequireWildcard(require_algorithms());
-    function _getRequireWildcardCache(e) {
-      if ("function" != typeof WeakMap) return null;
-      var r = /* @__PURE__ */ new WeakMap(), t = /* @__PURE__ */ new WeakMap();
-      return (_getRequireWildcardCache = function _getRequireWildcardCache2(e2) {
-        return e2 ? t : r;
-      })(e);
+    function _interopRequireWildcard(e, t) {
+      if ("function" == typeof WeakMap) var r = /* @__PURE__ */ new WeakMap(), n = /* @__PURE__ */ new WeakMap();
+      return (_interopRequireWildcard = function _interopRequireWildcard2(e2, t2) {
+        if (!t2 && e2 && e2.__esModule) return e2;
+        var o, i, f = { __proto__: null, default: e2 };
+        if (null === e2 || "object" != _typeof(e2) && "function" != typeof e2) return f;
+        if (o = t2 ? n : r) {
+          if (o.has(e2)) return o.get(e2);
+          o.set(e2, f);
+        }
+        for (var _t in e2) "default" !== _t && {}.hasOwnProperty.call(e2, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e2, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e2[_t]);
+        return f;
+      })(e, t);
     }
-    function _interopRequireWildcard(e, r) {
-      if (!r && e && e.__esModule) return e;
-      if (null === e || "object" != _typeof(e) && "function" != typeof e) return { default: e };
-      var t = _getRequireWildcardCache(r);
-      if (t && t.has(e)) return t.get(e);
-      var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor;
-      for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) {
-        var i = a ? Object.getOwnPropertyDescriptor(e, u) : null;
-        i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u];
-      }
-      return n.default = e, t && t.set(e, n), n;
-    }
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
     var AU = function AU2(str) {
       var match = str.match(/^(AU)?(\d{11})$/);
@@ -7553,7 +7780,7 @@ var require_isVAT = __commonJS({
         return /^(FI)?\d{8}$/.test(str);
       },
       FR: function FR(str) {
-        return /^(FR)?\w{2}\d{9}$/.test(str);
+        return /^(FR)([A-Z0-9]{2}\d{9})$/.test(str);
       },
       DE: function DE(str) {
         return /^(DE)?\d{9}$/.test(str);
@@ -7778,7 +8005,7 @@ var require_validator = __commonJS({
     var _isAlpha = _interopRequireWildcard(require_isAlpha());
     var _isAlphanumeric = _interopRequireWildcard(require_isAlphanumeric());
     var _isNumeric = _interopRequireDefault(require_isNumeric());
-    var _isPassportNumber = _interopRequireDefault(require_isPassportNumber());
+    var _isPassportNumber = _interopRequireWildcard(require_isPassportNumber());
     var _isPort = _interopRequireDefault(require_isPort());
     var _isLowercase = _interopRequireDefault(require_isLowercase());
     var _isUppercase = _interopRequireDefault(require_isUppercase());
@@ -7809,6 +8036,7 @@ var require_validator = __commonJS({
     var _isEmpty = _interopRequireDefault(require_isEmpty());
     var _isLength = _interopRequireDefault(require_isLength());
     var _isByteLength = _interopRequireDefault(require_isByteLength());
+    var _isULID = _interopRequireDefault(require_isULID());
     var _isUUID = _interopRequireDefault(require_isUUID());
     var _isMongoId = _interopRequireDefault(require_isMongoId());
     var _isAfter = _interopRequireDefault(require_isAfter());
@@ -7830,9 +8058,11 @@ var require_validator = __commonJS({
     var _isISO2 = _interopRequireDefault(require_isISO6391());
     var _isISO3 = _interopRequireDefault(require_isISO8601());
     var _isRFC = _interopRequireDefault(require_isRFC3339());
+    var _isISO4 = _interopRequireDefault(require_isISO15924());
     var _isISO31661Alpha = _interopRequireDefault(require_isISO31661Alpha2());
     var _isISO31661Alpha2 = _interopRequireDefault(require_isISO31661Alpha3());
-    var _isISO4 = _interopRequireDefault(require_isISO4217());
+    var _isISO31661Numeric = _interopRequireDefault(require_isISO31661Numeric());
+    var _isISO5 = _interopRequireDefault(require_isISO4217());
     var _isBase = _interopRequireDefault(require_isBase32());
     var _isBase2 = _interopRequireDefault(require_isBase58());
     var _isBase3 = _interopRequireDefault(require_isBase64());
@@ -7856,29 +8086,24 @@ var require_validator = __commonJS({
     var _isLicensePlate = _interopRequireDefault(require_isLicensePlate());
     var _isStrongPassword = _interopRequireDefault(require_isStrongPassword());
     var _isVAT = _interopRequireDefault(require_isVAT());
-    function _getRequireWildcardCache(e) {
-      if ("function" != typeof WeakMap) return null;
-      var r = /* @__PURE__ */ new WeakMap(), t = /* @__PURE__ */ new WeakMap();
-      return (_getRequireWildcardCache = function _getRequireWildcardCache2(e2) {
-        return e2 ? t : r;
-      })(e);
+    function _interopRequireWildcard(e, t) {
+      if ("function" == typeof WeakMap) var r = /* @__PURE__ */ new WeakMap(), n = /* @__PURE__ */ new WeakMap();
+      return (_interopRequireWildcard = function _interopRequireWildcard2(e2, t2) {
+        if (!t2 && e2 && e2.__esModule) return e2;
+        var o, i, f = { __proto__: null, default: e2 };
+        if (null === e2 || "object" != _typeof(e2) && "function" != typeof e2) return f;
+        if (o = t2 ? n : r) {
+          if (o.has(e2)) return o.get(e2);
+          o.set(e2, f);
+        }
+        for (var _t in e2) "default" !== _t && {}.hasOwnProperty.call(e2, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e2, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e2[_t]);
+        return f;
+      })(e, t);
     }
-    function _interopRequireWildcard(e, r) {
-      if (!r && e && e.__esModule) return e;
-      if (null === e || "object" != _typeof(e) && "function" != typeof e) return { default: e };
-      var t = _getRequireWildcardCache(r);
-      if (t && t.has(e)) return t.get(e);
-      var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor;
-      for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) {
-        var i = a ? Object.getOwnPropertyDescriptor(e, u) : null;
-        i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u];
-      }
-      return n.default = e, t && t.set(e, n), n;
+    function _interopRequireDefault(e) {
+      return e && e.__esModule ? e : { default: e };
     }
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var version = "13.12.0";
+    var version = "13.15.20";
     var validator = {
       version,
       toDate: _toDate.default,
@@ -7904,6 +8129,7 @@ var require_validator = __commonJS({
       isAlphanumericLocales: _isAlphanumeric.locales,
       isNumeric: _isNumeric.default,
       isPassportNumber: _isPassportNumber.default,
+      passportNumberLocales: _isPassportNumber.locales,
       isPort: _isPort.default,
       isLowercase: _isLowercase.default,
       isUppercase: _isUppercase.default,
@@ -7934,6 +8160,7 @@ var require_validator = __commonJS({
       isLength: _isLength.default,
       isLocale: _isLocale.default,
       isByteLength: _isByteLength.default,
+      isULID: _isULID.default,
       isUUID: _isUUID.default,
       isMongoId: _isMongoId.default,
       isAfter: _isAfter.default,
@@ -7957,10 +8184,12 @@ var require_validator = __commonJS({
       isFreightContainerID: _isISO.isFreightContainerID,
       isISO6391: _isISO2.default,
       isISO8601: _isISO3.default,
+      isISO15924: _isISO4.default,
       isRFC3339: _isRFC.default,
       isISO31661Alpha2: _isISO31661Alpha.default,
       isISO31661Alpha3: _isISO31661Alpha2.default,
-      isISO4217: _isISO4.default,
+      isISO31661Numeric: _isISO31661Numeric.default,
+      isISO4217: _isISO5.default,
       isBase32: _isBase.default,
       isBase58: _isBase2.default,
       isBase64: _isBase3.default,
@@ -8032,13 +8261,13 @@ var require_templateHelpers = __commonJS({
     var validator_1 = __importDefault(require_validator());
     var assertNever_1 = require_assertNever();
     var tsoa_route_1 = require_tsoa_route();
-    function ValidateParam(property, value, generatedModels, name = "", fieldErrors, isBodyParam, parent = "", config) {
-      return new ValidationService(generatedModels, config).ValidateParam(property, value, name, fieldErrors, isBodyParam, parent);
+    function ValidateParam(property, value, generatedModels, name = "", fieldErrors, isBodyParam, parent = "", config2) {
+      return new ValidationService(generatedModels, config2).ValidateParam(property, value, name, fieldErrors, isBodyParam, parent);
     }
     var ValidationService = class _ValidationService {
-      constructor(models2, config) {
+      constructor(models2, config2) {
         this.models = models2;
-        this.config = config;
+        this.config = config2;
       }
       ValidateParam(property, rawValue, name = "", fieldErrors, isBodyParam, parent = "") {
         let value = rawValue;
@@ -8722,10 +8951,10 @@ var require_templateService = __commonJS({
     exports.TemplateService = void 0;
     var templateHelpers_1 = require_templateHelpers();
     var TemplateService = class {
-      constructor(models2, config) {
+      constructor(models2, config2) {
         this.models = models2;
-        this.config = config;
-        this.validationService = new templateHelpers_1.ValidationService(models2, config);
+        this.config = config2;
+        this.validationService = new templateHelpers_1.ValidationService(models2, config2);
       }
       isController(object) {
         return "getHeaders" in object && "getStatus" in object && "setStatus" in object;
@@ -8849,10 +9078,10 @@ var require_hapiTemplateService = __commonJS({
     var templateService_1 = require_templateService();
     var hapiTsoaResponsed = Symbol("@tsoa:template_service:hapi:responsed");
     var HapiTemplateService = class extends templateService_1.TemplateService {
-      constructor(models2, config, hapi) {
-        super(models2, config);
+      constructor(models2, config2, hapi) {
+        super(models2, config2);
         this.models = models2;
-        this.config = config;
+        this.config = config2;
         this.hapi = hapi;
       }
       async apiHandler(params) {
@@ -9261,6 +9490,26 @@ UtilController = __decorateClass([
 
 // src/api/user/controller.ts
 var import_runtime3 = __toESM(require_dist(), 1);
+
+// src/api/types/base.ts
+var Permission = {
+  NONE: 0,
+  READ: 1,
+  WRITE: 2
+};
+var Scope = {
+  BASE: "dabih:base",
+  API: "dabih:api",
+  ADMIN: "dabih:admin"
+};
+var InodeType = {
+  FILE: 0,
+  DIRECTORY: 1,
+  UPLOAD: 2,
+  TRASH: 10,
+  ROOT: 11,
+  HOME: 12
+};
 
 // src/lib/db.ts
 import { PrismaClient } from "@prisma/client";
@@ -139386,7 +139635,7 @@ var ValidationStream = class extends Transform {
     this.hash = createHash4("sha256");
     this.byteCount = 0;
   }
-  _transform(chunk3, encoding, callback) {
+  _transform(chunk3, encoding, callback2) {
     if (encoding !== "buffer") {
       throw new Error(`Unsupported Encoding ${encoding}`);
     }
@@ -139395,7 +139644,7 @@ var ValidationStream = class extends Transform {
       this.hash.update(chunk3);
       this.push(chunk3);
     }
-    callback();
+    callback2();
   }
   digest() {
     return {
@@ -139410,7 +139659,7 @@ var Crc32 = class extends Transform {
     super();
     this.checksum = void 0;
   }
-  _transform(chunk3, encoding, callback) {
+  _transform(chunk3, encoding, callback2) {
     if (encoding !== "buffer") {
       throw new Error(`Unsupported Encoding ${encoding}`);
     }
@@ -139418,7 +139667,7 @@ var Crc32 = class extends Transform {
       this.checksum = crc32(chunk3, this.checksum);
       this.push(chunk3);
     }
-    callback();
+    callback2();
   }
   digest() {
     if (!this.checksum) {
@@ -139558,21 +139807,6 @@ function convertKey(user, key, isRootKey) {
     enabledBy: isAdmin ? sub : null
   };
 }
-
-// src/api/types/base.ts
-var Permission = {
-  NONE: 0,
-  READ: 1,
-  WRITE: 2
-};
-var InodeType = {
-  FILE: 0,
-  DIRECTORY: 1,
-  UPLOAD: 2,
-  TRASH: 10,
-  ROOT: 11,
-  HOME: 12
-};
 
 // src/lib/database/inode.ts
 var generateDataUid = async () => {
@@ -139866,7 +140100,7 @@ async function add(user, body) {
   const isRootKey = body.isRootKey && isAdmin;
   const key = convertKey(user, body.key, isRootKey);
   await getHome(sub);
-  const defaultScope = ["dabih:upload", "dabih:api"].join(" ");
+  const defaultScope = ["dabih:base", "dabih:api"].join(" ");
   const result = await db_default.user.create({
     data: {
       sub,
@@ -140022,6 +140256,37 @@ async function findKey(hash2) {
   return result;
 }
 
+// src/api/user/setAdmin.ts
+async function setAdmin(sub, admin) {
+  const existing = await db_default.user.findUnique({
+    where: {
+      sub
+    }
+  });
+  if (!existing) {
+    throw new RequestError(`User ${sub} not found`);
+  }
+  const scopes = new Set(existing.scope.split(" "));
+  if (admin) {
+    scopes.add(Scope.ADMIN);
+  } else {
+    scopes.delete(Scope.ADMIN);
+  }
+  const scope = Array.from(scopes).join(" ");
+  const result = await db_default.user.update({
+    where: {
+      sub
+    },
+    data: {
+      scope
+    },
+    include: {
+      keys: true
+    }
+  });
+  return result;
+}
+
 // src/api/user/controller.ts
 var UserController = class extends import_runtime3.Controller {
   async add(request, requestBody) {
@@ -140043,6 +140308,10 @@ var UserController = class extends import_runtime3.Controller {
   }
   async list() {
     return list();
+  }
+  async setAdmin(body) {
+    const { sub, admin } = body;
+    return setAdmin(sub, admin);
   }
   async remove(request, body) {
     const { sub } = body;
@@ -140073,6 +140342,7 @@ __decorateClass([
 ], UserController.prototype, "add", 1);
 __decorateClass([
   (0, import_runtime3.Get)("me"),
+  (0, import_runtime3.Security)("api_key", ["dabih:base"]),
   (0, import_runtime3.OperationId)("me"),
   __decorateParam(0, (0, import_runtime3.Request)())
 ], UserController.prototype, "me", 1);
@@ -140091,6 +140361,12 @@ __decorateClass([
   (0, import_runtime3.OperationId)("listUsers")
 ], UserController.prototype, "list", 1);
 __decorateClass([
+  (0, import_runtime3.Post)("admin"),
+  (0, import_runtime3.OperationId)("setAdmin"),
+  (0, import_runtime3.Security)("api_key", [Scope.ADMIN]),
+  __decorateParam(0, (0, import_runtime3.Body)())
+], UserController.prototype, "setAdmin", 1);
+__decorateClass([
   (0, import_runtime3.Post)("remove"),
   (0, import_runtime3.OperationId)("removeUser"),
   __decorateParam(0, (0, import_runtime3.Request)()),
@@ -140099,6 +140375,7 @@ __decorateClass([
 __decorateClass([
   (0, import_runtime3.Post)("key/add"),
   (0, import_runtime3.OperationId)("addKey"),
+  (0, import_runtime3.Security)("api_key", ["dabih:base"]),
   (0, import_runtime3.SuccessResponse)("201", "Created"),
   __decorateParam(0, (0, import_runtime3.Request)()),
   __decorateParam(1, (0, import_runtime3.Body)())
@@ -140118,7 +140395,7 @@ __decorateClass([
 UserController = __decorateClass([
   (0, import_runtime3.Route)("user"),
   (0, import_runtime3.Tags)("User"),
-  (0, import_runtime3.Security)("api_key", ["dabih:api"])
+  (0, import_runtime3.Security)("api_key", [Scope.API])
 ], UserController);
 
 // src/api/upload/controller.ts
@@ -140148,10 +140425,10 @@ async function getSecret(secretName, ttl) {
     secret3 = await generateSecret(secretName, ttl);
   } else {
     secret3 = JSON.parse(secrets[0]);
-  }
-  const now = Math.floor(Date.now() / 1e3);
-  if (secret3.expiresAt < now) {
-    secret3 = await generateSecret(secretName, ttl);
+    const now = Math.floor(Date.now() / 1e3);
+    if (secret3.expiresAt < now) {
+      secret3 = await generateSecret(secretName, ttl);
+    }
   }
   const { encrypted, iv } = secret3;
   try {
@@ -141310,7 +141587,7 @@ __decorateClass([
 UploadController = __decorateClass([
   (0, import_runtime5.Route)("upload"),
   (0, import_runtime5.Tags)("Upload"),
-  (0, import_runtime5.Security)("api_key", ["dabih:upload"])
+  (0, import_runtime5.Security)("api_key", [Scope.API])
 ], UploadController);
 
 // src/api/token/controller.ts
@@ -141452,7 +141729,7 @@ __decorateClass([
 TokenController = __decorateClass([
   (0, import_runtime7.Route)("token"),
   (0, import_runtime7.Tags)("Token"),
-  (0, import_runtime7.Security)("api_key", ["dabih:api"])
+  (0, import_runtime7.Security)("api_key", [Scope.API])
 ], TokenController);
 
 // src/api/job/controller.ts
@@ -141568,7 +141845,7 @@ __decorateClass([
 JobController = __decorateClass([
   (0, import_runtime9.Route)("job"),
   (0, import_runtime9.Tags)("Job"),
-  (0, import_runtime9.Security)("api_key", ["dabih:admin"])
+  (0, import_runtime9.Security)("api_key", [Scope.ADMIN])
 ], JobController);
 
 // src/api/fs/controller.ts
@@ -142044,7 +142321,7 @@ async function searchResults(user, jobId) {
 async function searchCancel(user, jobId) {
   const { sub } = user;
   const meta = await job_default.getMeta(jobId);
-  if (!meta || meta.sub !== sub) {
+  if (meta?.sub !== sub) {
     throw new NotFoundError(`Job not found for user ${sub}`);
   }
   await job_default.remove(jobId);
@@ -142407,7 +142684,7 @@ __decorateClass([
 FilesystemController = __decorateClass([
   (0, import_runtime11.Route)("fs"),
   (0, import_runtime11.Tags)("Filesystem"),
-  (0, import_runtime11.Security)("api_key", ["dabih:api"])
+  (0, import_runtime11.Security)("api_key", [Scope.API])
 ], FilesystemController);
 
 // src/api/filedata/controller.ts
@@ -142504,26 +142781,24 @@ var FileDataController = class extends import_runtime13.Controller {
 };
 __decorateClass([
   (0, import_runtime13.Get)("orphaned"),
-  (0, import_runtime13.Security)("api_key", ["dabih:admin"]),
   (0, import_runtime13.OperationId)("listOrphaned"),
   __decorateParam(0, (0, import_runtime13.Request)())
 ], FileDataController.prototype, "listOrphaned", 1);
 __decorateClass([
   (0, import_runtime13.Post)("{uid}/remove"),
-  (0, import_runtime13.Security)("api_key", ["dabih:admin"]),
   (0, import_runtime13.OperationId)("removeFileData"),
   __decorateParam(0, (0, import_runtime13.Request)()),
   __decorateParam(1, (0, import_runtime13.Path)())
 ], FileDataController.prototype, "removeFileData", 1);
 __decorateClass([
   (0, import_runtime13.Get)("checkIntegrity"),
-  (0, import_runtime13.Security)("api_key", ["dabih:admin"]),
   (0, import_runtime13.OperationId)("checkIntegrity"),
   __decorateParam(0, (0, import_runtime13.Request)())
 ], FileDataController.prototype, "checkIntegrity", 1);
 FileDataController = __decorateClass([
   (0, import_runtime13.Route)("filedata"),
-  (0, import_runtime13.Tags)("File Data")
+  (0, import_runtime13.Tags)("File Data"),
+  (0, import_runtime13.Security)("api_key", [Scope.ADMIN])
 ], FileDataController);
 
 // src/api/download/controller.ts
@@ -142667,7 +142942,7 @@ var DownloadController = class extends import_runtime15.Controller {
 };
 __decorateClass([
   (0, import_runtime15.Post)("{mnemonic}/decrypt"),
-  (0, import_runtime15.Security)("api_key", ["dabih:api"]),
+  (0, import_runtime15.Security)("api_key", [Scope.API]),
   (0, import_runtime15.OperationId)("decryptDataset"),
   __decorateParam(0, (0, import_runtime15.Path)()),
   __decorateParam(1, (0, import_runtime15.Request)()),
@@ -142681,7 +142956,7 @@ __decorateClass([
 ], DownloadController.prototype, "download", 1);
 __decorateClass([
   (0, import_runtime15.Get)("{uid}/chunk/{hash}"),
-  (0, import_runtime15.Security)("api_key", ["dabih:api"]),
+  (0, import_runtime15.Security)("api_key", [Scope.API]),
   (0, import_runtime15.OperationId)("downloadChunk"),
   (0, import_runtime15.Produces)("application/octet-stream"),
   __decorateParam(0, (0, import_runtime15.Path)()),
@@ -142770,17 +143045,6 @@ async function signIn(email) {
     },
     secret3
   );
-  if (existingUser) {
-    const { lastAuthAt } = existingUser;
-    const twoWeeks = 2 * 7 * 24 * 60 * 60 * 1e3;
-    const twoWeeksAgo = new Date(Date.now() - twoWeeks);
-    if (lastAuthAt > twoWeeksAgo) {
-      return {
-        status: "success",
-        token
-      };
-    }
-  }
   if (!hasEmail()) {
     logger_default.warn("Email service is not available. Returning token directly");
     return {
@@ -142806,18 +143070,20 @@ async function signIn(email) {
 }
 
 // src/api/auth/refresh.ts
-async function refresh(tokenStr) {
-  const payload = crypto_default.jwt.decode(tokenStr);
-  if (!payload || typeof payload !== "object") {
-    throw new AuthenticationError("Invalid token: not a valid JWT");
+var getScope = (user) => {
+  const scopes = /* @__PURE__ */ new Set([Scope.BASE]);
+  const { keys } = user;
+  if (keys.some((k) => k.enabled)) {
+    scopes.add(Scope.API);
   }
-  if (!payload.sub || typeof payload.sub !== "string") {
-    throw new AuthenticationError(
-      'Invalid token: no "sub" key in payload, this is not a signIn token'
-    );
+  if (user.scope.includes(Scope.ADMIN)) {
+    scopes.add(Scope.ADMIN);
   }
-  const { sub } = payload;
-  const user = await db_default.user.findUnique({
+  return Array.from(scopes).join(" ");
+};
+async function refresh(user, tokenStr) {
+  const { sub } = user;
+  const dbUser = await db_default.user.findUnique({
     where: { sub },
     include: {
       keys: {
@@ -142827,18 +143093,21 @@ async function refresh(tokenStr) {
       }
     }
   });
-  if (!user) {
+  if (!dbUser) {
     throw new NotFoundError(`User not found: ${sub}`);
   }
-  const keys = user.keys.map((key) => crypto_default.publicKey.fromString(key.data));
+  const keys = dbUser.keys.map((key) => crypto_default.publicKey.fromString(key.data));
   try {
-    crypto_default.jwt.verifyWithRSA(tokenStr, keys);
+    const payload = crypto_default.jwt.verifyWithRSA(tokenStr, keys);
+    if (typeof payload === "string" || payload.sub !== sub) {
+      throw new AuthenticationError("Invalid token payload");
+    }
   } catch {
     throw new AuthenticationError(
-      `Invalid token: no valid signature for user ${user.email}`
+      `Invalid token: no valid signature for user ${dbUser.email}`
     );
   }
-  const { lastAuthAt, scope } = user;
+  const { lastAuthAt } = dbUser;
   const twoWeeks = 2 * 7 * 24 * 60 * 60 * 1e3;
   const twoWeeksAgo = new Date(Date.now() - twoWeeks);
   if (lastAuthAt < twoWeeksAgo) {
@@ -142846,6 +143115,13 @@ async function refresh(tokenStr) {
       "User's last authentication was more than two weeks ago, re-authentication required"
     );
   }
+  const scope = getScope(dbUser);
+  await db_default.user.update({
+    where: { sub },
+    data: {
+      scope
+    }
+  });
   const secret3 = await getSecret(SECRET.AUTH);
   const token = crypto_default.jwt.signWithSecret(
     {
@@ -142856,6 +143132,504 @@ async function refresh(tokenStr) {
   );
   return token;
 }
+
+// src/api/auth/verifyEmail.ts
+async function verifyEmail(tokenStr) {
+  const secrets = await getSecrets(SECRET.EMAIL);
+  let payload;
+  try {
+    payload = crypto_default.jwt.verifyWithSecrets(tokenStr, secrets);
+    if (typeof payload !== "object" || !payload.email || !payload.sub) {
+      throw new Error("Invalid token payload");
+    }
+  } catch (error2) {
+    console.error("Email verification failed:", error2);
+    throw new Error("Invalid email verification token");
+  }
+  const { sub, email } = payload;
+  if (typeof sub !== "string" || typeof email !== "string") {
+    throw new Error("Invalid token payload structure");
+  }
+  const adminUser = await db_default.user.findFirst({
+    where: {
+      scope: {
+        contains: Scope.ADMIN
+      }
+    }
+  });
+  const secret3 = await getSecret(SECRET.AUTH);
+  const existingUser = await db_default.user.findUnique({
+    where: { sub }
+  });
+  if (existingUser) {
+    await db_default.user.update({
+      where: { sub },
+      data: {
+        lastAuthAt: /* @__PURE__ */ new Date()
+      },
+      include: {
+        keys: true
+      }
+    });
+    const { scope: scope2 } = existingUser;
+    const token2 = crypto_default.jwt.signWithSecret(
+      {
+        sub,
+        scope: scope2
+      },
+      secret3
+    );
+    return token2;
+  }
+  const scopes = ["dabih:base"];
+  if (!adminUser) {
+    logger_default.warn(
+      `No admin user found, creating new user with admin scope for ${email}`
+    );
+    scopes.push(Scope.API);
+    scopes.push(Scope.ADMIN);
+  }
+  const scope = scopes.join(" ");
+  await db_default.user.create({
+    data: {
+      sub,
+      email,
+      scope,
+      lastAuthAt: /* @__PURE__ */ new Date()
+    },
+    include: {
+      keys: true
+    }
+  });
+  await getHome(sub);
+  const token = crypto_default.jwt.signWithSecret(
+    {
+      sub,
+      scope
+    },
+    secret3
+  );
+  return token;
+}
+
+// src/lib/openid/index.ts
+import {
+  discovery,
+  Configuration,
+  randomPKCECodeVerifier,
+  calculatePKCECodeChallenge,
+  randomState,
+  buildAuthorizationUrl,
+  authorizationCodeGrant
+} from "openid-client";
+
+// src/lib/openid/providers.ts
+var providers = [
+  {
+    url: "https://github.com",
+    id: "github",
+    name: "GitHub",
+    logo_uri: "/images/providers/github.png",
+    discovery: false,
+    authorization_endpoint: "https://github.com/login/oauth/authorize",
+    token_endpoint: "https://github.com/login/oauth/access_token",
+    userinfo_endpoint: "https://api.github.com/user",
+    jwks_uri: "https://github.com/login/oauth/.well-known/jwks",
+    subject_types_supported: ["public"],
+    response_types_supported: ["code", "id_token"],
+    claims_supported: ["sub", "aud", "exp", "nbf", "iat", "iss", "act"],
+    id_token_signing_alg_values_supported: ["RS256"],
+    scopes_supported: ["openid"],
+    code_challenge_methods_supported: ["S256"]
+  },
+  {
+    url: "https://login.microsoftonline.com",
+    id: "microsoft",
+    name: "Microsoft",
+    logo_uri: "/images/providers/microsoft.png",
+    discovery: true,
+    supportsPKCE: true
+  }
+];
+var initProvider = (providerUrl) => {
+  const provider2 = providers.find((p) => providerUrl.startsWith(p.url));
+  if (provider2) {
+    return provider2;
+  }
+  return {
+    url: providerUrl,
+    id: "custom",
+    name: "Custom Provider",
+    logo_uri: "/images/providers/default.png",
+    discovery: true
+  };
+};
+var convertUserInfo = (providerId, userInfo) => {
+  switch (providerId) {
+    case "github": {
+      const sub = userInfo.id.toString();
+      return {
+        sub: `github:${sub}`,
+        email: userInfo.email
+      };
+    }
+    default: {
+      const { sub, email } = userInfo;
+      if (!sub || !email) {
+        throw new Error(
+          `userInfo is missing required fields (sub, email): ${JSON.stringify(userInfo)}`
+        );
+      }
+      return {
+        sub: `custom:${sub}`,
+        email
+      };
+    }
+  }
+};
+
+// src/lib/openid/index.ts
+var provider = null;
+var config = null;
+async function initOpenID() {
+  const providerUrl = getEnv("OIDC_PROVIDER", null);
+  if (!providerUrl) {
+    logger_default.warn(
+      "OIDC_PROVIDER is not set, skipping OpenID Connect initialization."
+    );
+    return;
+  }
+  provider = initProvider(providerUrl);
+  if (!provider) {
+    logger_default.error(
+      `OIDC provider ${providerUrl} not found. Skipping OIDC setup.`
+    );
+    return;
+  }
+  const clientId = getEnv("OIDC_CLIENT_ID", null);
+  const clientSecret = getEnv("OIDC_CLIENT_SECRET", null);
+  if (!clientId) {
+    throw new Error("OIDC_CLIENT_ID is required when OIDC_ISSUER is set.");
+  }
+  if (!clientSecret) {
+    throw new Error("OIDC_CLIENT_SECRET is required when OIDC_ISSUER is set.");
+  }
+  logger_default.info(`Using OIDC provider: ${provider.name}`);
+  if (provider.discovery) {
+    logger_default.info(`Using discovery for issuer: ${providerUrl}`);
+    try {
+      const url = new URL(providerUrl);
+      config = await discovery(url, clientId, clientSecret);
+      logger_default.info("Discovered OIDC configuration");
+    } catch (error2) {
+      logger_default.error(`Error discovering OIDC configuration: ${error2}`);
+      config = null;
+      provider = null;
+    }
+    return;
+  }
+  const serverData = {
+    issuer: providerUrl,
+    ...provider
+  };
+  config = new Configuration(serverData, clientId, clientSecret);
+}
+async function getRedirectUrl() {
+  if (!config) {
+    throw new Error("OpenID Connect is not configured.");
+  }
+  if (!config.serverMetadata().supportsPKCE() && !provider?.supportsPKCE) {
+    throw new Error("OIDC provider does not support PKCE.");
+  }
+  const host = getEnv("HOST", null);
+  if (!host) {
+    throw new Error("HOST environment variable is required, but not set.");
+  }
+  const scope = getEnv("OIDC_SCOPE", "openid email");
+  const redirectUri = new URL("/api/v1/auth/callback", host).toString();
+  logger_default.debug(`Using redirect URI: ${redirectUri}`);
+  const codeVerifier = randomPKCECodeVerifier();
+  const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
+  const state = randomState();
+  const parameters = {
+    redirect_uri: redirectUri,
+    scope,
+    code_challenge: codeChallenge,
+    code_challenge_method: "S256",
+    state
+  };
+  const redirectUrl = buildAuthorizationUrl(config, parameters);
+  return {
+    redirectUrl,
+    codeVerifier,
+    state
+  };
+}
+async function authorizationCode(request, expectedState, pkceCodeVerifier) {
+  if (!config) {
+    throw new Error("OpenID Connect is not configured.");
+  }
+  const host = getEnv("HOST", null);
+  if (!host) {
+    throw new Error("HOST environment variable is required, but not set.");
+  }
+  const callbackUrl = new URL(request.url, host);
+  let tokens;
+  try {
+    tokens = await authorizationCodeGrant(config, callbackUrl, {
+      pkceCodeVerifier,
+      expectedState,
+      idTokenExpected: false
+    });
+  } catch (error2) {
+    console.log(error2);
+    logger_default.error(`Error during authorization code grant: ${error2}`);
+    throw new RequestError("Invalid authorization code or state.");
+  }
+  if (!tokens.access_token) {
+    throw new RequestError("No access token received from OIDC provider.");
+  }
+  return tokens.access_token;
+}
+async function getUserInfo(accessToken) {
+  if (!config || !provider) {
+    throw new Error("OpenID Connect is not configured.");
+  }
+  const serverConfig = config.serverMetadata();
+  if (!serverConfig.userinfo_endpoint) {
+    throw new Error("OIDC provider does not support userinfo endpoint.");
+  }
+  const response = await fetch(serverConfig.userinfo_endpoint, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      Accept: "application/json"
+    }
+  });
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch user info: ${response.status} ${response.statusText}`
+    );
+  }
+  const userInfo = await response.json();
+  return convertUserInfo(provider.id, userInfo);
+}
+function getProvider() {
+  return provider;
+}
+
+// src/lib/redis/codeVerifier.ts
+var prefix4 = "codeVerifier:";
+var EX2 = 10 * 60;
+async function storeCodeVerifier(state, codeVerifier) {
+  const key = `${prefix4}${state}`;
+  await redis_default.set(key, codeVerifier, { EX: EX2 });
+}
+async function getCodeVerifier(state) {
+  const key = `${prefix4}${state}`;
+  const codeVerifier = await redis_default.get(key);
+  if (codeVerifier) {
+    await redis_default.del(key);
+  }
+  return codeVerifier;
+}
+
+// src/api/auth/login.ts
+async function login() {
+  const { redirectUrl, codeVerifier, state } = await getRedirectUrl();
+  await storeCodeVerifier(state, codeVerifier);
+  return redirectUrl.href;
+}
+
+// src/api/auth/callback.ts
+var getNewScope = async () => {
+  const existingAdmin = await db_default.user.findFirst({
+    where: {
+      scope: {
+        contains: Scope.ADMIN
+      }
+    }
+  });
+  const scopes = [Scope.BASE];
+  if (!existingAdmin) {
+    logger_default.warn(`No admin user found, creating new user with admin scope`);
+    scopes.push(Scope.API);
+    scopes.push(Scope.ADMIN);
+  }
+  const scope = scopes.join(" ");
+  return scope;
+};
+var getScope2 = (user) => {
+  const scopes = /* @__PURE__ */ new Set([Scope.BASE]);
+  const { keys } = user;
+  if (keys.some((k) => k.enabled)) {
+    scopes.add(Scope.API);
+  }
+  if (user.scope.includes(Scope.ADMIN)) {
+    scopes.add(Scope.ADMIN);
+  }
+  return Array.from(scopes).join(" ");
+};
+async function callback(request, state) {
+  const codeVerifier = await getCodeVerifier(state);
+  if (!codeVerifier) {
+    throw new RequestError("Could not find code verifier in redis");
+  }
+  const access_token = await authorizationCode(request, state, codeVerifier);
+  const { sub, email } = await getUserInfo(access_token);
+  const secret3 = await getSecret(SECRET.AUTH);
+  const emailMatch = await db_default.user.findUnique({
+    where: {
+      email
+    }
+  });
+  if (emailMatch && emailMatch.sub !== sub) {
+    throw new RequestError(
+      `Email ${email} is already associated with another account.`
+    );
+  }
+  const existing = await db_default.user.findUnique({
+    where: {
+      sub
+    },
+    include: {
+      keys: true
+    }
+  });
+  if (existing) {
+    const scope2 = getScope2(existing);
+    await db_default.user.update({
+      where: { sub },
+      data: {
+        email,
+        lastAuthAt: /* @__PURE__ */ new Date(),
+        scope: scope2
+      }
+    });
+    const token2 = crypto_default.jwt.signWithSecret(
+      {
+        sub,
+        scope: scope2
+      },
+      secret3
+    );
+    return token2;
+  }
+  const scope = await getNewScope();
+  try {
+    await db_default.user.create({
+      data: {
+        sub,
+        email,
+        scope,
+        lastAuthAt: /* @__PURE__ */ new Date()
+      }
+    });
+  } catch (e) {
+    throw new RequestError(`Could not create user: ${e.message}`);
+  }
+  await getHome(sub);
+  const token = crypto_default.jwt.signWithSecret(
+    {
+      sub,
+      scope
+    },
+    secret3
+  );
+  return token;
+}
+
+// src/api/auth/controller.ts
+var AuthController = class extends import_runtime17.Controller {
+  info(request) {
+    const { user } = request;
+    return user;
+  }
+  provider() {
+    return getProvider();
+  }
+  async login() {
+    let redirectUrl;
+    try {
+      redirectUrl = await login();
+    } catch (error2) {
+      const message = error2 instanceof Error ? error2.message : "Unknown error";
+      redirectUrl = `/signin/error?message=${encodeURIComponent(message)}`;
+    }
+    this.setStatus(302);
+    this.setHeader("Location", redirectUrl);
+  }
+  async callback(request, state) {
+    let redirectUrl;
+    try {
+      const token = await callback(request, state);
+      redirectUrl = `/signin/success/${token}`;
+    } catch (error2) {
+      const message = error2 instanceof Error ? error2.message : "Unknown error";
+      redirectUrl = `/signin/error?message=${encodeURIComponent(message)}`;
+    }
+    this.setStatus(302);
+    this.setHeader("Location", redirectUrl);
+  }
+  async signIn(request, requestBody) {
+    await rateLimit(request.ip);
+    const { email } = requestBody;
+    return signIn(email);
+  }
+  async verify(requestBody) {
+    const { token } = requestBody;
+    return verifyEmail(token);
+  }
+  async token(request, body) {
+    const { user } = request;
+    const { token } = body;
+    return refresh(user, token);
+  }
+};
+__decorateClass([
+  (0, import_runtime17.Get)("info"),
+  (0, import_runtime17.Security)("api_key", []),
+  (0, import_runtime17.OperationId)("authInfo"),
+  __decorateParam(0, (0, import_runtime17.Request)())
+], AuthController.prototype, "info", 1);
+__decorateClass([
+  (0, import_runtime17.Get)("provider"),
+  (0, import_runtime17.OperationId)("authProvider")
+], AuthController.prototype, "provider", 1);
+__decorateClass([
+  (0, import_runtime17.Get)("login"),
+  (0, import_runtime17.OperationId)("loginRedirect"),
+  (0, import_runtime17.Response)(302, "Redirect to OIDC provider")
+], AuthController.prototype, "login", 1);
+__decorateClass([
+  (0, import_runtime17.Get)("callback"),
+  (0, import_runtime17.OperationId)("loginCallback"),
+  (0, import_runtime17.Response)(302, "Redirect to frontend with token"),
+  __decorateParam(0, (0, import_runtime17.Request)()),
+  __decorateParam(1, (0, import_runtime17.Query)())
+], AuthController.prototype, "callback", 1);
+__decorateClass([
+  (0, import_runtime17.Post)("signIn"),
+  (0, import_runtime17.OperationId)("signIn"),
+  __decorateParam(0, (0, import_runtime17.Request)()),
+  __decorateParam(1, (0, import_runtime17.Body)())
+], AuthController.prototype, "signIn", 1);
+__decorateClass([
+  (0, import_runtime17.Post)("verify"),
+  (0, import_runtime17.Response)(500, "Unknown error"),
+  (0, import_runtime17.OperationId)("verifyEmail"),
+  __decorateParam(0, (0, import_runtime17.Body)())
+], AuthController.prototype, "verify", 1);
+__decorateClass([
+  (0, import_runtime17.Post)("refresh"),
+  (0, import_runtime17.OperationId)("refreshToken"),
+  (0, import_runtime17.Security)("api_key", [Scope.BASE]),
+  __decorateParam(0, (0, import_runtime17.Request)()),
+  __decorateParam(1, (0, import_runtime17.Body)())
+], AuthController.prototype, "token", 1);
+AuthController = __decorateClass([
+  (0, import_runtime17.Route)("auth"),
+  (0, import_runtime17.Tags)("Auth")
+], AuthController);
 
 // src/auth.ts
 var parseRequest = (request) => {
@@ -142926,168 +143700,10 @@ async function koaAuthentication(request, _name, scopes) {
   }
   const user = {
     ...decoded,
-    isAdmin: decoded.scopes.includes("dabih:admin")
+    isAdmin: decoded.scopes.includes(Scope.ADMIN)
   };
   return user;
 }
-
-// src/api/auth/verifyEmail.ts
-async function verifyEmail(tokenStr) {
-  const secrets = await getSecrets(SECRET.EMAIL);
-  let payload;
-  try {
-    payload = crypto_default.jwt.verifyWithSecrets(tokenStr, secrets);
-    if (typeof payload !== "object" || !payload.email || !payload.sub) {
-      throw new Error("Invalid token payload");
-    }
-  } catch (error2) {
-    console.error("Email verification failed:", error2);
-    throw new Error("Invalid email verification token");
-  }
-  const { sub, email } = payload;
-  if (typeof sub !== "string" || typeof email !== "string") {
-    throw new Error("Invalid token payload structure");
-  }
-  const adminUser = await db_default.user.findFirst({
-    where: {
-      scope: {
-        contains: "dabih:admin"
-      }
-    }
-  });
-  const secret3 = await getSecret(SECRET.AUTH);
-  const existingUser = await db_default.user.findUnique({
-    where: { sub }
-  });
-  if (existingUser) {
-    await db_default.user.update({
-      where: { sub },
-      data: {
-        lastAuthAt: /* @__PURE__ */ new Date()
-      },
-      include: {
-        keys: true
-      }
-    });
-    const { scope: scope2 } = existingUser;
-    const token2 = crypto_default.jwt.signWithSecret(
-      {
-        sub,
-        scope: scope2
-      },
-      secret3
-    );
-    return token2;
-  }
-  const scopes = ["dabih:upload", "dabih:api"];
-  if (!adminUser) {
-    logger_default.warn(
-      `No admin user found, creating new user with admin scope for ${email}`
-    );
-    scopes.push("dabih:admin");
-  }
-  const scope = scopes.join(" ");
-  await db_default.user.create({
-    data: {
-      sub,
-      email,
-      scope,
-      lastAuthAt: /* @__PURE__ */ new Date()
-    },
-    include: {
-      keys: true
-    }
-  });
-  await getHome(sub);
-  const token = crypto_default.jwt.signWithSecret(
-    {
-      sub,
-      scope
-    },
-    secret3
-  );
-  return token;
-}
-
-// src/api/auth/providers.ts
-function providers() {
-  const providers2 = [];
-  const githubClientId = getEnv("GITHUB_CLIENT_ID", null);
-  if (githubClientId) {
-    const metadata = {
-      issuer: "https://github.com",
-      authorization_endpoint: "https://github.com/login/oauth/authorize",
-      userinfo_endpoint: "https://api.github.com/user",
-      token_endpoint: "https://github.com/login/oauth/access_token",
-      end_session_endpoint: "https://github.com/logout"
-    };
-    providers2.push({
-      id: "github",
-      name: "GitHub",
-      authority: "https://github.com/login/oauth",
-      logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAKRlWElmTU0AKgAAAAgABgESAAMAAAABAAEAAAEaAAUAAAABAAAAVgEbAAUAAAABAAAAXgEoAAMAAAABAAIAAAExAAIAAAATAAAAZodpAAQAAAABAAAAegAAAAAAAABIAAAAAQAAAEgAAAABUGl4ZWxtYXRvciBQcm8gMy43AAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAMqADAAQAAAABAAAAMgAAAABBTEI0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADamlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNi4wLjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczpleGlmPSJodHRwOi8vbnMuYWRvYmUuY29tL2V4aWYvMS4wLyIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDxleGlmOlBpeGVsWURpbWVuc2lvbj41MDwvZXhpZjpQaXhlbFlEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOlBpeGVsWERpbWVuc2lvbj41MDwvZXhpZjpQaXhlbFhEaW1lbnNpb24+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+UGl4ZWxtYXRvciBQcm8gMy43PC94bXA6Q3JlYXRvclRvb2w+CiAgICAgICAgIDx4bXA6TWV0YWRhdGFEYXRlPjIwMjUtMDktMjlUMTI6MzA6MTErMDI6MDA8L3htcDpNZXRhZGF0YURhdGU+CiAgICAgICAgIDx0aWZmOlhSZXNvbHV0aW9uPjcyMDAwMC8xMDAwMDwvdGlmZjpYUmVzb2x1dGlvbj4KICAgICAgICAgPHRpZmY6UmVzb2x1dGlvblVuaXQ+MjwvdGlmZjpSZXNvbHV0aW9uVW5pdD4KICAgICAgICAgPHRpZmY6WVJlc29sdXRpb24+NzIwMDAwLzEwMDAwPC90aWZmOllSZXNvbHV0aW9uPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4K2DXT/AAADPNJREFUaAXdmntsXnUZx8+t7Rh07bqxW3d523UbsYhkG1uAATVqdIBIDGgUDBGRABr/8R8CMca7xviHGiYEownBRAMGuYqXkA4EAjjuM8B6eXtljG0d3Rhr+57fz8/3d87p3r49b7exgolP8vac3+W5fJ/n+V1Pfe/9UQib5Wcce3t77bJDY2cGgbfeM3az5/urPd873bN+k7Vmkfr4frDH8+0+uPZ61nZ7gf+MMd7zw6fVvert3Dnu5HheoK784rR83A8xnQhNUbS8Zd1Z1pSu8IPgMxj3Md/3ayVMCCnrL4/kSZsrg8hZmraNU37JGu9vyLhnsPf1l5NO3lRHpZUzPU4ESISgkoQtW9m6JQyCb2HiJRg4V8YmBmOS9Q2WSm75T2xCVPazOMUPBJBowW8Ow/BwbMyvhvt7/iUGaFJnUqz+93iAqI8iES8pFAo1XvQ9rLkaAwJDboChhC1ZpI5HXrk1DhgyDDKigNzEIQYhd094pe/uLhaLdFZ0lMLqW5XUaSaSgU7ZysLqa3wvvAcA58n7xtjYOZNK+gjAiYKQXseXOsJKJnUBaXZ24AVXNTTOf3v0wMgL6ghltiSlir8zAck8ETYX2m4jAD8CwKkocxFAeQagQuT7LirLZKxzEo96AF1e39i0+OCB/Y+qmp905kammhfFEDc1tc07ZZ53Ly76VBzHWQo5ZbR/0GQU+DAMI2PNP94b9a7Yv79rFKXOtkrleUBkqElBPAqIc42JJ6irqWT+kMoTQRDWAObpsUPhp/fuff0gep2N5forvStgLoRJJPxKEAqr2slll8+5YS5XcALvyJJMJ1djJZNdI0cyvZ1bd1r8Z+oVEdkwJQiqLCeVbXNhzTZmkC8yK5VHQoLJY0YLpL9UIEyKye4KwanQzJi0OFX50T5M20zFeN7JpV7TsmQ6nTxDxudEEIZrGhqaFo0e2P+w6tJ2HknBvXheB3N2MV5WaP1q6Ac/MLEpoTZLJ6ZHN+e/4Xv2OhaKTtL3MGvGUrSfyioipawxZLVT7mcGaJFIfkeBYrQMl5GsOdggAHAeouoRRNyG3l9bz2+DdQXt6iP5odVEE/ib6hvn9x10s5mzWe2THnI5t7SlZVVoo+eZyptoUweXeigphWEQ4ZWfDRa7bhajaOXKta1xYK4D3E3gbAAQAilhIjLo4b9LyW0/aMEpdm7qkElX02+Mzr8t2WDb7v6u/zjB/GGmvJGwbItxKK7QwihyNiFjnwnM+uGenn7qnO1ZByEGcvhjmJpY58qZcar1nXG+t0P92tra6rq6uib6+9/ooXjLssLau3xjfoihjeB4gmXyNYx4y1jvHeMFRzxvnFypraNunjXx6dStxfgtCA792H5nYKDnOcmFgvb29mgne6/QBK8YP9ZCWZ7+ilyJxF4QxMFP6H8VP2e7CxmFeCXbDhMET+D1yUhQn5FNM6RjoHfX41Q6LyTPDt473dYl6/w+nlm+uzDCb5e3tq5hyX2J91NU5ucM5ilyqc7W4oL+ZDsTyiBHgPh2Mmbl+1xCbixF5UTZgZAc/VB2JUYpd50n0zpnhN6Ttg7XnvHoqVlqimx/IqDsxhBNlYSNhMrZnDZJYby8peUsMF/MHoEiO7hpJHB+ENpAY0dU7h2Vy4y4R0blUeqgTrDnNU/WSba1UbCAJb5usnbKix/IVrLkYtk+2Nv7sjPamuALVNYCRilSaaSq2FcFyPUuTOR15PSZoukkCkpVUbyZGVGO1hJQqY85ROPYr5Xt6i2mGiouYWyoe040XH5GDFKPzenjYsKlZRFIambvbyI7jr2nWM21imsJmJ7u2CqbZTvtUcDi185LuwOSAKNYTmBmmqDp5wO9XQ/QIi99gECQzRh6s797h2/srehGnZuAyo3Su4AIYDsYzmRGNJtAVUNV3syjMIXs3vaMB6VfpJKqjYG0eRYencks2FA/5w4WwVdJa81q05yHzaS8X8PUv0nz8gapZhLIo1geYZ2+f09v71vpbDQ9zHmcJ1tHVLSesMj+CWMZ/dOBTJoceBvImWBttbSi3u01sGl7YlfnyZp3/Pydnc5hgNDaxjo2ZWFM5KTjhCxbq7Ml+5mEp1ILQkLaY1p70rZp4a3kmcWy08Vuo59oHEauAlCZDcl+yLMrGEl2AR1Fk5FypaNMhlHChu5/Q0ei0rvk9rtVtCcZY+0CbcXrq3SarLac0yYLH/KLiWOyhsyYgYQhb93IWLJQ6pRwWlb5YT/rSiG67dxj6GV373ladPLJbSD9MLZmSdqhMv3y+Wan1ukyobeIKVUXfxoAufqpHGVu9felzclIKTOCdVOzBRsU85GkuiNXUBnLLL4mWxX0r2Wx0wkxb6Jxm0dhILX8AR2GoGlAEOLOIexNzk8s7MwTNovGl4vqdPYwc25RLc9p9lHtjqbCABDzBp0EI89IFkxV2wuaW1vX8qLCTOOK5lkheTZubj6DHbC3lbs0CZ0+4LFZtrOhf50tbXLqy4MLs+ZptgHhKWz+b5A0neD0/CAJHcldQVS6hlG8DP9pWzQtrXVXILsJy47ABsGz5N8EwKYjlrVsdLiOkZRvLi+s2axtA4rcrbuaZ5s2bNhQIx2LV61rQect1c9IMs3dfrONCZ8Vymh5oU1n5rPTAZWljsAqldRHR90QDxSNbzre7O3tS/ZdnWrXbzaIHdOG0NuxY6K1tbVhLA4ew7nrSW2ikbuOuOMuil/gQmSTjC4B4KGKcSIQ4A1Ch1r3EtaOk42FyEadS1vWXJgecQVCMpRuimjmBF6PSeornoyPJN8xwVn9o+PGfxy963XPXAWEG9OyWbYjoyRve8lRN3yOyrL52t9L7xeBM4/eGwXIgUnm9BgRdxovvmOoWHxRMk6WlhUKZwQ2vJYT9U3ozS7Lq43HxNG+P+aVzDmDgz2vCIg8EpNe92Hs5dwujvMUoKcJ2XkysHll6yeou4M7ndWcD9zto7b3AHsPoE8xsW3n3vEZHLiHUcpXjeIB2FxKir+SFi5cVz9nzniLDYOFOHUjXTvocx46GvTNBSDV0ikTxZWQ7tnMfYPF7s9TGU4CqbgOcgOJzeSTsV+6Wh9cFq9a1RL5USfptdLlbeITbgmPZhMgh0p+aUv6gSYPiKtrbm5e4EdztpO6Op06cgB0uDu+zxVufJB6W4b7u59EgLsO0tQWuvsh6/0Bw3TY4lCoI65/fuTVPFooFJa81dfXy0T8dRDSndkiWaDY05kSs9ph+jNC7C8diOS6R1ArSXXR0NDQPqL7U7EoA+CXDazSbqxJQVWCR9EgHby7MxB0ZmeZkFMaB/GtGLQPW5WbnCDNGOFeV/Kj76vb8EDX38mnm5FDdRDpD68RJ1Ft6uyEie5VP6+zU4ZVI9d2yJYeQtYQukhjHMOfagxl9UTC4yLE7jOhuTWtd7ZrfIgodESHDrw4Ut+4YA/GXQ4gKaxVZNCxsbG+8ZHR0ZFhbsKfnNfQ+CoRWQKXALPptEVWpm3Dfbvup+zSh+dM5B85cODIvPlNl9K9hY4y5jiAKEu48Pb8bwz3dm+Xzbp4l6JKZjfwVxRW/4ap+wZ9l8Br8Ia6gLhrqNh1TXrvOybe5ua2ZlMbh6eG4W7uglV3vKQImBUtbQD3LyPyMiZzajUZ7oMP88DtA8XuG9P+DoQYKoGobDtAumvVwF/Jm0+iRLNUSAS07/racF/P78R4klQBRGMkd9HL1AAi4IOP+edQ34qt6RrmbM065HkhKBKuaMH8ByLjXYSAVaSXropYHIPPNcxvOr2hqfHt+rlzxxYfXGyWekvD2ubaxvpFixYeHBkZzQQf4+mMQNaXAbAO+aSWGyd5bAkIa5+pC+1lIyMvvEcnOcKNjYyhMiJZvUux+WwV5sb+veQWkYkBY7XYh+mX3V6U74eBS1i7HLE7WXcuTgVMUZIJLXu6iCxvaXuQ6fzSKqmlBUVjIqL9sdCOX9Hf3z9CnbOtTJZ7lcA8cjk70tPzzlBL91Y+f99OZJilAkDwYcazEraG32bez+VWZgWp52auPGE5dTMDdZeFmhFZ9Iy5s7GvbutMICS/GhC1CUzgdXqlIQZXbONrSYC9CHc35GTDBBMb/3Fh2avhPPdHbCdCblHKGAROKWyZmCK2QCM2NtcP9nVdv9Nz/3QjW2VTLs0ERAwKL+l3ZThc7Pl97EfnYPjd1DGVBexG+OLEqUYd0xyfMgCT+hn+6iyt4ZEYqBAAgEtca/7oG/+cwf7uO2lT9CU31cNbDh0LiFjQpG8eHdHu4mvFob6ur6D8IgBp8TuC9lryWP3mJH2nzYRqqyQ3NrUYMuQ4SQe1LK7jpNFf4P44GfClgYGubumEUVGYORXp4ARWapmhLODicSHmFvxsLso/ixM3ck1x12DfLn0HV58ZvZf1aV7VyieB4AYAPU+SPvjmQM+/aRPJMzL+WHLU9/+L/gt//IwlvKdbXAAAAABJRU5ErkJggg==",
-      clientId: githubClientId,
-      scopes: ["read:user", "user:email"],
-      metadata
-    });
-  }
-  return providers2;
-}
-
-// src/api/auth/controller.ts
-var AuthController = class extends import_runtime17.Controller {
-  providers() {
-    return providers();
-  }
-  info(request) {
-    const { user } = request;
-    return user;
-  }
-  async signIn(request, requestBody) {
-    await rateLimit(request.ip);
-    const { email } = requestBody;
-    return signIn(email);
-  }
-  async verify(requestBody) {
-    const { token } = requestBody;
-    return verifyEmail(token);
-  }
-  async token(request) {
-    const tokenStr = parseRequest(request);
-    return refresh(tokenStr);
-  }
-};
-__decorateClass([
-  (0, import_runtime17.Get)("providers"),
-  (0, import_runtime17.OperationId)("authProviders")
-], AuthController.prototype, "providers", 1);
-__decorateClass([
-  (0, import_runtime17.Get)("info"),
-  (0, import_runtime17.Security)("api_key", []),
-  (0, import_runtime17.OperationId)("authInfo"),
-  __decorateParam(0, (0, import_runtime17.Request)())
-], AuthController.prototype, "info", 1);
-__decorateClass([
-  (0, import_runtime17.Post)("signIn"),
-  (0, import_runtime17.OperationId)("signIn"),
-  __decorateParam(0, (0, import_runtime17.Request)()),
-  __decorateParam(1, (0, import_runtime17.Body)())
-], AuthController.prototype, "signIn", 1);
-__decorateClass([
-  (0, import_runtime17.Post)("verify"),
-  (0, import_runtime17.Response)(500, "Unknown error"),
-  (0, import_runtime17.OperationId)("verifyEmail"),
-  __decorateParam(0, (0, import_runtime17.Body)())
-], AuthController.prototype, "verify", 1);
-__decorateClass([
-  (0, import_runtime17.Post)("refresh"),
-  (0, import_runtime17.OperationId)("refreshToken"),
-  __decorateParam(0, (0, import_runtime17.Request)())
-], AuthController.prototype, "token", 1);
-AuthController = __decorateClass([
-  (0, import_runtime17.Route)("auth"),
-  (0, import_runtime17.Tags)("Auth")
-], AuthController);
 
 // build/routes.ts
 var koaAuthenticationRecasted = koaAuthentication;
@@ -143135,19 +143751,19 @@ var models = {
   "crypto.JsonWebKey": {
     "dataType": "refObject",
     "properties": {
-      "crv": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "d": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "dp": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "dq": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "e": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "k": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "kty": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "n": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "p": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "q": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "qi": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "x": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] },
-      "y": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "undefined" }] }
+      "crv": { "dataType": "string" },
+      "d": { "dataType": "string" },
+      "dp": { "dataType": "string" },
+      "dq": { "dataType": "string" },
+      "e": { "dataType": "string" },
+      "k": { "dataType": "string" },
+      "kty": { "dataType": "string" },
+      "n": { "dataType": "string" },
+      "p": { "dataType": "string" },
+      "q": { "dataType": "string" },
+      "qi": { "dataType": "string" },
+      "x": { "dataType": "string" },
+      "y": { "dataType": "string" }
     },
     "additionalProperties": { "dataType": "any" }
   },
@@ -143349,7 +143965,7 @@ var models = {
       "id": { "dataType": "any", "required": true },
       "sub": { "dataType": "string", "required": true },
       "inodeId": { "dataType": "any", "required": true },
-      "permission": { "dataType": "double", "required": true },
+      "permission": { "dataType": "integer", "required": true, "validators": { "minimum": { "value": 0 } } },
       "createdAt": { "dataType": "datetime", "required": true },
       "updatedAt": { "dataType": "datetime", "required": true }
     },
@@ -143361,16 +143977,11 @@ var models = {
     "type": { "dataType": "intersection", "subSchemas": [{ "ref": "Inode" }, { "dataType": "nestedObjectLiteral", "nestedProperties": { "members": { "dataType": "array", "array": { "dataType": "refObject", "ref": "Member" }, "required": true } } }], "validators": {} }
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  "AESKey": {
-    "dataType": "refAlias",
-    "type": { "dataType": "string", "validators": {} }
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   "FileDecryptionKey": {
     "dataType": "refObject",
     "properties": {
       "mnemonic": { "dataType": "string", "required": true },
-      "key": { "ref": "AESKey", "required": true }
+      "key": { "dataType": "string", "required": true }
     },
     "additionalProperties": false
   },
@@ -143388,7 +143999,7 @@ var models = {
     "dataType": "refObject",
     "properties": {
       "sub": { "dataType": "string", "required": true },
-      "permission": { "dataType": "double", "required": true }
+      "permission": { "dataType": "integer", "required": true, "validators": { "minimum": { "value": 0 } } }
     },
     "additionalProperties": false
   },
@@ -143466,33 +144077,6 @@ var models = {
     "additionalProperties": false
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  "AuthMetadata": {
-    "dataType": "refObject",
-    "properties": {
-      "issuer": { "dataType": "string", "required": true },
-      "authorization_endpoint": { "dataType": "string", "required": true },
-      "userinfo_endpoint": { "dataType": "string", "required": true },
-      "token_endpoint": { "dataType": "string", "required": true },
-      "end_session_endpoint": { "dataType": "string" }
-    },
-    "additionalProperties": false
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  "AuthProvider": {
-    "dataType": "refObject",
-    "properties": {
-      "id": { "dataType": "string", "required": true },
-      "name": { "dataType": "string", "required": true },
-      "authority": { "dataType": "string", "required": true },
-      "signInUrl": { "dataType": "string" },
-      "clientId": { "dataType": "string", "required": true },
-      "scopes": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
-      "logo": { "dataType": "string" },
-      "metadata": { "ref": "AuthMetadata" }
-    },
-    "additionalProperties": false
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   "User": {
     "dataType": "refObject",
     "properties": {
@@ -143501,6 +144085,19 @@ var models = {
       "isAdmin": { "dataType": "boolean", "required": true }
     },
     "additionalProperties": false
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  "OpenIDProvider": {
+    "dataType": "refObject",
+    "properties": {
+      "id": { "dataType": "string", "required": true },
+      "url": { "dataType": "string", "required": true },
+      "name": { "dataType": "string", "required": true },
+      "logo_uri": { "dataType": "string", "required": true },
+      "discovery": { "dataType": "boolean", "required": true },
+      "supportsPKCE": { "dataType": "boolean" }
+    },
+    "additionalProperties": { "dataType": "any" }
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   "SignInResponse": {
@@ -143607,7 +144204,7 @@ function RegisterRoutes(router) {
   };
   router.get(
     "/user/me",
-    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
+    authenticateMiddleware([{ "api_key": ["dabih:base"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(UserController),
     ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.me),
     async function UserController_me(context, next) {
@@ -143711,6 +144308,34 @@ function RegisterRoutes(router) {
       });
     }
   );
+  const argsUserController_setAdmin = {
+    body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "admin": { "dataType": "boolean", "required": true }, "sub": { "dataType": "string", "required": true } } }
+  };
+  router.post(
+    "/user/admin",
+    authenticateMiddleware([{ "api_key": ["dabih:admin"] }]),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController),
+    ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.setAdmin),
+    async function UserController_setAdmin(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsUserController_setAdmin, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new UserController();
+      return templateService.apiHandler({
+        methodName: "setAdmin",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
   const argsUserController_remove = {
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
     body: { "in": "body", "name": "body", "required": true, "ref": "UserSub" }
@@ -143746,7 +144371,7 @@ function RegisterRoutes(router) {
   };
   router.post(
     "/user/key/add",
-    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
+    authenticateMiddleware([{ "api_key": ["dabih:base"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(UserController),
     ...(0, import_runtime19.fetchMiddlewares)(UserController.prototype.addKey),
     async function UserController_addKey(context, next) {
@@ -143833,7 +144458,7 @@ function RegisterRoutes(router) {
   };
   router.post(
     "/upload/start",
-    authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
+    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.start),
     async function UploadController_start(context, next) {
@@ -143862,7 +144487,7 @@ function RegisterRoutes(router) {
   };
   router.post(
     "/upload/:mnemonic/cancel",
-    authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
+    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.cancel),
     async function UploadController_cancel(context, next) {
@@ -143892,7 +144517,7 @@ function RegisterRoutes(router) {
   };
   router.put(
     "/upload/stream/:mnemonic/:filename",
-    authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
+    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.stream),
     async function UploadController_stream(context, next) {
@@ -143923,7 +144548,7 @@ function RegisterRoutes(router) {
   };
   router.put(
     "/upload/:mnemonic/chunk",
-    authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
+    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.chunk),
     async function UploadController_chunk(context, next) {
@@ -143952,7 +144577,7 @@ function RegisterRoutes(router) {
   };
   router.post(
     "/upload/:mnemonic/finish",
-    authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
+    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.finish),
     async function UploadController_finish(context, next) {
@@ -143980,7 +144605,7 @@ function RegisterRoutes(router) {
   };
   router.get(
     "/upload/unfinished",
-    authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
+    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.unfinished),
     async function UploadController_unfinished(context, next) {
@@ -144008,7 +144633,7 @@ function RegisterRoutes(router) {
   };
   router.post(
     "/upload/cleanup",
-    authenticateMiddleware([{ "api_key": ["dabih:upload"] }]),
+    authenticateMiddleware([{ "api_key": ["dabih:api"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController),
     ...(0, import_runtime19.fetchMiddlewares)(UploadController.prototype.cleanup),
     async function UploadController_cleanup(context, next) {
@@ -144753,7 +145378,7 @@ function RegisterRoutes(router) {
   const argsDownloadController_decrypt = {
     mnemonic: { "in": "path", "name": "mnemonic", "required": true, "dataType": "string" },
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
-    body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "key": { "ref": "AESKey", "required": true } } }
+    body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "key": { "dataType": "string", "required": true } } }
   };
   router.post(
     "/download/:mnemonic/decrypt",
@@ -144837,31 +145462,6 @@ function RegisterRoutes(router) {
       });
     }
   );
-  const argsAuthController_providers = {};
-  router.get(
-    "/auth/providers",
-    ...(0, import_runtime19.fetchMiddlewares)(AuthController),
-    ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.providers),
-    async function AuthController_providers(context, next) {
-      let validatedArgs = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_providers, context, next });
-      } catch (err) {
-        const error2 = err;
-        error2.message ||= JSON.stringify({ fields: error2.fields });
-        context.status = error2.status;
-        context.throw(context.status, error2.message, error2);
-      }
-      const controller = new AuthController();
-      return templateService.apiHandler({
-        methodName: "providers",
-        controller,
-        context,
-        validatedArgs,
-        successStatus: void 0
-      });
-    }
-  );
   const argsAuthController_info = {
     request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
   };
@@ -144883,6 +145483,84 @@ function RegisterRoutes(router) {
       const controller = new AuthController();
       return templateService.apiHandler({
         methodName: "info",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
+  const argsAuthController_provider = {};
+  router.get(
+    "/auth/provider",
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.provider),
+    async function AuthController_provider(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_provider, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new AuthController();
+      return templateService.apiHandler({
+        methodName: "provider",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
+  const argsAuthController_login = {};
+  router.get(
+    "/auth/login",
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.login),
+    async function AuthController_login(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_login, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new AuthController();
+      return templateService.apiHandler({
+        methodName: "login",
+        controller,
+        context,
+        validatedArgs,
+        successStatus: void 0
+      });
+    }
+  );
+  const argsAuthController_callback = {
+    request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+    state: { "in": "query", "name": "state", "required": true, "dataType": "string" }
+  };
+  router.get(
+    "/auth/callback",
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController),
+    ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.callback),
+    async function AuthController_callback(context, next) {
+      let validatedArgs = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_callback, context, next });
+      } catch (err) {
+        const error2 = err;
+        error2.message ||= JSON.stringify({ fields: error2.fields });
+        context.status = error2.status;
+        context.throw(context.status, error2.message, error2);
+      }
+      const controller = new AuthController();
+      return templateService.apiHandler({
+        methodName: "callback",
         controller,
         context,
         validatedArgs,
@@ -144946,10 +145624,12 @@ function RegisterRoutes(router) {
     }
   );
   const argsAuthController_token = {
-    request: { "in": "request", "name": "request", "required": true, "dataType": "object" }
+    request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+    body: { "in": "body", "name": "body", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "token": { "dataType": "string", "required": true } } }
   };
   router.post(
     "/auth/refresh",
+    authenticateMiddleware([{ "api_key": ["dabih:base"] }]),
     ...(0, import_runtime19.fetchMiddlewares)(AuthController),
     ...(0, import_runtime19.fetchMiddlewares)(AuthController.prototype.token),
     async function AuthController_token(context, next) {
@@ -145164,6 +145844,7 @@ var app = async (port) => {
   await initInodes();
   await initRedis();
   initEmail();
+  await initOpenID();
   const app2 = new Koa();
   app2.use(bodyParser());
   app2.use(log_default());

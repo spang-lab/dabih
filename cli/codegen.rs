@@ -81,125 +81,6 @@ pub mod types {
             value.clone()
         }
     }
-    ///`AuthMetadata`
-    ///
-    /// <details><summary>JSON schema</summary>
-    ///
-    /// ```json
-    ///{
-    ///  "type": "object",
-    ///  "required": [
-    ///    "authorization_endpoint",
-    ///    "issuer",
-    ///    "token_endpoint",
-    ///    "userinfo_endpoint"
-    ///  ],
-    ///  "properties": {
-    ///    "authorization_endpoint": {
-    ///      "type": "string"
-    ///    },
-    ///    "end_session_endpoint": {
-    ///      "type": "string"
-    ///    },
-    ///    "issuer": {
-    ///      "type": "string"
-    ///    },
-    ///    "token_endpoint": {
-    ///      "type": "string"
-    ///    },
-    ///    "userinfo_endpoint": {
-    ///      "type": "string"
-    ///    }
-    ///  },
-    ///  "additionalProperties": true
-    ///}
-    /// ```
-    /// </details>
-    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-    pub struct AuthMetadata {
-        pub authorization_endpoint: ::std::string::String,
-        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-        pub end_session_endpoint: ::std::option::Option<::std::string::String>,
-        pub issuer: ::std::string::String,
-        pub token_endpoint: ::std::string::String,
-        pub userinfo_endpoint: ::std::string::String,
-    }
-    impl ::std::convert::From<&AuthMetadata> for AuthMetadata {
-        fn from(value: &AuthMetadata) -> Self {
-            value.clone()
-        }
-    }
-    ///`AuthProvider`
-    ///
-    /// <details><summary>JSON schema</summary>
-    ///
-    /// ```json
-    ///{
-    ///  "type": "object",
-    ///  "required": [
-    ///    "authority",
-    ///    "clientId",
-    ///    "id",
-    ///    "name",
-    ///    "scopes"
-    ///  ],
-    ///  "properties": {
-    ///    "authority": {
-    ///      "type": "string"
-    ///    },
-    ///    "clientId": {
-    ///      "type": "string"
-    ///    },
-    ///    "id": {
-    ///      "type": "string"
-    ///    },
-    ///    "logo": {
-    ///      "type": "string"
-    ///    },
-    ///    "metadata": {
-    ///      "$ref": "#/components/schemas/AuthMetadata"
-    ///    },
-    ///    "name": {
-    ///      "type": "string"
-    ///    },
-    ///    "scopes": {
-    ///      "type": "array",
-    ///      "items": {
-    ///        "type": "string"
-    ///      }
-    ///    },
-    ///    "signInUrl": {
-    ///      "type": "string"
-    ///    }
-    ///  },
-    ///  "additionalProperties": true
-    ///}
-    /// ```
-    /// </details>
-    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-    pub struct AuthProvider {
-        pub authority: ::std::string::String,
-        #[serde(rename = "clientId")]
-        pub client_id: ::std::string::String,
-        pub id: ::std::string::String,
-        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-        pub logo: ::std::option::Option<::std::string::String>,
-        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-        pub metadata: ::std::option::Option<AuthMetadata>,
-        pub name: ::std::string::String,
-        pub scopes: ::std::vec::Vec<::std::string::String>,
-        #[serde(
-            rename = "signInUrl",
-            default,
-            skip_serializing_if = "::std::option::Option::is_none"
-        )]
-        pub sign_in_url: ::std::option::Option<::std::string::String>,
-    }
-    impl ::std::convert::From<&AuthProvider> for AuthProvider {
-        fn from(value: &AuthProvider) -> Self {
-            value.clone()
-        }
-    }
     ///`Chunk`
     ///
     /// <details><summary>JSON schema</summary>
@@ -2612,6 +2493,63 @@ This is based on the OIDC standard*/
             value.clone()
         }
     }
+    ///`OpenIdProvider`
+    ///
+    /// <details><summary>JSON schema</summary>
+    ///
+    /// ```json
+    ///{
+    ///  "type": "object",
+    ///  "required": [
+    ///    "discovery",
+    ///    "id",
+    ///    "logo_uri",
+    ///    "name",
+    ///    "url"
+    ///  ],
+    ///  "properties": {
+    ///    "discovery": {
+    ///      "type": "boolean"
+    ///    },
+    ///    "id": {
+    ///      "type": "string"
+    ///    },
+    ///    "logo_uri": {
+    ///      "type": "string"
+    ///    },
+    ///    "name": {
+    ///      "type": "string"
+    ///    },
+    ///    "supportsPKCE": {
+    ///      "type": "boolean"
+    ///    },
+    ///    "url": {
+    ///      "type": "string"
+    ///    }
+    ///  },
+    ///  "additionalProperties": true
+    ///}
+    /// ```
+    /// </details>
+    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+    pub struct OpenIdProvider {
+        pub discovery: bool,
+        pub id: ::std::string::String,
+        pub logo_uri: ::std::string::String,
+        pub name: ::std::string::String,
+        #[serde(
+            rename = "supportsPKCE",
+            default,
+            skip_serializing_if = "::std::option::Option::is_none"
+        )]
+        pub supports_pkce: ::std::option::Option<bool>,
+        pub url: ::std::string::String,
+    }
+    impl ::std::convert::From<&OpenIdProvider> for OpenIdProvider {
+        fn from(value: &OpenIdProvider) -> Self {
+            value.clone()
+        }
+    }
     ///`PublicKey`
     ///
     /// <details><summary>JSON schema</summary>
@@ -2697,6 +2635,33 @@ This is based on the OIDC standard*/
     }
     impl ::std::convert::From<&PublicKey> for PublicKey {
         fn from(value: &PublicKey) -> Self {
+            value.clone()
+        }
+    }
+    ///`RefreshTokenBody`
+    ///
+    /// <details><summary>JSON schema</summary>
+    ///
+    /// ```json
+    ///{
+    ///  "type": "object",
+    ///  "required": [
+    ///    "token"
+    ///  ],
+    ///  "properties": {
+    ///    "token": {
+    ///      "type": "string"
+    ///    }
+    ///  }
+    ///}
+    /// ```
+    /// </details>
+    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+    pub struct RefreshTokenBody {
+        pub token: ::std::string::String,
+    }
+    impl ::std::convert::From<&RefreshTokenBody> for RefreshTokenBody {
+        fn from(value: &RefreshTokenBody) -> Self {
             value.clone()
         }
     }
@@ -2822,6 +2787,38 @@ This is based on the OIDC standard*/
     }
     impl ::std::convert::From<&SetAccessBody> for SetAccessBody {
         fn from(value: &SetAccessBody) -> Self {
+            value.clone()
+        }
+    }
+    ///`SetAdminBody`
+    ///
+    /// <details><summary>JSON schema</summary>
+    ///
+    /// ```json
+    ///{
+    ///  "type": "object",
+    ///  "required": [
+    ///    "admin",
+    ///    "sub"
+    ///  ],
+    ///  "properties": {
+    ///    "admin": {
+    ///      "type": "boolean"
+    ///    },
+    ///    "sub": {
+    ///      "type": "string"
+    ///    }
+    ///  }
+    ///}
+    /// ```
+    /// </details>
+    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+    pub struct SetAdminBody {
+        pub admin: bool,
+        pub sub: ::std::string::String,
+    }
+    impl ::std::convert::From<&SetAdminBody> for SetAdminBody {
+        fn from(value: &SetAdminBody) -> Self {
             value.clone()
         }
     }
@@ -3835,6 +3832,43 @@ impl Client {
             .build()?;
         let info = OperationInfo {
             operation_id: "list_users",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            200u16 => ResponseValue::from_response(response).await,
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
+    /**Sends a `POST` request to `/user/admin`
+
+*/
+    pub async fn set_admin<'a>(
+        &'a self,
+        body: &'a types::SetAdminBody,
+    ) -> Result<ResponseValue<::std::option::Option<types::UserResponse>>, Error<()>> {
+        let url = format!("{}/user/admin", self.baseurl,);
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
+        header_map
+            .append(
+                ::reqwest::header::HeaderName::from_static("api-version"),
+                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+            );
+        #[allow(unused_mut)]
+        let mut request = self
+            .client
+            .post(url)
+            .header(
+                ::reqwest::header::ACCEPT,
+                ::reqwest::header::HeaderValue::from_static("application/json"),
+            )
+            .json(&body)
+            .headers(header_map)
+            .build()?;
+        let info = OperationInfo {
+            operation_id: "set_admin",
         };
         self.pre(&mut request, &info).await?;
         let result = self.exec(request, &info).await;
@@ -5117,41 +5151,6 @@ Sends a `GET` request to `/filedata/orphaned`
             _ => Err(Error::UnexpectedResponse(response)),
         }
     }
-    /**Sends a `GET` request to `/auth/providers`
-
-*/
-    pub async fn auth_providers<'a>(
-        &'a self,
-    ) -> Result<ResponseValue<::std::vec::Vec<types::AuthProvider>>, Error<()>> {
-        let url = format!("{}/auth/providers", self.baseurl,);
-        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
-        header_map
-            .append(
-                ::reqwest::header::HeaderName::from_static("api-version"),
-                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
-            );
-        #[allow(unused_mut)]
-        let mut request = self
-            .client
-            .get(url)
-            .header(
-                ::reqwest::header::ACCEPT,
-                ::reqwest::header::HeaderValue::from_static("application/json"),
-            )
-            .headers(header_map)
-            .build()?;
-        let info = OperationInfo {
-            operation_id: "auth_providers",
-        };
-        self.pre(&mut request, &info).await?;
-        let result = self.exec(request, &info).await;
-        self.post(&result, &info).await?;
-        let response = result?;
-        match response.status().as_u16() {
-            200u16 => ResponseValue::from_response(response).await,
-            _ => Err(Error::UnexpectedResponse(response)),
-        }
-    }
     /**Sends a `GET` request to `/auth/info`
 
 */
@@ -5184,6 +5183,99 @@ Sends a `GET` request to `/filedata/orphaned`
         let response = result?;
         match response.status().as_u16() {
             200u16 => ResponseValue::from_response(response).await,
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
+    /**Sends a `GET` request to `/auth/provider`
+
+*/
+    pub async fn auth_provider<'a>(
+        &'a self,
+    ) -> Result<ResponseValue<::std::option::Option<types::OpenIdProvider>>, Error<()>> {
+        let url = format!("{}/auth/provider", self.baseurl,);
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
+        header_map
+            .append(
+                ::reqwest::header::HeaderName::from_static("api-version"),
+                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+            );
+        #[allow(unused_mut)]
+        let mut request = self
+            .client
+            .get(url)
+            .header(
+                ::reqwest::header::ACCEPT,
+                ::reqwest::header::HeaderValue::from_static("application/json"),
+            )
+            .headers(header_map)
+            .build()?;
+        let info = OperationInfo {
+            operation_id: "auth_provider",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            200u16 => ResponseValue::from_response(response).await,
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
+    /**Sends a `GET` request to `/auth/login`
+
+*/
+    pub async fn login_redirect<'a>(&'a self) -> Result<ResponseValue<()>, Error<()>> {
+        let url = format!("{}/auth/login", self.baseurl,);
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
+        header_map
+            .append(
+                ::reqwest::header::HeaderName::from_static("api-version"),
+                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+            );
+        #[allow(unused_mut)]
+        let mut request = self.client.get(url).headers(header_map).build()?;
+        let info = OperationInfo {
+            operation_id: "login_redirect",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            204u16 => Ok(ResponseValue::empty(response)),
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
+    /**Sends a `GET` request to `/auth/callback`
+
+*/
+    pub async fn login_callback<'a>(
+        &'a self,
+        state: &'a str,
+    ) -> Result<ResponseValue<()>, Error<()>> {
+        let url = format!("{}/auth/callback", self.baseurl,);
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
+        header_map
+            .append(
+                ::reqwest::header::HeaderName::from_static("api-version"),
+                ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+            );
+        #[allow(unused_mut)]
+        let mut request = self
+            .client
+            .get(url)
+            .query(&progenitor_client::QueryParam::new("state", &state))
+            .headers(header_map)
+            .build()?;
+        let info = OperationInfo {
+            operation_id: "login_callback",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            204u16 => Ok(ResponseValue::empty(response)),
             _ => Err(Error::UnexpectedResponse(response)),
         }
     }
@@ -5269,6 +5361,7 @@ Sends a `GET` request to `/filedata/orphaned`
 */
     pub async fn refresh_token<'a>(
         &'a self,
+        body: &'a types::RefreshTokenBody,
     ) -> Result<ResponseValue<::std::string::String>, Error<()>> {
         let url = format!("{}/auth/refresh", self.baseurl,);
         let mut header_map = ::reqwest::header::HeaderMap::with_capacity(1usize);
@@ -5285,6 +5378,7 @@ Sends a `GET` request to `/filedata/orphaned`
                 ::reqwest::header::ACCEPT,
                 ::reqwest::header::HeaderValue::from_static("application/json"),
             )
+            .json(&body)
             .headers(header_map)
             .build()?;
         let info = OperationInfo {

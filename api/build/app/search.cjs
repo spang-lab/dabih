@@ -130311,10 +130311,10 @@ async function getSecret(secretName, ttl) {
     secret2 = await generateSecret(secretName, ttl);
   } else {
     secret2 = JSON.parse(secrets[0]);
-  }
-  const now = Math.floor(Date.now() / 1e3);
-  if (secret2.expiresAt < now) {
-    secret2 = await generateSecret(secretName, ttl);
+    const now = Math.floor(Date.now() / 1e3);
+    if (secret2.expiresAt < now) {
+      secret2 = await generateSecret(secretName, ttl);
+    }
   }
   const { encrypted, iv } = secret2;
   try {
@@ -130517,7 +130517,7 @@ async function search({
   const searchQueue = startPoints.filter(isDir).map((inode) => inode.id);
   while (searchQueue.length > 0) {
     const meta = await job_default.getMeta(jobId);
-    if (!meta || meta.status !== "running") {
+    if (meta?.status !== "running") {
       return;
     }
     const inodeId = searchQueue.shift();
